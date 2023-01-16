@@ -12,6 +12,9 @@
 .ideadictionaries
 .ideashelf
 
+# intellij configs
+.idea/
+
 # AWS User-specific
 .ideaaws.xml
 
