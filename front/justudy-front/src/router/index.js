@@ -1,18 +1,13 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import userRouter from '../router/userRouter'
-
+import studyRouter from './studyRouter';
 
 Vue.use(VueRouter);
-
-
 
 const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
-    routes: [
-        ...userRouter
-    ]
+    routes: [...studyRouter]
 });
 
 export default router;
