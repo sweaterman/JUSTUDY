@@ -1,4 +1,4 @@
-package com.justudy.backend.domain;
+package com.justudy.backend.community.domain;
 
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -1,9 +1,9 @@
-package com.justudy.backend.controller;
+package com.justudy.backend.community.controller;
 
-import com.justudy.backend.dto.request.CommunityCreate;
-import com.justudy.backend.dto.request.CommunityEdit;
-import com.justudy.backend.dto.response.CommunityResponse;
-import com.justudy.backend.service.CommunityService;
+import com.justudy.backend.community.dto.request.CommunityCreate;
+import com.justudy.backend.community.dto.request.CommunityEdit;
+import com.justudy.backend.community.dto.response.CommunityResponse;
+import com.justudy.backend.community.service.CommunityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

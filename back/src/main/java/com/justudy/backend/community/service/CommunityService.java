@@ -1,10 +1,10 @@
-package com.justudy.backend.service;
+package com.justudy.backend.community.service;
 
-import com.justudy.backend.domain.CommunityEntity;
-import com.justudy.backend.dto.request.CommunityCreate;
-import com.justudy.backend.dto.request.CommunityEdit;
-import com.justudy.backend.dto.response.CommunityResponse;
-import com.justudy.backend.repository.CommunityRepository;
+import com.justudy.backend.community.dto.request.CommunityCreate;
+import com.justudy.backend.community.dto.request.CommunityEdit;
+import com.justudy.backend.community.dto.response.CommunityResponse;
+import com.justudy.backend.community.domain.CommunityEntity;
+import com.justudy.backend.community.repository.CommunityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

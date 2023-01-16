@@ -1,6 +1,6 @@
-package com.justudy.backend.dto.request;
+package com.justudy.backend.community.dto.request;
 
-import com.justudy.backend.domain.CommunityEntity;
+import com.justudy.backend.community.domain.CommunityEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
