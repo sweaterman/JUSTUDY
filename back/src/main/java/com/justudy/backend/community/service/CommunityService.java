@@ -6,6 +6,7 @@ import com.justudy.backend.community.dto.response.CommunityResponse;
 import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.repository.CommunityRepository;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +24,12 @@ public class CommunityService {
         CommunityEntity community = request.toEntity();
         return repository.save(community).getSequence();
     }
-
+    @Transactional
     public CommunityResponse readCommunity(Long communitySequence) {
         CommunityEntity entity = repository.findById(communitySequence)
                 .orElseThrow(() -> new CommunityNotFound());
+        //조회수 증가
+        entity.changeViewCount(entity.getViewCount()+1);
         return CommunityResponse.builder()
                 .sequence(entity.getSequence())
                 .member_seq(entity.getMember_seq())
@@ -34,11 +37,9 @@ public class CommunityService {
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .viewCount(entity.getViewCount())
-                .bookmark(entity.getBookmark())
                 .createdTime(entity.getCreatedTime())
                 .modifiedTime(entity.getModifiedTime())
                 .love(entity.getLove())
-                .isDeleted(entity.getIsDeleted())
                 .build();
     }
 
@@ -50,11 +51,9 @@ public class CommunityService {
                     .title(entity.getTitle())
                     .content(entity.getContent())
                     .viewCount(entity.getViewCount())
-                    .bookmark(entity.getBookmark())
                     .createdTime(entity.getCreatedTime())
                     .modifiedTime(entity.getModifiedTime())
                     .love(entity.getLove())
-                    .isDeleted(entity.getIsDeleted())
                     .build())
                 .collect(Collectors.toList());
     }
@@ -63,15 +62,18 @@ public class CommunityService {
     public Long UpdateCommunity(long id, CommunityEdit request) {
         CommunityEntity entity = repository.findById(id)
                 .orElseThrow(() -> new CommunityNotFound());
-        entity.update(request.getTitle(), request.getContent(), request.getViewCount(), request.getBookmark(), request.getModifiedTime());
+        entity.update(request.getTitle(), request.getContent(), request.getViewCount(), request.getModifiedTime());
         return id;
     }
 
     @Transactional
     public void deleteCommunity(Long communitySequence) {
-        CommunityEntity entity = repository.findById(communitySequence)
+        repository.findById(communitySequence)
                 .orElseThrow(() -> new CommunityNotFound());
         repository.deleteById(communitySequence);
     }
 
+    private class CommunityNotFound extends IllegalArgumentException {
+
+    }
 }
