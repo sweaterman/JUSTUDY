@@ -1,5 +1,6 @@
 package com.justudy.backend.community.service;
 
+import com.justudy.backend.community.domain.CommunityLove;
 import com.justudy.backend.community.dto.request.CommunityCreate;
 import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.community.dto.response.CommunityResponse;
@@ -72,7 +73,8 @@ public class CommunityService {
     @Transactional
     //조회수 증가
     public void addViewCount(CommunityEntity entity) {
-        entity.changeViewCount(entity.getViewCount() + 1);
+        int temp = entity.getViewCount();
+        entity.changeViewCount(temp+ 1);
     }
 
     public List<CommunityResponse> search(int page, String type, String search) {
@@ -95,8 +97,26 @@ public class CommunityService {
                 .collect(Collectors.toList());
     }
 
-    public CommunityResponse createBookmark(CommunityCreate request) {
+    public long createLove(CommunityCreate request) {
+//        CommunityLove love = repository.findByPK(request);
+        return repository.saveLove(request);
     }
+
+    public Long deleteAllLoveByCommunity(Long id) {
+        return repository.deleteAllLoveByCommunity(id);
+    }
+
+    public Long updateLove(CommunityEdit request) {
+        boolean flag = repository.readLove(request);
+        return repository.updateLove(request,flag);
+    }
+
+    public List<CommunityLove> readAllLoveByCommunity(Long id) {
+        return repository.readAllLoveByCommunity(id);
+    }
+
+//    public CommunityResponse createBookmark(CommunityCreate request) {
+//    }
 
     private class CommunityNotFound extends IllegalArgumentException {
 

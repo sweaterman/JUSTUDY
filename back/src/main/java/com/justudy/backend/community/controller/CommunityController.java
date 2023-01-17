@@ -1,5 +1,6 @@
 package com.justudy.backend.community.controller;
 
+import com.justudy.backend.community.domain.CommunityLove;
 import com.justudy.backend.community.dto.request.CommunityCreate;
 import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.community.dto.response.CommunityResponse;
@@ -23,7 +24,7 @@ public class CommunityController {
      *
      * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
      */
-    @GetMapping("/board")
+    @GetMapping("/board/search")
     public ResponseEntity<List<CommunityResponse>> readAllCommunityBySearch(@RequestParam("page") int page, @RequestParam("type") String type, @RequestParam("saerch") String search) {
         return ResponseEntity.status(HttpStatus.OK).body(service.search(page, type, search));
     }
@@ -99,10 +100,10 @@ public class CommunityController {
      *
      * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
      */
-    @PostMapping("/board/bookmark")
-    public ResponseEntity<CommunityResponse> createBookmark(CommunityCreate request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.createBookmark(request));
-    }
+//    @PostMapping("/board/bookmark")
+//    public ResponseEntity<CommunityResponse> createBookmark(CommunityCreate request) {
+//        return ResponseEntity.status(HttpStatus.CREATED).body(service.createBookmark(request));
+//    }
 //
 //    /**
 //     * 북마크 삭제 API
@@ -122,4 +123,50 @@ public class CommunityController {
 //    public ResponseEntity<List<CommunityResponse>> createBookmark() {
 //        return ResponseEntity.status(HttpStatus.OK).body(service.readAllBookmark());
 //    }
+
+    /**
+     * 좋아요 생성 API
+     *
+     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
+     */
+    @PostMapping("/board/love")
+    public ResponseEntity<CommunityLove> createLove(CommunityCreate request) {
+        if(service.createLove(request)==1)
+            return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        else//create 실패
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+    }
+    /**
+     * 좋아요 수정 API
+     *
+     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
+     */
+    @PutMapping("/board/love")
+    public ResponseEntity<List<CommunityResponse>> updateBookmark(CommunityEdit request) {
+        if(service.updateLove(request)==1)
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        else//update 실패
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+    }
+    /**
+     * 좋아요 삭제 API
+     *
+     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
+     */
+    @DeleteMapping("/board/love/{id}")
+    public ResponseEntity<List<CommunityResponse>> deleteLove(@PathVariable("id") Long id) {
+        if(service.deleteAllLoveByCommunity(id)==1)
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        else//update 실패
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+    }
+    /**
+     * 좋아요 불러오기 API
+     *
+     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
+     */
+    @GetMapping("/board/love/{id}")
+    public ResponseEntity<List<CommunityLove>> readLove(@PathVariable("id") Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.readAllLoveByCommunity(id));
+    }
 }

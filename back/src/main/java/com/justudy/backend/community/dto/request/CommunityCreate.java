@@ -31,7 +31,9 @@ public class CommunityCreate {
                 .category_seq(category_seq)
                 .title(title)
                 .content(content)
+                .viewCount(0)
                 .createdTime(createdTime)
+
                 .build();
     }
 }

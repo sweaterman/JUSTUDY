@@ -1,7 +1,11 @@
 package com.justudy.backend.community.repository;
 
 import com.justudy.backend.community.domain.CommunityEntity;
+import com.justudy.backend.community.domain.CommunityLove;
 import com.justudy.backend.community.domain.QCommunityEntity;
+import com.justudy.backend.community.domain.QCommunityLove;
+import com.justudy.backend.community.dto.request.CommunityCreate;
+import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.util.PagingUtil;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
@@ -9,6 +13,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 public class CommunityRepositoryImpl implements CommunityRepositorySupport {
@@ -58,6 +64,56 @@ public class CommunityRepositoryImpl implements CommunityRepositorySupport {
         JPQLQuery<CommunityEntity> query = queryFactory.selectFrom(community);
 
         return pagingUtil.getPageImpl(pageable, query, community.getClass());
+    }
+
+
+
+    @Override
+    public long saveLove(CommunityCreate request) {
+        QCommunityLove love = QCommunityLove.communityLove;
+        return queryFactory
+                .insert(love)
+                .columns(love.community,love.isChecked)
+                .values(CommunityEntity.builder().category_seq(request.getCategory_seq()).member_seq(request.getMember_seq()).build(),true)
+                .execute();
+    }
+
+    @Override
+    public Long updateLove(CommunityEdit request,boolean flag) {
+        QCommunityLove love = QCommunityLove.communityLove;
+        return queryFactory
+                .update(love)
+                .where(love.community.sequence.eq(request.getSequence()),love.community.member_seq.eq(request.getMember_seq()))
+                .set(love.isChecked,flag)
+                .execute();
+    }
+
+    @Override
+    public List<CommunityLove> readAllLoveByCommunity(Long id) {
+        QCommunityLove love = QCommunityLove.communityLove;
+        return queryFactory
+                .selectFrom(love)
+                .where(love.community.sequence.eq(id))
+                .fetch();
+    }
+
+    @Override
+    public Long deleteAllLoveByCommunity(Long id) {
+        QCommunityLove love = QCommunityLove.communityLove;
+        return queryFactory
+                .delete(love)
+                .where(love.community.sequence.eq(id))
+                .execute();
+    }
+
+    @Override
+    public boolean readLove(CommunityEdit request) {
+        QCommunityLove love = QCommunityLove.communityLove;
+        return queryFactory
+                .select(love.isChecked)
+                .from(love)
+                .where(love.community.sequence.eq(request.getSequence()),love.community.member_seq.eq(request.getMember_seq()))
+                .fetchOne();
     }
 
     /**

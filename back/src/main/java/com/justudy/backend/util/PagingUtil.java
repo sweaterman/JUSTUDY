@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @Component
+@SuppressWarnings("unchecked")
 @RequiredArgsConstructor
 public class PagingUtil {
 
