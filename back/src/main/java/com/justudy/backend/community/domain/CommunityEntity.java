@@ -34,10 +34,6 @@ public class CommunityEntity {
     private Boolean isDeleted;
     @Column(name = "community_is_highlighted",columnDefinition = "TINYINT(1)")
     private Boolean isHighlighted;
-    @Column(name = "community_love")
-    private Integer love;
-    @Column(name = "community_book_mark")
-    private Boolean bookmark;
 
 
     public void changeTitle(String title){

@@ -15,17 +15,15 @@ public class CommunityEdit {
     private String title;
     private String content;
     private Integer viewCount;
-    private Boolean bookmark;
     private LocalDateTime modifiedTime;
     @Builder
-    public CommunityEdit(Long sequence, Long member_seq, Long category_seq, String title, String content, Integer viewCount, Boolean bookmark, LocalDateTime modifiedTime) {
+    public CommunityEdit(Long sequence, Long member_seq, Long category_seq, String title, String content, Integer viewCount,LocalDateTime modifiedTime) {
         this.sequence = sequence;
         this.member_seq = member_seq;
         this.category_seq = category_seq;
         this.title = title;
         this.content = content;
         this.viewCount = viewCount;
-        this.bookmark = bookmark;
         this.modifiedTime = modifiedTime;
     }
 }

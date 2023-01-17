@@ -1,5 +1,6 @@
 package com.justudy.backend.community.dto.response;
 
+import com.justudy.backend.community.domain.CommunityEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,5 +31,18 @@ public class CommunityResponse {
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
         this.love = love;
+    }
+
+    public static CommunityResponse makeBuilder(CommunityEntity entity) {
+        return CommunityResponse.builder()
+                .sequence(entity.getSequence())
+                .member_seq(entity.getMember_seq())
+                .category_seq(entity.getCategory_seq())
+                .title(entity.getTitle())
+                .content(entity.getContent())
+                .viewCount(entity.getViewCount())
+                .createdTime(entity.getCreatedTime())
+                .modifiedTime(entity.getModifiedTime())
+                .build();
     }
 }
