@@ -165,7 +165,7 @@
 
 <script>
 import {mapState} from 'vuex';
-import YellowButton from '../components/mypage/YellowButton.vue';
+import YellowButton from '../../components/mypage/YellowButton.vue';
 
 export default {
     name: 'CreateStudyView',
