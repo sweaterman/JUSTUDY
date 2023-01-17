@@ -2,11 +2,13 @@ package com.justudy.backend.member.domain;
 
 
 import com.justudy.backend.file.domain.FileEntity;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static javax.persistence.FetchType.*;
 
@@ -26,6 +28,9 @@ public class MemberEntity {
 
     @Column(name = "member_password")
     private String password;
+
+    @Column(name = "member_username")
+    private String username;
 
     @Column(name = "member_nickname")
     private String nickname;
@@ -47,6 +52,7 @@ public class MemberEntity {
     private String dream;
 
     @Column(name = "member_introduction")
+    @Lob
     private String introduction;
 
     @ManyToOne(fetch = LAZY)
@@ -65,6 +71,9 @@ public class MemberEntity {
     @Enumerated(EnumType.STRING)
     private MemberLevel level;
 
+    @OneToMany(mappedBy = "member")
+    List<MemberCategoryEntity> categories = new ArrayList<>();
+
     @Column(name = "member_mm_id")
     private String mmId;
 
@@ -79,4 +88,44 @@ public class MemberEntity {
 
     @Column(name = "member_is_banned")
     private boolean isBanned;
+
+    @Column(name = "member_created_time")
+    private LocalDateTime createdTime;
+
+    @Column(name = "member_modified_time")
+    private LocalDateTime localDateTime;
+
+    @Builder
+    public MemberEntity(String userId, String password,
+                        String username, String nickname,
+                        String ssafyId, String phone, String email,
+                        MemberRegion region, String dream, String introduction,
+                        FileEntity image, MemberRole role, MemberStatus status, MemberLevel level,
+                        String mmId, boolean isMMValid) {
+        this.userId = userId;
+        this.password = password;
+        this.username = username;
+        this.nickname = nickname;
+        this.ssafyId = ssafyId;
+        this.phone = phone;
+        this.email = email;
+        this.region = region;
+        this.dream = dream;
+        this.introduction = introduction;
+
+        this.role = MemberRole.USER;
+        this.status = MemberStatus.ON;
+        this.level = MemberLevel.BEGINNER;
+
+        this.mmId = mmId;
+        this.isMMValid = false;
+
+        this.image = image; // FileEntity를 만들어야함
+        this.badgeCount = 0;
+        this.isDeleted = false;
+        this.isBanned = false;
+
+        this.createdTime = LocalDateTime.now();
+        this.localDateTime = createdTime;
+    }
 }
