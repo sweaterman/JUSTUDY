@@ -1,5 +1,6 @@
 <template>
     <v-app>
+        <NavHeader />
         <!-- <v-app-bar app color="red" dark>
             <v-spacer></v-spacer>
             <v-app-bar-title>
@@ -9,7 +10,7 @@
         </v-app-bar> -->
         <v-main>
             <v-container>
-                <v-row>
+                <v-row :style="{marginTop: '5%'}">
                     <v-col cols="12" md="2">
                         <v-btn color="orange" @click="movetoboard1" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Back-end</v-btn>
                     </v-col>
@@ -79,13 +80,17 @@
                 </v-row>
             </v-container>
         </v-main>
+        <NavFooter />
     </v-app>
 </template>
 
 <script>
 import axios from 'axios';
+import NavFooter from '../../components/common/NavFooter.vue';
+import NavHeader from '../../components/common/NavHeader.vue';
 
 export default {
+    components: {NavHeader, NavFooter},
     data() {
         return {
             writer: '',
@@ -120,7 +125,7 @@ export default {
             window.history.back();
         },
         movetomain() {
-            window.location.href = '/';
+            window.location.href = '/community';
         }
     }
 };

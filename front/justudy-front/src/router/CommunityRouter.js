@@ -5,22 +5,22 @@ import CommuContent from '../views/Community/CommuContent.vue';
 
 export default [
     {
-        path: '/',
+        path: '/community',
         name: 'MainPage',
         component: MainPage
     },
     {
-        path: '/board/:id',
+        path: '/community/:id',
         name: 'CommuBoard',
         component: CommuBoard
     },
     {
-        path: '/board/:id/write',
+        path: '/community/:id/write',
         name: 'CommuWrite',
         component: CommuWrite
     },
     {
-        path: '/board/:id/content',
+        path: '/community/:id/content',
         name: 'CommuContent',
         component: CommuContent
     }

@@ -121,7 +121,7 @@ export default {
 
     methods: {
         movetomain() {
-            window.location.href = '/';
+            window.location.href = '/community';
         },
         movetowrite() {
             window.location.href = window.location.pathname + 'write';
