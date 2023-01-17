@@ -1,7 +1,11 @@
 <template>
-    <footer>
-        <p>copyRight fyzh99.tistory.com</p>
-    </footer>
+    <v-row :style="{marginBottom: '5%'}">
+        <v-col cols="12" md="5" />
+        <v-col cols="12" md="2" justify="center" align="center">
+            <p>안녕 나는 푸터야</p>
+        </v-col>
+        <v-col cols="12" md="5" />
+    </v-row>
 </template>
 
 <script>

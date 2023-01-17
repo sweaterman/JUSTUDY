@@ -1,5 +1,6 @@
 <template>
     <v-app>
+        <NavHeader />
         <!-- <v-app-bar app color="light-green" dark>
             <v-spacer></v-spacer>
             <v-app-bar-title>
@@ -170,12 +171,16 @@
                 <!-- 끝 ~ 페이지네이션 -->
             </v-container>
         </v-main>
+        <NavFooter />
     </v-app>
 </template>
 <script>
 import axios from 'axios'; // backend와 axios 통신을 위해 필요
+import NavFooter from '../../components/common/NavFooter.vue';
+import NavHeader from '../../components/common/NavHeader.vue';
 
 export default {
+    components: {NavFooter, NavHeader},
     data() {
         return {
             contentlist: [], // 현재 게시판과 페이지에 맞는 글 리스트들
@@ -229,19 +234,19 @@ export default {
     methods: {
         // 페이지 이동시 params로 게시판 구분, query로 페이지 구분
         movetoboard1() {
-            window.location.href = '/board/1/?page=1';
+            window.location.href = '/community/1/?page=1';
         },
         movetoboard2() {
-            window.location.href = '/board/2/?page=1';
+            window.location.href = '/community/2/?page=1';
         },
         movetoboard3() {
-            window.location.href = '/board/3/?page=1';
+            window.location.href = '/community/3/?page=1';
         },
         movetomain() {
-            window.location.href = '/';
+            window.location.href = '/community';
         },
         movetowrite() {
-            window.location.href = '/board/3/write';
+            window.location.href = '/community/3/write';
             // window.location.href = window.location.pathname + 'write';
             // window.location.pathname이 현재 주소를 의미
             // 여기다 write를 붙여주면 글 작성 페이지로 라우팅 되게 됨
