@@ -37,4 +37,9 @@ public class MemberService {
         List<MemberEntity> members = memberRepository.findAll();
         return members.stream().anyMatch(member -> member.getSsafyId().equals(ssafyId));
     }
+
+    public boolean isNotEqualPassword(String password, String passwordCheck) {
+        return !password.equals(passwordCheck);
+    }
+
 }

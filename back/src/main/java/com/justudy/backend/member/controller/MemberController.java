@@ -43,5 +43,8 @@ public class MemberController {
         if (memberService.isDuplicatedSsafyId(request.getSsafyId())) {
             throw new ConflictRequest("ssafyId", "이미 가입된 SSAFY학번입니다.");
         }
+        if (memberService.isNotEqualPassword(request.getPassword(), request.getPasswordCheck())) {
+            throw new InvalidRequest("password", "비밀번호와 비밀번호확인이 다릅니다.");
+        }
     }
 }
