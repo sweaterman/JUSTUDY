@@ -22,6 +22,10 @@ public class MemberController {
         if (memberService.isDuplicatedUserId(request.getUserId())) {
             throw new ConflictRequest("userId", "이미 가입된 아이디입니다.");
         }
+        if (memberService.isDuplicatedNickname(request.getNickname())) {
+            throw new ConflictRequest("nickname", "이미 가입된 닉네임입니다.");
+        }
+
 
         memberService.createMember(request);
     }

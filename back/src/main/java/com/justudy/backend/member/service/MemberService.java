@@ -27,4 +27,9 @@ public class MemberService {
         List<MemberEntity> members = memberRepository.findAll();
         return members.stream().anyMatch(member -> member.getUserId().equals(userId));
     }
+
+    public boolean isDuplicatedNickname(String nickname) {
+        List<MemberEntity> members = memberRepository.findAll();
+        return members.stream().anyMatch(member -> member.getNickname().equals(nickname));
+    }
 }
