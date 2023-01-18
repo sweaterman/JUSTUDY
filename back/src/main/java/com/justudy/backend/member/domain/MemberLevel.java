@@ -11,4 +11,8 @@ public enum MemberLevel {
     MemberLevel(String value) {
         this.value = value;
     }
+
+    public String getValue() {
+        return value;
+    }
 }
