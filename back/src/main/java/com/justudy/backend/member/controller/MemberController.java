@@ -19,6 +19,12 @@ public class MemberController {
     @PostMapping("/register")
     public void signupMember(@RequestBody @Validated MemberCreate request) {
 
+        validMember(request);
+
+        memberService.createMember(request);
+    }
+
+    private void validMember(MemberCreate request) {
         if (memberService.isDuplicatedUserId(request.getUserId())) {
             throw new ConflictRequest("userId", "이미 가입된 아이디입니다.");
         }
@@ -28,7 +34,5 @@ public class MemberController {
         if (memberService.isDuplicatedSsafyId(request.getSsafyId())) {
             throw new ConflictRequest("ssafyId", "이미 가입된 SSAFY학번입니다.");
         }
-
-        memberService.createMember(request);
     }
 }
