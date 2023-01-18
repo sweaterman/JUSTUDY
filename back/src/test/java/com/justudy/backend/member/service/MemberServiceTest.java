@@ -13,8 +13,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 
-import static com.justudy.backend.member.dto.request.MemberCreate.*;
-
+import static com.justudy.backend.member.dto.request.MemberCreate.MemberCreateBuilder;
 
 public class MemberServiceTest {
 
