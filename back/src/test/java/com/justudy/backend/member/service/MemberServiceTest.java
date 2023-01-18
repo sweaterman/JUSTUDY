@@ -87,7 +87,6 @@ public class MemberServiceTest {
     }
 
 
-
     private MemberCreateBuilder makeMemberCreateBuilder() {
         return MemberCreate.builder()
                 .password("1234")
