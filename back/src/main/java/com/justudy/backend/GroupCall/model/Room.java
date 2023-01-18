@@ -38,8 +38,9 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
 *
-* Room :
+* Room : 방에 관련된 클래스
 *
+ * 방정보(이름)과 해당 방을 실질적으로 들어가기 위한 미디어 파이프 라인이 제공된다.
 *
 *
 **/
@@ -55,12 +56,14 @@ public class Room implements Closeable {
   }
 
 
+  //무조건 두 정보를 받아야하기 때문에 생성자를 다음과 같이 설정했다.
   public Room(String roomName, MediaPipeline pipeline) {
     this.name = roomName;
     this.pipeline = pipeline;
     log.info("ROOM {} has been created", roomName);
   }
 
+  //컨테이너에서 해당 객체가 삭제되기전에 동작한다. 해당 기능으로 인해 close함수를 자동으로 들어가서 auto close까지 가능해진다.
   @PreDestroy
   private void shutdown() {
     this.close();
@@ -144,6 +147,7 @@ public class Room implements Closeable {
         participantsArray.size());
     user.sendMessage(existingParticipantsMsg);
   }
+
 
   public Collection<UserSession> getParticipants() {
     return participants.values();

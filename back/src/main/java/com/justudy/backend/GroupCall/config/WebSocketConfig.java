@@ -4,6 +4,7 @@ import com.justudy.backend.GroupCall.model.RoomManager;
 import com.justudy.backend.GroupCall.model.UserRegistry;
 import org.kurento.client.KurentoClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
@@ -15,7 +16,7 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
  * ServerEndpointExportert를 설정해주어야만 웹소켓이 가능하다
 *
 **/
-@Component
+@Configuration
 public class WebSocketConfig {
 
     @Bean

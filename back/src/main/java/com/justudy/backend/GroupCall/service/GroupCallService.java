@@ -83,6 +83,16 @@ public class GroupCallService   {
       case "leaveRoom":
         leaveRoom(user);
         break;
+      case "ban":
+        final String personName = jsonMessage.get("name").getAsString();
+        final String roomName = jsonMessage.get("room").getAsString();
+        ban(personName,roomName);
+        break;
+      case "mute":
+        final String personName2 = jsonMessage.get("name").getAsString();
+        final String roomName2 = jsonMessage.get("room").getAsString();
+        mute(personName2,roomName2);
+        break;
       case "onIceCandidate":
         JsonObject candidate = jsonMessage.get("candidate").getAsJsonObject();
 
@@ -96,6 +106,23 @@ public class GroupCallService   {
         break;
     }
   }
+
+  private void mute(String personName, String roomName)throws Exception {
+    final Room room = roomManager.getRoom(roomName);
+
+    for(UserSession user : room.getParticipants()){
+      user.transferMute(personName);
+    }
+  }
+
+  private void ban(String personName, String roomName) throws Exception {
+    final Room room = roomManager.getRoom(roomName);
+
+    for(UserSession user : room.getParticipants()){
+      user.transferBan(personName);
+    }
+  }
+
 
   @OnOpen
   public void afterConnectionEstablished() throws Exception {
