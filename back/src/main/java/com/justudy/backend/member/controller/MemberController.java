@@ -1,12 +1,18 @@
 package com.justudy.backend.member.controller;
 
+import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.dto.request.MemberCreate;
+import com.justudy.backend.member.dto.response.MypageResponse;
 import com.justudy.backend.member.exception.ConflictRequest;
+import com.justudy.backend.member.exception.InvalidRequest;
 import com.justudy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import javax.servlet.http.HttpSession;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -17,9 +23,12 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/register")
-    public void signupMember(@RequestBody @Validated MemberCreate request) {
-
+    public ResponseEntity<Void> signupMember(@RequestBody @Validated MemberCreate request) {
         validMember(request);
+        memberService.saveMember(request);
+
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
+    }
 
     /**
      * 마이페이지 멤버 정보 API
