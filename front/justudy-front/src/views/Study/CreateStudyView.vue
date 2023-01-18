@@ -63,45 +63,46 @@
                         <v-subheader>활동 주기</v-subheader>
                     </v-col>
                     <v-col cols="8">
-                        <v-btn color="primary" dark @click="circleDialog('open')"> 활동주기 선택 </v-btn>
+                        <v-row>
+                            <v-col cols="12">
+                                <v-btn-toggle v-model="study.week" multiple>
+                                    <v-btn rounded color="primary"> 월 </v-btn>
+                                    <v-btn rounded color="primary"> 화 </v-btn>
+                                    <v-btn rounded color="primary"> 수 </v-btn>
+                                    <v-btn rounded color="primary"> 목 </v-btn>
+                                    <v-btn rounded color="primary"> 금 </v-btn>
+                                    <v-btn rounded color="primary"> 토 </v-btn>
+                                    <v-btn rounded color="primary"> 일 </v-btn>
+                                </v-btn-toggle>
+                            </v-col>
+                        </v-row>
 
-                        <!-- 활동주기 모달창 -->
-                        <v-dialog v-model="circleData" persistent max-width="500">
-                            <v-card>
-                                <v-card-title> 활동주기 선택 </v-card-title>
-
-                                <v-row>
-                                    <v-col cols="12">
-                                        <v-btn-toggle v-model="study.week" multiple>
-                                            <v-btn rounded color="primary"> 월 </v-btn>
-                                            <v-btn rounded color="primary"> 화 </v-btn>
-                                            <v-btn rounded color="primary"> 수 </v-btn>
-                                            <v-btn rounded color="primary"> 목 </v-btn>
-                                            <v-btn rounded color="primary"> 금 </v-btn>
-                                            <v-btn rounded color="primary"> 토 </v-btn>
-                                            <v-btn rounded color="primary"> 일 </v-btn>
-                                        </v-btn-toggle>
-                                    </v-col>
-                                </v-row>
-
-                                <v-row>
-                                    <v-col cols="3"> 시간 </v-col>
-                                    <v-col cols="4">
-                                        <v-combobox v-model="study.startTime" :items="timeList" label="시작시간 선택"></v-combobox>
-                                    </v-col>
-                                    <v-col cols="1"> ~ </v-col>
-                                    <v-col cols="4">
-                                        <v-combobox v-model="study.endTime" :items="timeList" label="끝나는 시간 선택"></v-combobox>
-                                    </v-col>
-                                </v-row>
-
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="green darken-1" text @click="circleDialog('T')"> 확인 </v-btn>
-                                    <v-btn color="green darken-1" text @click="circleDialog('F')"> 취소 </v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
+                        <v-row>
+                            <v-col cols="6">
+                                <v-dialog ref="dialog" v-model="startModal" :return-value.sync="study.startTime" persistent width="290px">
+                                    <template v-slot:activator="{on, attrs}">
+                                        <v-text-field v-model="study.startTime" label="시작 시간" prepend-icon="mdi-clock-time-four-outline" readonly v-bind="attrs" v-on="on"></v-text-field>
+                                    </template>
+                                    <v-time-picker v-if="startModal" v-model="study.startTime" full-width>
+                                        <v-spacer></v-spacer>
+                                        <v-btn text color="primary" @click="startModal = false"> 취소 </v-btn>
+                                        <v-btn text color="primary" @click="$refs.dialog.save(study.startTime)"> 확인 </v-btn>
+                                    </v-time-picker>
+                                </v-dialog>
+                            </v-col>
+                            <v-col cols="6">
+                                <v-dialog ref="dialog2" v-model="endModal" :return-value.sync="study.endTime" persistent width="290px">
+                                    <template v-slot:activator="{on, attrs}">
+                                        <v-text-field v-model="study.endTime" label="끝나는 시간" prepend-icon="mdi-clock-time-four-outline" readonly v-bind="attrs" v-on="on"></v-text-field>
+                                    </template>
+                                    <v-time-picker v-if="endModal" v-model="study.endTime" full-width>
+                                        <v-spacer></v-spacer>
+                                        <v-btn text color="primary" @click="endModal = false"> 취소 </v-btn>
+                                        <v-btn text color="primary" @click="$refs.dialog2.save(study.endTime)"> 확인 </v-btn>
+                                    </v-time-picker>
+                                </v-dialog>
+                            </v-col>
+                        </v-row>
                     </v-col>
                 </v-row>
 
@@ -201,33 +202,8 @@ export default {
             personnelList: ['2', '3', '4', '5', '6', '7', '8', '9', '10'],
             name_rules: [value => !!value || '스터디 이름을 입력해주세요.'],
             intro_rules: [value => !!value || '스터디 소개를 입력해주세요.'],
-            circleData: false,
-            timeList: [
-                '00:00',
-                '01:00',
-                '02:00',
-                '03:00',
-                '04:00',
-                '05:00',
-                '06:00',
-                '07:00',
-                '08:00',
-                '09:00',
-                '10:00',
-                '11:00',
-                '12:00',
-                '13:00',
-                '14:00',
-                '15:00',
-                '16:00',
-                '17:00',
-                '18:00',
-                '19:00',
-                '20:00',
-                '21:00',
-                '22:00',
-                '23:00'
-            ],
+            startModal: false,
+            endModal: false,
             nameCheckVal: true
         };
     },
@@ -239,18 +215,6 @@ export default {
                 this.categoryList.bottom = ['Vue.js', 'Node.js'];
             } else {
                 this.categoryList.bottom = null;
-            }
-        },
-        circleDialog(check) {
-            if (check == 'open') {
-                this.circleData = true;
-            } else if (check == 'T') {
-                this.circleData = false;
-            } else if (check == 'F') {
-                this.study.week = null;
-                this.study.startTime = null;
-                this.study.endTime = null;
-                this.circleData = !this.circleData;
             }
         },
         nameCheckBtn(name) {
