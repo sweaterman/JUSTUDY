@@ -32,4 +32,9 @@ public class MemberService {
         List<MemberEntity> members = memberRepository.findAll();
         return members.stream().anyMatch(member -> member.getNickname().equals(nickname));
     }
+
+    public boolean isDuplicatedSsafyId(String ssafyId) {
+        List<MemberEntity> members = memberRepository.findAll();
+        return members.stream().anyMatch(member -> member.getSsafyId().equals(ssafyId));
+    }
 }
