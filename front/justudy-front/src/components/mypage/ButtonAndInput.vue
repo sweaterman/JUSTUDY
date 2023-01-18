@@ -1,11 +1,11 @@
 <template>
     <div>
         <v-row justify="center">
-            <v-col cols="2" align="center">
+            <v-col cols="8" align="center" md="4">
                 <YellowButton :buttonLength="`${buttonLength}`" :height="`${height}`" :fontSize="`${fontSize}`" :content="`${content}`" :standard="`${standard}`" />
             </v-col>
-            <v-col cols="5">
-                <v-text-field label="8-16자 사이로 넣어주세요" outlined />
+            <v-col cols="16" md="8">
+                <v-text-field :label="`${placeholder}`" outlined />
             </v-col>
         </v-row>
     </div>
@@ -32,6 +32,10 @@ export default {
         },
         standard: {
             type: String
+        },
+        placeholder: {
+            type: String,
+            default: ''
         }
     }
 };

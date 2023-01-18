@@ -1,10 +1,10 @@
 <template>
     <div>
         <v-row justify="center">
-            <v-col cols="2" align="center">
+            <v-col cols="8" align="center" md="4">
                 <YellowButton :buttonLength="`${buttonLength}`" :height="`${height}`" :fontSize="`${fontSize}`" :content="`${content}`" :standard="`${standard}`" />
             </v-col>
-            <v-col cols="5">
+            <v-col cols="16" md="8">
                 <v-select :items="items" label="Outlined style" outlined></v-select>
             </v-col>
         </v-row>
@@ -36,7 +36,7 @@ export default {
     },
     data() {
         return {
-            items: ['Foo', 'Bar', 'Fizz', 'Buzz']
+            items: ['서울', '대전', '광주', '구미', '부울경']
         };
     }
 };

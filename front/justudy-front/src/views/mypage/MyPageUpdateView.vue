@@ -1,18 +1,18 @@
 <template>
-    <v-app>
-        <v-row style="height: 70%" justify="center">
-            <v-col cols="2">
+    <v-app style="padding: 10%">
+        <v-row style="height: 70%">
+            <v-col cols="12" md="4">
                 <!-- 임시로 해놓음 -->
                 <ProfilePicture :diameter="300" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" />
             </v-col>
-            <v-col cols="10">
+            <v-col cols="12" md="8">
                 <ButtonAndDefault :button-length="200" :height="70" :fontSize="20" content="이름" standard="px" text="김싸피" />
-                <ButtonAndOption :button-length="200" :height="70" :fontSize="20" content="제목" standard="px" />
+                <ButtonAndOption :button-length="200" :height="70" :fontSize="20" content="지역" standard="px" />
 
                 <ButtonAndDefault :button-length="300" :height="70" :fontSize="20" content="SSAFY 학번" standard="px" text="0812345" />
                 <ButtonAndDefault :button-length="200" :height="70" :fontSize="20" content="ID" standard="px" text="kimssafy1234" />
-                <ButtonAndInput :button-length="200" :height="70" :fontSize="20" content="비밀번호" standard="px" />
-                <ButtonAndInput :button-length="300" :height="70" :fontSize="20" content="비밀번호 재확인" standard="px" />
+                <ButtonAndInput :button-length="200" :height="70" :fontSize="20" content="비밀번호" standard="px" placeholder="8~16자를 입력하세요" />
+                <ButtonAndInput :button-length="300" :height="70" :fontSize="20" content="비밀번호 재확인" standard="px" placeholder="8~16자를 입력하세요" />
                 <ButtonAndInput :button-length="200" :height="70" :fontSize="20" content="전화번호" standard="px" />
                 <ButtonAndInput :button-length="200" :height="70" :fontSize="20" content="E-mail" standard="px" />
             </v-col>
