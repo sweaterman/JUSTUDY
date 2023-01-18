@@ -1,13 +1,13 @@
 <template>
     <div>
         <v-row justify="center">
-            <v-col cols="2" align="center">
+            <v-col cols="8" align="center" md="4">
                 <YellowButton :buttonLength="`${buttonLength}`" :height="`${height}`" :fontSize="`${fontSize}`" :content="`${content}`" :standard="`${standard}`" />
             </v-col>
-            <v-col v-if="content === '이름'" cols="5">
+            <v-col v-if="content === '이름'" cols="8" md="8" align="center">
                 <h1>{{ text }}</h1>
             </v-col>
-            <v-col v-else cols="5">
+            <v-col v-else cols="16" md="8" align="center">
                 <h1>{{ text }}</h1>
             </v-col>
         </v-row>
