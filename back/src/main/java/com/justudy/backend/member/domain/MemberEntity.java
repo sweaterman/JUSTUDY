@@ -113,12 +113,12 @@ public class MemberEntity {
         this.dream = dream;
         this.introduction = introduction;
 
+        this.mmId = mmId;
+        this.isMMValid = false;
+
         this.role = MemberRole.USER;
         this.status = MemberStatus.ON;
         this.level = MemberLevel.BEGINNER;
-
-        this.mmId = mmId;
-        this.isMMValid = false;
 
         this.image = image; // FileEntity를 만들어야함
         this.badgeCount = 0;
