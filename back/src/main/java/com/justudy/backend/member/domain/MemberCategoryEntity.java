@@ -2,12 +2,14 @@ package com.justudy.backend.member.domain;
 
 import com.justudy.backend.category.CategoryEntity;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 import static javax.persistence.FetchType.*;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class MemberCategoryEntity {
