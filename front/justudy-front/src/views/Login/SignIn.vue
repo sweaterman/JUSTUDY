@@ -181,7 +181,7 @@
         <v-row :style="{marginBottom: '10%'}">
             <v-col cols="12" md="4" />
             <v-col cols="12" md="4" justify="center" align="center">
-                <v-btn color="yellow" @click="movetomain" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">가입 완료</v-btn>
+                <v-btn color="yellow" @click="showmodal = true" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">가입 완료</v-btn>
             </v-col>
             <v-col cols="12" md="4" />
         </v-row>
@@ -206,6 +206,7 @@ export default {
 
     data() {
         return {
+            showmodal: false,
             regionList: ['서울', '대전', '부울경', '광주'],
             stackList: ['Vuejs', 'nodejs', 'React', 'Spring', 'SpringBoot', 'TensorFlow']
         };
@@ -213,7 +214,7 @@ export default {
 
     methods: {
         movetomain() {
-            window.location.href = '/community';
+            window.location.href = '/';
         }
     }
 };

@@ -1,85 +1,91 @@
 <template>
     <v-app>
         <NavHeader />
-        <!-- <v-app-bar app color="red" dark>
-            <v-spacer></v-spacer>
-            <v-app-bar-title>
-                <div align="center" :style="{fontSize: 'xx-large'}">게시판 {{ $route.params.id }} 글쓰기</div>
-            </v-app-bar-title>
-            <v-spacer></v-spacer>
-        </v-app-bar> -->
-        <v-main>
-            <v-container>
-                <v-row :style="{marginTop: '5%'}">
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard1" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Back-end</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard2" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Front-end</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard3" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Infra</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard1" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">CS</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard2" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Algorithm</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard3" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Etc.</v-btn>
-                    </v-col>
-                    <!-- <v-col cols="12" md="3"></v-col> -->
-                </v-row>
-                <v-row>
-                    <!-- <v-col cols="12" md="1">
-                        <v-btn color="cyan" @click="movetomain" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">홈으로</v-btn>
-                    </v-col> -->
-                    <v-col cols="12" md="12">
-                        <v-card>
-                            <v-form ref="form" @submit.prevent="onSubmitForm">
-                                <!-- <v-text-field
+        <CommuHeader />
+        <!-- 글읽기 제목 -->
+        <v-row :style="{marginBottom: '2%'}">
+            <v-col cols="12" md="4" />
+            <v-col cols="12" md="4" justify="center" align="center">
+                <TextButton :buttonLength="100" :height="70" :fontSize="10" :content="`게시판 글쓰기`" :standard="px" />
+            </v-col>
+            <v-col cols="12" md="4" />
+        </v-row>
+
+        <!-- 글쓰기 -->
+        <v-row>
+            <v-col cols="12" md="2" />
+            <v-col cols="12" md="8">
+                <v-form ref="form" @submit.prevent="onSubmitForm">
+                    <v-card>
+                        <!-- 작성자 -->
+                        <v-row>
+                            <v-col cols="12" md="2" justify="center" align="center" :style="{color: 'white'}">
+                                <v-btn depressed color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '20%', marginLeft: '15%'}">작성자</v-btn>
+                            </v-col>
+                            <v-col cols="12" md="10">
+                                <v-text-field
                                     v-model="writer"
-                                    dense
+                                    solo
+                                    readonly
                                     outlined
-                                    label="작성자"
-                                    style="width: 300px; margin-left: 100px; padding-top: 20px"
-                                    :rules="[v => !!v || '작성자는 필수입니다.']"
-                                ></v-text-field> -->
-                                <!-- rules를 통해 작성자와 제목을 안 쓰면 제출 못하게끔 함 -->
+                                    depressed
+                                    label="제목을 입력하세요"
+                                    style="width: 80%; height: 20px; margin-right: 10%; margin-left: 5%; margin-top: 4%"
+                                ></v-text-field>
+                                <!-- <v-btn color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '3%', marginLeft: '10%'}"></v-btn> -->
+                            </v-col>
+                        </v-row>
+
+                        <!-- 제목 -->
+                        <v-row>
+                            <v-col cols="12" md="2" justify="center" align="center">
+                                <v-btn depressed color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginLeft: '15%'}">제목</v-btn>
+                            </v-col>
+                            <v-col cols="12" md="10">
                                 <v-text-field
                                     v-model="title"
-                                    dense
                                     outlined
                                     label="제목을 입력하세요"
-                                    style="width: 80%; margin-right: 10%; margin-left: 10%; padding-top: 5%"
+                                    style="width: 80%; margin-right: 10%; margin-left: 5%"
                                     :rules="[v => !!v || '제목은 필수입니다.']"
                                 ></v-text-field>
-                                <v-textarea v-model="text" label="내용" outlined rows="13" style="width: 80%; margin-right: 10%; margin-left: 10%"></v-textarea>
-                                <!-- <v-btn width="100px" style="margin-left: 90%" @click="moveback">취소</v-btn>
-                                <v-btn width="100px" style="margin-left: 90%; margin-bottom: 10%" type="submit">제출</v-btn> -->
-                            </v-form>
-                        </v-card>
-                    </v-col>
-                    <!-- <v-col cols="12" md="1" /> -->
-                </v-row>
+                            </v-col>
+                        </v-row>
+
+                        <!-- 내용 -->
+                        <v-row>
+                            <v-col cols="12" md="2">
+                                <v-btn depressed color="white" :style="{height: '40px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '1%', marginLeft: '15%'}">내용</v-btn>
+                            </v-col>
+                            <v-col cols="12" md="10">
+                                <v-textarea v-model="text" label="내용" outlined rows="13" style="width: 80%; margin-right: 10%; margin-left: 5%; margintop: 4%"></v-textarea>
+                            </v-col>
+                        </v-row>
+                    </v-card>
+                </v-form>
+            </v-col>
+            <v-col cols="12" md="2" />
+        </v-row>
+
+        <!-- 완료/취소 버튼 -->
+        <v-row :style="{marginTop: '1%'}">
+            <v-col cols="12" md="2" />
+            <v-col cols="12" md="8">
                 <v-row>
                     <v-col cols="12" md="1">
-                        <v-btn color="cyan" @click="movetomain" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">홈으로</v-btn>
+                        <v-btn @click="movetomain" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">홈으로</v-btn>
                     </v-col>
-                    <v-col cols="12" md="9"></v-col>
-                    <v-col cols="12" md="1">
+                    <v-col cols="12" md="7"></v-col>
+                    <v-col cols="12" md="2" align="right">
                         <v-btn @click="moveback" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">취소</v-btn>
                     </v-col>
-                    <v-col cols="12" md="1">
+                    <v-col cols="12" md="2">
                         <v-btn type="submit" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">등록</v-btn>
                     </v-col>
-
-                    <!-- <v-btn width="100px" style="margin-left: 80%" @click="moveback">취소</v-btn>
-                    <v-btn width="100px" style="margin-left: 90%" type="submit">제출</v-btn> -->
                 </v-row>
-            </v-container>
-        </v-main>
+            </v-col>
+            <v-col cols="12" md="2" />
+        </v-row>
         <NavFooter />
     </v-app>
 </template>
@@ -88,12 +94,14 @@
 import axios from 'axios';
 import NavFooter from '../../components/common/NavFooter.vue';
 import NavHeader from '../../components/common/NavHeader.vue';
+import CommuHeader from '../../components/Community/CommuHeader.vue';
+import TextButton from '../../components/common/TextButton.vue';
 
 export default {
-    components: {NavHeader, NavFooter},
+    components: {NavHeader, NavFooter, CommuHeader, TextButton},
     data() {
         return {
-            writer: '',
+            writer: '돌숭이',
             title: '',
             text: ''
         };

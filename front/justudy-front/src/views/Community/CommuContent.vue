@@ -1,52 +1,132 @@
 <template>
     <v-app>
-        <v-app-bar app color="red" dark>
-            <v-spacer></v-spacer>
-            <v-app-bar-title>
-                <div align="center" :style="{fontSize: 'xx-large'}">게시판 {{ $route.params.id }}</div>
-            </v-app-bar-title>
-            <v-spacer></v-spacer>
-        </v-app-bar>
-        <v-main>
-            <v-container>
+        <NavHeader />
+        <CommuHeader />
+
+        <!-- 상세 글보기 -->
+        <!-- 글읽기 제목 -->
+        <v-row :style="{marginBottom: '2%'}">
+            <v-col cols="12" md="4" />
+            <v-col cols="12" md="4" justify="center" align="center">
+                <TextButton :buttonLength="100" :height="70" :fontSize="10" :content="`게시판 글읽기`" :standard="px" />
+            </v-col>
+            <v-col cols="12" md="4" />
+        </v-row>
+
+        <v-row>
+            <v-col cols="12" md="2" />
+            <v-col cols="12" md="8">
+                <v-form ref="form" @submit.prevent="onSubmitForm">
+                    <v-card>
+                        <!-- 글쓴이 -->
+                        <v-row>
+                            <v-col cols="12" md="2" :style="{color: 'white'}">
+                                <v-btn depressed color="white" :style="{height: '65px', width: '165px', fontWeight: 'bold', fontSize: 'large', marginTop: '20%'}">글쓴이</v-btn>
+                            </v-col>
+                            <v-col cols="12" md="10">
+                                <v-text-field v-model="writer" solo readonly outlined depressed label="글쓴이" style="width: 80%; height: 20px; margin-right: 10%; margin-top: 4%"></v-text-field>
+                                <!-- <v-btn color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '3%', marginLeft: '10%'}"></v-btn> -->
+                            </v-col>
+                        </v-row>
+
+                        <!-- 제목 -->
+                        <v-row>
+                            <v-col cols="12" md="2">
+                                <v-btn depressed color="white" :style="{height: '65px', width: '165px', fontWeight: 'bold', fontSize: 'large'}">제목</v-btn>
+                            </v-col>
+                            <v-col cols="12" md="10">
+                                <v-text-field v-model="title" solo readonly depressed outlined label="제목" style="width: 80%; margin-right: 10%; margin-top: 0.5%"></v-text-field>
+                            </v-col>
+                        </v-row>
+
+                        <!-- 작성일 -->
+                        <v-row>
+                            <v-col cols="12" md="2">
+                                <v-btn depressed color="white" :style="{height: '65px', width: '165px', fontWeight: 'bold', fontSize: 'large'}">작성일</v-btn>
+                            </v-col>
+                            <v-col cols="12" md="10">
+                                <v-text-field v-model="createdAt" solo readonly depressed outlined label="작성일" style="width: 80%; margin-right: 15%"></v-text-field>
+                            </v-col>
+                        </v-row>
+
+                        <!-- 수정일 -->
+                        <v-row>
+                            <v-col cols="12" md="2">
+                                <v-btn depressed color="white" :style="{height: '65px', width: '165px', fontWeight: 'bold', fontSize: 'large'}">수정일</v-btn>
+                            </v-col>
+                            <v-col cols="12" md="10">
+                                <v-text-field v-model="updatedAt" solo readonly depressed outlined label="수정일" style="width: 80%; margin-right: 10%"></v-text-field>
+                            </v-col>
+                        </v-row>
+
+                        <!-- 내용 -->
+                        <v-row>
+                            <v-col cols="12" md="2">
+                                <v-btn depressed color="white" :style="{height: '65px', width: '165px', fontWeight: 'bold', fontSize: 'large'}">내용</v-btn>
+                            </v-col>
+                            <v-col cols="12" md="10">
+                                <v-textarea v-model="text" solo readonly depressed outlined label="내용" rows="13" style="width: 80%; margin-right: 10%"></v-textarea>
+                            </v-col>
+                        </v-row>
+
+                        <!-- 내용 -->
+                        <!-- <v-row>
+                            <v-col cols="12" md="2" justify="center" align="center">
+                                <v-btn depressed color="white" :style="{height: '65px', width: '100px', fontWeight: 'bold', fontSize: 'large', marginLeft: '15%'}">내용</v-btn>
+                            </v-col>
+                            <v-col cols="12" md="10">
+                                <v-textarea v-model="text" outlined rows="13" style="width: 730px; margin-left: 100px; padding-top: 10px" :disabled="editable === false"></v-textarea>
+                                <v-text-field v-model="text" solo readonly depressed outlined label="내용" style="width: 80%; margin-right: 10%; margin-left: 5%; margin-top: 0.5%"></v-text-field>
+                            </v-col>
+                        </v-row> -->
+                    </v-card>
+                </v-form>
+            </v-col>
+            <v-col cols="12" md="2" />
+        </v-row>
+
+        <!-- 완료/취소 버튼 -->
+        <v-row :style="{marginTop: '1%'}">
+            <v-col cols="12" md="2" />
+            <v-col cols="12" md="8">
                 <v-row>
                     <v-col cols="12" md="1">
-                        <v-btn color="cyan" @click="movetomain" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">홈으로</v-btn>
+                        <v-btn @click="moveback" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">뒤로가기</v-btn>
                     </v-col>
-                    <v-col cols="12" md="10">
-                        <v-card>
-                            <div style="width: 300px; margin-left: 100px; padding-top: 20px">글쓴이 : {{ writer }}</div>
-                            <div style="width: 300px; margin-left: 100px; padding-top: 10px">제목 : {{ title }}</div>
-                            <div style="width: 300px; margin-left: 100px; padding-top: 10px">작성일 : {{ createdAt }}</div>
-                            <div style="width: 300px; margin-left: 100px; padding-top: 10px">최근수정일 : {{ updatedAt }}</div>
-                            <div style="width: 300px; margin-left: 100px; padding-top: 10px">내용</div>
-                            <v-textarea v-model="text" outlined rows="13" style="width: 730px; margin-left: 100px; padding-top: 10px" :disabled="editable === false"></v-textarea>
-                            <!-- textarea의 disabled 속성을 통해 원래는 수정을 할 수 없지만
-                        수정 버튼을 누르면 수정할 수 있게끔 바뀜 -->
-                            <v-btn width="100px" style="margin-left: 470px; margin-bottom: 20px" @click="moveback">뒤로가기</v-btn>
-                            <v-btn width="100px" style="margin-left: 30px; margin-bottom: 20px" @click="editcontent" v-if="editable === false">수정</v-btn>
-                            <v-btn width="100px" style="margin-left: 30px; margin-bottom: 20px" @click="editcontentfinish" v-if="editable === true">수정완료</v-btn>
-                            <v-btn width="100px" style="margin-left: 30px; margin-bottom: 20px" @click="deletecontent">삭제</v-btn>
-                        </v-card>
+                    <v-col cols="12" md="7"></v-col>
+                    <v-col cols="12" md="2" align="right">
+                        <v-btn @click="editcontent" v-if="editable === false" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정하기</v-btn>
+                        <v-btn @click="editcontentfinish" v-if="editable === true" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정완료</v-btn>
                     </v-col>
-                    <v-col cols="12" md="1" />
+                    <v-col cols="12" md="2">
+                        <v-btn @click="deletecontent" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">삭제</v-btn>
+                    </v-col>
                 </v-row>
-            </v-container>
-        </v-main>
+            </v-col>
+            <v-col cols="12" md="2" />
+        </v-row>
+
+        <NavFooter />
     </v-app>
 </template>
 
 <script>
 import axios from 'axios';
+import NavFooter from '../../components/common/NavFooter.vue';
+import NavHeader from '../../components/common/NavHeader.vue';
+import CommuHeader from '../../components/Community/CommuHeader.vue';
+import TextButton from '../../components/common/TextButton.vue';
 
 export default {
+    components: {NavHeader, NavFooter, CommuHeader, TextButton},
+
     data() {
         return {
-            writer: '', // 작성자
-            title: '', // 글 제목
-            createdAt: '', // 작성일
-            updatedAt: '', // 최근 수정일
-            text: '', // 글 내용
+            writer: '돌숭이', // 작성자
+            title: '돌숭이의 꿀팁', // 글 제목
+            createdAt: '2023/01/18', // 작성일
+            updatedAt: '2023/01/20', // 최근 수정일
+            text: '그런건 없습니다', // 글 내용
             editable: false // 수정가능여부 (수정 버튼누르면 true로 바뀜)
         };
     },

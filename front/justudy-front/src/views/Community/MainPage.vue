@@ -1,134 +1,43 @@
 <template>
     <v-app>
         <NavHeader />
-        <!-- <v-app-bar app color="light-green" dark>
-            <v-spacer></v-spacer>
-            <v-app-bar-title>
-                <div align="center" :style="{fontSize: 'xx-large'}">메인화면</div>
-            </v-app-bar-title>
-            <v-spacer></v-spacer>
-            <v-container>
-                <v-row>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard1" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Back-end</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard2" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Front-end</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard3" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Infra</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard1" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">CS</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard2" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Algorithm</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard3" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Etc.</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="3"></v-col>
-                </v-row>
-            </v-container>
-        </v-app-bar> -->
-        <!-- <v-main>
-            <v-container>
-                <v-row>
-                    <v-col cols="12" md="3"></v-col>
-                    <v-col cols="12" md="2" align="center">
-                        <v-btn color="light-green" @click="movetoboard1" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">게시판1</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2" align="center">
-                        <v-btn color="yellow" @click="movetoboard2" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">게시판2</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2" align="center">
-                        <v-btn color="orange" type="submit" @click="movetoboard3" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">게시판3</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="3"></v-col>
-                </v-row>
-            </v-container>
-        </v-main> -->
-        <v-main>
-            <v-container>
-                <!-- 시작 ~ 백엔드/프론트/.../기타 -->
-                <v-row>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard1" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Back-end</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard2" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Front-end</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard3" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Infra</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard1" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">CS</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard2" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Algorithm</v-btn>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn color="orange" @click="movetoboard3" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">Etc.</v-btn>
-                    </v-col>
-                    <!-- <v-col cols="12" md="3"></v-col> -->
-                </v-row>
-                <!-- 끝 ~ 백엔드/프론트/.../기타 -->
+        <CommuHeader />
 
-                <!-- 시작 ~ 자유게시판 / 검색 기능 / 글쓰기 -->
-                <v-row :style="{marginTop: '50px'}">
+        <!-- 자유게시판 / 검색 기능 / 글쓰기 -->
+        <v-row>
+            <v-col cols="12" md="2" />
+
+            <v-col cols="12" md="8">
+                <v-row>
                     <v-col cols="12" md="2">
                         <v-app-bar-title>
                             <div align="left" :style="{fontSize: 'xx-large'}">자유 게시판</div>
                         </v-app-bar-title>
                     </v-col>
-                    <v-col cols="12" md="2">
-                        <v-select :items="searchoption" v-model="searchoptionselected" :style="{width: '90px', marginLeft: '90px'}" />
+                    <v-col cols="12" md="2" align="right">
+                        <v-select :items="searchoption" v-model="searchoptionselected" :style="{width: '150px'}" />
                     </v-col>
                     <v-col cols="12" md="4">
-                        <v-text-field v-model="searchkeyword" dense outlined label="검색키워드" full-width :style="{marginTop: '10px'}" />
+                        <v-text-field v-model="searchkeyword" dense outlined label="검색키워드" full-width />
                     </v-col>
                     <v-col cols="12" md="1">
-                        <v-btn @click="searchstart" :style="{marginTop: '10px'}">검색</v-btn>
+                        <v-btn @click="searchstart">검색</v-btn>
                     </v-col>
-                    <v-col cols="12" md="3">
-                        <v-btn color="pink accent-1" @click="movetowrite" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">글작성</v-btn>
+
+                    <v-col cols="12" md="1" />
+                    <v-col cols="12" md="2" align="right">
+                        <v-btn color="yellow" @click="movetowrite" :style="{height: '50px', width: '200px', fontWeight: 'bold', fontSize: 'large'}">글작성</v-btn>
                     </v-col>
                 </v-row>
-                <!-- 끝 ~ 자유게시판 / 검색 기능 / 글쓰기 -->
+            </v-col>
 
-                <!--            기능 ~~ 검색 결과 ____ 개
-                <v-row v-if="searchfinish === true" :style="{marginTop: '0px'}">
-                    <v-col cols="12" md="5" />
-                    <v-col cols="12" md="2">
-                        <div style="font-size: x-large">검색결과 : {{ searchcnt }} 개</div>
-                    </v-col>
-                    <v-col cols="12" md="5" />
-                </v-row>
-                -->
+            <v-col cols="12" md="2" />
+        </v-row>
 
-                <!-- 검색 결과로 리스트 -->
-                <!-- <v-row v-if="searchfinish === true">
-                    <v-simple-table style="width: 100%">
-                        <thead>
-                            <tr style="font-weight: bolder">
-                                <td style="width: 10%; font-size: x-large">게시판</td>
-                                <td style="width: 20%; font-size: x-large">작성자</td>
-                                <td style="width: 50%; font-size: x-large">제목</td>
-                                <td style="width: 20%; font-size: x-large">작성일</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in contentlist" :key="item.id" @click="movetocontent(item.boardnum, item.id)">
-                                <td>{{ item.boardnum }}</td>
-                                <td>{{ item.writer }}</td>
-                                <td>{{ item.title }}</td>
-                                <td>{{ item.createdAt.split('T')[0] }}</td>
-                            </tr>
-                        </tbody>
-                    </v-simple-table>
-                </v-row> -->
-
-                <!-- 시작 ~ 게시글 리스트 -->
+        <!-- 글목록 -->
+        <v-row>
+            <v-col cols="12" md="2" />
+            <v-col cols="12" md="8">
                 <v-row>
                     <v-simple-table style="width: 100%">
                         <thead>
@@ -151,26 +60,43 @@
                         </tbody>
                     </v-simple-table>
                 </v-row>
-                <!-- 끝 ~ 게시글 리스트 -->
+            </v-col>
+            <v-col cols="12" md="2" />
+        </v-row>
 
-                <!-- 시작 ~ 페이지네이션 -->
-                <v-row style="padding-top: 10%">
-                    <v-spacer />
-                    <v-btn width="10px" @click="movetopreviouspage">
-                        <!-- 이전페이지로 이동 -->
-                        <v-icon color="red" large> mdi-arrow-left-bold-outline </v-icon>
-                    </v-btn>
-                    <div style="margin-top: 5px; margin-right: 10px; margin-left: 10px">{{ $route.query.page }}/{{ totalpage }} page</div>
-                    <!-- 위와 같이 해줌으로서 '현재페이지/총페이지 page' 식으로 나타냄 -->
-                    <v-btn width="10px" @click="movetonextpage">
-                        <!-- 다음페이지로 이동 -->
-                        <v-icon color="red" large> mdi-arrow-right-bold-outline </v-icon>
-                    </v-btn>
-                    <v-spacer />
+        <!-- 페이지네이션 -->
+        <v-row style="padding-top: 10%">
+            <v-col cols="12" md="1" />
+            <v-col cols="12" md="10">
+                <v-row>
+                    <v-col cols="12" md="4" />
+
+                    <v-col cols="12" md="1" align="right">
+                        <v-btn width="5px" @click="movetopreviouspage">
+                            <!-- 이전페이지로 이동 -->
+                            <v-icon color="black" small> mdi-arrow-left-bold-outline </v-icon>
+                        </v-btn>
+                    </v-col>
+
+                    <v-col cols="12" md="2" justify="center" align="center">
+                        <div style="margin-top: 5px; margin-right: 10px; margin-left: 10px">{{ $route.query.page }}/{{ totalpage }} page</div>
+                        <!-- 위와 같이 해줌으로서 '현재페이지/총페이지 page' 식으로 나타냄 -->
+                    </v-col>
+
+                    <v-col cols="12" md="1" align="left">
+                        <v-btn width="5px" @click="movetonextpage">
+                            <!-- 다음페이지로 이동 -->
+                            <v-icon color="black" small> mdi-arrow-right-bold-outline </v-icon>
+                        </v-btn>
+                    </v-col>
+
+                    <v-col cols="12" md="4" />
                 </v-row>
-                <!-- 끝 ~ 페이지네이션 -->
-            </v-container>
-        </v-main>
+            </v-col>
+            <v-col cols="12" md="1" />
+        </v-row>
+
+        <!-- 푸터 -->
         <NavFooter />
     </v-app>
 </template>
@@ -178,9 +104,10 @@
 import axios from 'axios'; // backend와 axios 통신을 위해 필요
 import NavFooter from '../../components/common/NavFooter.vue';
 import NavHeader from '../../components/common/NavHeader.vue';
+import CommuHeader from '../../components/Community/CommuHeader.vue';
 
 export default {
-    components: {NavFooter, NavHeader},
+    components: {NavFooter, NavHeader, CommuHeader},
     data() {
         return {
             contentlist: [], // 현재 게시판과 페이지에 맞는 글 리스트들
