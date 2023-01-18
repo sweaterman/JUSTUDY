@@ -1,6 +1,6 @@
-import SelfTestProblemView from "@/views/self-test/SelfTestProblem.vue"
-import SelfTestConfirmView from "@/views/self-test/SelfTestConfirm.vue"
-import SelfTestResultView from "@/views/self-test/SelfTestResult.vue"
+import SelfTestProblemView from '@/views/self-test/SelfTestProblem.vue';
+import SelfTestConfirmView from '@/views/self-test/SelfTestConfirm.vue';
+import SelfTestResultView from '@/views/self-test/SelfTestResult.vue';
 export default [
     {
         path: '/self-test/problem/:number',
