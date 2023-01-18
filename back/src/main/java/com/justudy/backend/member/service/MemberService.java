@@ -2,6 +2,8 @@ package com.justudy.backend.member.service;
 
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.dto.request.MemberCreate;
+import com.justudy.backend.member.dto.response.MypageResponse;
+import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +20,13 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public void createMember(MemberCreate request) {
+    @Transactional
+    public Long saveMember(MemberCreate request) {
+        MemberEntity member = request.toEntity();
+        memberRepository.save(member);
 
+        return member.getSequence();
+    }
 
     public MypageResponse getMemberOfMypage(Long loginSequence) {
         MemberEntity findMember = memberRepository.findById(loginSequence)
