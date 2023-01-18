@@ -2,6 +2,7 @@ package com.justudy.backend.member.controller;
 
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.dto.request.MemberCreate;
+import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
 import com.justudy.backend.member.exception.ConflictRequest;
 import com.justudy.backend.member.exception.InvalidRequest;
@@ -40,6 +41,13 @@ public class MemberController {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
         return memberService.getMemberOfMypage(loginSequence);
+    }
+
+    @GetMapping("/mypage/modify")
+    public ModifyPageResponse memberModifyPage(HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        return memberService.getModifyPage(loginSequence);
     }
 
     private void validMember(MemberCreate request) {

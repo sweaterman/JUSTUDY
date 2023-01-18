@@ -1,7 +1,9 @@
 package com.justudy.backend.member.service;
 
+import com.justudy.backend.member.domain.MemberCategoryEntity;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.dto.request.MemberCreate;
+import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
 import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,6 +36,34 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFound());
 
         return createMypageResponse(findMember);
+    }
+
+    public ModifyPageResponse getModifyPage(Long loginSequence) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(() -> new MemberNotFound());
+
+        return createModifyPageResponse(findMember);
+    }
+
+    private ModifyPageResponse createModifyPageResponse(MemberEntity member) {
+
+        List<MemberCategoryEntity> categories = member.getCategories();
+        List<String> categoryToString = categories.stream().map(category -> category.getCategory().getName())
+                .collect(Collectors.toList());
+        String[] categoryResponse = categoryToString.toArray(new String[categoryToString.size()]);
+
+        return ModifyPageResponse.builder()
+                .username(member.getUsername())
+                .region(member.getRegion().getValue())
+                .level(member.getLevel().getValue())
+                .ssafyId(member.getSsafyId())
+                .userId(member.getUserId())
+                .phone(member.getPhone())
+                .email(member.getEmail())
+                .category(categoryResponse)
+                .dream(member.getDream())
+                .introduction(member.getIntroduction())
+                .build();
     }
 
     public boolean isDuplicatedUserId(String userId) {
