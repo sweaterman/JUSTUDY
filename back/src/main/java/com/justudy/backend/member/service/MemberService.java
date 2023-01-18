@@ -21,6 +21,11 @@ public class MemberService {
     public void createMember(MemberCreate request) {
 
 
+    public MypageResponse getMemberOfMypage(Long loginSequence) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(() -> new MemberNotFound());
+
+        return createMypageResponse(findMember);
     }
 
     public boolean isDuplicatedUserId(String userId) {
@@ -42,4 +47,14 @@ public class MemberService {
         return !password.equals(passwordCheck);
     }
 
+    private MypageResponse createMypageResponse(MemberEntity member) {
+        return MypageResponse.builder()
+                .nickname(member.getNickname())
+                .category(member.getCategories())
+                .dream(member.getDream())
+                .status(member.getStatus().getValue())
+                .badgeCount(member.getBadgeCount())
+                .level(member.getLevel().getValue())
+                .build();
+    }
 }
