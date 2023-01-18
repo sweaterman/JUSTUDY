@@ -66,7 +66,7 @@ public class MemberServiceTest {
         boolean result = memberService.isDuplicatedUserId(request.getUserId());
 
         //then
-        Assertions.assertThat(result).isTrue();
+        assertThat(result).isTrue();
     }
 
     @Test
