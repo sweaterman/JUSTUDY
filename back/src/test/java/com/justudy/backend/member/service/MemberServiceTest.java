@@ -85,7 +85,7 @@ public class MemberServiceTest {
         boolean result = memberService.isDuplicatedNickname(request.getNickname());
 
         //then
-        Assertions.assertThat(result).isTrue();
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -104,7 +104,7 @@ public class MemberServiceTest {
         boolean result = memberService.isDuplicatedSsafyId(request.getSsafyId());
 
         //then
-        Assertions.assertThat(result).isTrue();
+        assertThat(result).isTrue();
     }
 
 
