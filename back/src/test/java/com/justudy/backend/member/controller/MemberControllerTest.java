@@ -50,6 +50,7 @@ public class MemberControllerTest {
                 .ssafyId("0847968")
                 .phone("01051391111")
                 .email("ssafylee@ssafy.com")
+                .mmId("sklee0206")
                 .region("SEOUL")
                 .dream("백엔드취업 희망")
                 .category(new String[]{"JAVA", "Spring", "JPA"})
@@ -60,9 +61,9 @@ public class MemberControllerTest {
 
         //expected
         mockMvc.perform(post("/api/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().string(""))
                 .andDo(MockMvcResultHandlers.print());
     }
