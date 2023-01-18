@@ -1,5 +1,9 @@
 package com.justudy.backend.member.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.justudy.backend.member.domain.MemberEntity;
+import com.justudy.backend.member.domain.MemberRegion;
 import lombok.Builder;
 import lombok.Data;
 
@@ -32,19 +36,32 @@ public class MemberCreate {
     @NotBlank
     private String email;
 
+    @NotBlank
+    private String mmId;
+
     private String region;
 
     private String dream;
 
-    private String[] categories;
+    private String[] category;
 
     private String introduction;
 
     @Builder
-    public MemberCreate(String userId, String password, String passwordCheck,
-                        String username, String nickname, String ssafyId, String phone,
-                        String email, String region, String dream,
-                        String[] category, String introduction) {
+    @JsonCreator
+    public MemberCreate(@JsonProperty("userId") String userId,
+                        @JsonProperty("password") String password,
+                        @JsonProperty("passwordCheck") String passwordCheck,
+                        @JsonProperty("username") String username,
+                        @JsonProperty("nickname") String nickname,
+                        @JsonProperty("ssafyId") String ssafyId,
+                        @JsonProperty("phone") String phone,
+                        @JsonProperty("email") String email,
+                        @JsonProperty("mmId") String mmId,
+                        @JsonProperty("region") String region,
+                        @JsonProperty("dream") String dream,
+                        @JsonProperty("category") String[] category,
+                        @JsonProperty("introduction") String introduction) {
         this.userId = userId;
         this.password = password;
         this.passwordCheck = passwordCheck;
@@ -53,9 +70,26 @@ public class MemberCreate {
         this.ssafyId = ssafyId;
         this.phone = phone;
         this.email = email;
+        this.mmId = mmId;
         this.region = region;
         this.dream = dream;
-        this.categories = category;
+        this.category = category;
         this.introduction = introduction;
+    }
+
+    public MemberEntity toEntity() {
+        return MemberEntity.builder()
+                .userId(userId)
+                .password(password)
+                .username(username)
+                .nickname(nickname)
+                .ssafyId(ssafyId)
+                .phone(phone)
+                .email(email)
+                .region(MemberRegion.valueOf(region))
+                .dream(dream)
+                .introduction(introduction)
+                .mmId(mmId)
+                .build();
     }
 }
