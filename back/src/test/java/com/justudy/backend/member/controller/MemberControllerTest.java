@@ -74,7 +74,7 @@ public class MemberControllerTest {
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(SessionConst.LOGIN_USER, 1L);
 
-        BDDMockito.given(memberService.getMemberOfMypage(1L))
+        BDDMockito.given(memberService.getMypage(1L))
                 .willReturn(makeTestMypageResponse());
 
         mockMvc.perform(get("/api/mypage/member")
