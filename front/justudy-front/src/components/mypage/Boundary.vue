@@ -27,6 +27,10 @@ export default {
         },
         startPoint: {
             type: Number
+        },
+        buttonLength: {
+            type: Number,
+            default: 306
         }
     }
 };
