@@ -4,11 +4,13 @@ import com.justudy.backend.member.domain.MemberCategoryEntity;
 import com.justudy.backend.member.domain.MemberEditor;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.member.domain.MemberRole;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
 import com.justudy.backend.member.exception.ConflictRequest;
+import com.justudy.backend.member.exception.ForbiddenRequest;
 import com.justudy.backend.member.exception.InvalidRequest;
 import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
@@ -50,6 +52,15 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFound());
 
         return createModifyPageResponse(findMember);
+    }
+
+    public Long deleteMember(Long loginSequence, Long memberSequence) {
+        validateSessionUser(loginSequence, MemberRole.ADMIN);
+
+        MemberEntity findMember = memberRepository.findById(memberSequence)
+                .orElseThrow(() -> new MemberNotFound());
+        findMember.deleteMember();
+        return findMember.getSequence();
     }
 
     @Transactional

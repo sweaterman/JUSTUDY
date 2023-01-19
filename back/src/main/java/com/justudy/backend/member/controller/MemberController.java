@@ -55,4 +55,13 @@ public class MemberController {
         memberService.editMember(loginSequence, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping("/admin/members/{memberSequence}")
+    public ResponseEntity<Void> deleteMember(@PathVariable Long memberSequence, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        memberService.deleteMember(loginSequence, memberSequence);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
