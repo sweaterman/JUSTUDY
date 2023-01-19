@@ -95,23 +95,69 @@ public class MemberServiceTest {
                 .hasMessage("중복된 값이 존재합니다.");
     }
 
+
+
     @Test
-    @DisplayName("ssfay학번 중복")
-    void duplicatedSsafyId() {
+    @DisplayName("멤버 업데이트")
+    void editMember() {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
 
-        BDDMockito.given(memberRepository.findAll())
-                .willReturn(List.of(savedMember));
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(savedMember));
+
+        MemberEdit editRequest = MemberEdit.builder()
+                .nickname(NICKNAME)
+                .phone("9999999999")
+                .email("shinkwang.dev@gmail.com")
+                .region("DAEJEON")
+                .dream("그만하자")
+                .introduction("나는 싸피생이다.")
+                .build();
 
         //when
-        MemberCreate request = makeMemberCreateBuilder()
-                .ssafyId(SSAFY_ID)
-                .build();
-        boolean result = memberService.isDuplicatedSsafyId(request.getSsafyId());
+        memberService.editMember(1L, editRequest);
 
         //then
-        assertThat(result).isTrue();
+        assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
+        assertThat(savedMember.getPhone()).isEqualTo(editRequest.getPhone());
+        assertThat(savedMember.getEmail()).isEqualTo(editRequest.getEmail());
+        assertThat(savedMember.getRegion()).isEqualTo(MemberRegion.valueOf(editRequest.getRegion()));
+        assertThat(savedMember.getDream()).isEqualTo(editRequest.getDream());
+        assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
+    }
+
+    @Test
+    @DisplayName("멤버 비밀번호도 함께 업데이트")
+    void editMemberWithPassword() {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(savedMember));
+
+        MemberEdit editRequest = MemberEdit.builder()
+                .nickname(NICKNAME)
+                .password("0123456789")
+                .passwordCheck("0123456789")
+                .phone("9999999999")
+                .email("shinkwang.dev@gmail.com")
+                .region("DAEJEON")
+                .dream("그만하자")
+                .introduction("나는 싸피생이다.")
+                .build();
+
+        //when
+        memberService.editMember(1L, editRequest);
+
+        //then
+        assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
+        assertThat(savedMember.getPassword()).isEqualTo(editRequest.getPassword());
+        assertThat(savedMember.getPhone()).isEqualTo(editRequest.getPhone());
+        assertThat(savedMember.getEmail()).isEqualTo(editRequest.getEmail());
+        assertThat(savedMember.getRegion()).isEqualTo(MemberRegion.valueOf(editRequest.getRegion()));
+        assertThat(savedMember.getDream()).isEqualTo(editRequest.getDream());
+        assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
     }
 
 
