@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class CommunityResponse {
+public class BookmarkResponse {
     private Long sequence;
     private Long member_seq;
     private Long category_seq;
@@ -21,7 +21,7 @@ public class CommunityResponse {
     private Integer loveCount;
 
     @Builder
-    public CommunityResponse(Long sequence, Long member_seq, Long category_seq, String title, String content, Integer viewCount, LocalDateTime createdTime, LocalDateTime modifiedTime, Integer loveCount) {
+    public BookmarkResponse(Long sequence, Long member_seq, Long category_seq, String title, String content, Integer viewCount, LocalDateTime createdTime, LocalDateTime modifiedTime, Integer loveCount) {
         this.sequence = sequence;
         this.member_seq = member_seq;
         this.category_seq = category_seq;
@@ -32,11 +32,11 @@ public class CommunityResponse {
         this.modifiedTime = modifiedTime;
         this.loveCount = loveCount;
     }
-    public static CommunityResponse makeBuilder(CommunityEntity entity) {
+    public static BookmarkResponse makeBuilder(CommunityEntity entity) {
         return makeBuilder(entity,0);
     }
-    public static CommunityResponse makeBuilder(CommunityEntity entity,Integer loveCount) {
-        return CommunityResponse.builder()
+    public static BookmarkResponse makeBuilder(CommunityEntity entity, Integer loveCount) {
+        return BookmarkResponse.builder()
                 .sequence(entity.getSequence())
                 .member_seq(entity.getMember_seq())
                 .category_seq(entity.getCategory_seq())

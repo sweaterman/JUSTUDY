@@ -1,11 +1,11 @@
 package com.justudy.backend.community.service;
 
-import com.justudy.backend.community.domain.CommunityLove;
 import com.justudy.backend.community.dto.request.CommunityCreate;
 import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.community.dto.response.CommunityResponse;
 import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.repository.CommunityRepository;
+import com.justudy.backend.community.repository.LoveRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,28 +19,31 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CommunityService {
-    private final CommunityRepository repository;
+    private final CommunityRepository communityRepository;
+
+    private final LoveRepository loveRepository;
     private final int MAX_PAGE_SIZE = 10;
+// ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
     @Transactional
     public Long createCommunity(CommunityCreate request) {
         CommunityEntity community = request.toEntity();
-        return repository.save(community).getSequence();
+        return communityRepository.save(community).getSequence();
     }
 
     @Transactional
     public CommunityResponse readCommunity(Long communitySequence) {
-        CommunityEntity entity = repository.findById(communitySequence)
+        CommunityEntity entity = communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
-
+        Integer loveCount = loveRepository.readLoveCountByCommunity(communitySequence);
         addViewCount(entity);
-        return CommunityResponse.makeBuilder(entity);
+        return CommunityResponse.makeBuilder(entity, loveCount);
     }
 
-    public List<CommunityResponse> readAllCommunity(int page) {
+    public List<CommunityResponse> readAllCommunity(int page,String category) {
         Pageable pageable = PageRequest.of(page, MAX_PAGE_SIZE);
 
-        return repository.findAll(pageable)
+        return communityRepository.findAll(pageable,category)
                 .stream()
                 .map(CommunityResponse::makeBuilder)
                 .collect(Collectors.toList());
@@ -48,7 +51,7 @@ public class CommunityService {
 
     @Transactional
     public Long UpdateCommunity(long id, CommunityEdit request) {
-        CommunityEntity entity = repository.findById(id)
+        CommunityEntity entity = communityRepository.findById(id)
                 .orElseThrow(CommunityNotFound::new);
 
         entity.update(request.getTitle(), request.getContent(), request.getViewCount(), request.getModifiedTime());
@@ -57,14 +60,14 @@ public class CommunityService {
 
     @Transactional
     public void deleteCommunity(Long communitySequence) {
-        repository.findById(communitySequence)
+        communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
-        repository.deleteById(communitySequence);
+        communityRepository.deleteById(communitySequence);
     }
 
     public List<CommunityResponse> readAllNoticeCommunity(int page) {
         Pageable pageable = PageRequest.of(page, MAX_PAGE_SIZE);
-        return repository.findAllByNotice(pageable)
+        return communityRepository.findAllByNotice(pageable)
                 .stream()
                 .map(CommunityResponse::makeBuilder)
                 .collect(Collectors.toList());
@@ -74,7 +77,7 @@ public class CommunityService {
     //조회수 증가
     public void addViewCount(CommunityEntity entity) {
         int temp = entity.getViewCount();
-        entity.changeViewCount(temp+ 1);
+        entity.changeViewCount(temp + 1);
     }
 
     public List<CommunityResponse> search(int page, String type, String search) {
@@ -91,34 +94,26 @@ public class CommunityService {
             content = search;
         }
 
-        return repository.findAllBySearchOption(pageable, name, title, content)
+        return communityRepository.findAllBySearchOption(pageable, name, title, content)
                 .stream()
                 .map(CommunityResponse::makeBuilder)
                 .collect(Collectors.toList());
     }
 
-    public long createLove(CommunityCreate request) {
-//        CommunityLove love = repository.findByPK(request);
-        return repository.saveLove(request);
-    }
-
-    public Long deleteAllLoveByCommunity(Long id) {
-        return repository.deleteAllLoveByCommunity(id);
-    }
-
-    public Long updateLove(CommunityEdit request) {
-        boolean flag = repository.readLove(request);
-        return repository.updateLove(request,flag);
-    }
-
-    public List<CommunityLove> readAllLoveByCommunity(Long id) {
-        return repository.readAllLoveByCommunity(id);
-    }
-
-//    public CommunityResponse createBookmark(CommunityCreate request) {
-//    }
 
     private class CommunityNotFound extends IllegalArgumentException {
+
+    }
+
+    private class CommunityBookmarkNotFound extends IllegalArgumentException {
+
+    }
+
+    private class CommunityBookmarkAlreadyCreated extends IllegalArgumentException {
+
+    }
+
+    private class CommunityLoveAlreadyCreated extends IllegalArgumentException {
 
     }
 }

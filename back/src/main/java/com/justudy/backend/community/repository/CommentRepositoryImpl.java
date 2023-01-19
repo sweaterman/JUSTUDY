@@ -1,16 +1,11 @@
-package com.justudy.backend.comment.repository;
+package com.justudy.backend.community.repository;
 
 import com.justudy.backend.comment.domain.CommentEntity;
 import com.justudy.backend.comment.domain.QCommentEntity;
-import com.justudy.backend.comment.dto.request.CommentEdit;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 public class CommentRepositoryImpl implements CommentRepositorySupport {

@@ -9,14 +9,17 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface CommunityRepositorySupport {
+public interface LoveRepositorySupport {
 
+    Long saveLove(LoveCreate request);
 
-    Page<CommunityEntity> findAllByNotice(Pageable pageable);
+    Long updateLove(LoveCreate request, boolean flag);
 
-    Page<CommunityEntity> findAllBySearchOption(Pageable pageable, String name, String title, String content);
+    List<LoveEntity> readAllLoveByCommunity(Long id);
 
-    Page<CommunityEntity> findAll(Pageable pageable,String category);
+    Long deleteAllLoveByCommunity(Long id);
 
+    Boolean readLove(LoveCreate request);
 
+    Integer readLoveCountByCommunity(Long communitySequence);
 }
