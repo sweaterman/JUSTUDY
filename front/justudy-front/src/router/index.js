@@ -6,13 +6,14 @@ import CommunityRouter from './CommunityRouter';
 import selfTestRouter from './selfTestRouter';
 import loginRouter from './loginRouter';
 import mainRouter from './mainRouter';
+import timerRouter from './timerRouter';
 
 Vue.use(VueRouter);
 
 const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
-    routes: [...studyRouter, ...userRouter, ...CommunityRouter, ...selfTestRouter, ...loginRouter, ...mainRouter]
+    routes: [...studyRouter, ...userRouter, ...CommunityRouter, ...selfTestRouter, ...loginRouter, ...mainRouter, ...timerRouter]
 });
 
 export default router;
