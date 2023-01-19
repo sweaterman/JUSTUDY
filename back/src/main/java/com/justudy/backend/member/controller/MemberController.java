@@ -38,7 +38,7 @@ public class MemberController {
     public MypageResponse mypageMember(HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
-        return memberService.getMemberOfMypage(loginSequence);
+        return memberService.getMypage(loginSequence);
     }
 
     @GetMapping("/mypage/modify")
