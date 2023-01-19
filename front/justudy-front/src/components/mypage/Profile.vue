@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-img
-            :src="require('../../assets/jjanggu.jpg')"
+            :src="src"
             :style="`
           width: ${diameter}${standard};
           height: ${diameter}${standard};
@@ -12,7 +12,7 @@
             v-on:click="dialogChange()"
         />
         <v-img
-            :src="require('../../assets/redHeart.png')"
+            :src="require('@/assets/redHeart.png')"
             :style="`
           width: ${diameter / 3}${standard};
           height: ${diameter / 3}${standard};
@@ -37,7 +37,8 @@ export default {
         },
         standard: {
             type: String
-        }
+        },
+        src: {}
     },
     methods: {
         dialogChange() {

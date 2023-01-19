@@ -2,7 +2,7 @@
     <div>
         <v-row justify="center">
             <v-col cols="8" align="center" md="4">
-                <YellowButton :buttonLength="`${buttonLength}`" :height="`${height}`" :fontSize="`${fontSize}`" :content="`${content}`" :standard="`${standard}`" />
+                <YellowButton :buttonLength="buttonLength" :height="height" :fontSize="fontSize" :content="`${content}`" :standard="`${standard}`" />
             </v-col>
             <v-col cols="16" md="8">
                 <v-select :items="items" label="Outlined style" outlined></v-select>

@@ -1,11 +1,11 @@
 <template>
     <div>
-        <YellowButton :buttonLength="200" :height="70" :fontSize="36" :content="`${buttonContent}`" standard="px" />
+        <YellowButton :buttonLength="150" :height="60" :fontSize="36" :content="`${buttonContent}`" standard="px" />
         <!-- 여기에 사진들 배너 .... -->
-        <div class="d-flex align-center" style="width: 90%; margin: 5%; overflow: hidden">
+        <div class="d-flex align-center" style="width: 90%; margin-left: 5%; margin-right: 5%; overflow: hidden">
             <div :style="`margin-left : ${bannerPosition}px ; transition: 0.5s`"></div>
             <div v-for="item in 50" v-bind:key="item" style="margin: 1%; transition: 0.5s">
-                <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" />
+                <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="require('@/assets/juniorClass.png')" />
 
                 이싸피
 
