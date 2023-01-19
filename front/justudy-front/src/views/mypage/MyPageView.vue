@@ -6,10 +6,15 @@
         <div style="margin: 10%">
             <v-row>
                 <v-col cols="12" md="4">
-                    <ProfilePicture :diameter="300" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" />
+                    <ProfilePicture :diameter="300" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" :src="require('@/assets/middleClass.png')" />
                 </v-col>
                 <v-col cols="12" md="8">
                     <ProfileDetail />
+                </v-col>
+            </v-row>
+            <v-row>
+                <v-col>
+                    <Boundary content="북마크한 글" standard="px" :startPoint="100" :hasContent="false"></Boundary>
                 </v-col>
             </v-row>
             <v-row>

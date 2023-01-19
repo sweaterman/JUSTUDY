@@ -2,7 +2,7 @@
     <div>
         <v-row justify="center">
             <v-col cols="8" align="center" md="4">
-                <YellowButton :buttonLength="`${buttonLength}`" :height="`${height}`" :fontSize="`${fontSize}`" :content="`${content}`" :standard="`${standard}`" />
+                <YellowButton :buttonLength="buttonLength" :height="height" :fontSize="fontSize" :content="`${content}`" :standard="`${standard}`" />
             </v-col>
             <v-col v-if="content === '이름'" cols="8" md="8" align="center">
                 <h1>{{ text }}</h1>
@@ -37,7 +37,7 @@ export default {
             type: String
         },
         text: {
-            type: Number
+            type: String
         }
     }
 };

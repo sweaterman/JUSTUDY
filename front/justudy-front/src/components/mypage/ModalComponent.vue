@@ -2,7 +2,7 @@
     <div :v-model="dialog" v-if="dialog" id="all" @click="close(true)">
         <div id="modal" @click="close(false)">
             <div class="d-flex justify-center">
-                <ProfilePicture :diameter="200" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" />
+                <ProfilePicture :diameter="200" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" :src="require('@/assets/juniorClass.png')" />
                 <div class="d-flex flex-column pa-12">
                     <div v-for="item in 3" v-bind:key="item">
                         <div class="d-flex justify-space-around">
