@@ -1,15 +1,15 @@
-<!-- 홍보 중인 스터디 목록을 보여주는 컴포넌트입니다. -->
+<!-- 홍보 중인 스터디 목록을 보여주는 컴포넌트입니다. (페이지네이션 적용) -->
 
 <template>
     <v-app>
         <v-row>
             <v-col cols="4" v-for="study in calData" :key="study.seq">
                 <v-row justify="center">
-                    <img src="@/assets/studyImage.png" alt="study_image" />
+                    <img src="@/assets/studyImage.png" alt="study_image" @click="moveToStudy(study.seq)" />
                 </v-row>
                 <v-row>
                     <v-col cols="9">
-                        <h3>{{ study.name }}</h3>
+                        <h3 @click="moveToStudy(study.seq)">{{ study.name }}</h3>
                     </v-col>
                     <v-col cols="3"> 모집현황 {{ study.current_person }} / {{ study.personnel }}</v-col>
                 </v-row>
@@ -233,6 +233,12 @@ export default {
         },
         calData() {
             return this.searchStudies.slice(this.startOffset, this.endOffset);
+        }
+    },
+    methods: {
+        moveToStudy(seq) {
+            var router = this.$router;
+            router.push({path: `/study/search/${seq}`});
         }
     }
 };
