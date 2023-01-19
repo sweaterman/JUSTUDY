@@ -3,7 +3,10 @@ package com.justudy.backend.member.service;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.domain.MemberRegion;
 import com.justudy.backend.member.dto.request.MemberCreate;
+import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
+import com.justudy.backend.member.exception.ConflictRequest;
+import com.justudy.backend.member.exception.InvalidRequest;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.justudy.backend.member.dto.request.MemberCreate.MemberCreateBuilder;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
@@ -63,10 +67,12 @@ public class MemberServiceTest {
         MemberCreate request = makeMemberCreateBuilder()
                 .userId(USER_ID)
                 .build();
-        boolean result = memberService.isDuplicatedUserId(request.getUserId());
 
-        //then
-        assertThat(result).isTrue();
+        //expected
+        assertThatThrownBy(()-> memberService.saveMember(request))
+                .isInstanceOf(ConflictRequest.class)
+                .hasMessage("중복된 값이 존재합니다.");
+
     }
 
     @Test
@@ -82,10 +88,11 @@ public class MemberServiceTest {
         MemberCreate request = makeMemberCreateBuilder()
                 .nickname(NICKNAME)
                 .build();
-        boolean result = memberService.isDuplicatedNickname(request.getNickname());
 
-        //then
-        assertThat(result).isTrue();
+        //expected
+        assertThatThrownBy(()-> memberService.saveMember(request))
+                .isInstanceOf(ConflictRequest.class)
+                .hasMessage("중복된 값이 존재합니다.");
     }
 
     @Test

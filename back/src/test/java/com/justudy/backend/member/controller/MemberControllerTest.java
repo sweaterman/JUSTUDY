@@ -1,6 +1,5 @@
 package com.justudy.backend.member.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberLevel;

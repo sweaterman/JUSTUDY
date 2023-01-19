@@ -2,10 +2,9 @@ package com.justudy.backend.member.controller;
 
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.dto.request.MemberCreate;
+import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
-import com.justudy.backend.member.exception.ConflictRequest;
-import com.justudy.backend.member.exception.InvalidRequest;
 import com.justudy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +24,9 @@ public class MemberController {
 
     @PostMapping("/register")
     public ResponseEntity<Void> signupMember(@RequestBody @Validated MemberCreate request) {
-        validMember(request);
         memberService.saveMember(request);
 
-        return new ResponseEntity<Void>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     /**

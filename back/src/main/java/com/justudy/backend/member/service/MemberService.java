@@ -1,18 +1,22 @@
 package com.justudy.backend.member.service;
 
 import com.justudy.backend.member.domain.MemberCategoryEntity;
+import com.justudy.backend.member.domain.MemberEditor;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.domain.MemberRegion;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
+import com.justudy.backend.member.exception.ConflictRequest;
+import com.justudy.backend.member.exception.InvalidRequest;
 import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +31,7 @@ public class MemberService {
 
     @Transactional
     public Long saveMember(MemberCreate request) {
+        validateCreateRequest(request);
         MemberEntity member = request.toEntity();
         memberRepository.save(member);
 
