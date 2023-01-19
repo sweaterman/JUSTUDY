@@ -2,7 +2,7 @@ package com.justudy.backend.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.justudy.backend.login.infra.SessionConst;
-import com.justudy.backend.member.domain.MemberLevel;
+import com.justudy.backend.common.enum_util.Level;
 import com.justudy.backend.member.domain.MemberStatus;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.response.MypageResponse;
@@ -84,9 +84,9 @@ public class MemberControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.nickname").value("닉네임"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.dream").value("백엔드개발자"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(MemberStatus.ON.getValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(MemberStatus.ONLINE.getValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.badgeCount").value(2))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.level").value(MemberLevel.BEGINNER.getValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.level").value(Level.BEGINNER.getValue()))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -95,9 +95,9 @@ public class MemberControllerTest {
                 .nickname("닉네임")
                 .category(null)
                 .dream("백엔드개발자")
-                .status(MemberStatus.ON.getValue())
+                .status(MemberStatus.ONLINE.getValue())
                 .badgeCount(2)
-                .level(MemberLevel.BEGINNER.getValue())
+                .level(Level.BEGINNER.getValue())
                 .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.justudy.backend.member.domain;
 
+import com.justudy.backend.common.enum_util.Region;
 import lombok.Getter;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class MemberEditor {
 
     private String email;
 
-    private MemberRegion region;
+    private Region region;
 
     private List<MemberCategoryEntity> category;
 
@@ -25,7 +26,7 @@ public class MemberEditor {
 
     public MemberEditor(String nickname, String password,
                         String phone, String email,
-                        MemberRegion region, List<MemberCategoryEntity> category,
+                        Region region, List<MemberCategoryEntity> category,
                         String dream, String introduction) {
         this.nickname = nickname;
         this.password = password;
@@ -46,7 +47,7 @@ public class MemberEditor {
         private String password;
         private String phone;
         private String email;
-        private MemberRegion region;
+        private Region region;
         private List<MemberCategoryEntity> category;
         private String dream;
         private String introduction;
@@ -71,7 +72,7 @@ public class MemberEditor {
             this.email = email;
             return this;
         }
-        public MemberEditorBuilder region(final MemberRegion region) {
+        public MemberEditorBuilder region(final Region region) {
             this.region = region;
             return this;
         }

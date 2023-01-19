@@ -1,7 +1,7 @@
 package com.justudy.backend.member.service;
 
 import com.justudy.backend.member.domain.MemberEntity;
-import com.justudy.backend.member.domain.MemberRegion;
+import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
@@ -155,7 +155,7 @@ public class MemberServiceTest {
         assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
         assertThat(savedMember.getPhone()).isEqualTo(editRequest.getPhone());
         assertThat(savedMember.getEmail()).isEqualTo(editRequest.getEmail());
-        assertThat(savedMember.getRegion()).isEqualTo(MemberRegion.valueOf(editRequest.getRegion()));
+        assertThat(savedMember.getRegion()).isEqualTo(Region.valueOf(editRequest.getRegion()));
         assertThat(savedMember.getDream()).isEqualTo(editRequest.getDream());
         assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
     }
@@ -188,7 +188,7 @@ public class MemberServiceTest {
         assertThat(savedMember.getPassword()).isEqualTo(editRequest.getPassword());
         assertThat(savedMember.getPhone()).isEqualTo(editRequest.getPhone());
         assertThat(savedMember.getEmail()).isEqualTo(editRequest.getEmail());
-        assertThat(savedMember.getRegion()).isEqualTo(MemberRegion.valueOf(editRequest.getRegion()));
+        assertThat(savedMember.getRegion()).isEqualTo(Region.valueOf(editRequest.getRegion()));
         assertThat(savedMember.getDream()).isEqualTo(editRequest.getDream());
         assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
     }
@@ -217,7 +217,7 @@ public class MemberServiceTest {
                 .ssafyId(ssafyId)
                 .phone("01011111111")
                 .email("ssafylee@ssafy.com")
-                .region(MemberRegion.SEOUL)
+                .region(Region.SEOUL)
                 .dream("백엔드 취업희망")
                 .introduction("안녕하세요")
                 .build();

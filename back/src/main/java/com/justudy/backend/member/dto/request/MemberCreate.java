@@ -3,7 +3,7 @@ package com.justudy.backend.member.dto.request;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.justudy.backend.member.domain.MemberEntity;
-import com.justudy.backend.member.domain.MemberRegion;
+import com.justudy.backend.common.enum_util.Region;
 import lombok.Builder;
 import lombok.Data;
 
@@ -86,7 +86,7 @@ public class MemberCreate {
                 .ssafyId(ssafyId)
                 .phone(phone)
                 .email(email)
-                .region(MemberRegion.valueOf(region))
+                .region(Region.valueOf(region))
                 .dream(dream)
                 .introduction(introduction)
                 .mmId(mmId)

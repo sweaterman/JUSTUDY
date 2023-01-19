@@ -3,7 +3,7 @@ package com.justudy.backend.member.service;
 import com.justudy.backend.member.domain.MemberCategoryEntity;
 import com.justudy.backend.member.domain.MemberEditor;
 import com.justudy.backend.member.domain.MemberEntity;
-import com.justudy.backend.member.domain.MemberRegion;
+import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
@@ -65,7 +65,7 @@ public class MemberService {
                 .password(editRequest.getPassword())
                 .phone(editRequest.getPhone())
                 .email(editRequest.getEmail())
-                .region(MemberRegion.valueOf(editRequest.getRegion()))
+                .region(Region.valueOf(editRequest.getRegion()))
                 .category(null)
                 .dream(editRequest.getDream())
                 .introduction(editRequest.getIntroduction())
