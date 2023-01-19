@@ -95,7 +95,40 @@ public class MemberServiceTest {
                 .hasMessage("중복된 값이 존재합니다.");
     }
 
+    @Test
+    @DisplayName("ssfay학번 중복")
+    void duplicatedSsafyId() {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
 
+        BDDMockito.given(memberRepository.findAll())
+                .willReturn(List.of(savedMember));
+
+        //when
+        MemberCreate request = makeMemberCreateBuilder()
+                .ssafyId(SSAFY_ID)
+                .build();
+
+        //expected
+        assertThatThrownBy(()-> memberService.saveMember(request))
+                .isInstanceOf(ConflictRequest.class)
+                .hasMessage("중복된 값이 존재합니다.");
+    }
+
+    @Test
+    @DisplayName("비밀번호 검증")
+    void validPassword() {
+        //given
+        MemberCreate request = MemberCreate.builder()
+                .password("1234")
+                .passwordCheck("123")
+                .build();
+
+        //expected
+        assertThatThrownBy(() -> memberService.saveMember(request))
+                .isInstanceOf(InvalidRequest.class)
+                .hasMessage("잘못된 요청입니다.");
+    }
 
     @Test
     @DisplayName("멤버 업데이트")
