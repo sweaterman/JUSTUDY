@@ -128,4 +128,27 @@ public class MemberEntity {
         this.createdTime = LocalDateTime.now();
         this.localDateTime = createdTime;
     }
+
+    public MemberEditor.MemberEditorBuilder toEditor() {
+        return MemberEditor.builder()
+                .nickname(nickname)
+                .password(password)
+                .phone(phone)
+                .email(email)
+                .region(region)
+                .category(categories)
+                .dream(dream)
+                .introduction(introduction);
+    }
+
+    public void edit(MemberEditor memberEditor) {
+        nickname = memberEditor.getNickname();
+        password = memberEditor.getPassword();
+        phone = memberEditor.getPhone();
+        email = memberEditor.getEmail();
+        region = memberEditor.getRegion();
+        categories = memberEditor.getCategory();
+        dream = memberEditor.getDream();
+        introduction = memberEditor.getIntroduction();
+    }
 }
