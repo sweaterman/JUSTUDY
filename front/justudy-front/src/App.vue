@@ -1,12 +1,20 @@
 <template>
- 
-    <router-view></router-view>
-    
-   
+    <div>
+        <NavHeader />
+        <router-view></router-view>
+        <NavFooter />
+    </div>
 </template>
 
 <script>
+import NavHeader from '../src/components/common/NavHeader.vue';
+import NavFooter from '../src/components/common/NavFooter.vue';
+
 export default {
-    name: 'App'
+    name: 'App',
+    components: {
+        NavHeader,
+        NavFooter
+    }
 };
 </script>

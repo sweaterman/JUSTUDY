@@ -29,7 +29,7 @@
         <v-col cols="12" md="2" />
 
         <v-col cols="12" md="1" justify="center" align="center"> 마이스터디 </v-col>
-        <v-col @click="movetosignin" cols="12" md="1" justify="center" align="center"> 회원가입 ** </v-col>
+        <v-col @click="movetomypage" cols="12" md="1" justify="center" align="center"> 마이페이지 </v-col>
         <v-col @click="movetologin" cols="12" md="1" justify="center" align="center"> 로그인 ** </v-col>
 
         <v-col cols="12" md="1" />
@@ -46,8 +46,8 @@ export default {
         movetocommunity() {
             window.location.href = ' /community';
         },
-        movetosignin() {
-            window.location.href = ' /signin';
+        movetomypage() {
+            window.location.href = ' /mypage';
         },
         movetocommunitycontent() {
             window.location.href = ' /community/3/content';

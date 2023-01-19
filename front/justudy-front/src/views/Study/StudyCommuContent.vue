@@ -1,7 +1,5 @@
 <template>
     <v-app>
-        <CommuHeader />
-
         <!-- 상세 글보기 -->
         <v-row>
             <v-col cols="12" md="2" />
@@ -88,10 +86,8 @@
 <script>
 import axios from 'axios';
 
-import CommuHeader from '../../components/Community/CommuHeader.vue';
-
 export default {
-    components: {CommuHeader},
+    components: {},
 
     data() {
         return {

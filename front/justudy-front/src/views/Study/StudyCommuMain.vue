@@ -1,16 +1,13 @@
 <template>
     <v-app>
-        <CommuHeader />
-
-        <!-- 자유게시판 / 검색 기능 / 글쓰기 -->
-        <v-row :style="{marginTop: '-8%'}">
+        <v-row>
             <v-col cols="12" md="2" />
 
             <v-col cols="12" md="8">
                 <v-row>
                     <v-col cols="12" md="2">
                         <v-app-bar-title>
-                            <div align="left" :style="{fontSize: 'xx-large'}">자유 게시판</div>
+                            <div align="left" :style="{fontSize: 'xx-large'}">스터디 게시판</div>
                         </v-app-bar-title>
                     </v-col>
                     <v-col cols="12" md="2" align="right">
@@ -34,7 +31,7 @@
         </v-row>
 
         <!-- 글목록 -->
-        <v-row :style="{marginTop: '-6%'}">
+        <v-row>
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <v-row>
@@ -98,10 +95,9 @@
 </template>
 <script>
 import axios from 'axios'; // backend와 axios 통신을 위해 필요
-import CommuHeader from '../../components/Community/CommuHeader.vue';
 
 export default {
-    components: {CommuHeader},
+    components: {},
     data() {
         return {
             contentlist: [], // 현재 게시판과 페이지에 맞는 글 리스트들
@@ -155,19 +151,19 @@ export default {
     methods: {
         // 페이지 이동시 params로 게시판 구분, query로 페이지 구분
         movetoboard1() {
-            window.location.href = '/community/1/?page=1';
+            window.location.href = '/study/community/1/?page=1';
         },
         movetoboard2() {
-            window.location.href = '/community/2/?page=1';
+            window.location.href = '/study/community/2/?page=1';
         },
         movetoboard3() {
-            window.location.href = '/community/3/?page=1';
+            window.location.href = '/study/community/3/?page=1';
         },
         movetomain() {
-            window.location.href = '/community';
+            window.location.href = '/study/community';
         },
         movetowrite() {
-            window.location.href = '/community/3/write';
+            window.location.href = '/study/community/3/write';
             // window.location.href = window.location.pathname + 'write';
             // window.location.pathname이 현재 주소를 의미
             // 여기다 write를 붙여주면 글 작성 페이지로 라우팅 되게 됨

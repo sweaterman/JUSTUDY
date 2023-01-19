@@ -1,6 +1,5 @@
 <template>
     <v-app>
-        <CommuHeader />
         <!-- 글읽기 제목 -->
         <v-row :style="{marginBottom: '2%'}">
             <v-col cols="12" md="4" />
@@ -90,11 +89,10 @@
 
 <script>
 import axios from 'axios';
-import CommuHeader from '../../components/Community/CommuHeader.vue';
 import TextButton from '../../components/common/TextButton.vue';
 
 export default {
-    components: {CommuHeader, TextButton},
+    components: {TextButton},
     data() {
         return {
             writer: '돌숭이',
@@ -129,7 +127,7 @@ export default {
             window.history.back();
         },
         movetomain() {
-            window.location.href = '/community';
+            window.location.href = '/';
         }
     }
 };

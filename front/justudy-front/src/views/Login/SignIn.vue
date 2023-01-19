@@ -1,7 +1,5 @@
 <template>
     <v-app>
-        <NavHeader />
-
         <!-- 제목 ~ 회원 가입 -->
         <v-row :style="{marginTop: '5%'}">
             <v-col cols="12" md="4" />
@@ -181,7 +179,37 @@
         <v-row :style="{marginBottom: '10%'}">
             <v-col cols="12" md="4" />
             <v-col cols="12" md="4" justify="center" align="center">
-                <v-btn color="yellow" @click="showmodal = true" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">가입 완료</v-btn>
+                <v-btn color="yellow" @click="selftestDialog('open')" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">가입 완료</v-btn>
+                <v-dialog v-model="selfTest" max-width="600" max-height="500">
+                    <v-card>
+                        <v-row>
+                            <v-col cols="12" md="2" />
+                            <v-col cols="12" md="8" justify="center" align="center">
+                                <v-card-text>
+                                    <div class="text-h2 pa-12">반가워요!</div>
+                                </v-card-text>
+                                <h3>시작하기 전에 자신의 수준을 확인해볼까요?</h3>
+                            </v-col>
+                            <v-col cols="12" md="2" />
+                        </v-row>
+
+                        <v-row style="margin-top: 9%; margin-bottom: 3%">
+                            <!-- <v-card-actions> -->
+                            <v-col cols="12" md="2" />
+                            <v-col cols="12" md="2" justify="center" align="center">
+                                <v-btn color="yellow darken-2" text @click="selftestDialog('close')"> 닫기 </v-btn>
+                            </v-col>
+
+                            <v-col cols="12" md="1"> </v-col>
+                            <v-col cols="12" md="3">
+                                <v-btn color="yellow darken-2" text @click="selftestDialog('test')"> 자기진단 하기 </v-btn>
+                            </v-col>
+                            <v-col cols="12" md="2">
+                                <v-btn color="yellow darken-2" text @click="selftestDialog('home')"> 홈으로 </v-btn>
+                            </v-col>
+                        </v-row>
+                    </v-card>
+                </v-dialog>
             </v-col>
             <v-col cols="12" md="4" />
         </v-row>
@@ -192,29 +220,37 @@
 </template>
 
 <script>
-import NavHeader from '../../components/common/NavHeader.vue';
-import NavFooter from '../../components/common/NavFooter.vue';
 import TextButton from '../../components/common/TextButton.vue';
 
 export default {
     name: 'SignInView',
     components: {
-        TextButton,
-        NavHeader,
-        NavFooter
+        TextButton
     },
 
     data() {
         return {
             showmodal: false,
             regionList: ['서울', '대전', '부울경', '광주'],
-            stackList: ['Vuejs', 'nodejs', 'React', 'Spring', 'SpringBoot', 'TensorFlow']
+            stackList: ['Vuejs', 'nodejs', 'React', 'Spring', 'SpringBoot', 'TensorFlow'],
+            selfTest: false
         };
     },
 
     methods: {
         movetomain() {
             window.location.href = '/';
+        },
+        selftestDialog(check) {
+            if (check == 'open') {
+                this.selfTest = true;
+            } else if (check == 'close') {
+                this.selfTest = false;
+            } else if (check == 'test') {
+                window.location.href = '/self-test/problem/1';
+            } else if (check == 'home') {
+                window.location.href = '/';
+            }
         }
     }
 };

@@ -1,7 +1,5 @@
 <template>
     <v-app>
-        <NavHeader />
-
         <!-- 제목 ~ 로그인 -->
         <v-row :style="{marginTop: '5%'}">
             <v-col cols="12" md="4" />
@@ -59,21 +57,16 @@
             <v-col cols="12" md="4" />
         </v-row>
         <!-- 로그인 버튼 ~ 끝 -->
-        <NavFooter />
     </v-app>
 </template>
 
 <script>
-import NavHeader from '../../components/common/NavHeader.vue';
-import NavFooter from '../../components/common/NavFooter.vue';
 import TextButton from '../../components/common/TextButton.vue';
 
 export default {
     name: 'SignInView',
     components: {
-        TextButton,
-        NavHeader,
-        NavFooter
+        TextButton
     },
 
     data() {
