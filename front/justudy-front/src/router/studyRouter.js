@@ -2,6 +2,7 @@ import CreateStudyView from '@/views/Study/CreateStudyView';
 import ApplyStudyView from '@/views/Study/ApplyStudyView';
 import SearchStudyView from '@/views/Study/SearchStudyView';
 import MyStudyView from '@/views/Study/MyStudyView';
+import StudyDetailView from '@/views/Study/StudyDetailView';
 
 export default [
     {
@@ -23,5 +24,10 @@ export default [
         path: '/study/myStudy',
         name: 'MyStudyView',
         component: MyStudyView
+    },
+    {
+        path: '/study/detail/:studySeq',
+        name: 'StudyDetailView',
+        component: StudyDetailView
     }
 ];

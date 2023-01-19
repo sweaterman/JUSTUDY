@@ -19,12 +19,12 @@
                     <v-col cols="4" v-for="study in studies" :key="study.seq">
                         <v-row justify="center">
                             <v-col align-self="center">
-                                <img src="@/assets/studyImage.png" alt="study_image" />
+                                <img @click="moveToApply(study.seq)" src="@/assets/studyImage.png" alt="study_image" />
                             </v-col>
                         </v-row>
                         <v-row>
                             <v-col cols="9">
-                                <h3>{{ study.name }}</h3>
+                                <h3 @click="moveToApply(study.seq)">{{ study.name }}</h3>
                             </v-col>
                             <v-col cols="3"> 모집현황 {{ study.current_person }} / {{ study.personnel }}</v-col>
                         </v-row>
@@ -49,6 +49,19 @@
                                 </v-btn>
                             </v-col>
                         </v-row>
+
+                        <v-dialog v-model="deleteModal" width="500">
+                            <v-card>
+                                <v-card-title class="text-h5 grey lighten-2"> 지원 취소 </v-card-title>
+                                <v-card-text> 지원을 취소하시면, 스터디장에게 간 메세지가 사라집니다. 정말로 취소하시겠습니까? </v-card-text>
+                                <v-divider></v-divider>
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="primary" text @click="deleteApply('T')"> 확인 </v-btn>
+                                    <v-btn color="primary" text @click="deleteApply('F')"> 취소 </v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
                     </v-col>
                 </v-row>
             </v-col>
@@ -74,12 +87,12 @@
                     <v-col cols="4" v-for="study in studies" :key="study.seq">
                         <v-row justify="center">
                             <v-col align-self="center">
-                                <img src="@/assets/studyImage.png" alt="study_image" />
+                                <img @click="moveToDetail(study.seq)" src="@/assets/studyImage.png" alt="study_image" />
                             </v-col>
                         </v-row>
                         <v-row>
                             <v-col cols="9">
-                                <h3>{{ study.name }}</h3>
+                                <h3 @click="moveToDetail(study.seq)">{{ study.name }}</h3>
                             </v-col>
                             <v-col cols="3"> 모집현황 {{ study.current_person }} / {{ study.personnel }}</v-col>
                         </v-row>
@@ -109,6 +122,8 @@ export default {
     created() {},
     data() {
         return {
+            deleteModal: false,
+            deleteNum: null,
             studies: [
                 {
                     seq: 1,
@@ -202,8 +217,25 @@ export default {
         };
     },
     methods: {
+        moveToApply(seq) {
+            var router = this.$router;
+            router.push({path: `/study/search/${seq}`});
+        },
+        moveToDetail(seq) {
+            var router = this.$router;
+            router.push({path: `/study/detail/${seq}`});
+        },
         deleteApply(seq) {
-            console.log(seq);
+            if (seq == 'T') {
+                //deleteNum 을 서버에 보내기
+                this.deleteModal = false;
+            } else if (seq == 'F') {
+                this.deleteNum = null;
+                this.deleteModal = false;
+            } else {
+                this.deleteNum = seq;
+                this.deleteModal = true;
+            }
         }
     }
 };
