@@ -54,7 +54,6 @@ public class MemberEntity {
     private String dream;
 
     @Column(name = "member_introduction")
-    @Lob
     private String introduction;
 
     @ManyToOne(fetch = LAZY)
@@ -152,5 +151,9 @@ public class MemberEntity {
         categories = memberEditor.getCategory();
         dream = memberEditor.getDream();
         introduction = memberEditor.getIntroduction();
+    }
+
+    public void deleteMember() {
+        isDeleted = true;
     }
 }
