@@ -86,7 +86,14 @@ public class MemberService {
         return findMember.getSequence();
     }
 
+    private void validateSessionUser(Long loginSequence, MemberRole role) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(() -> new MemberNotFound());
 
+        if (!findMember.getRole().equals(role)) {
+            throw new ForbiddenRequest();
+        }
+    }
 
     private ModifyPageResponse createModifyPageResponse(MemberEntity member) {
 
