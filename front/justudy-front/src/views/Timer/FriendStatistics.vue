@@ -1,8 +1,15 @@
 <template>
-    <v-app>rrr </v-app>
+    <v-app>
+        <Common />
+    </v-app>
 </template>
 <script>
+import Common from '@/components/timer/Common.vue';
+
 export default {
-    name: 'FriendStatistics'
+    name: 'FriendStatistics',
+    components: {
+        Common
+    }
 };
 </script>
