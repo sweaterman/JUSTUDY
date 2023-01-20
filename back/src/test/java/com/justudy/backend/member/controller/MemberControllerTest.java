@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.justudy.backend.common.enum_util.EnumMapper;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.common.enum_util.Level;
+import com.justudy.backend.login.service.LoginService;
 import com.justudy.backend.member.domain.MemberStatus;
 import com.justudy.backend.member.dto.request.MemberCreate;
+import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
 import com.justudy.backend.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,9 @@ public class MemberControllerTest {
 
     @MockBean
     MemberService memberService;
+
+    @MockBean
+    LoginService loginService;
 
     @MockBean
     EnumMapper enumMapper;
@@ -81,6 +86,7 @@ public class MemberControllerTest {
         BDDMockito.given(memberService.getMypage(1L))
                 .willReturn(makeTestMypageResponse());
 
+        //expected
         mockMvc.perform(get("/api/mypage/member")
                         .contentType(MediaType.APPLICATION_JSON)
                         .session(session)
@@ -92,6 +98,41 @@ public class MemberControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.badgeCount").value(2))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.level").value(Level.BEGINNER.getValue()))
                 .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("GET /mypage/modify")
+    void getModifyPage() throws Exception {
+        //given
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(SessionConst.LOGIN_USER, 1L);
+
+        BDDMockito.given(memberService.getModifyPage(1L))
+                .willReturn(makeTestModifyPageResponse());
+
+        //expected
+        mockMvc.perform(get("/api/mypage/modify")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .session(session)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    private static ModifyPageResponse makeTestModifyPageResponse() {
+        return ModifyPageResponse.builder()
+                .username("서주광")
+                .nickname("돌로스원숭숭")
+                .region("서울")
+                .level("초보")
+                .ssafyId("0845111")
+                .userId("tjwnrhkd")
+                .phone("0101111111")
+                .email("tjwnrhkd@naver.com")
+                .category(null)
+                .dream("백엔드 + 프론트 마스터")
+                .introduction("귀여운 돌로스 원숭숭입니다.")
+                .build();
     }
 
     private static MypageResponse makeTestMypageResponse() {
