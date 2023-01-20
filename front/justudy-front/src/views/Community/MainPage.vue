@@ -9,9 +9,7 @@
             <v-col cols="12" md="8">
                 <v-row>
                     <v-col cols="12" md="2">
-                        <v-app-bar-title>
-                            <div align="left" :style="{fontSize: 'xx-large'}">자유 게시판</div>
-                        </v-app-bar-title>
+                        <div align="left" :style="{fontSize: 'xx-large'}">자유 게시판</div>
                     </v-col>
                     <v-col cols="12" md="2" align="right">
                         <v-select :items="searchoption" v-model="searchoptionselected" :style="{width: '150px'}" />
@@ -97,7 +95,6 @@
     </v-app>
 </template>
 <script>
-import axios from 'axios'; // backend와 axios 통신을 위해 필요
 import CommuHeader from '../../components/Community/CommuHeader.vue';
 
 export default {
@@ -109,48 +106,15 @@ export default {
         };
     },
     computed: {
-        // computed는 계산 목적으로 사용된다고 보면 됨
-        totalpage() {
-            if (this.cnt == 0) {
-                // 현재 게시판 글 갯수가 0개일때 총 페이지가 0이 되는거 방지
-                return 1;
-            } else {
-                return Math.ceil(this.cnt / 10); // (글 갯수/10)한 후 올림 연산을 통해 총 페이지 계산
-            }
-        }
-    },
-    mounted() {
-        // mounted는 페이지가 켜질때 실행됨, 페이지가 켜질때 글 리스트들을 db에서 불러옴
-        axios({
-            // 게시글 작성자, 제목, 작성일 가져오기
-            url: 'http://127.0.0.1:52273/content/boardlist/',
-            method: 'POST',
-            data: {
-                // back 서버에 현재 게시판번호와 페이지번호를 넘겨줘야 해당하는 글 리스트 불러올 수 있음
-                boardnum: this.$route.params.id,
-                page: this.$route.query.page
-            }
-        })
-            .then(res => {
-                this.contentlist = res.data;
-            })
-            .catch(err => {
-                alert(err);
-            });
-        axios({
-            // 현재 게시판 글 개수 가져오기
-            url: 'http://127.0.0.1:52273/content/boardlistcnt/',
-            method: 'POST',
-            data: {
-                boardnum: this.$route.params.id
-            }
-        })
-            .then(res => {
-                this.cnt = res.data;
-            })
-            .catch(err => {
-                alert(err);
-            });
+        // // computed는 계산 목적으로 사용된다고 보면 됨
+        // totalpage() {
+        //     if (this.cnt == 0) {
+        //         // 현재 게시판 글 갯수가 0개일때 총 페이지가 0이 되는거 방지
+        //         return 1;
+        //     } else {
+        //         return Math.ceil(this.cnt / 10); // (글 갯수/10)한 후 올림 연산을 통해 총 페이지 계산
+        //     }
+        // }
     },
     methods: {
         // 페이지 이동시 params로 게시판 구분, query로 페이지 구분

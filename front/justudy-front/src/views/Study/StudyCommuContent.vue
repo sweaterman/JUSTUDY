@@ -84,8 +84,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
     components: {},
 
@@ -100,67 +98,67 @@ export default {
         };
     },
     mounted() {
-        axios({
-            url: 'http://127.0.0.1:52273/content/content/',
-            method: 'POST',
-            data: {
-                id: this.$route.query.id
-            }
-        })
-            .then(res => {
-                this.writer = res.data.writer;
-                this.title = res.data.title;
-                this.createdAt = res.data.createdAt.split('T')[0];
-                this.updatedAt = res.data.updatedAt.split('T')[0];
-                this.text = res.data.text;
-            })
-            .catch(err => {
-                alert(err);
-            });
+        // axios({
+        //     url: 'http://127.0.0.1:52273/content/content/',
+        //     method: 'POST',
+        //     data: {
+        //         id: this.$route.query.id
+        //     }
+        // })
+        //     .then(res => {
+        //         this.writer = res.data.writer;
+        //         this.title = res.data.title;
+        //         this.createdAt = res.data.createdAt.split('T')[0];
+        //         this.updatedAt = res.data.updatedAt.split('T')[0];
+        //         this.text = res.data.text;
+        //     })
+        //     .catch(err => {
+        //         alert(err);
+        //     });
     },
     methods: {
         moveback() {
             window.history.back(); // window.history.back()을 통해 뒤로가기
         },
-        deletecontent() {
-            // 글에 들어가서 삭제버튼 눌렀을 때
-            axios({
-                url: 'http://127.0.0.1:52273/content/delete/',
-                method: 'POST',
-                data: {
-                    id: this.$route.query.id
-                }
-            })
-                .then(res => {
-                    alert(res.data.message);
-                    window.location.href = window.location.pathname.slice(0, -8) + '/?page=1';
-                    // 삭제 후 그 게시판의 1페이지로 이동
-                })
-                .catch(err => {
-                    alert(err);
-                });
-        },
+        // deletecontent() {
+        //     // 글에 들어가서 삭제버튼 눌렀을 때
+        //     axios({
+        //         url: 'http://127.0.0.1:52273/content/delete/',
+        //         method: 'POST',
+        //         data: {
+        //             id: this.$route.query.id
+        //         }
+        //     })
+        //         .then(res => {
+        //             alert(res.data.message);
+        //             window.location.href = window.location.pathname.slice(0, -8) + '/?page=1';
+        //             // 삭제 후 그 게시판의 1페이지로 이동
+        //         })
+        //         .catch(err => {
+        //             alert(err);
+        //         });
+        // },
         editcontent() {
             this.editable = true;
         },
-        editcontentfinish() {
-            // 수정완료 버튼을 눌렀을 때, 수정된 내용이 저장되야 되기 때문에 back서버와 통신 필요
-            axios({
-                url: 'http://127.0.0.1:52273/content/edit/',
-                method: 'POST',
-                data: {
-                    id: this.$route.query.id,
-                    text: this.text
-                }
-            })
-                .then(res => {
-                    alert(res.data.message);
-                    this.editable = false;
-                })
-                .catch(err => {
-                    alert(err);
-                });
-        },
+        // editcontentfinish() {
+        //     // 수정완료 버튼을 눌렀을 때, 수정된 내용이 저장되야 되기 때문에 back서버와 통신 필요
+        //     axios({
+        //         url: 'http://127.0.0.1:52273/content/edit/',
+        //         method: 'POST',
+        //         data: {
+        //             id: this.$route.query.id,
+        //             text: this.text
+        //         }
+        //     })
+        //         .then(res => {
+        //             alert(res.data.message);
+        //             this.editable = false;
+        //         })
+        //         .catch(err => {
+        //             alert(err);
+        //         });
+        // },
         movetomain() {
             window.location.href = '/';
         }
