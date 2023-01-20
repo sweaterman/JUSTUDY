@@ -88,7 +88,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import TextButton from '../../components/common/TextButton.vue';
 
 export default {
@@ -101,34 +100,34 @@ export default {
         };
     },
     methods: {
-        onSubmitForm() {
-            if (this.$refs.form.validate()) {
-                // 위에 써준 rules를 만족하면 실행
-                axios({
-                    url: 'http://127.0.0.1:52273/content/write/',
-                    method: 'POST',
-                    data: {
-                        boardnum: this.$route.params.id,
-                        writer: this.writer,
-                        title: this.title,
-                        text: this.text
-                    }
-                })
-                    .then(res => {
-                        alert(res.data.message);
-                        window.history.back();
-                    })
-                    .catch(err => {
-                        alert(err);
-                    });
-            }
-        },
-        moveback() {
-            window.history.back();
-        },
-        movetomain() {
-            window.location.href = '/';
-        }
+        // onSubmitForm() {
+        //     if (this.$refs.form.validate()) {
+        //         // 위에 써준 rules를 만족하면 실행
+        //         axios({
+        //             url: 'http://127.0.0.1:52273/content/write/',
+        //             method: 'POST',
+        //             data: {
+        //                 boardnum: this.$route.params.id,
+        //                 writer: this.writer,
+        //                 title: this.title,
+        //                 text: this.text
+        //             }
+        //         })
+        //             .then(res => {
+        //                 alert(res.data.message);
+        //                 window.history.back();
+        //             })
+        //             .catch(err => {
+        //                 alert(err);
+        //             });
+        //     }
+        // },
+        // moveback() {
+        //     window.history.back();
+        // },
+        // movetomain() {
+        //     window.location.href = '/community';
+        // }
     }
 };
 </script>
