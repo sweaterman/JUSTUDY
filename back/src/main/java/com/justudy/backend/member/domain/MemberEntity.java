@@ -153,7 +153,10 @@ public class MemberEntity {
         introduction = memberEditor.getIntroduction();
     }
 
-    public void deleteMember() {
-        isDeleted = true;
+    public void banMember() {
+        if (role.equals(MemberRole.ADMIN)) {
+            throw new ForbiddenRequest("role", "ADMIN 유저는 밴할 수 없습니다.");
+        }
+        isBanned = true;
     }
 }

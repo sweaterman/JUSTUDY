@@ -1,11 +1,13 @@
 package com.justudy.backend.member.service;
 
-import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.member.domain.MemberEntity;
+import com.justudy.backend.member.domain.MemberRole;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.exception.ConflictRequest;
+import com.justudy.backend.member.exception.ForbiddenRequest;
 import com.justudy.backend.member.exception.InvalidRequest;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +21,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.justudy.backend.member.dto.request.MemberCreate.MemberCreateBuilder;
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
 public class MemberServiceTest {
@@ -192,6 +194,49 @@ public class MemberServiceTest {
         assertThat(savedMember.getDream()).isEqualTo(editRequest.getDream());
         assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
     }
+
+
+    @Test
+    @DisplayName("회원 밴")
+    void bandMember() {
+        //given
+        MemberEntity adminUser = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+        adminUser.changeRole(MemberRole.ADMIN);
+
+        MemberEntity targetUser = makeTestMember("user", "기본유저", "1234567");
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(adminUser));
+        BDDMockito.given(memberRepository.findById(2L))
+                .willReturn(Optional.of(targetUser));
+
+        //when
+        memberService.banMember(1L, 2L);
+
+        //then
+        assertThat(memberRepository.findById(2L).get().isBanned()).isTrue();
+    }
+    @Test
+    @DisplayName("AdminUser가 AdminUser를 삭제하면 ForbiddenError 발생")
+    void bandAdminMember() {
+        //given
+        MemberEntity adminUser = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+        adminUser.changeRole(MemberRole.ADMIN);
+
+        MemberEntity targetUser = makeTestMember("user", "기본유저", "1234567");
+        targetUser.changeRole(MemberRole.ADMIN);
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(adminUser));
+        BDDMockito.given(memberRepository.findById(2L))
+                .willReturn(Optional.of(targetUser));
+
+        //expected
+        assertThatThrownBy(() -> memberService.banMember(1L, 2L))
+                .isInstanceOf(ForbiddenRequest.class)
+                .hasMessage("접근 권한이 없습니다.");
+    }
+
 
 
     private MemberCreateBuilder makeMemberCreateBuilder() {

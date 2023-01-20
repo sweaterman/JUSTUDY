@@ -54,13 +54,14 @@ public class MemberService {
         return createModifyPageResponse(findMember);
     }
 
-    public Long deleteMember(Long loginSequence, Long memberSequence) {
+    @Transactional
+    public Long banMember(Long loginSequence, Long memberSequence) {
         validateSessionUser(loginSequence, MemberRole.ADMIN);
 
-        MemberEntity findMember = memberRepository.findById(memberSequence)
+        MemberEntity targetMember = memberRepository.findById(memberSequence)
                 .orElseThrow(() -> new MemberNotFound());
-        findMember.deleteMember();
-        return findMember.getSequence();
+        targetMember.banMember();
+        return targetMember.getSequence();
     }
 
     @Transactional

@@ -57,10 +57,10 @@ public class MemberController {
     }
 
     @DeleteMapping("/admin/members/{memberSequence}")
-    public ResponseEntity<Void> deleteMember(@PathVariable Long memberSequence, HttpSession session) {
+    public ResponseEntity<Void> banMember(@PathVariable Long memberSequence, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
-        memberService.deleteMember(loginSequence, memberSequence);
+        memberService.banMember(loginSequence, memberSequence);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
