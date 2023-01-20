@@ -40,7 +40,7 @@ public class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("회원정보 수정페이지 반환")
+    @DisplayName("GET 회원정보 수정페이지 반환 API")
     void getModifyPage() {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);

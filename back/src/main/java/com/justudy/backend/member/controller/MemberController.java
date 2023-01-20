@@ -31,18 +31,18 @@ public class MemberController {
 
     /**
      * 마이페이지 멤버 정보 API
-     * @param HttpSession session에서 memberSequence를 찾기 위해
+     * @param session session에서 memberSequence를 찾기 위해
      * @return MypageRespoonse 마이페이지 멤버 응답 객체
      */
     @GetMapping("/mypage/member")
-    public MypageResponse mypageMember(HttpSession session) {
+    public MypageResponse getMypageInfomation(HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
         return memberService.getMypage(loginSequence);
     }
 
     @GetMapping("/mypage/modify")
-    public ModifyPageResponse memberModifyPage(HttpSession session) {
+    public ModifyPageResponse getModifyPageInformation(HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
         return memberService.getModifyPage(loginSequence);
