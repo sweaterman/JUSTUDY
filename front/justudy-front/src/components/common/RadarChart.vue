@@ -12,13 +12,13 @@
             :height="height"
         />
         <div v-if="hasButton">
-            <YellowButton :buttonLength="200" :height="70" :fontSize="36" :content="`${buttonContent}`" standard="px" />
+            <BasicButton :buttonLength="200" :height="70" :fontSize="36" :content="`${buttonContent}`" standard="px" />
         </div>
     </div>
 </template>
 <script>
 import {Radar} from 'vue-chartjs';
-import YellowButton from './YellowButton.vue';
+import BasicButton from '@/components/common/BasicButton.vue';
 import {Chart as ChartJS, Title, Tooltip, Legend, PointElement, LineElement, RadialLinearScale, registerables} from 'chart.js';
 
 ChartJS.register(Title, Tooltip, Legend, PointElement, RadialLinearScale, LineElement, ...registerables);
@@ -26,7 +26,7 @@ export default {
     name: 'RadarChart',
     components: {
         Radar,
-        YellowButton
+        BasicButton
     },
     props: {
         chartId: {
