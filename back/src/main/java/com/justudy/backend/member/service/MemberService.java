@@ -113,6 +113,7 @@ public class MemberService {
 
         return ModifyPageResponse.builder()
                 .username(member.getUsername())
+                .nickname(member.getNickname())
                 .region(member.getRegion().getValue())
                 .level(member.getLevel().getValue())
                 .ssafyId(member.getSsafyId())
