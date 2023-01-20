@@ -1,6 +1,7 @@
 package com.justudy.backend.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.justudy.backend.common.enum_util.EnumMapper;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.common.enum_util.Level;
 import com.justudy.backend.member.domain.MemberStatus;
@@ -35,6 +36,9 @@ public class MemberControllerTest {
 
     @MockBean
     MemberService memberService;
+
+    @MockBean
+    EnumMapper enumMapper;
 
     @Test
     @DisplayName("POST /register 요청")
