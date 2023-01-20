@@ -1,14 +1,13 @@
 <template>
     <v-app>
-        <v-row>
+        <!-- 자유게시판 / 검색 기능 / 글쓰기 -->
+        <v-row :style="{marginTop: '-8%'}">
             <v-col cols="12" md="2" />
 
             <v-col cols="12" md="8">
                 <v-row>
                     <v-col cols="12" md="2">
-                        <v-app-bar-title>
-                            <div align="left" :style="{fontSize: 'xx-large'}">스터디 게시판</div>
-                        </v-app-bar-title>
+                        <div align="left" :style="{fontSize: 'xx-large'}">스터디 게시판</div>
                     </v-col>
                     <v-col cols="12" md="2" align="right">
                         <v-select :items="searchoption" v-model="searchoptionselected" :style="{width: '150px'}" />
@@ -31,7 +30,7 @@
         </v-row>
 
         <!-- 글목록 -->
-        <v-row>
+        <v-row :style="{marginTop: '-6%'}">
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <v-row>
@@ -94,8 +93,6 @@
     </v-app>
 </template>
 <script>
-import axios from 'axios'; // backend와 axios 통신을 위해 필요
-
 export default {
     components: {},
     data() {
@@ -105,65 +102,32 @@ export default {
         };
     },
     computed: {
-        // computed는 계산 목적으로 사용된다고 보면 됨
-        totalpage() {
-            if (this.cnt == 0) {
-                // 현재 게시판 글 갯수가 0개일때 총 페이지가 0이 되는거 방지
-                return 1;
-            } else {
-                return Math.ceil(this.cnt / 10); // (글 갯수/10)한 후 올림 연산을 통해 총 페이지 계산
-            }
-        }
-    },
-    mounted() {
-        // mounted는 페이지가 켜질때 실행됨, 페이지가 켜질때 글 리스트들을 db에서 불러옴
-        axios({
-            // 게시글 작성자, 제목, 작성일 가져오기
-            url: 'http://127.0.0.1:52273/content/boardlist/',
-            method: 'POST',
-            data: {
-                // back 서버에 현재 게시판번호와 페이지번호를 넘겨줘야 해당하는 글 리스트 불러올 수 있음
-                boardnum: this.$route.params.id,
-                page: this.$route.query.page
-            }
-        })
-            .then(res => {
-                this.contentlist = res.data;
-            })
-            .catch(err => {
-                alert(err);
-            });
-        axios({
-            // 현재 게시판 글 개수 가져오기
-            url: 'http://127.0.0.1:52273/content/boardlistcnt/',
-            method: 'POST',
-            data: {
-                boardnum: this.$route.params.id
-            }
-        })
-            .then(res => {
-                this.cnt = res.data;
-            })
-            .catch(err => {
-                alert(err);
-            });
+        // // computed는 계산 목적으로 사용된다고 보면 됨
+        // totalpage() {
+        //     if (this.cnt == 0) {
+        //         // 현재 게시판 글 갯수가 0개일때 총 페이지가 0이 되는거 방지
+        //         return 1;
+        //     } else {
+        //         return Math.ceil(this.cnt / 10); // (글 갯수/10)한 후 올림 연산을 통해 총 페이지 계산
+        //     }
+        // }
     },
     methods: {
         // 페이지 이동시 params로 게시판 구분, query로 페이지 구분
         movetoboard1() {
-            window.location.href = '/study/community/1/?page=1';
+            window.location.href = '/community/1/?page=1';
         },
         movetoboard2() {
-            window.location.href = '/study/community/2/?page=1';
+            window.location.href = '/community/2/?page=1';
         },
         movetoboard3() {
-            window.location.href = '/study/community/3/?page=1';
+            window.location.href = '/community/3/?page=1';
         },
         movetomain() {
-            window.location.href = '/study/community';
+            window.location.href = '/community';
         },
         movetowrite() {
-            window.location.href = '/study/community/3/write';
+            window.location.href = '/community/3/write';
             // window.location.href = window.location.pathname + 'write';
             // window.location.pathname이 현재 주소를 의미
             // 여기다 write를 붙여주면 글 작성 페이지로 라우팅 되게 됨

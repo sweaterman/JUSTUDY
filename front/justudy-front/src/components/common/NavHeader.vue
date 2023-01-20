@@ -21,14 +21,14 @@
             <a href="/" class="logo"><img alt="Vue logo" width="80" height="80" src="../../assets/logo.jpg" /></a>
         </v-col>
 
-        <v-col cols="12" md="1" justify="center" align="center"> 스터디 </v-col>
+        <v-col @click="movetostudysearch" cols="12" md="1" justify="center" align="center"> 스터디 </v-col>
         <v-col @click="movetocommunity" cols="12" md="1" justify="center" align="center"> 커뮤니티 </v-col>
         <v-col @click="movetocommunitycontent" cols="12" md="1" justify="center" align="center"> 게시판 상세 ** </v-col>
         <v-col cols="12" md="1" justify="center" align="center"> 랭킹 </v-col>
 
         <v-col cols="12" md="2" />
 
-        <v-col cols="12" md="1" justify="center" align="center"> 마이스터디 </v-col>
+        <v-col @click="movetomystudy" cols="12" md="1" justify="center" align="center"> 마이스터디 </v-col>
         <v-col @click="movetomypage" cols="12" md="1" justify="center" align="center"> 마이페이지 </v-col>
         <v-col @click="movetologin" cols="12" md="1" justify="center" align="center"> 로그인 ** </v-col>
 
@@ -54,6 +54,12 @@ export default {
         },
         movetologin() {
             window.location.href = ' /login';
+        },
+        movetostudysearch() {
+            window.location.href = ' /study/search';
+        },
+        movetomystudy() {
+            window.location.href = ' /study/mystudy';
         }
     }
 };
