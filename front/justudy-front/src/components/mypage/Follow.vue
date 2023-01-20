@@ -1,6 +1,6 @@
 <template>
     <div>
-        <YellowButton :buttonLength="150" :height="60" :fontSize="36" :content="`${buttonContent}`" standard="px" />
+        <BasicButton :buttonLength="150" :height="60" :fontSize="36" :content="`${buttonContent}`" standard="px" />
         <!-- 여기에 사진들 배너 .... -->
         <div class="d-flex align-center" style="width: 90%; margin-left: 5%; margin-right: 5%; overflow: hidden">
             <div :style="`margin-left : ${bannerPosition}px ; transition: 0.5s`"></div>
@@ -19,12 +19,12 @@
     </div>
 </template>
 <script>
-import YellowButton from './YellowButton.vue';
+import BasicButton from '@/components/common/BasicButton.vue';
 import Profile from './Profile.vue';
 export default {
     name: 'FollowFollowing',
     components: {
-        YellowButton,
+        BasicButton,
         Profile
     },
     data() {

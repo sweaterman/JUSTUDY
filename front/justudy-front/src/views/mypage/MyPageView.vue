@@ -70,16 +70,15 @@
     </v-app>
 </template>
 <script>
-// import YellowButton from "../components/mypage/YellowButton.vue"
-import Boundary from '@/components/mypage/Boundary.vue';
+import Boundary from '@/components/common/Boundary.vue';
 import ListBookMark from '@/components/mypage/ListBookMark.vue';
 import StudyAnalyze from '@/components/mypage/StudyAnalyze.vue';
 import RecommandStudy from '@/components/mypage/RecommandStudy.vue';
 import ProfileDetail from '@/components/mypage/ProfileDetail.vue';
 import Follow from '@/components/mypage/Follow.vue';
 import ProfilePicture from '@/components/mypage/ProfilePicture.vue';
-import Calendar from '@/components/mypage/Calendar.vue';
-import RadarChart from '@/components/mypage/RadarChart.vue';
+import Calendar from '@/components/common/Calendar.vue';
+import RadarChart from '@/components/common/RadarChart.vue';
 import ModalComponent from '@/components/mypage/ModalComponent.vue';
 
 export default {
@@ -96,7 +95,6 @@ export default {
         // },
     },
     components: {
-        // YellowButton,
         Boundary,
         ListBookMark,
         StudyAnalyze,

@@ -2,16 +2,16 @@
     <div>
         <hr />
         <div v-if="hasContent" :style="`margin-top : -33px; margin-bottom : 33px; margin-left : ${startPoint}${standard}`">
-            <YellowButton :buttonLength="306" :height="66" standard="px" :content="`${content}`" />
+            <BasicButton :buttonLength="306" :height="66" standard="px" :content="`${content}`" />
         </div>
     </div>
 </template>
 <script>
-import YellowButton from '../mypage/YellowButton.vue';
+import BasicButton from '@/components/common/BasicButton.vue';
 export default {
     name: 'BoundaryLine',
     components: {
-        YellowButton
+        BasicButton
     },
     props: {
         hasContent: {

@@ -29,7 +29,7 @@
 <script>
 import ProfilePicture from './ProfilePicture.vue';
 
-import RadarChart from './RadarChart.vue';
+import RadarChart from '@/components/common/RadarChart.vue';
 export default {
     name: 'ModalComponent',
     components: {
