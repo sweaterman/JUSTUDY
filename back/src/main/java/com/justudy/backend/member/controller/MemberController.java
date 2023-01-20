@@ -56,6 +56,21 @@ public class MemberController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @DeleteMapping("/mypage/delete")
+    public ResponseEntity<Void> quitMember(HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        memberService.deleteMember(loginSequence);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    /**
+     * ADMIN 유저의 회원 삭제 API
+     * @param memberSequence - Target Member Sequence
+     * @param session
+     *
+     */
     @DeleteMapping("/admin/members/{memberSequence}")
     public ResponseEntity<Void> banMember(@PathVariable Long memberSequence, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);

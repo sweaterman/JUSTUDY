@@ -159,4 +159,14 @@ public class MemberEntity {
         }
         isBanned = true;
     }
+
+    public void deleteMember() {
+        isDeleted = true;
+    }
+
+    public void changeRole(MemberRole role) {
+        this.role = role;
+    }
+
+
 }

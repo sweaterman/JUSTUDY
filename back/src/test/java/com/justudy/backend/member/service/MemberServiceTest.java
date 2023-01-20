@@ -195,6 +195,21 @@ public class MemberServiceTest {
         assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
     }
 
+    @Test
+    @DisplayName("회원 탈퇴")
+    void deleteMember() {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(savedMember));
+
+        //when
+        memberService.deleteMember(1L);
+
+        //then
+        assertThat(memberRepository.findById(1L).get().isDeleted()).isTrue();
+    }
 
     @Test
     @DisplayName("회원 밴")

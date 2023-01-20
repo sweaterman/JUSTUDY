@@ -65,6 +65,14 @@ public class MemberService {
     }
 
     @Transactional
+    public Long deleteMember(Long loginSequence) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(() -> new MemberNotFound());
+        findMember.deleteMember();
+        return findMember.getSequence();
+    }
+
+    @Transactional
     public Long editMember(Long loginSequence, MemberEdit editRequest) {
         MemberEntity findMember = memberRepository.findById(loginSequence)
                 .orElseThrow(() -> new MemberNotFound());
