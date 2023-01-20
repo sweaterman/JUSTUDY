@@ -22,7 +22,7 @@
 
                         <v-row>
                             <v-col>
-                                <div>하이</div>
+                                <KingOfStudy />
                             </v-col>
                         </v-row>
                     </v-container>
@@ -36,13 +36,15 @@
 </template>
 
 <script>
+//스터디 정보 한번에 다받아서 하부 컴포넌트로 보내기
 // import {mapState} from 'vuex';
 import StudyRoomIcon from '@/components/study/StudyRoomIcon.vue';
 import StudyInfo from '@/components/study/StudyInfo.vue';
+import KingOfStudy from '@/components/study/KingOfStudy.vue';
 
 export default {
     name: 'SearchStudyView',
-    components: {StudyRoomIcon, StudyInfo},
+    components: {StudyRoomIcon, StudyInfo, KingOfStudy},
     data() {
         return {};
     }
