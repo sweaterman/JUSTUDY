@@ -1,5 +1,7 @@
 package com.justudy.backend.community.domain;
 
+import com.justudy.backend.member.domain.MemberEntity;
+import com.justudy.backend.member.domain.QMemberEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,8 +18,9 @@ public class CommunityEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "community_seq")
     private Long sequence;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_seq")
-    private Long member_seq;
+    private MemberEntity member;
     @JoinColumn(name = "category_seq")
     private Long category_seq;
     @Column(name = "community_title")
@@ -30,29 +33,26 @@ public class CommunityEntity {
     private LocalDateTime createdTime;
     @Column(name = "community_modified_time")
     private LocalDateTime modifiedTime;
-    @Column(name = "community_is_deleted",columnDefinition = "TINYINT(1)")
+    @Column(name = "community_is_deleted", columnDefinition = "TINYINT(1)")
     private Boolean isDeleted;
-    @Column(name = "community_is_highlighted",columnDefinition = "TINYINT(1)")
+    @Column(name = "community_is_highlighted", columnDefinition = "TINYINT(1)")
     private Boolean isHighlighted;
+    @Column(name = "community_week_love_count")
+    private Integer weekLoveCount;
 
 
-    public void changeTitle(String title){
-        this.title=title;
+    public void changeViewCount(Integer viewCount) {
+        this.viewCount = viewCount;
     }
-    public void changeContent(String content){
-        this.content=content;
-    }
-    public void changeViewCount(Integer viewCount){
-        this.viewCount=viewCount;
-    }
-    public void changeModifiedTime(LocalDateTime modifiedTime){
-        this.modifiedTime=modifiedTime;
+
+    public void changeWeekLoveCount(Integer weekLoveCount) {
+        this.weekLoveCount = weekLoveCount;
     }
 
     public void update(String title, String content, Integer viewCount, LocalDateTime modifiedTime) {
-        this.title=title;
-        this.content=content;
-        this.viewCount=viewCount;
-        this.modifiedTime=modifiedTime;
+        this.title = title;
+        this.content = content;
+        this.viewCount = viewCount;
+        this.modifiedTime = modifiedTime;
     }
 }

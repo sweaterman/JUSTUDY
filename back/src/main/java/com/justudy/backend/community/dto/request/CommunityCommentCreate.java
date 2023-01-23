@@ -1,5 +1,6 @@
 package com.justudy.backend.community.dto.request;
 
+import com.justudy.backend.community.domain.CommunityCommentEntity;
 import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.member.domain.MemberEntity;
 import lombok.AllArgsConstructor;
@@ -11,23 +12,19 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @Builder
-public class CommunityCreate {
+public class CommunityCommentCreate {
     private MemberEntity member;
-    private Long category_seq;
-    private String title;
+    private CommunityEntity community;
     private String content;
-    private LocalDateTime createdTime;
-    private Boolean isHighlighted;
+    private Long parentSeq;
 
-    public CommunityEntity toEntity() {
-        return CommunityEntity.builder()
+    public CommunityCommentEntity toEntity() {
+        return CommunityCommentEntity.builder()
                 .member(member)
-                .category_seq(category_seq)
-                .title(title)
+                .community(community)
                 .content(content)
-                .viewCount(0)
-                .createdTime(createdTime)
-                .isHighlighted(isHighlighted)
+                .parentSeq(parentSeq)
+                .createdTime(LocalDateTime.now())
                 .build();
     }
 }

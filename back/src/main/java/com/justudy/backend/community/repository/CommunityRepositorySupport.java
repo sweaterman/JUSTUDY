@@ -1,9 +1,7 @@
 package com.justudy.backend.community.repository;
 
 import com.justudy.backend.community.domain.CommunityEntity;
-import com.justudy.backend.community.domain.LoveEntity;
-import com.justudy.backend.community.dto.request.BookmarkCreate;
-import com.justudy.backend.community.dto.request.LoveCreate;
+import com.justudy.backend.community.dto.response.CommunityResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,5 +16,7 @@ public interface CommunityRepositorySupport {
 
     Page<CommunityEntity> findAll(Pageable pageable,String category);
 
+    Long noticeCount();
 
+    List<CommunityEntity> findPopularCommunity();
 }

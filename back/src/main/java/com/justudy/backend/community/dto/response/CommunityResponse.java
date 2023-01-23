@@ -1,6 +1,7 @@
 package com.justudy.backend.community.dto.response;
 
 import com.justudy.backend.community.domain.CommunityEntity;
+import com.justudy.backend.member.domain.MemberEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CommunityResponse {
     private Long sequence;
-    private Long member_seq;
+    private MemberEntity member;
     private Long category_seq;
     private String title;
     private String content;
@@ -21,9 +22,9 @@ public class CommunityResponse {
     private Integer loveCount;
 
     @Builder
-    public CommunityResponse(Long sequence, Long member_seq, Long category_seq, String title, String content, Integer viewCount, LocalDateTime createdTime, LocalDateTime modifiedTime, Integer loveCount) {
+    public CommunityResponse(Long sequence, MemberEntity member, Long category_seq, String title, String content, Integer viewCount, LocalDateTime createdTime, LocalDateTime modifiedTime, Integer loveCount) {
         this.sequence = sequence;
-        this.member_seq = member_seq;
+        this.member = member;
         this.category_seq = category_seq;
         this.title = title;
         this.content = content;
@@ -38,7 +39,7 @@ public class CommunityResponse {
     public static CommunityResponse makeBuilder(CommunityEntity entity,Integer loveCount) {
         return CommunityResponse.builder()
                 .sequence(entity.getSequence())
-                .member_seq(entity.getMember_seq())
+                .member(entity.getMember())
                 .category_seq(entity.getCategory_seq())
                 .title(entity.getTitle())
                 .content(entity.getContent())
