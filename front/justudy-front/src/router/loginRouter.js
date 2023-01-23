@@ -1,10 +1,10 @@
-import SignIn from '../views/Login/SignIn.vue';
+import SignUp from '../views/Login/SignUp.vue';
 import LogIn from '../views/Login/LogIn.vue';
 export default [
     {
-        path: '/signin',
-        name: 'SignIn',
-        component: SignIn
+        path: '/signUp',
+        name: 'SignUp',
+        component: SignUp
     },
     {
         path: '/login',

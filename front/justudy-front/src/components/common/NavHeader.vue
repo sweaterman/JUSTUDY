@@ -1,101 +1,75 @@
-<!-- <template>
-    <header :style="{marginTop: '5%', marginBottom: '5%'}">
-        <h1>
-            <a href="#" class="logo"><img alt="Vue logo" src="../../assets/logo.jpg" width="80" /></a>
-        </h1>
-        <div class="menuWrap">
-            <ul class="menu">
-                <li><a href="javascript:;">메뉴1</a></li>
-                <li><a href="javascript:;">메뉴2</a></li>
-                <li><a href="javascript:;">메뉴3</a></li>
-                <li><a href="javascript:;">메뉴4</a></li>
-            </ul>
-        </div>
-    </header>
-</template> -->
 <template>
-    <v-row :style="{marginTop: '3%'}">
-        <v-col cols="12" md="1" />
+    <v-container>
+        <v-row>
+            <!-- 좌측 Nav -->
+            <v-col cols="12" md="6" align="center">
+                <v-row justify="center">
+                    <v-col class="nav" cols="12" md="2">
+                        <a href="/" class="logo"><img alt="Vue logo" width="80" height="80" src="../../assets/logo.jpg" /></a>
+                    </v-col>
+                    <v-col class="nav" @click="moveTo('/study/search')" cols="3" md="2"><div class="hover">스터디</div></v-col>
+                    <v-col class="nav" @click="moveTo('/community')" cols="3" md="2"><div class="hover">커뮤니티</div></v-col>
+                    <v-col class="nav" @click="moveTo('/timer/study-start')" cols="3" md="2"><div class="hover">타이머</div></v-col>
+                    <v-col class="nav" cols="3" md="2"><div class="hover">랭킹</div></v-col>
+                    <v-col class="nav" cols="12" md="2"></v-col>
+                </v-row>
+            </v-col>
 
-        <v-col cols="12" md="1" justify="center" align="center">
-            <a href="/" class="logo"><img alt="Vue logo" width="80" height="80" src="../../assets/logo.jpg" /></a>
-        </v-col>
+            <!-- 우측 Nav (login X) -->
+            <v-col class="nav" cols="12" md="6" v-if="!isLogin">
+                <v-row>
+                    <v-col cols="0" md="8"></v-col>
+                    <v-col class="nav" @click="moveTo('/login')" cols="6" md="2"><div class="hover">로그인</div></v-col>
+                    <v-col class="nav" @click="moveTo('/signUp')" cols="6" md="2"><div class="hover">회원가입</div></v-col>
+                </v-row>
+            </v-col>
 
-        <v-col @click="movetostudysearch" cols="12" md="1" justify="center" align="center"> 스터디 </v-col>
-        <v-col @click="movetocommunity" cols="12" md="1" justify="center" align="center"> 커뮤니티 </v-col>
-        <v-col @click="movetocommunitycontent" cols="12" md="1" justify="center" align="center"> 게시판 상세 ** </v-col>
-        <v-col cols="12" md="1" justify="center" align="center"> 랭킹 </v-col>
-
-        <v-col cols="12" md="2" />
-
-        <v-col @click="movetomystudy" cols="12" md="1" justify="center" align="center"> 마이스터디 </v-col>
-        <v-col @click="movetomypage" cols="12" md="1" justify="center" align="center"> 마이페이지 </v-col>
-        <v-col @click="movetologin" cols="12" md="1" justify="center" align="center"> 로그인 ** </v-col>
-
-        <v-col cols="12" md="1" />
-    </v-row>
+            <!-- 우측 Nav (login O) -->
+            <v-col class="nav" cols="12" md="6" v-if="isLogin">
+                <v-row>
+                    <v-col cols="0" md="5"> </v-col>
+                    <v-col cols="12" md="7">
+                        <v-row>
+                            <v-col class="nav" @click="moveTo('/study/mystudy')" cols="4"><div class="hover">마이스터디</div></v-col>
+                            <v-col class="nav" @click="moveTo('/mypage')" cols="4"><div class="hover">마이페이지</div></v-col>
+                            <v-col class="nav" @click="moveTo('/')" cols="4"><div class="hover">로그아웃</div></v-col>
+                        </v-row>
+                    </v-col>
+                </v-row>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
-// import TextButton from '../../components/common/TextButton.vue';
-
 export default {
     name: 'NavHeaderBar',
     components: {},
+    data() {
+        return {
+            isLogin: false
+        };
+    },
     methods: {
-        movetocommunity() {
-            window.location.href = ' /community';
-        },
-        movetomypage() {
-            window.location.href = ' /mypage';
-        },
-        movetocommunitycontent() {
-            window.location.href = ' /community/3/content';
-        },
-        movetologin() {
-            window.location.href = ' /login';
-        },
-        movetostudysearch() {
-            window.location.href = ' /study/search';
-        },
-        movetomystudy() {
-            window.location.href = ' /study/mystudy';
+        moveTo(link) {
+            window.location.href = link;
         }
     }
 };
 </script>
 
 <style scoped>
-header {
-    width: 100%;
-    text-align: center;
-    position: relative;
-    height: 120px;
-    border-bottom: 1px solid #35495e;
-}
-header h1 {
-    position: absolute;
-    top: 0;
-    left: 100px;
-}
-header ul.menu:after {
-    display: block;
-    clear: both;
-    content: '';
-}
-header ul.menu {
-    position: absolute;
-    top: 20px;
-    right: 50px;
-}
-header ul.menu li {
-    float: left;
-    padding: 10px 20px;
-    list-style: none;
+.nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-a {
-    text-decoration: none;
-    color: #333;
+.hover {
+    cursor: pointer;
+}
+
+.hover:hover {
+    color: gold;
 }
 </style>

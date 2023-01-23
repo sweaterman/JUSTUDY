@@ -1,6 +1,7 @@
 <template>
     <div>
         <NavHeader />
+        <v-divider></v-divider>
         <router-view></router-view>
         <NavFooter />
     </div>

@@ -223,7 +223,7 @@
 import TextButton from '../../components/common/TextButton.vue';
 
 export default {
-    name: 'SignInView',
+    name: 'SignUpView',
     components: {
         TextButton
     },
