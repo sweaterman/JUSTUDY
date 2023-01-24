@@ -9,6 +9,7 @@ import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
+import com.justudy.backend.member.dto.response.ProfileResponse;
 import com.justudy.backend.member.exception.ConflictRequest;
 import com.justudy.backend.member.exception.ForbiddenRequest;
 import com.justudy.backend.member.exception.InvalidRequest;
@@ -52,6 +53,13 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFound());
 
         return createModifyPageResponse(findMember);
+    }
+
+    public ProfileResponse getProfile(Long memberSequence) {
+        MemberEntity findMember = memberRepository.findById(memberSequence)
+                .orElseThrow(() -> new MemberNotFound());
+
+        return createProfileResponse(findMember);
     }
 
     @Transactional
@@ -102,6 +110,16 @@ public class MemberService {
         if (!findMember.getRole().equals(role)) {
             throw new ForbiddenRequest();
         }
+    }
+
+    private ProfileResponse createProfileResponse(MemberEntity member) {
+        return ProfileResponse.builder()
+                .nickname(member.getNickname())
+                .category(null)
+                .dream(member.getDream())
+                .introduction(member.getIntroduction())
+                .level(member.getLevel().getValue())
+                .build();
     }
 
     private ModifyPageResponse createModifyPageResponse(MemberEntity member) {

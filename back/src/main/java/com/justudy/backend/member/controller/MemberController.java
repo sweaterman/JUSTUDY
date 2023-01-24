@@ -5,6 +5,7 @@ import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
+import com.justudy.backend.member.dto.response.ProfileResponse;
 import com.justudy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +55,11 @@ public class MemberController {
 
         memberService.editMember(loginSequence, request);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/profiles/{memberSequence}")
+    public ProfileResponse getProfile(@PathVariable Long memberSequence) {
+        return memberService.getProfile(memberSequence);
     }
 
     @DeleteMapping("/mypage/delete")
