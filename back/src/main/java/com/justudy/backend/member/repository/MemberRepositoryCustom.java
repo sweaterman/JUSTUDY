@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface MemberRepositoryCustom {
 
-    Optional<Tuple> hasUserId(String userId);
+    Optional<Tuple> findPasswordByUserId(String userId);
 
 
 }

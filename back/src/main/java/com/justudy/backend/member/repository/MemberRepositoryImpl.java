@@ -15,9 +15,9 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 
     @Override
-    public Optional<Tuple> hasUserId(String userId) {
+    public Optional<Tuple> findPasswordByUserId(String userId) {
         return Optional.ofNullable(queryFactory
-                .select(memberEntity.userId, memberEntity.password)
+                .select(memberEntity.sequence, memberEntity.password)
                 .from(memberEntity)
                 .where(memberEntity.userId.eq(userId))
                 .fetchOne());
