@@ -4,6 +4,7 @@
             parseInt((allTime % 3600) / 60) >= 10 ? parseInt((allTime % 3600) / 60) : '0' + parseInt((allTime % 3600) / 60)
         }}:{{ allTime % 60 >= 10 ? allTime % 60 : '0' + (allTime % 60) }}
     </div>
+    <!-- 디지털클락 -->
 </template>
 <script>
 export default {
