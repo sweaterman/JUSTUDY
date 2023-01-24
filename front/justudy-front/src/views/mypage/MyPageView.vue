@@ -75,7 +75,7 @@ import ListBookMark from '@/components/mypage/ListBookMark.vue';
 import StudyAnalyze from '@/components/mypage/StudyAnalyze.vue';
 import RecommandStudy from '@/components/mypage/RecommandStudy.vue';
 import ProfileDetail from '@/components/mypage/ProfileDetail.vue';
-import Follow from '@/components/mypage/Follow.vue';
+import Follow from '@/components/common/Follow.vue';
 import ProfilePicture from '@/components/mypage/ProfilePicture.vue';
 import Calendar from '@/components/common/Calendar.vue';
 import RadarChart from '@/components/common/RadarChart.vue';

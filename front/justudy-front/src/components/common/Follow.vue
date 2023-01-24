@@ -20,7 +20,7 @@
 </template>
 <script>
 import BasicButton from '@/components/common/BasicButton.vue';
-import Profile from './Profile.vue';
+import Profile from '@/components/mypage/Profile.vue';
 export default {
     name: 'FollowFollowing',
     components: {
