@@ -1,9 +1,14 @@
 package com.justudy.backend.member.service;
 
+import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.member.domain.MemberEntity;
-import com.justudy.backend.member.domain.MemberRegion;
+import com.justudy.backend.member.domain.MemberRole;
 import com.justudy.backend.member.dto.request.MemberCreate;
+import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
+import com.justudy.backend.member.exception.ConflictRequest;
+import com.justudy.backend.member.exception.ForbiddenRequest;
+import com.justudy.backend.member.exception.InvalidRequest;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +22,7 @@ import java.util.Optional;
 
 import static com.justudy.backend.member.dto.request.MemberCreate.MemberCreateBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
 public class MemberServiceTest {
@@ -34,7 +40,7 @@ public class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("회원정보 수정페이지 반환")
+    @DisplayName("GET 회원정보 수정페이지 반환 API")
     void getModifyPage() {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
@@ -63,10 +69,12 @@ public class MemberServiceTest {
         MemberCreate request = makeMemberCreateBuilder()
                 .userId(USER_ID)
                 .build();
-        boolean result = memberService.isDuplicatedUserId(request.getUserId());
 
-        //then
-        assertThat(result).isTrue();
+        //expected
+        assertThatThrownBy(()-> memberService.saveMember(request))
+                .isInstanceOf(ConflictRequest.class)
+                .hasMessage("중복된 값이 존재합니다.");
+
     }
 
     @Test
@@ -82,10 +90,11 @@ public class MemberServiceTest {
         MemberCreate request = makeMemberCreateBuilder()
                 .nickname(NICKNAME)
                 .build();
-        boolean result = memberService.isDuplicatedNickname(request.getNickname());
 
-        //then
-        assertThat(result).isTrue();
+        //expected
+        assertThatThrownBy(()-> memberService.saveMember(request))
+                .isInstanceOf(ConflictRequest.class)
+                .hasMessage("중복된 값이 존재합니다.");
     }
 
     @Test
@@ -101,11 +110,148 @@ public class MemberServiceTest {
         MemberCreate request = makeMemberCreateBuilder()
                 .ssafyId(SSAFY_ID)
                 .build();
-        boolean result = memberService.isDuplicatedSsafyId(request.getSsafyId());
+
+        //expected
+        assertThatThrownBy(()-> memberService.saveMember(request))
+                .isInstanceOf(ConflictRequest.class)
+                .hasMessage("중복된 값이 존재합니다.");
+    }
+
+    @Test
+    @DisplayName("비밀번호 검증")
+    void validPassword() {
+        //given
+        MemberCreate request = MemberCreate.builder()
+                .password("1234")
+                .passwordCheck("123")
+                .build();
+
+        //expected
+        assertThatThrownBy(() -> memberService.saveMember(request))
+                .isInstanceOf(InvalidRequest.class)
+                .hasMessage("잘못된 요청입니다.");
+    }
+
+    @Test
+    @DisplayName("멤버 업데이트")
+    void editMember() {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(savedMember));
+
+        MemberEdit editRequest = MemberEdit.builder()
+                .nickname(NICKNAME)
+                .phone("9999999999")
+                .email("shinkwang.dev@gmail.com")
+                .region("DAEJEON")
+                .dream("그만하자")
+                .introduction("나는 싸피생이다.")
+                .build();
+
+        //when
+        memberService.editMember(1L, editRequest);
 
         //then
-        assertThat(result).isTrue();
+        assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
+        assertThat(savedMember.getPhone()).isEqualTo(editRequest.getPhone());
+        assertThat(savedMember.getEmail()).isEqualTo(editRequest.getEmail());
+        assertThat(savedMember.getRegion()).isEqualTo(Region.valueOf(editRequest.getRegion()));
+        assertThat(savedMember.getDream()).isEqualTo(editRequest.getDream());
+        assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
     }
+
+    @Test
+    @DisplayName("멤버 비밀번호도 함께 업데이트")
+    void editMemberWithPassword() {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(savedMember));
+
+        MemberEdit editRequest = MemberEdit.builder()
+                .nickname(NICKNAME)
+                .password("0123456789")
+                .passwordCheck("0123456789")
+                .phone("9999999999")
+                .email("shinkwang.dev@gmail.com")
+                .region("DAEJEON")
+                .dream("그만하자")
+                .introduction("나는 싸피생이다.")
+                .build();
+
+        //when
+        memberService.editMember(1L, editRequest);
+
+        //then
+        assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
+        assertThat(savedMember.getPassword()).isEqualTo(editRequest.getPassword());
+        assertThat(savedMember.getPhone()).isEqualTo(editRequest.getPhone());
+        assertThat(savedMember.getEmail()).isEqualTo(editRequest.getEmail());
+        assertThat(savedMember.getRegion()).isEqualTo(Region.valueOf(editRequest.getRegion()));
+        assertThat(savedMember.getDream()).isEqualTo(editRequest.getDream());
+        assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴")
+    void deleteMember() {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(savedMember));
+
+        //when
+        memberService.deleteMember(1L);
+
+        //then
+        assertThat(memberRepository.findById(1L).get().isDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("회원 밴")
+    void bandMember() {
+        //given
+        MemberEntity adminUser = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+        adminUser.changeRole(MemberRole.ADMIN);
+
+        MemberEntity targetUser = makeTestMember("user", "기본유저", "1234567");
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(adminUser));
+        BDDMockito.given(memberRepository.findById(2L))
+                .willReturn(Optional.of(targetUser));
+
+        //when
+        memberService.banMember(1L, 2L);
+
+        //then
+        assertThat(memberRepository.findById(2L).get().isBanned()).isTrue();
+    }
+    @Test
+    @DisplayName("AdminUser가 AdminUser를 삭제하면 ForbiddenError 발생")
+    void bandAdminMember() {
+        //given
+        MemberEntity adminUser = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+        adminUser.changeRole(MemberRole.ADMIN);
+
+        MemberEntity targetUser = makeTestMember("user", "기본유저", "1234567");
+        targetUser.changeRole(MemberRole.ADMIN);
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(adminUser));
+        BDDMockito.given(memberRepository.findById(2L))
+                .willReturn(Optional.of(targetUser));
+
+        //expected
+        assertThatThrownBy(() -> memberService.banMember(1L, 2L))
+                .isInstanceOf(ForbiddenRequest.class)
+                .hasMessage("접근 권한이 없습니다.");
+    }
+
 
 
     private MemberCreateBuilder makeMemberCreateBuilder() {
@@ -131,7 +277,7 @@ public class MemberServiceTest {
                 .ssafyId(ssafyId)
                 .phone("01011111111")
                 .email("ssafylee@ssafy.com")
-                .region(MemberRegion.SEOUL)
+                .region(Region.SEOUL)
                 .dream("백엔드 취업희망")
                 .introduction("안녕하세요")
                 .build();

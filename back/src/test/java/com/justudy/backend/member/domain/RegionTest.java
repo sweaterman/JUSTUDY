@@ -1,10 +1,11 @@
 package com.justudy.backend.member.domain;
 
+import com.justudy.backend.common.enum_util.Region;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class MemberRegionTest {
+public class RegionTest {
 
     @Test
     @DisplayName("String to Enum")
@@ -13,9 +14,9 @@ public class MemberRegionTest {
         String region = "SEOUL";
 
         //when
-        MemberRegion regionEnum = MemberRegion.valueOf(region);
+        Region regionEnum = Region.valueOf(region);
 
         //then
-        Assertions.assertThat(regionEnum).isEqualTo(MemberRegion.SEOUL);
+        Assertions.assertThat(regionEnum).isEqualTo(Region.SEOUL);
     }
 }

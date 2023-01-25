@@ -8,6 +8,8 @@ public class ModifyPageResponse {
 
     private String username;
 
+    private String nickname;
+
     private String region;
 
     private String level;
@@ -27,11 +29,13 @@ public class ModifyPageResponse {
     private String introduction;
 
     @Builder
-    public ModifyPageResponse(String username, String region, String userId,
+    public ModifyPageResponse(String username, String nickname,
+                              String region, String userId,
                               String level, String ssafyId,
                               String phone, String email,
                               String[] category, String dream, String introduction) {
         this.username = username;
+        this.nickname = nickname;
         this.region = region;
         this.level = level;
         this.ssafyId = ssafyId;

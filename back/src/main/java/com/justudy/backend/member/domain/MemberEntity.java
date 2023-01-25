@@ -1,7 +1,10 @@
 package com.justudy.backend.member.domain;
 
 
+import com.justudy.backend.common.enum_util.Level;
+import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.file.domain.FileEntity;
+import com.justudy.backend.member.exception.ForbiddenRequest;
 import lombok.*;
 
 import javax.persistence.*;
@@ -46,13 +49,12 @@ public class MemberEntity {
 
     @Column(name = "member_region")
     @Enumerated(EnumType.STRING)
-    private MemberRegion region;
+    private Region region;
 
     @Column(name = "member_dream")
     private String dream;
 
     @Column(name = "member_introduction")
-    @Lob
     private String introduction;
 
     @ManyToOne(fetch = LAZY)
@@ -69,7 +71,7 @@ public class MemberEntity {
 
     @Column(name = "member_level")
     @Enumerated(EnumType.STRING)
-    private MemberLevel level;
+    private Level level;
 
     @OneToMany(mappedBy = "member")
     List<MemberCategoryEntity> categories = new ArrayList<>();
@@ -99,8 +101,8 @@ public class MemberEntity {
     public MemberEntity(String userId, String password,
                         String username, String nickname,
                         String ssafyId, String phone, String email,
-                        MemberRegion region, String dream, String introduction,
-                        FileEntity image, MemberRole role, MemberStatus status, MemberLevel level,
+                        Region region, String dream, String introduction,
+                        FileEntity image, MemberRole role, MemberStatus status, Level level,
                         String mmId, boolean isMMValid) {
         this.userId = userId;
         this.password = password;
@@ -117,8 +119,8 @@ public class MemberEntity {
         this.isMMValid = false;
 
         this.role = MemberRole.USER;
-        this.status = MemberStatus.ON;
-        this.level = MemberLevel.BEGINNER;
+        this.status = MemberStatus.ONLINE;
+        this.level = Level.BEGINNER;
 
         this.image = image; // FileEntity를 만들어야함
         this.badgeCount = 0;
@@ -128,4 +130,44 @@ public class MemberEntity {
         this.createdTime = LocalDateTime.now();
         this.localDateTime = createdTime;
     }
+
+    public MemberEditor.MemberEditorBuilder toEditor() {
+        return MemberEditor.builder()
+                .nickname(nickname)
+                .password(password)
+                .phone(phone)
+                .email(email)
+                .region(region)
+                .category(categories)
+                .dream(dream)
+                .introduction(introduction);
+    }
+
+    public void edit(MemberEditor memberEditor) {
+        nickname = memberEditor.getNickname();
+        password = memberEditor.getPassword();
+        phone = memberEditor.getPhone();
+        email = memberEditor.getEmail();
+        region = memberEditor.getRegion();
+        categories = memberEditor.getCategory();
+        dream = memberEditor.getDream();
+        introduction = memberEditor.getIntroduction();
+    }
+
+    public void banMember() {
+        if (role.equals(MemberRole.ADMIN)) {
+            throw new ForbiddenRequest("role", "ADMIN 유저는 밴할 수 없습니다.");
+        }
+        isBanned = true;
+    }
+
+    public void deleteMember() {
+        isDeleted = true;
+    }
+
+    public void changeRole(MemberRole role) {
+        this.role = role;
+    }
+
+
 }
