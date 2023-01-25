@@ -5,23 +5,14 @@ import com.justudy.backend.login.dto.request.LoginRequest;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.exception.InvalidRequest;
 import com.justudy.backend.member.repository.MemberRepository;
-import com.justudy.backend.member.service.MemberService;
-import com.querydsl.core.Tuple;
-import lombok.RequiredArgsConstructor;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 class LoginServiceTest {
