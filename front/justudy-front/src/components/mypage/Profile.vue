@@ -11,7 +11,7 @@
         `"
             v-on:click="dialogChange()"
         />
-        <v-img
+        <!-- <v-img
             :src="require('@/assets/redHeart.png')"
             :style="`
           width: ${diameter / 3}${standard};
@@ -20,7 +20,7 @@
           margin-left: ${(2 * diameter) / 3}${standard};
           border-radius: ${diameter / 2}${standard};
         `"
-        />
+        /> -->
     </div>
 </template>
 <script>

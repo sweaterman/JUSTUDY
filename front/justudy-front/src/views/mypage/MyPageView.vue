@@ -3,88 +3,131 @@
         <div>
             <ModalComponent :dialog="dialog" @closeModal="close" />
         </div>
-        <div style="margin: 10%">
-            <v-row>
-                <v-col cols="12" md="4">
-                    <ProfilePicture :diameter="300" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" :src="require('@/assets/middleClass.png')" />
-                </v-col>
-                <v-col cols="12" md="8">
-                    <ProfileDetail />
-                </v-col>
-            </v-row>
-            <v-row>
-                <v-col>
-                    <Boundary content="북마크한 글" standard="px" :startPoint="100" :hasContent="false"></Boundary>
-                </v-col>
-            </v-row>
-            <v-row>
-                <v-col cols="12">
-                    <Follow buttonContent="팔로잉" @dialogChangeFromChild="dialogChange()" />
-                </v-col>
-            </v-row>
-            <v-row>
-                <v-col cols="12">
-                    <Follow buttonContent="팔로우" />
-                </v-col>
-            </v-row>
-            <v-row>
-                <v-col>
-                    <Boundary content="북마크한 글" standard="px" :startPoint="100" :hasContent="false"></Boundary>
-                </v-col>
-            </v-row>
-            <!-- <YellowButton :buttonLength="300" :height="65" :fontSize="36" content="아카아칸" standard="px"/> -->
-            <v-row>
-                <v-col>
-                    <div style="height: 40px"></div>
-                </v-col>
-            </v-row>
-            <v-row>
-                <v-col>
-                    <RadarChart buttonContent="학습 진행도" :hasButton="true" />
-                </v-col>
-                <v-col>
-                    <v-row>
-                        <v-col>
-                            <StudyAnalyze />
-                        </v-col>
-                    </v-row>
 
-                    <v-row>
-                        <v-col>
-                            <RecommandStudy />
-                        </v-col>
-                    </v-row>
-                </v-col>
-            </v-row>
-            <v-row>
-                <v-col>
-                    <div style="height: 40px"></div>
-                    <Boundary content="북마크한 글" standard="px" :startPoint="100"></Boundary>
-                </v-col>
-            </v-row>
-            <ListBookMark />
-            <div style="height: 100px"></div>
-            <Boundary content="이번달 달력" standard="px" :startPoint="150"></Boundary>
+        <!-- 프로필 디테일 파트 -->
+        <v-row :style="{marginTop: '2%'}">
+            <v-col cols="12" md="2" />
+
+            <!-- 내용상세 -->
+            <v-col cols="12" md="8">
+                <v-row>
+                    <!-- 프로필 이미지 -->
+                    <v-col cols="12" md="3">
+                        <v-row>
+                            <ProfilePicture
+                                :diameter="230"
+                                :height="70"
+                                :fontSize="32"
+                                content="LV"
+                                standard="px"
+                                :src="require('@/assets/banner.jpg')"
+                                style="padding: 5%"
+                                justify="center"
+                                align="center"
+                            />
+                        </v-row>
+                        <v-row :style="{marginTop: '10%'}">
+                            <v-col cols="12" md="4">
+                                <v-btn color="yellow" :style="{height: '30px', width: '100%', fontWeight: 'bold', fontSize: 'large'}">Lv.</v-btn>
+                            </v-col>
+                            <v-col cols="12" md="8" align="left">
+                                <h2>{{ level }}</h2>
+                                <!-- <TextButton :buttonLength="70" :height="70" :fontSize="1" :content="level" :standard="px" /> -->
+                            </v-col>
+                        </v-row>
+                    </v-col>
+
+                    <!-- 프로필 상세 -->
+                    <v-col cols="12" md="3">
+                        <ProfileDetail />
+                    </v-col>
+
+                    <!-- 팔로우 N 팔로잉 -->
+                    <v-col cols="12" md="6">
+                        <v-row>
+                            <!-- <Follow buttonContent="팔로잉" @dialogChangeFromChild="dialogChange()" /> -->
+                            <!-- <Follow buttonContent="팔로우" /> -->
+                        </v-row>
+                    </v-col>
+                </v-row>
+            </v-col>
+            <v-col cols="12" md="2" />
+        </v-row>
+
+        <!-- 학습 분석 파트 -->
+        <v-row>
+            <v-col cols="12" md="2" />
+            <v-col cols="12" md="8">
+                <v-row :style="{marginTop: '1%', marginBottom: '3%'}">
+                    <v-col cols="12" md="4" align="left">
+                        <h1>학습 분석</h1>
+                        <hr />
+                    </v-col>
+                    <v-col cols="12" md="4" />
+                    <v-col cols="12" md="4" align="right" />
+                </v-row>
+
+                <v-row>
+                    <v-col cols="12" md="5" justify="center" align="center">
+                        <RadarChart buttonContent="학습 진행도" :hasButton="true" />
+                        <v-row justify="center" align="center">
+                            <v-btn color="yellow" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'x-large', marginTop: '30%'}">학습 진행도</v-btn>
+                        </v-row>
+                    </v-col>
+
+                    <v-col cols="12" md="7">
+                        <StudyAnalyze first="알고리즘" second="DataBase" :style="{marginLeft: '2%', marginBottom: '10%'}" />
+                        <v-row :style="{marginLeft: '2%'}">
+                            <v-row :style="{marginBottom: '2%'}">
+                                <v-btn color="yellow" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'x-large'}">추천 스터디</v-btn>
+                            </v-row>
+                            <v-row>
+                                <div class="d-flex mr-1" v-for="item in 3" v-bind:key="item">
+                                    <div>
+                                        <img src="../../assets/logo.jpg" width="200px" height="200px" style="padding: 4%" />
+                                        <div class="d-flex" :style="{marginLeft: '5%'}">
+                                            <div>
+                                                <h3>#임시파일입니다</h3>
+                                                <h3>월~금 5시</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </v-row>
+                        </v-row>
+                    </v-col>
+                </v-row>
+            </v-col>
+            <v-col cols="12" md="2" />
+        </v-row>
+
+        <!-- 북마크한 글 파트 -->
+        <v-row :style="{marginBottom: '5%'}">
+            <BoardList boardtitle="북마크한 글" />
+        </v-row>
+
+        <!-- 달력 파트 -->
+        <v-row :style="{marginTop: '1%'}">
             <Calendar />
-        </div>
+        </v-row>
     </v-app>
 </template>
 <script>
-import Boundary from '@/components/common/Boundary.vue';
-import ListBookMark from '@/components/mypage/ListBookMark.vue';
 import StudyAnalyze from '@/components/mypage/StudyAnalyze.vue';
-import RecommandStudy from '@/components/mypage/RecommandStudy.vue';
 import ProfileDetail from '@/components/mypage/ProfileDetail.vue';
-import Follow from '@/components/common/Follow.vue';
+// import Follow from '@/components/common/Follow.vue';
 import ProfilePicture from '@/components/mypage/ProfilePicture.vue';
 import Calendar from '@/components/common/Calendar.vue';
 import RadarChart from '@/components/common/RadarChart.vue';
 import ModalComponent from '@/components/mypage/ModalComponent.vue';
+import BoardList from '@/components/common/BoardList.vue';
+// import TextButton from '@/components/common/TextButton.vue';
 
 export default {
     name: 'MyPageView',
     data() {
         return {
+            level: '초보 개발자',
             dialog: false
         };
     },
@@ -95,16 +138,15 @@ export default {
         // },
     },
     components: {
-        Boundary,
-        ListBookMark,
+        BoardList,
         StudyAnalyze,
-        RecommandStudy,
         ProfileDetail,
-        Follow,
+        // Follow,
         ProfilePicture,
         Calendar,
         RadarChart,
         ModalComponent
+        // TextButton
     },
     methods: {
         dialogChange() {

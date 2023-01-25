@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-container :style="{marginTop: '1%', marginBottom: '1%'}">
         <v-row>
             <!-- 좌측 Nav -->
             <v-col cols="12" md="6" align="center">
