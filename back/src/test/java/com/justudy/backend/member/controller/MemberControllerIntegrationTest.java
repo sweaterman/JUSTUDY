@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class MemberControllerIntegrationTest {
 
     @Test
     @DisplayName("회원가입 요청")
+    @Transactional
     void signupMember() {
         //given
         MemberCreate request = MemberCreate.builder()
@@ -36,12 +38,14 @@ public class MemberControllerIntegrationTest {
                 .region("SEOUL")
                 .dream("백엔드취업 희망")
                 .category(new String[]{"JAVA", "Spring", "JPA"})
-                .introduction("이신광이다.")
+                .introduction("안녕하세요.")
                 .build();
 
+        //when
         memberController.signupMember(request);
-        List<MemberEntity> members = memberRepository.findAll();
 
+        //then
+        List<MemberEntity> members = memberRepository.findAll();
         Assertions.assertThat(members.size()).isEqualTo(1);
     }
 }

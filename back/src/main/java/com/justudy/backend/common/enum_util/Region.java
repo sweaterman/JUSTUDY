@@ -1,9 +1,9 @@
-package com.justudy.backend.member.domain;
+package com.justudy.backend.common.enum_util;
 
 import lombok.Getter;
 
 @Getter
-public enum MemberRegion {
+public enum Region implements EnumModel {
 
     SEOUL("서울"),
     DAEJEON("대전"),
@@ -13,14 +13,16 @@ public enum MemberRegion {
 
     private final String value;
 
-    MemberRegion(String value) {
+    Region(String value) {
         this.value = value;
     }
 
+    @Override
     public String getKey() {
         return name();
     }
 
+    @Override
     public String getValue() {
         return value;
     }

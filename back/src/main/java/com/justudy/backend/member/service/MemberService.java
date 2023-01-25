@@ -1,16 +1,25 @@
 package com.justudy.backend.member.service;
 
 import com.justudy.backend.member.domain.MemberCategoryEntity;
+import com.justudy.backend.member.domain.MemberEditor;
 import com.justudy.backend.member.domain.MemberEntity;
+import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.member.domain.MemberRole;
 import com.justudy.backend.member.dto.request.MemberCreate;
+import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
+import com.justudy.backend.member.dto.response.ProfileResponse;
+import com.justudy.backend.member.exception.ConflictRequest;
+import com.justudy.backend.member.exception.ForbiddenRequest;
+import com.justudy.backend.member.exception.InvalidRequest;
 import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,13 +34,14 @@ public class MemberService {
 
     @Transactional
     public Long saveMember(MemberCreate request) {
+        validateCreateRequest(request);
         MemberEntity member = request.toEntity();
         memberRepository.save(member);
 
         return member.getSequence();
     }
 
-    public MypageResponse getMemberOfMypage(Long loginSequence) {
+    public MypageResponse getMypage(Long loginSequence) {
         MemberEntity findMember = memberRepository.findById(loginSequence)
                 .orElseThrow(() -> new MemberNotFound());
 
@@ -45,6 +55,73 @@ public class MemberService {
         return createModifyPageResponse(findMember);
     }
 
+    public ProfileResponse getProfile(Long memberSequence) {
+        MemberEntity findMember = memberRepository.findById(memberSequence)
+                .orElseThrow(() -> new MemberNotFound());
+
+        return createProfileResponse(findMember);
+    }
+
+    @Transactional
+    public Long banMember(Long loginSequence, Long memberSequence) {
+        validateSessionUser(loginSequence, MemberRole.ADMIN);
+
+        MemberEntity targetMember = memberRepository.findById(memberSequence)
+                .orElseThrow(() -> new MemberNotFound());
+        targetMember.banMember();
+        return targetMember.getSequence();
+    }
+
+    @Transactional
+    public Long deleteMember(Long loginSequence) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(() -> new MemberNotFound());
+        findMember.deleteMember();
+        return findMember.getSequence();
+    }
+
+    @Transactional
+    public Long editMember(Long loginSequence, MemberEdit editRequest) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(() -> new MemberNotFound());
+        validateEditRequest(findMember, editRequest);
+
+        MemberEditor.MemberEditorBuilder editorBuilder = findMember.toEditor();
+
+        MemberEditor memberEditor = editorBuilder
+                .nickname(editRequest.getNickname())
+                .password(editRequest.getPassword())
+                .phone(editRequest.getPhone())
+                .email(editRequest.getEmail())
+                .region(Region.valueOf(editRequest.getRegion()))
+                .category(null)
+                .dream(editRequest.getDream())
+                .introduction(editRequest.getIntroduction())
+                .build();
+
+        findMember.edit(memberEditor);
+        return findMember.getSequence();
+    }
+
+    private void validateSessionUser(Long loginSequence, MemberRole role) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(() -> new MemberNotFound());
+
+        if (!findMember.getRole().equals(role)) {
+            throw new ForbiddenRequest();
+        }
+    }
+
+    private ProfileResponse createProfileResponse(MemberEntity member) {
+        return ProfileResponse.builder()
+                .nickname(member.getNickname())
+                .category(null)
+                .dream(member.getDream())
+                .introduction(member.getIntroduction())
+                .level(member.getLevel().getValue())
+                .build();
+    }
+
     private ModifyPageResponse createModifyPageResponse(MemberEntity member) {
 
         List<MemberCategoryEntity> categories = member.getCategories();
@@ -54,6 +131,7 @@ public class MemberService {
 
         return ModifyPageResponse.builder()
                 .username(member.getUsername())
+                .nickname(member.getNickname())
                 .region(member.getRegion().getValue())
                 .level(member.getLevel().getValue())
                 .ssafyId(member.getSsafyId())
@@ -66,23 +144,53 @@ public class MemberService {
                 .build();
     }
 
-    public boolean isDuplicatedUserId(String userId) {
-        List<MemberEntity> members = memberRepository.findAll();
-        return members.stream().anyMatch(member -> member.getUserId().equals(userId));
+    private void validateCreateRequest(MemberCreate request) {
+        isDuplicatedUserId(request.getUserId());
+        isDuplicatedSsafyId(request.getSsafyId());
+        isDuplicatedNickname(request.getNickname());
+        isNotEqualPassword(request.getPassword(), request.getPasswordCheck());
     }
 
-    public boolean isDuplicatedNickname(String nickname) {
-        List<MemberEntity> members = memberRepository.findAll();
-        return members.stream().anyMatch(member -> member.getNickname().equals(nickname));
+    private void validateEditRequest(MemberEntity findMember, MemberEdit editRequest) {
+        String oldNickname = findMember.getNickname();
+        String newNickname = editRequest.getNickname();
+        if (!oldNickname.equals(newNickname)) {
+            isDuplicatedNickname(newNickname);
+        }
+
+        String newPassword = editRequest.getPassword();
+        String newPasswordCheck = editRequest.getPasswordCheck();
+        if (StringUtils.hasText(newPassword)
+                && StringUtils.hasText(newPasswordCheck)) {
+            isNotEqualPassword(newPassword, newPasswordCheck);
+        }
     }
 
-    public boolean isDuplicatedSsafyId(String ssafyId) {
+    private void isDuplicatedUserId(String userId) {
         List<MemberEntity> members = memberRepository.findAll();
-        return members.stream().anyMatch(member -> member.getSsafyId().equals(ssafyId));
+        if (members.stream().anyMatch(member -> member.getUserId().equals(userId))) {
+            throw new ConflictRequest("userId", "이미 가입된 아이디입니다.");
+        }
     }
 
-    public boolean isNotEqualPassword(String password, String passwordCheck) {
-        return !password.equals(passwordCheck);
+    private void isDuplicatedNickname(String nickname) {
+        List<MemberEntity> members = memberRepository.findAll();
+        if (members.stream().anyMatch(member -> member.getNickname().equals(nickname))) {
+            throw new ConflictRequest("nickname", "이미 가입된 닉네임입니다.");
+        }
+    }
+
+    private void isDuplicatedSsafyId(String ssafyId) {
+        List<MemberEntity> members = memberRepository.findAll();
+        if (members.stream().anyMatch(member -> member.getSsafyId().equals(ssafyId))) {
+            throw new ConflictRequest("ssafyId", "이미 가입된 SSAFY학번입니다.");
+        }
+    }
+
+    private void isNotEqualPassword(String password, String passwordCheck) {
+        if (!password.equals(passwordCheck)) {
+            throw new InvalidRequest("password", "비밀번호와 비밀번호확인이 다릅니다.");
+        }
     }
 
     private MypageResponse createMypageResponse(MemberEntity member) {

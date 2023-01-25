@@ -24,3 +24,6 @@ spring:
 logging:
   level:
     org.hibernate.sql: debug
+
+vue:
+  loginUrl: "localhost:8081/login"
