@@ -1,5 +1,5 @@
 <template>
-    <v-app>
+    <v-container>
         <!-- 스터디 지원목록 -->
         <v-row>
             <v-col>
@@ -19,7 +19,7 @@
                     <v-col cols="4" v-for="study in studies" :key="study.seq">
                         <v-row justify="center">
                             <v-col align-self="center">
-                                <img @click="moveToApply(study.seq)" src="@/assets/studyImage.png" alt="study_image" />
+                                <img @click="moveToApply(study.seq)" src="@/assets/study_480x270.png" alt="study_image" />
                             </v-col>
                         </v-row>
                         <v-row>
@@ -87,7 +87,7 @@
                     <v-col cols="4" v-for="study in studies" :key="study.seq">
                         <v-row justify="center">
                             <v-col align-self="center">
-                                <img @click="moveToDetail(study.seq)" src="@/assets/studyImage.png" alt="study_image" />
+                                <img @click="moveToDetail(study.seq)" src="@/assets/study_480x270.png" alt="study_image" />
                             </v-col>
                         </v-row>
                         <v-row>
@@ -110,7 +110,7 @@
             </v-col>
             <v-col cols="3"></v-col>
         </v-row>
-    </v-app>
+    </v-container>
 </template>
 
 <script>
