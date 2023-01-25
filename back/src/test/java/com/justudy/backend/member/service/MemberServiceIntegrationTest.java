@@ -1,14 +1,18 @@
 package com.justudy.backend.member.service;
 
-import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.dto.request.MemberCreate;
+import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,6 +51,7 @@ public class MemberServiceIntegrationTest {
         assertThat(findMember.getPassword()).isEqualTo("1234");
         assertThat(findMember.getUsername()).isEqualTo("이싸피");
         assertThat(findMember.getPhone()).isEqualTo("01051391111");
+        assertThat(findMember.getCategories().size()).isEqualTo(2);
         assertThat(findMember.getRegion()).isEqualTo(Region.SEOUL);
     }
 
@@ -120,7 +125,7 @@ public class MemberServiceIntegrationTest {
                 .email("ssafylee@ssafy.com")
                 .region("SEOUL")
                 .dream("백엔드취업 희망")
-                .category(new String[]{"JAVA", "Spring", "JPA"})
+                .category(new String[]{"JAVA", "Spring"})
                 .introduction("이신광이다.");
     }
 }
