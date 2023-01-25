@@ -50,6 +50,66 @@ public class MemberServiceIntegrationTest {
         assertThat(findMember.getRegion()).isEqualTo(Region.SEOUL);
     }
 
+    @Transactional
+    @Test
+    @DisplayName("유저 수정")
+    void updateMember() {
+        //given
+        final String MODIFIED_NICKNAME = "modified";
+        final String MODIFIED_PASSWORD = "modified";
+        final String MODIFIED_PASSWORDCHECK = "modified";
+        final String MODIFIED_PHONE = "11111111";
+        final String MODIFIED_EMAIL = "modified@modified.com";
+        final String MODIFIED_REGION = "GUMI";
+        final String MODIFIED_DREAM = "프론트엔드 할래";
+        final String MODIFIED_INTRODUCTION = "프론트엔드 초고수다";
+        final String[] MODIFIED_CATEGORY = new String[]{"JavaScript", "React"};
+
+        MemberCreate request = makeMemberCreateBuilder()
+                .userId(USER_ID)
+                .nickname(NICKNAME)
+                .ssafyId(SSAFY_ID)
+                .build();
+
+        Long savedMemberSequence = memberService.saveMember(request);
+
+        MemberEdit editRequest = MemberEdit.builder()
+                .nickname(MODIFIED_NICKNAME)
+                .password(MODIFIED_PASSWORD)
+                .passwordCheck(MODIFIED_PASSWORDCHECK)
+                .phone(MODIFIED_PHONE)
+                .email(MODIFIED_EMAIL)
+                .region(MODIFIED_REGION)
+                .dream(MODIFIED_DREAM)
+                .introduction(MODIFIED_INTRODUCTION)
+                .category(MODIFIED_CATEGORY)
+                .build();
+
+        //when
+        Long modifiedMember = memberService.editMember(savedMemberSequence, editRequest);
+        MemberEntity findMember = memberRepository.findById(modifiedMember).get();
+
+        //then
+        assertThat(findMember.getNickname()).isEqualTo(MODIFIED_NICKNAME);
+        assertThat(findMember.getPassword()).isEqualTo(MODIFIED_PASSWORD);
+        assertThat(findMember.getPhone()).isEqualTo(MODIFIED_PHONE);
+        assertThat(findMember.getEmail()).isEqualTo(MODIFIED_EMAIL);
+        assertThat(findMember.getRegion().getKey()).isEqualTo(MODIFIED_REGION);
+        assertThat(findMember.getDream()).isEqualTo(MODIFIED_DREAM);
+        assertThat(findMember.getIntroduction()).isEqualTo(MODIFIED_INTRODUCTION);
+
+        List<String> categories = findMember.getCategories().stream()
+                .map(memberCategory -> memberCategory.getCategory().getName())
+                .collect(Collectors.toList());
+
+        assertThat(categories.contains("JavaScript")).isTrue();
+        assertThat(categories.contains("React")).isTrue();
+
+
+    }
+
+
+
 
     private MemberCreate.MemberCreateBuilder makeMemberCreateBuilder() {
         return MemberCreate.builder()
