@@ -1,32 +1,31 @@
 <template>
-    <div class="d-flex flex-column align-center">
-        <Radar
-            :chart-options="chartOptions"
-            :chart-data="chartData"
-            :chart-id="chartId"
-            :dataset-id-key="datasetIdKey"
-            :plugins="plugins"
-            :css-classes="cssClasses"
-            :styles="styles"
-            :width="width"
-            :height="height"
-        />
-        <div v-if="hasButton">
-            <BasicButton :buttonLength="200" :height="70" :fontSize="36" :content="`${buttonContent}`" standard="px" />
-        </div>
-    </div>
+    <v-row>
+        <v-row>
+            <v-col>
+                <Radar
+                    :chart-options="chartOptions"
+                    :chart-data="chartData"
+                    :chart-id="chartId"
+                    :dataset-id-key="datasetIdKey"
+                    :plugins="plugins"
+                    :css-classes="cssClasses"
+                    :styles="styles"
+                    :width="{width}"
+                    :height="height"
+                />
+            </v-col>
+        </v-row>
+    </v-row>
 </template>
 <script>
 import {Radar} from 'vue-chartjs';
-import BasicButton from '@/components/common/BasicButton.vue';
 import {Chart as ChartJS, Title, Tooltip, Legend, PointElement, LineElement, RadialLinearScale, registerables} from 'chart.js';
 
 ChartJS.register(Title, Tooltip, Legend, PointElement, RadialLinearScale, LineElement, ...registerables);
 export default {
     name: 'RadarChart',
     components: {
-        Radar,
-        BasicButton
+        Radar
     },
     props: {
         chartId: {
@@ -39,11 +38,11 @@ export default {
         },
         width: {
             type: Number,
-            default: 400
+            default: 7000
         },
         height: {
             type: Number,
-            default: 400
+            default: 7000
         },
         cssClasses: {
             default: '',
