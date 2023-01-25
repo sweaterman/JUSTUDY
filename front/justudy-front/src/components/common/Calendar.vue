@@ -1,31 +1,43 @@
 <template>
-    <div>
-        <v-sheet tile height="54" class="d-flex">
-            <v-btn icon class="ma-2" @click="$refs.calendar.prev()">
-                <v-icon>mdi-chevron-left</v-icon>
-            </v-btn>
-            <v-select v-model="type" :items="types" dense outlined hide-details class="ma-2" label="type"></v-select>
-            <v-select v-model="mode" :items="modes" dense outlined hide-details label="event-overlap-mode" class="ma-2"></v-select>
-            <v-select v-model="weekday" :items="weekdays" dense outlined hide-details label="weekdays" class="ma-2"></v-select>
-            <v-spacer></v-spacer>
-            <v-btn icon class="ma-2" @click="$refs.calendar.next()">
-                <v-icon>mdi-chevron-right</v-icon>
-            </v-btn>
-        </v-sheet>
-        <v-sheet height="600">
-            <v-calendar
-                ref="calendar"
-                v-model="value"
-                :weekdays="weekday"
-                :type="type"
-                :events="events"
-                :event-overlap-mode="mode"
-                :event-overlap-threshold="30"
-                :event-color="getEventColor"
-                @change="getEvents"
-            ></v-calendar>
-        </v-sheet>
-    </div>
+    <v-row :style="{marginTop: '1%'}">
+        <v-col cols="12" md="2" />
+        <v-col cols="12" md="8">
+            <v-row :style="{marginBottom: '1%'}">
+                <v-col cols="12" md="4" align="left">
+                    <h1>일정 관리</h1>
+                    <hr />
+                </v-col>
+                <v-col cols="12" md="4" />
+                <v-col cols="12" md="4" />
+            </v-row>
+            <v-sheet tile height="54" class="d-flex">
+                <v-btn icon class="ma-2" @click="$refs.calendar.prev()">
+                    <v-icon>mdi-chevron-left</v-icon>
+                </v-btn>
+                <v-select v-model="type" :items="types" dense outlined hide-details class="ma-2" label="type"></v-select>
+                <v-select v-model="mode" :items="modes" dense outlined hide-details label="event-overlap-mode" class="ma-2"></v-select>
+                <v-select v-model="weekday" :items="weekdays" dense outlined hide-details label="weekdays" class="ma-2"></v-select>
+                <v-spacer></v-spacer>
+                <v-btn icon class="ma-2" @click="$refs.calendar.next()">
+                    <v-icon>mdi-chevron-right</v-icon>
+                </v-btn>
+            </v-sheet>
+            <v-sheet height="600">
+                <v-calendar
+                    ref="calendar"
+                    v-model="value"
+                    :weekdays="weekday"
+                    :type="type"
+                    :events="events"
+                    :event-overlap-mode="mode"
+                    :event-overlap-threshold="30"
+                    :event-color="getEventColor"
+                    @change="getEvents"
+                ></v-calendar>
+            </v-sheet>
+        </v-col>
+        <v-col cols="12" md="2" />
+    </v-row>
 </template>
 <script>
 export default {

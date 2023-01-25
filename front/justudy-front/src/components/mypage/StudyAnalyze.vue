@@ -1,16 +1,29 @@
 <template>
-    <div>
-        <BasicButton :buttonLength="200" :height="70" :fontSize="36" content="학습분석" standard="px" />
-        <h1><span style="color: #58a8f7">알고리즘 DP </span> 공부가 더 필요해요</h1>
-        <h1><span style="color: #58a8f7">DataBase </span> 공부가 더 필요해요</h1>
-    </div>
+    <v-row :style="{marginLeft: '2%', marginBottom: '2%'}">
+        <v-row :style="{marginBottom: '2%'}">
+            <v-btn color="yellow" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'x-large'}">학습 분석</v-btn>
+        </v-row>
+        <v-row :style="{marginLeft: '3%'}">
+            <h1>
+                <span style="color: #58a8f7"> "{{ first }}" </span> 공부가 더 필요해요
+            </h1>
+            <h1>
+                <span style="color: #58a8f7"> "{{ second }}" </span> 공부가 더 필요해요
+            </h1>
+        </v-row>
+    </v-row>
 </template>
 <script>
-import BasicButton from '@/components/common/BasicButton.vue';
 export default {
     name: 'StudyAnalyze',
-    components: {
-        BasicButton
+    components: {},
+    props: {
+        first: {
+            type: String
+        },
+        second: {
+            type: String
+        }
     }
 };
 </script>
