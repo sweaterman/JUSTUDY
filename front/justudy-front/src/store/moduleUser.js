@@ -1,17 +1,28 @@
 // import axios from "axios";
 
 export default {
-    namespaced : true,
-    state : {
-
+    namespaced: true,
+    state: {
+        // user: {}
     },
-    getters : {
-
+    getters: {
+        // dataComputed : function(state){
+        //     return state.user.money+1000
+        // }
     },
-    mutations : {
-
+    mutations: {
+        // getUserMyPageUser(state,payload){
+        //     state.user = payload;
+        // }
     },
-    actions : {
-
+    actions: {
+        // getMyPageUser({commit},{idx}){
+        //     axios({
+        //         url : "aaaaaa",
+        //         method : "GET"
+        //     }).then((res) => {
+        //         commit("getMyPageUser",res.data)
+        //     })
+        // }
     }
-}
+};
