@@ -1,4 +1,4 @@
-package com.justudy.backend.common.interceptor;
+package com.justudy.backend.config.interceptor;
 
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberEntity;

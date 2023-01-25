@@ -1,6 +1,6 @@
-package com.justudy.backend.common.config;
+package com.justudy.backend.config;
 
-import com.justudy.backend.common.interceptor.LoginCheckInterceptor;
+import com.justudy.backend.config.interceptor.LoginCheckInterceptor;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
