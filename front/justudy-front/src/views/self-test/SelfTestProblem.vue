@@ -21,13 +21,13 @@
                     <!-- 얘는 여의치 않으면 직접 구현 -->
                 </div>
             </div>
-            <div class="d-flex">
-                <router-link :to="`/self-test/problem/${Number(this.$route.params.number) - 1}`" style="text-decoration: none; color: black; margin-right: 10px">
+            <div class="d-flex" v-on:click="nextOrPrev()">
+                <a :href="`/self-test/problem/${Number(this.$route.params.number) - 1}`" style="text-decoration: none; color: black; margin-right: 10px">
                     <BasicButton :buttonLength="150" :height="60" :fontSize="25" content="뒤로" standard="px" />
-                </router-link>
-                <router-link :to="`/self-test/${this.$route.params.number != 3 ? 'problem/' + Number(Number(this.$route.params.number) + 1) : 'confirm'}`" style="text-decoration: none; color: black">
+                </a>
+                <a :href="`/self-test/${this.$route.params.number != 3 ? 'problem/' + Number(Number(this.$route.params.number) + 1) : 'confirm'}`" style="text-decoration: none; color: black">
                     <BasicButton :buttonLength="150" :height="60" :fontSize="25" content="다음" standard="px" />
-                </router-link>
+                </a>
                 <!-- {{ selected }} -->
             </div>
         </div>
@@ -59,9 +59,12 @@ export default {
             ]
         };
     },
+
     methods: {
         setSelect(index) {
+            console.log(this.selected[0]);
             this.selected.length = 0;
+
             // console.log(index)
             let result = localStorage.getItem('result') ? JSON.parse(localStorage.getItem('result')) : new Array(4).fill(0);
             result[this.$route.params.number - 1] = index;

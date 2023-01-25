@@ -1,7 +1,7 @@
 <template>
     <v-app style="padding-left: 10%; padding-right: 10%">
         <Common />
-        <Calendar />
+        <TimerCalendar />
         <div style="margin-bottom: 100px"></div>
         <Boundary content="TOTAL" standard="%" :startPoint="40"></Boundary>
         <DigitalClockPerDate content="THIS WEEK" />
@@ -14,7 +14,7 @@
     </v-app>
 </template>
 <script>
-import Calendar from '@/components/common/Calendar.vue';
+import TimerCalendar from '@/components/common/TimerCalendar.vue';
 import Common from '@/components/timer/Common.vue';
 import Boundary from '@/components/common/Boundary.vue';
 import TimeAndRadarChart from '@/components/timer/TimeAndRadarChart.vue';
@@ -24,7 +24,7 @@ export default {
     name: 'MyStatistics',
     components: {
         Common,
-        Calendar,
+        TimerCalendar,
         Boundary,
         TimeAndRadarChart,
         DigitalClockPerDate,
