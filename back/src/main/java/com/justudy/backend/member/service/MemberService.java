@@ -173,6 +173,17 @@ public class MemberService {
                 .build();
     }
 
+    private MypageResponse createMypageResponse(MemberEntity member) {
+        return MypageResponse.builder()
+                .nickname(member.getNickname())
+                .category(getCategoryArray(member.getCategories()))
+                .dream(member.getDream())
+                .status(member.getStatus().getValue())
+                .badgeCount(member.getBadgeCount())
+                .level(member.getLevel().getValue())
+                .build();
+    }
+
     private static String[] getCategoryArray(List<MemberCategoryEntity> categories) {
         List<String> categoryToString = categories.stream().map(category -> category.getCategory().getName())
                 .collect(Collectors.toList());
@@ -227,16 +238,5 @@ public class MemberService {
         if (!password.equals(passwordCheck)) {
             throw new InvalidRequest("password", "비밀번호와 비밀번호확인이 다릅니다.");
         }
-    }
-
-    private MypageResponse createMypageResponse(MemberEntity member) {
-        return MypageResponse.builder()
-                .nickname(member.getNickname())
-                .category(member.getCategories())
-                .dream(member.getDream())
-                .status(member.getStatus().getValue())
-                .badgeCount(member.getBadgeCount())
-                .level(member.getLevel().getValue())
-                .build();
     }
 }
