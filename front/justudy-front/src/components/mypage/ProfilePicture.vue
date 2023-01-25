@@ -1,22 +1,13 @@
 <template>
-    <div>
-        <!-- 여기에 사진들 배너 .... -->
-        <div>
-            <Profile :diameter="diameter" :standard="`${standard}`" :src="`${src}`" />
-        </div>
-        <div class="d-flex">
-            <BasicButton :buttonLength="buttonLength" :height="height" :fontSize="fontSize" :content="`${content}`" :standard="`${standard}`" />
-            <h1>초보 개발자</h1>
-        </div>
-    </div>
+    <v-row>
+        <Profile :diameter="diameter" :standard="`${standard}`" :src="`${src}`" />
+    </v-row>
 </template>
 <script>
-import BasicButton from '@/components/common/BasicButton.vue';
 import Profile from './Profile.vue';
 export default {
     name: 'FollowFollowing',
     components: {
-        BasicButton,
         Profile
     },
     props: {
