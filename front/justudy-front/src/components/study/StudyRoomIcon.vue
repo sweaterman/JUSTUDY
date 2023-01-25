@@ -4,7 +4,7 @@
         <!-- 스터디 이미지 -->
         <v-row>
             <v-col cols="12">
-                <img class="img" src="@/assets/study_320_180.png" alt="study_image" />
+                <img class="img" src="@/assets/study_320x180.png" alt="study_image" />
             </v-col>
         </v-row>
 
