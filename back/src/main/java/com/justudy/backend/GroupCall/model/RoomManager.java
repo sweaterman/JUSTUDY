@@ -50,6 +50,7 @@ public class RoomManager  {
 
     if (room == null) {
       log.debug("Room {} not existent. Will create now!", roomName);
+
       room = new Room(roomName, kurento.createMediaPipeline());
       rooms.put(roomName, room);
     }

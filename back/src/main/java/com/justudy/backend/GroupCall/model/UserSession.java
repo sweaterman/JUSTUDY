@@ -44,9 +44,13 @@ public class UserSession implements Closeable {
   private final MediaPipeline pipeline;
 
   private final String roomName;
-  private final WebRtcEndpoint outgoingMedia;
-  private final ConcurrentMap<String, WebRtcEndpoint> incomingMedia = new ConcurrentHashMap<>();
+  private WebRtcEndpoint outgoingMedia;//final 제거
+  private ConcurrentMap<String, WebRtcEndpoint> incomingMedia = new ConcurrentHashMap<>();
 
+  private final ConcurrentHashMap<String,String> imageOnFace = new ConcurrentHashMap<String,String>(){{
+    put("마리오 모자","https://velog.velcdn.com/images/uiseok/post/bade4912-c2ae-49bd-81ad-d82454f64307/image.png");
+    put("테스트 모자","https://kuku-keke.com/wp-content/uploads/2020/04/2497_4.png");
+  }};
   public UserSession(final String name, String roomName, final Session session,
       MediaPipeline pipeline) {
 
@@ -73,6 +77,8 @@ public class UserSession implements Closeable {
         }
       }
     });
+
+
   }
 
   public WebRtcEndpoint getOutgoingWebRtcPeer() {
@@ -113,6 +119,7 @@ public class UserSession implements Closeable {
     this.getEndpointForUser(sender).gatherCandidates();
   }
 
+
   private WebRtcEndpoint getEndpointForUser(final UserSession sender) {
     if (sender.getName().equals(name)) {
       log.debug("PARTICIPANT {}: configuring loopback", this.name);
@@ -125,7 +132,6 @@ public class UserSession implements Closeable {
     if (incoming == null) {
       log.debug("PARTICIPANT {}: creating new endpoint for {}", this.name, sender.getName());
       incoming = new WebRtcEndpoint.Builder(pipeline).build();
-
       incoming.addIceCandidateFoundListener(new EventListener<IceCandidateFoundEvent>() {
 
         @Override
@@ -144,6 +150,7 @@ public class UserSession implements Closeable {
 
         }
       });
+
 
       incomingMedia.put(sender.getName(), incoming);
     }
@@ -166,14 +173,14 @@ public class UserSession implements Closeable {
     incoming.release(new Continuation<Void>() {
       @Override
       public void onSuccess(Void result) throws Exception {
-        log.trace("PARTICIPANT {}: Released successfully incoming EP for {}",
-            UserSession.this.name, senderName);
+//        log.trace("PARTICIPANT {}: Released successfully incoming EP for {}",
+//            UserSession.this.name, senderName);
       }
 
       @Override
       public void onError(Throwable cause) throws Exception {
-        log.warn("PARTICIPANT {}: Could not release incoming EP for {}", UserSession.this.name,
-            senderName);
+//        log.warn("PARTICIPANT {}: Could not release incoming EP for {}", UserSession.this.name,
+//            senderName);
       }
     });
   }
@@ -191,14 +198,14 @@ public class UserSession implements Closeable {
 
         @Override
         public void onSuccess(Void result) throws Exception {
-          log.trace("PARTICIPANT {}: Released successfully incoming EP for {}",
-              UserSession.this.name, remoteParticipantName);
+//          log.trace("PARTICIPANT {}: Released successfully incoming EP for {}",
+//              UserSession.this.name, remoteParticipantName);
         }
 
         @Override
         public void onError(Throwable cause) throws Exception {
-          log.warn("PARTICIPANT {}: Could not release incoming EP for {}", UserSession.this.name,
-              remoteParticipantName);
+//          log.warn("PARTICIPANT {}: Could not release incoming EP for {}", UserSession.this.name,
+//              remoteParticipantName);
         }
       });
     }
@@ -207,12 +214,12 @@ public class UserSession implements Closeable {
 
       @Override
       public void onSuccess(Void result) throws Exception {
-        log.trace("PARTICIPANT {}: Released outgoing EP", UserSession.this.name);
+//        log.trace("PARTICIPANT {}: Released outgoing EP", UserSession.this.name);
       }
 
       @Override
       public void onError(Throwable cause) throws Exception {
-        log.warn("USER {}: Could not release outgoing EP", UserSession.this.name);
+//        log.warn("USER {}: Could not release outgoing EP", UserSession.this.name);
       }
     });
   }
@@ -247,6 +254,37 @@ public class UserSession implements Closeable {
     sender.addProperty("name", personName);
     this.sendMessage(sender);
   }
+
+  public void transferExit() throws IOException{
+    final JsonObject sender = new JsonObject();
+    sender.addProperty("id", "exit");
+    this.sendMessage(sender);
+  }
+  public void transferRequestMute(String personName) throws IOException  {
+    final JsonObject sender = new JsonObject();
+    sender.addProperty("id", "requestMuteVote");
+    sender.addProperty("name", personName);
+    this.sendMessage(sender);
+  }
+  public void transferRequestExit()  throws IOException  {
+    final JsonObject sender = new JsonObject();
+    sender.addProperty("id", "requestExitVote");
+    this.sendMessage(sender);
+  }
+  public void transferLadderResult(String value)  throws IOException   {
+    final JsonObject sender = new JsonObject();
+    sender.addProperty("id", "ladderResult");
+    sender.addProperty("value", value);
+    this.sendMessage(sender);
+
+  }
+  public void transferChatMessage(String personName, String message) throws IOException {
+    final JsonObject sender = new JsonObject();
+    sender.addProperty("id", "receiveChatMessage");
+    sender.addProperty("name", personName);
+    sender.addProperty("message", message);
+    this.sendMessage(sender);
+  }
   /*
    * (non-Javadoc)
    *
@@ -279,4 +317,6 @@ public class UserSession implements Closeable {
     result = 31 * result + roomName.hashCode();
     return result;
   }
+
+
 }
