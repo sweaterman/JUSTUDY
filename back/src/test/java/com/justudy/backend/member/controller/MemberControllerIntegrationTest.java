@@ -37,7 +37,7 @@ public class MemberControllerIntegrationTest {
                 .email("ssafylee@ssafy.com")
                 .region("SEOUL")
                 .dream("백엔드취업 희망")
-                .category(new String[]{"JAVA", "Spring", "JPA"})
+                .category(new String[]{"JAVA", "Spring"})
                 .introduction("안녕하세요.")
                 .build();
 
