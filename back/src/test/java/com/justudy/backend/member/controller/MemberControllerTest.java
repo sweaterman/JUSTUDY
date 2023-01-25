@@ -1,49 +1,52 @@
 package com.justudy.backend.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.justudy.backend.common.enum_util.EnumMapper;
-import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.common.enum_util.Level;
-import com.justudy.backend.login.service.LoginService;
+import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberStatus;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
 import com.justudy.backend.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @Slf4j
-@WebMvcTest
+@ExtendWith(MockitoExtension.class)
 public class MemberControllerTest {
 
-    @Autowired
     MockMvc mockMvc;
 
-    @Autowired
-    ObjectMapper objectMapper;
+    ObjectMapper objectMapper = new ObjectMapper();
 
-    @MockBean
-    MemberService memberService;
+    @InjectMocks
+    private MemberController memberController;
 
-    @MockBean
-    LoginService loginService;
+    @Mock
+    private MemberService memberService;
 
-    @MockBean
-    EnumMapper enumMapper;
+    @BeforeEach
+    void init() {
+        mockMvc = MockMvcBuilders.standaloneSetup(memberController)
+                .build();
+    }
+
 
     @Test
     @DisplayName("POST /register 요청")
