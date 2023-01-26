@@ -60,7 +60,7 @@ class CommunityCommentServiceTest {
                 .nickname(NICKNAME)
                 .ssafyId(SSAFY_ID)
                 .build();
-        Long savedMemberId = memberService.saveMember(memberRequest);
+        Long savedMemberId = memberService.saveMember(memberRequest, null);
         findMember = memberRepository.findById(savedMemberId).get();
 
         Long savedCommunityId = communityService.createCommunity(CommunityCreate
