@@ -1,6 +1,6 @@
 package com.justudy.backend.member.domain;
 
-import com.justudy.backend.category.CategoryEntity;
+import com.justudy.backend.category.domain.CategoryEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +11,7 @@ import static javax.persistence.FetchType.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "member_category")
 @Entity
 public class MemberCategoryEntity {
 
@@ -24,4 +25,23 @@ public class MemberCategoryEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_seq")
     private CategoryEntity category;
+
+    //==연관관계 편의메소드==//
+    public void addMember(MemberEntity member) {
+        this.member = member;
+    }
+
+    //생성 메소드를 위한 메소드
+    public void changeCategory(CategoryEntity category) {
+        this.category = category;
+    }
+
+    //==생성메소드==//
+    public static MemberCategoryEntity createMemberCategory(CategoryEntity category) {
+        MemberCategoryEntity memberCategory = new MemberCategoryEntity();
+        memberCategory.changeCategory(category);
+
+        return memberCategory;
+    }
+
 }

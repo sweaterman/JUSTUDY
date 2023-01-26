@@ -1,5 +1,7 @@
 package com.justudy.backend.member.service;
 
+import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.domain.MemberRole;
@@ -28,6 +30,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class MemberServiceTest {
 
     private MemberRepository memberRepository = Mockito.mock(MemberRepository.class);
+
+    private CategoryRepository categoryRepository = Mockito.mock(CategoryRepository.class);
+
     private MemberService memberService;
 
     private final String USER_ID = "justudy";
@@ -36,7 +41,7 @@ public class MemberServiceTest {
 
     @BeforeEach
     public void setUp() {
-        memberService = new MemberService(memberRepository);
+        memberService = new MemberService(memberRepository, categoryRepository);
     }
 
     @Test
@@ -138,8 +143,25 @@ public class MemberServiceTest {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
 
+        CategoryEntity backend = new CategoryEntity("backend", 1L);
+        CategoryEntity java = new CategoryEntity("Java", 1L);
+        java.addParentCategory(backend);
+        CategoryEntity spring = new CategoryEntity("Spring", 1L);
+        spring.addParentCategory(backend);
+        CategoryEntity python = new CategoryEntity("Python", 1L);
+        python.addParentCategory(backend);
+
         BDDMockito.given(memberRepository.findById(1L))
                 .willReturn(Optional.of(savedMember));
+
+        BDDMockito.given(categoryRepository.findByName("Java"))
+                .willReturn(Optional.of(java));
+
+        BDDMockito.given(categoryRepository.findByName("Spring"))
+                .willReturn(Optional.of(spring));
+
+        BDDMockito.given(categoryRepository.findByName("Python"))
+                .willReturn(Optional.of(python));
 
         MemberEdit editRequest = MemberEdit.builder()
                 .nickname(NICKNAME)
@@ -147,6 +169,7 @@ public class MemberServiceTest {
                 .email("shinkwang.dev@gmail.com")
                 .region("DAEJEON")
                 .dream("그만하자")
+                .category(new String[]{"Java", "Spring", "Python"})
                 .introduction("나는 싸피생이다.")
                 .build();
 
@@ -160,6 +183,7 @@ public class MemberServiceTest {
         assertThat(savedMember.getRegion()).isEqualTo(Region.valueOf(editRequest.getRegion()));
         assertThat(savedMember.getDream()).isEqualTo(editRequest.getDream());
         assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
+        assertThat(savedMember.getCategories().size()).isEqualTo(3);
     }
 
     @Test
@@ -168,8 +192,25 @@ public class MemberServiceTest {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
 
+        CategoryEntity backend = new CategoryEntity("backend", 1L);
+        CategoryEntity java = new CategoryEntity("Java", 1L);
+        java.addParentCategory(backend);
+        CategoryEntity spring = new CategoryEntity("Spring", 1L);
+        spring.addParentCategory(backend);
+        CategoryEntity python = new CategoryEntity("Python", 1L);
+        python.addParentCategory(backend);
+
         BDDMockito.given(memberRepository.findById(1L))
                 .willReturn(Optional.of(savedMember));
+
+        BDDMockito.given(categoryRepository.findByName("Java"))
+                .willReturn(Optional.of(java));
+
+        BDDMockito.given(categoryRepository.findByName("Spring"))
+                .willReturn(Optional.of(spring));
+
+        BDDMockito.given(categoryRepository.findByName("Python"))
+                .willReturn(Optional.of(python));
 
         MemberEdit editRequest = MemberEdit.builder()
                 .nickname(NICKNAME)
@@ -179,6 +220,7 @@ public class MemberServiceTest {
                 .email("shinkwang.dev@gmail.com")
                 .region("DAEJEON")
                 .dream("그만하자")
+                .category(new String[]{"Java", "Spring", "Python"})
                 .introduction("나는 싸피생이다.")
                 .build();
 
@@ -193,6 +235,7 @@ public class MemberServiceTest {
         assertThat(savedMember.getRegion()).isEqualTo(Region.valueOf(editRequest.getRegion()));
         assertThat(savedMember.getDream()).isEqualTo(editRequest.getDream());
         assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
+        assertThat(savedMember.getCategories().size()).isEqualTo(3);
     }
 
     @Test
@@ -263,7 +306,7 @@ public class MemberServiceTest {
                 .email("ssafylee@ssafy.com")
                 .region("SEOUL")
                 .dream("백엔드취업 희망")
-                .category(new String[]{"JAVA", "Spring", "JPA"})
+                .category(new String[]{"JAVA", "Spring"})
                 .introduction("이신광이다.");
     }
 
