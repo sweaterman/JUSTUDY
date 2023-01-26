@@ -8,7 +8,7 @@ RUN npm install
 
 RUN npm install -g serve
 
-COPY / /frontend
+COPY /justudy-front/ /frontend
 
 RUN npm run build
 
