@@ -1,9 +1,11 @@
 package com.justudy.backend.member.service;
 
+import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.repository.CategoryRepository;
+import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.member.domain.MemberCategoryEntity;
 import com.justudy.backend.member.domain.MemberEditor;
 import com.justudy.backend.member.domain.MemberEntity;
-import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.member.domain.MemberRole;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
@@ -21,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,12 +36,16 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    private final CategoryRepository categoryRepository;
+
     @Transactional
     public Long saveMember(MemberCreate request) {
         validateCreateRequest(request);
-        MemberEntity member = request.toEntity();
-        memberRepository.save(member);
 
+        MemberEntity member = request.toEntity();
+        addCategory(request, member);
+
+        memberRepository.save(member);
         return member.getSequence();
     }
 
@@ -94,13 +102,40 @@ public class MemberService {
                 .phone(editRequest.getPhone())
                 .email(editRequest.getEmail())
                 .region(Region.valueOf(editRequest.getRegion()))
-                .category(null)
                 .dream(editRequest.getDream())
                 .introduction(editRequest.getIntroduction())
                 .build();
 
+        List<MemberCategoryEntity> newCategories = createNewMemberCategories(editRequest);
+
+        findMember.changeMemberCategory(newCategories);
         findMember.edit(memberEditor);
+
         return findMember.getSequence();
+    }
+
+    private List<MemberCategoryEntity> createNewMemberCategories(MemberEdit editRequest) {
+        List<MemberCategoryEntity> memberCategories = new ArrayList<>();
+
+        for (String c : editRequest.getCategory()) {
+            CategoryEntity category = categoryRepository.findByName(c)
+                    .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
+            MemberCategoryEntity memberCategory = MemberCategoryEntity.createMemberCategory(category);
+            memberCategories.add(memberCategory);
+        }
+
+        return memberCategories;
+    }
+
+    private void addCategory(MemberCreate request, MemberEntity member) {
+        List<CategoryEntity> categories = Arrays.stream(request.getCategory())
+                .map(category -> (categoryRepository.findByName(category)
+                        .orElseThrow(InvalidRequest::new)))
+                .collect(Collectors.toList());
+        for (CategoryEntity category : categories) {
+            MemberCategoryEntity memberCategory = MemberCategoryEntity.createMemberCategory(category);
+            member.addMemberCategory(memberCategory);
+        }
     }
 
     private void validateSessionUser(Long loginSequence, MemberRole role) {
@@ -115,7 +150,7 @@ public class MemberService {
     private ProfileResponse createProfileResponse(MemberEntity member) {
         return ProfileResponse.builder()
                 .nickname(member.getNickname())
-                .category(null)
+                .category(getCategoryArray(member.getCategories()))
                 .dream(member.getDream())
                 .introduction(member.getIntroduction())
                 .level(member.getLevel().getValue())
@@ -123,12 +158,6 @@ public class MemberService {
     }
 
     private ModifyPageResponse createModifyPageResponse(MemberEntity member) {
-
-        List<MemberCategoryEntity> categories = member.getCategories();
-        List<String> categoryToString = categories.stream().map(category -> category.getCategory().getName())
-                .collect(Collectors.toList());
-        String[] categoryResponse = categoryToString.toArray(new String[categoryToString.size()]);
-
         return ModifyPageResponse.builder()
                 .username(member.getUsername())
                 .nickname(member.getNickname())
@@ -138,10 +167,28 @@ public class MemberService {
                 .userId(member.getUserId())
                 .phone(member.getPhone())
                 .email(member.getEmail())
-                .category(categoryResponse)
+                .category(getCategoryArray(member.getCategories()))
                 .dream(member.getDream())
                 .introduction(member.getIntroduction())
                 .build();
+    }
+
+    private MypageResponse createMypageResponse(MemberEntity member) {
+        return MypageResponse.builder()
+                .nickname(member.getNickname())
+                .category(getCategoryArray(member.getCategories()))
+                .dream(member.getDream())
+                .status(member.getStatus().getValue())
+                .badgeCount(member.getBadgeCount())
+                .level(member.getLevel().getValue())
+                .build();
+    }
+
+    private static String[] getCategoryArray(List<MemberCategoryEntity> categories) {
+        List<String> categoryToString = categories.stream().map(category -> category.getCategory().getName())
+                .collect(Collectors.toList());
+        String[] categoryResponse = categoryToString.toArray(new String[categoryToString.size()]);
+        return categoryResponse;
     }
 
     private void validateCreateRequest(MemberCreate request) {
@@ -191,16 +238,5 @@ public class MemberService {
         if (!password.equals(passwordCheck)) {
             throw new InvalidRequest("password", "비밀번호와 비밀번호확인이 다릅니다.");
         }
-    }
-
-    private MypageResponse createMypageResponse(MemberEntity member) {
-        return MypageResponse.builder()
-                .nickname(member.getNickname())
-                .category(member.getCategories())
-                .dream(member.getDream())
-                .status(member.getStatus().getValue())
-                .badgeCount(member.getBadgeCount())
-                .level(member.getLevel().getValue())
-                .build();
     }
 }

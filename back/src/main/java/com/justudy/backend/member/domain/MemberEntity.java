@@ -73,7 +73,9 @@ public class MemberEntity {
     @Enumerated(EnumType.STRING)
     private Level level;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member",
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true)
     List<MemberCategoryEntity> categories = new ArrayList<>();
 
     @Column(name = "member_mm_id")
@@ -167,6 +169,18 @@ public class MemberEntity {
 
     public void changeRole(MemberRole role) {
         this.role = role;
+    }
+
+    //== 연관관계 편의메소드 ==//
+    public void addMemberCategory(MemberCategoryEntity memberCategory) {
+        this.categories.add(memberCategory);
+        memberCategory.addMember(this);
+    }
+
+    public void changeMemberCategory(List<MemberCategoryEntity> categories) {
+        for (MemberCategoryEntity category : categories) {
+            addMemberCategory(category);
+        }
     }
 
 

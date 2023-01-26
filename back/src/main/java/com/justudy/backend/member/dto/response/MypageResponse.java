@@ -11,7 +11,7 @@ public class MypageResponse {
 
     String nickname;
 
-    List<MemberCategoryEntity> category;
+    String[] category;
 
     String dream;
 
@@ -22,7 +22,7 @@ public class MypageResponse {
     String level;
 
     @Builder
-    public MypageResponse(String nickname, List<MemberCategoryEntity> category,
+    public MypageResponse(String nickname, String[] category,
                           String dream, String status,
                           int badgeCount, String level) {
         this.nickname = nickname;
