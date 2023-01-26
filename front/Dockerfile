@@ -2,7 +2,7 @@ FROM node:18.12.1
 
 WORKDIR /frontend
 
-COPY ./package*.json /frontend/
+COPY ./justudy-front/package*.json /frontend/
 
 RUN npm install
 
