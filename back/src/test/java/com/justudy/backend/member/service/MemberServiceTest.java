@@ -1,0 +1,328 @@
+package com.justudy.backend.member.service;
+
+import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.repository.CategoryRepository;
+import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.member.domain.MemberEntity;
+import com.justudy.backend.member.domain.MemberRole;
+import com.justudy.backend.member.dto.request.MemberCreate;
+import com.justudy.backend.member.dto.request.MemberEdit;
+import com.justudy.backend.member.dto.response.ModifyPageResponse;
+import com.justudy.backend.member.exception.ConflictRequest;
+import com.justudy.backend.member.exception.ForbiddenRequest;
+import com.justudy.backend.member.exception.InvalidRequest;
+import com.justudy.backend.member.repository.MemberRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
+import org.mockito.Mockito;
+
+import java.util.List;
+import java.util.Optional;
+
+import static com.justudy.backend.member.dto.request.MemberCreate.MemberCreateBuilder;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+@Slf4j
+public class MemberServiceTest {
+
+    private MemberRepository memberRepository = Mockito.mock(MemberRepository.class);
+
+    private CategoryRepository categoryRepository = Mockito.mock(CategoryRepository.class);
+
+    private MemberService memberService;
+
+    private final String USER_ID = "justudy";
+    private final String NICKNAME = "levi";
+    private final String SSAFY_ID = "0847968";
+
+    @BeforeEach
+    public void setUp() {
+        memberService = new MemberService(memberRepository, categoryRepository);
+    }
+
+    @Test
+    @DisplayName("GET 회원정보 수정페이지 반환 API")
+    void getModifyPage() {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(savedMember));
+
+        //when
+        ModifyPageResponse modifyPage = memberService.getModifyPage(1L);
+
+        //then
+        assertThat(modifyPage.getUsername()).isEqualTo(savedMember.getUsername());
+        assertThat(modifyPage.getCategory()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("유저 아이디 중복검증")
+    void duplicatedUserId() {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+
+        BDDMockito.given(memberRepository.findAll())
+                .willReturn(List.of(savedMember));
+
+        //when
+        MemberCreate request = makeMemberCreateBuilder()
+                .userId(USER_ID)
+                .build();
+
+        //expected
+        assertThatThrownBy(()-> memberService.saveMember(request))
+                .isInstanceOf(ConflictRequest.class)
+                .hasMessage("중복된 값이 존재합니다.");
+
+    }
+
+    @Test
+    @DisplayName("닉네임 중복")
+    void duplicatedNickname() {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+
+        BDDMockito.given(memberRepository.findAll())
+                .willReturn(List.of(savedMember));
+
+        //when
+        MemberCreate request = makeMemberCreateBuilder()
+                .nickname(NICKNAME)
+                .build();
+
+        //expected
+        assertThatThrownBy(()-> memberService.saveMember(request))
+                .isInstanceOf(ConflictRequest.class)
+                .hasMessage("중복된 값이 존재합니다.");
+    }
+
+    @Test
+    @DisplayName("ssfay학번 중복")
+    void duplicatedSsafyId() {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+
+        BDDMockito.given(memberRepository.findAll())
+                .willReturn(List.of(savedMember));
+
+        //when
+        MemberCreate request = makeMemberCreateBuilder()
+                .ssafyId(SSAFY_ID)
+                .build();
+
+        //expected
+        assertThatThrownBy(()-> memberService.saveMember(request))
+                .isInstanceOf(ConflictRequest.class)
+                .hasMessage("중복된 값이 존재합니다.");
+    }
+
+    @Test
+    @DisplayName("비밀번호 검증")
+    void validPassword() {
+        //given
+        MemberCreate request = MemberCreate.builder()
+                .password("1234")
+                .passwordCheck("123")
+                .build();
+
+        //expected
+        assertThatThrownBy(() -> memberService.saveMember(request))
+                .isInstanceOf(InvalidRequest.class)
+                .hasMessage("잘못된 요청입니다.");
+    }
+
+    @Test
+    @DisplayName("멤버 업데이트")
+    void editMember() {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+
+        CategoryEntity backend = new CategoryEntity("backend", 1L);
+        CategoryEntity java = new CategoryEntity("Java", 1L);
+        java.addParentCategory(backend);
+        CategoryEntity spring = new CategoryEntity("Spring", 1L);
+        spring.addParentCategory(backend);
+        CategoryEntity python = new CategoryEntity("Python", 1L);
+        python.addParentCategory(backend);
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(savedMember));
+
+        BDDMockito.given(categoryRepository.findByName("Java"))
+                .willReturn(Optional.of(java));
+
+        BDDMockito.given(categoryRepository.findByName("Spring"))
+                .willReturn(Optional.of(spring));
+
+        BDDMockito.given(categoryRepository.findByName("Python"))
+                .willReturn(Optional.of(python));
+
+        MemberEdit editRequest = MemberEdit.builder()
+                .nickname(NICKNAME)
+                .phone("9999999999")
+                .email("shinkwang.dev@gmail.com")
+                .region("DAEJEON")
+                .dream("그만하자")
+                .category(new String[]{"Java", "Spring", "Python"})
+                .introduction("나는 싸피생이다.")
+                .build();
+
+        //when
+        memberService.editMember(1L, editRequest);
+
+        //then
+        assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
+        assertThat(savedMember.getPhone()).isEqualTo(editRequest.getPhone());
+        assertThat(savedMember.getEmail()).isEqualTo(editRequest.getEmail());
+        assertThat(savedMember.getRegion()).isEqualTo(Region.valueOf(editRequest.getRegion()));
+        assertThat(savedMember.getDream()).isEqualTo(editRequest.getDream());
+        assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
+        assertThat(savedMember.getCategories().size()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("멤버 비밀번호도 함께 업데이트")
+    void editMemberWithPassword() {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+
+        CategoryEntity backend = new CategoryEntity("backend", 1L);
+        CategoryEntity java = new CategoryEntity("Java", 1L);
+        java.addParentCategory(backend);
+        CategoryEntity spring = new CategoryEntity("Spring", 1L);
+        spring.addParentCategory(backend);
+        CategoryEntity python = new CategoryEntity("Python", 1L);
+        python.addParentCategory(backend);
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(savedMember));
+
+        BDDMockito.given(categoryRepository.findByName("Java"))
+                .willReturn(Optional.of(java));
+
+        BDDMockito.given(categoryRepository.findByName("Spring"))
+                .willReturn(Optional.of(spring));
+
+        BDDMockito.given(categoryRepository.findByName("Python"))
+                .willReturn(Optional.of(python));
+
+        MemberEdit editRequest = MemberEdit.builder()
+                .nickname(NICKNAME)
+                .password("0123456789")
+                .passwordCheck("0123456789")
+                .phone("9999999999")
+                .email("shinkwang.dev@gmail.com")
+                .region("DAEJEON")
+                .dream("그만하자")
+                .category(new String[]{"Java", "Spring", "Python"})
+                .introduction("나는 싸피생이다.")
+                .build();
+
+        //when
+        memberService.editMember(1L, editRequest);
+
+        //then
+        assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
+        assertThat(savedMember.getPassword()).isEqualTo(editRequest.getPassword());
+        assertThat(savedMember.getPhone()).isEqualTo(editRequest.getPhone());
+        assertThat(savedMember.getEmail()).isEqualTo(editRequest.getEmail());
+        assertThat(savedMember.getRegion()).isEqualTo(Region.valueOf(editRequest.getRegion()));
+        assertThat(savedMember.getDream()).isEqualTo(editRequest.getDream());
+        assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
+        assertThat(savedMember.getCategories().size()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴")
+    void deleteMember() {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(savedMember));
+
+        //when
+        memberService.deleteMember(1L);
+
+        //then
+        assertThat(memberRepository.findById(1L).get().isDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("회원 밴")
+    void bandMember() {
+        //given
+        MemberEntity adminUser = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+        adminUser.changeRole(MemberRole.ADMIN);
+
+        MemberEntity targetUser = makeTestMember("user", "기본유저", "1234567");
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(adminUser));
+        BDDMockito.given(memberRepository.findById(2L))
+                .willReturn(Optional.of(targetUser));
+
+        //when
+        memberService.banMember(1L, 2L);
+
+        //then
+        assertThat(memberRepository.findById(2L).get().isBanned()).isTrue();
+    }
+    @Test
+    @DisplayName("AdminUser가 AdminUser를 삭제하면 ForbiddenError 발생")
+    void bandAdminMember() {
+        //given
+        MemberEntity adminUser = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+        adminUser.changeRole(MemberRole.ADMIN);
+
+        MemberEntity targetUser = makeTestMember("user", "기본유저", "1234567");
+        targetUser.changeRole(MemberRole.ADMIN);
+
+        BDDMockito.given(memberRepository.findById(1L))
+                .willReturn(Optional.of(adminUser));
+        BDDMockito.given(memberRepository.findById(2L))
+                .willReturn(Optional.of(targetUser));
+
+        //expected
+        assertThatThrownBy(() -> memberService.banMember(1L, 2L))
+                .isInstanceOf(ForbiddenRequest.class)
+                .hasMessage("접근 권한이 없습니다.");
+    }
+
+
+
+    private MemberCreateBuilder makeMemberCreateBuilder() {
+        return MemberCreate.builder()
+                .password("1234")
+                .passwordCheck("1234")
+                .username("이싸피")
+                .phone("01051391111")
+                .email("ssafylee@ssafy.com")
+                .region("SEOUL")
+                .dream("백엔드취업 희망")
+                .category(new String[]{"JAVA", "Spring"})
+                .introduction("이신광이다.");
+    }
+
+
+    private MemberEntity makeTestMember(String userId, String nickname, String ssafyId) {
+        return MemberEntity.builder()
+                .userId(userId)
+                .password("1234")
+                .username("이신광")
+                .nickname(nickname)
+                .ssafyId(ssafyId)
+                .phone("01011111111")
+                .email("ssafylee@ssafy.com")
+                .region(Region.SEOUL)
+                .dream("백엔드 취업희망")
+                .introduction("안녕하세요")
+                .build();
+    }
+}
