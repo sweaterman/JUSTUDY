@@ -29,4 +29,5 @@ vue:
   loginUrl: "localhost:8081/login"
 
 file:
-  dir: src/main/resources/static/image/
+  dir: C:\Users\SSAFY\Desktop\shin\Firs_Project\back\src\main\resources\static\image\
+
