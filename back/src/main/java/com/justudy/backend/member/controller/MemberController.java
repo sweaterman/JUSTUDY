@@ -64,7 +64,7 @@ public class MemberController {
 
     @PatchMapping(value = "/mypage/modify",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Void> modifyMember(@RequestPart @Validated MemberEdit request,
+    public ResponseEntity<Void> modifyMember(@RequestPart(name = "request") @Validated MemberEdit request,
                                              @RequestPart MultipartFile multipartFile,
                                              HttpSession session) throws IOException {
 
