@@ -1,6 +1,7 @@
 package com.justudy.backend.file.service;
 
 import com.justudy.backend.file.domain.UploadFileEntity;
+import com.justudy.backend.file.exception.UploadFileNotFound;
 import com.justudy.backend.file.repository.UploadFileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,13 +22,13 @@ public class UploadFileService {
 
     public UploadFileEntity getUploadFile(Long uploadFileSequence) {
         return uploadFileRepository.findById(uploadFileSequence)
-                .orElseThrow();
+                .orElseThrow(() -> new UploadFileNotFound());
     }
 
     @Transactional
     public Long deleteUploadFile(Long uploadFileSequence) {
         UploadFileEntity targetFile = uploadFileRepository.findById(uploadFileSequence)
-                .orElseThrow();
+                .orElseThrow(() -> new UploadFileNotFound());
 
         uploadFileRepository.delete(targetFile);
         return targetFile.getSequence();

@@ -14,6 +14,7 @@ import javax.persistence.*;
 public class UploadFileEntity {
 
     @Id @GeneratedValue
+    @Column(name = "upload_file_seq")
     private Long sequence;
 
     @Column(name = "upload_filename")
