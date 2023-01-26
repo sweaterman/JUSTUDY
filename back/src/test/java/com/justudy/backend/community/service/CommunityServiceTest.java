@@ -56,7 +56,7 @@ class CommunityServiceTest {
                 .nickname(NICKNAME)
                 .ssafyId(SSAFY_ID)
                 .build();
-        Long savedMemberId = memberService.saveMember(memberRequest);
+        Long savedMemberId = memberService.saveMember(memberRequest, null);
         findMember = memberRepository.findById(savedMemberId).get();
         log.info("정보2 : end set up->{}", findMember);
     }
