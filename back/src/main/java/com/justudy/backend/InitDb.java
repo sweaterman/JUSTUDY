@@ -2,6 +2,8 @@ package com.justudy.backend;
 
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
+import com.justudy.backend.file.domain.UploadFileEntity;
+import com.justudy.backend.file.repository.UploadFileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,28 +12,43 @@ import javax.annotation.PostConstruct;
 
 @RequiredArgsConstructor
 @Component
-public class InitCategoryDb {
+public class InitDb {
 
-    private final InitCategoryService initCategoryService;
+    private final InitService initService;
 
     @PostConstruct
     public void init() {
-        initCategoryService.categoryInit();
+        initService.init();
     }
 
     @RequiredArgsConstructor
     @Component
     @Transactional
-    static class InitCategoryService {
+    static class InitService {
 
         private final CategoryRepository categoryRepository;
 
-        public void categoryInit() {
+        private final UploadFileRepository uploadFileRepository;
 
-            saveMainCategory();
+
+
+        public void init() {
+            saveCategory();
+            saveImageFile();
         }
 
-        private void saveMainCategory() {
+        private void saveImageFile() {
+            UploadFileEntity basicMemberImage = new UploadFileEntity("basic_member.png", "basic_member.png");
+            uploadFileRepository.save(basicMemberImage);
+            UploadFileEntity basicFrontEndImage = new UploadFileEntity("basic_frontend.jpg", "basic_frontend.jpg");
+            uploadFileRepository.save(basicFrontEndImage);
+            UploadFileEntity basicBackEndImage = new UploadFileEntity("basic_backend.png", "basic_backend.png");
+            uploadFileRepository.save(basicBackEndImage);
+            UploadFileEntity basicAlgorithmImage = new UploadFileEntity("basic_algorithm.png", "basic_algorithm.png");
+            uploadFileRepository.save(basicAlgorithmImage);
+        }
+
+        private void saveCategory() {
             CategoryEntity frontend = createMainCategory("frontend", 0L);
             categoryRepository.save(frontend);
             CategoryEntity backend = createMainCategory("backend", 0L);
