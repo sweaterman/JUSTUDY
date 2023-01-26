@@ -10,6 +10,8 @@ public class ProfileResponse {
 
     private String[] category;
 
+    private Long imageSequence;
+
     private String dream;
 
     private String introduction;
@@ -17,9 +19,13 @@ public class ProfileResponse {
     private String level;
 
     @Builder
-    public ProfileResponse(String nickname, String[] category, String dream, String introduction, String level) {
+    public ProfileResponse(String nickname, String[] category,
+                           Long imageSequence,
+                           String dream, String introduction,
+                           String level) {
         this.nickname = nickname;
         this.category = category;
+        this.imageSequence = imageSequence;
         this.dream = dream;
         this.introduction = introduction;
         this.level = level;
