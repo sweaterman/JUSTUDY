@@ -7,7 +7,7 @@
                     <BasicButton :buttonLength="150" :height="60" :fontSize="25" content="아니오" standard="px" />
                 </router-link>
                 <router-link :to="`/self-test/result`" style="text-decoration: none; color: black">
-                    <BasicButton :buttonLength="150" :height="60" :fontSize="25" content="예" standard="px" />
+                    <BasicButton :buttonLength="150" :height="60" :fontSize="25" content="예" standard="px" @click="gotoResultPage()" />
                 </router-link>
             </div>
         </div>
@@ -21,9 +21,10 @@ export default {
         BasicButton
     },
     data() {
-        return {
-            // 여기서 localStorage에 있는 정보 넘겨주면 , Api 에서 등급 가지고 오기
-        };
+        return {};
+    },
+    methods: {
+        gotoResultPage() {}
     }
 };
 </script>
