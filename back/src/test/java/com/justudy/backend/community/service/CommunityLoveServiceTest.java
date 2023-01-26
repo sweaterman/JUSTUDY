@@ -7,7 +7,6 @@ import com.justudy.backend.community.dto.request.CommunityLoveCreate;
 import com.justudy.backend.community.repository.CommunityLoveRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.member.domain.MemberEntity;
-import com.justudy.backend.member.domain.MemberRegion;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.member.service.MemberService;
