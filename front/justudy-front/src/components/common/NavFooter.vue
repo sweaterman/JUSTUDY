@@ -33,6 +33,7 @@ export default {};
 
 <style scoped>
 .div {
+    margin-top: 20px;
     background-color: #363636;
     height: 150px;
     display: flex;
