@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  back:
+    container_name: be
+    build: ./BE
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    restart: on-failure 
+
+  front:
+    container_name: fe
+    build: ./FE
+    ports:
+      - "5000:5000"
+    restart: on-failure 
+
+  db:
+    container_name: db
+    image: mysql:8.0.30
+    ports:
+      - "3306:3306"
+    volumes: 
+      - ./mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ssafy
+    restart: on-failure 
+
+  kurento:
+    container_name: kurento
+    image: kurento/kurento-media-server:latest
+    ports:
+      - "8888:8888"
+      - "5001-5050:5001-5050/udp"
+    volumes: 
+      - ./mysql:/var/lib/mysql
+    environment:
+       KMS_MIN_PORT: 5001 
+       KMS_MAX_PORT: 5050
+    restart: on-failure 
+  
