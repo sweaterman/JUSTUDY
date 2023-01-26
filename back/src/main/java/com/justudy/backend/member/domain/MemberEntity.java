@@ -3,7 +3,7 @@ package com.justudy.backend.member.domain;
 
 import com.justudy.backend.common.enum_util.Level;
 import com.justudy.backend.common.enum_util.Region;
-import com.justudy.backend.file.domain.FileEntity;
+import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.member.exception.ForbiddenRequest;
 import lombok.*;
 
@@ -58,8 +58,8 @@ public class MemberEntity {
     private String introduction;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "file_id")
-    private FileEntity image;
+    @JoinColumn(name = "upload_file_seq")
+    private UploadFileEntity imageFile;
 
     @Column(name = "member_role")
     @Enumerated(EnumType.STRING)
@@ -104,7 +104,7 @@ public class MemberEntity {
                         String username, String nickname,
                         String ssafyId, String phone, String email,
                         Region region, String dream, String introduction,
-                        FileEntity image, MemberRole role, MemberStatus status, Level level,
+                        UploadFileEntity imageFile,
                         String mmId, boolean isMMValid) {
         this.userId = userId;
         this.password = password;
@@ -120,11 +120,12 @@ public class MemberEntity {
         this.mmId = mmId;
         this.isMMValid = false;
 
+        this.imageFile = imageFile;
+
         this.role = MemberRole.USER;
         this.status = MemberStatus.ONLINE;
         this.level = Level.BEGINNER;
 
-        this.image = image; // FileEntity를 만들어야함
         this.badgeCount = 0;
         this.isDeleted = false;
         this.isBanned = false;
@@ -142,7 +143,8 @@ public class MemberEntity {
                 .region(region)
                 .category(categories)
                 .dream(dream)
-                .introduction(introduction);
+                .introduction(introduction)
+                .imageFile(imageFile);
     }
 
     public void edit(MemberEditor memberEditor) {
@@ -154,6 +156,7 @@ public class MemberEntity {
         categories = memberEditor.getCategory();
         dream = memberEditor.getDream();
         introduction = memberEditor.getIntroduction();
+        imageFile = memberEditor.getImageFile();
     }
 
     public void banMember() {
@@ -171,6 +174,10 @@ public class MemberEntity {
         this.role = role;
     }
 
+    public void changeImage(UploadFileEntity imageFile) {
+        this.imageFile = imageFile;
+    }
+
     //== 연관관계 편의메소드 ==//
     public void addMemberCategory(MemberCategoryEntity memberCategory) {
         this.categories.add(memberCategory);
@@ -182,6 +189,4 @@ public class MemberEntity {
             addMemberCategory(category);
         }
     }
-
-
 }

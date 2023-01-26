@@ -32,3 +32,7 @@ logging:
 
 vue:
   loginUrl: "localhost:8081/login"
+
+file:
+  dir: C:\Users\SSAFY\Desktop\shin\Firs_Project\back\src\main\resources\static\image\
+

@@ -41,7 +41,7 @@ public class MemberServiceIntegrationTest {
                 .build();
 
         //when
-        Long savedMemberId = memberService.saveMember(request);
+        Long savedMemberId = memberService.saveMember(request, null);
         MemberEntity findMember = memberRepository.findById(savedMemberId).get();
 
         //then
@@ -76,7 +76,7 @@ public class MemberServiceIntegrationTest {
                 .ssafyId(SSAFY_ID)
                 .build();
 
-        Long savedMemberSequence = memberService.saveMember(request);
+        Long savedMemberSequence = memberService.saveMember(request, null);
 
         MemberEdit editRequest = MemberEdit.builder()
                 .nickname(MODIFIED_NICKNAME)
@@ -91,7 +91,7 @@ public class MemberServiceIntegrationTest {
                 .build();
 
         //when
-        Long modifiedMember = memberService.editMember(savedMemberSequence, editRequest);
+        Long modifiedMember = memberService.editMember(savedMemberSequence, editRequest, null);
         MemberEntity findMember = memberRepository.findById(modifiedMember).get();
 
         //then
