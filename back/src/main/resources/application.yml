@@ -27,3 +27,6 @@ logging:
 
 vue:
   loginUrl: "localhost:8081/login"
+
+file:
+  dir: src/main/resources/static/image/
