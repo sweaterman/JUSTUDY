@@ -12,6 +12,7 @@ export default [
         path: '/timer/my-statistics',
         name: 'TimerMyStatistics',
         component: MyStatisticsView
+        // meta: {authorization: ['login']}
     },
     {
         path: '/timer/friend-statistics',
