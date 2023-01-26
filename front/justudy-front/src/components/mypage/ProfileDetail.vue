@@ -18,8 +18,12 @@ import OneLineInfo from '../common/OneLineInfo.vue';
 export default {
     components: {OneLineInfo},
     name: 'ProfileDetail',
+    props: {
+        user: {}
+    },
     data() {
         return {
+            // 얘네들 user와 관련된 것들로 바꿀 거임
             items: ['온라인🟢', '오프라인⚪', '집중중🔴', '자리비움🟡'],
             nickname: '돌숭숭',
             stack: 'React',

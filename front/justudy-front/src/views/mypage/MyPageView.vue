@@ -14,6 +14,7 @@
                     <!-- 프로필 이미지 -->
                     <v-col cols="12" md="3">
                         <v-row>
+                            <!-- 받아온 이미지 src에 넣기 -->
                             <ProfilePicture
                                 :diameter="230"
                                 :height="70"
@@ -39,7 +40,7 @@
 
                     <!-- 프로필 상세 -->
                     <v-col cols="12" md="3">
-                        <ProfileDetail />
+                        <ProfileDetail :user="user" />
                     </v-col>
 
                     <!-- 팔로우 N 팔로잉 -->
@@ -128,7 +129,15 @@ export default {
     data() {
         return {
             level: '초보 개발자',
-            dialog: false
+            dialog: false,
+            // store에서 담아올 값
+            user: {},
+            following: {},
+            follow: {},
+            studyAnalyzeValue: [],
+            studyRecommand: [],
+            bookMark: [],
+            studyCalendar: []
         };
     },
     computed: {
@@ -159,9 +168,19 @@ export default {
         }
     },
     created() {
-        //     this.$store.dispatch("follow/getFollowingList", {
-        //   followingIdx: this.$route.params.idx,
-        // });
+        // 로그인한 유저 사진과 유저 정보 (닉네임,희망상태,희망진로)
+        //     this.$store.dispatch("user/getUser");
+        // 팔로잉
+        // this.$store.dispatch("user/following");
+        // 팔로우
+        // this.$store.dispatch("user/follow");
+        // 학습 분석 수치  (얘는 타이머를 통해 수치를 가지고 올거임)
+        // this.$store.dispatch("timer/categoryTime")
+        // 추천 스터디 가지고 오기
+        // this.$store.dispatch("study/recommand")
+        // 북마크한글 가지고 오기
+        // this.$store.dispatch("community/bookmark")
+        // 달력 일정 가지고 오기 (이걸 어떻게 구체적으로 할지 상의해야 할듯 )
     }
 };
 </script>

@@ -77,7 +77,11 @@ export default {
     data() {
         return {
             bannerPosition: 0,
-            studyPosition: 0
+            studyPosition: 0,
+            //store 에서 담아올 값
+            // 모집중인 스터디 3개(최근)
+            studyNew: [],
+            boardHot: []
         };
     },
 
@@ -105,6 +109,12 @@ export default {
                 this.studyPosition = this.studyPosition - 1225;
             }
         }
+    },
+    created() {
+        //  최신 스터디 3개를 뽑아서 보여주기
+        // this.$store.dispatch("study/new")
+        // 핫한글 (좋아요 기준)
+        // this.$store.dispatch("community/hot")
     }
 };
 </script>
