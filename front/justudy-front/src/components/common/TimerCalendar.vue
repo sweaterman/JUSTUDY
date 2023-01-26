@@ -1,6 +1,7 @@
 <template>
     <v-app>
         <div class="d-flex align-center">
+            <!-- 좀 수정예정 -->
             <img src="@/assets/arrow.png" style="width: 20px; height: 20px; transform: rotate(0.5turn)" v-on:click="monthBefore()" />
             <h1>{{ year }}</h1>
             <h1>{{ month + 1 }}</h1>
