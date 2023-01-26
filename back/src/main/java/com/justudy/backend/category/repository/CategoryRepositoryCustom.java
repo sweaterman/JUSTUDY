@@ -13,4 +13,6 @@ public interface CategoryRepositoryCustom {
     List<String> findByParent(CategorySearch condition);
 
     List<String> getAllChildrenName();
+
+    List<String> getAllParentsName();
 }

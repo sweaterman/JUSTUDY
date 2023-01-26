@@ -2,6 +2,7 @@ package com.justudy.backend.category.repository;
 
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.dto.request.CategorySearch;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
+@Slf4j
 @SpringBootTest
 class CategoryRepositoryTest {
 
@@ -45,5 +47,13 @@ class CategoryRepositoryTest {
         //then
         Assertions.assertThat(category.getName()).isEqualTo(JAVA_SCRIPT);
         Assertions.assertThat(category.getCategoryLevel()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("sub-category조회")
+    void getAllSubCategory() {
+
+        List<String> category = categoryRepository.getAllChildrenName();
+        System.out.println(">>>>>>>>>>>>>>>>>" + category);
     }
 }

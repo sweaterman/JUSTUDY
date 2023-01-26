@@ -41,6 +41,14 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public List<String> getAllParentsName() {
+        return queryFactory.select(categoryEntity.name)
+                .from(categoryEntity)
+                .where(categoryEntity.parentCategory.isNull())
+                .fetch();
+    }
+
     private BooleanExpression nameEq(String name) {
         return name != null ? categoryEntity.name.eq(name) : null;
     }

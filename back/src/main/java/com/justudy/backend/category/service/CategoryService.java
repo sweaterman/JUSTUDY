@@ -21,4 +21,12 @@ public class CategoryService {
     public List<String> getList(CategorySearch categorySearch) {
         return categoryRepository.findByParent(categorySearch);
     }
+
+    public List<String> getMainCategories() {
+        return categoryRepository.getAllParentsName();
+    }
+
+    public List<String> getSubCategories() {
+        return categoryRepository.getAllChildrenName();
+    }
 }
