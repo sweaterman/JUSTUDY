@@ -23,7 +23,8 @@ services:
     ports:
       - "3306:3306"
     volumes: 
-      - ./mysql:/var/lib/mysql
+      - /mysql:/var/lib/mysql
+      - /mysql/config/my.cnf:/etc/mysql/my.cnf
     environment:
       MYSQL_ROOT_PASSWORD: ssafy
     restart: on-failure 
@@ -34,8 +35,6 @@ services:
     ports:
       - "8888:8888"
       - "5001-5050:5001-5050/udp"
-    volumes: 
-      - ./mysql:/var/lib/mysql
     environment:
        KMS_MIN_PORT: 5001 
        KMS_MAX_PORT: 5050
