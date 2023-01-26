@@ -120,19 +120,22 @@ public class MemberService {
         findMember.edit(memberEditor);
         UploadFileEntity newImageFile = findMember.getImageFile();
 
-        validateImageFile(oldImageFile.getSequence(), newImageFile.getSequence());
+        if (validateImageFile(oldImageFile.getSequence(), newImageFile.getSequence())) {
+            uploadFileService.saveUploadFile(newImageFile);
+        }
 
         return findMember.getSequence();
     }
 
-    private void validateImageFile(Long oldImageSequence, Long newImageSequence) {
+    private boolean validateImageFile(Long oldImageSequence, Long newImageSequence) {
         if (isSameImage(oldImageSequence, newImageSequence)) {
-            return;
+            return false;
         }
         if (isBasicImage(oldImageSequence)) {
-            return;
+            return false;
         }
         deleteOldImageFile(oldImageSequence);
+        return true;
     }
 
     private Long deleteOldImageFile(Long oldImageSequence) {
