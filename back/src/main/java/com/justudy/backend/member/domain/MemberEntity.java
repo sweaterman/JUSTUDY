@@ -3,7 +3,7 @@ package com.justudy.backend.member.domain;
 
 import com.justudy.backend.common.enum_util.Level;
 import com.justudy.backend.common.enum_util.Region;
-import com.justudy.backend.file.domain.FileEntity;
+import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.member.exception.ForbiddenRequest;
 import lombok.*;
 
@@ -59,7 +59,7 @@ public class MemberEntity {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "file_id")
-    private FileEntity image;
+    private UploadFileEntity image;
 
     @Column(name = "member_role")
     @Enumerated(EnumType.STRING)
@@ -104,7 +104,7 @@ public class MemberEntity {
                         String username, String nickname,
                         String ssafyId, String phone, String email,
                         Region region, String dream, String introduction,
-                        FileEntity image, MemberRole role, MemberStatus status, Level level,
+                        UploadFileEntity image, MemberRole role, MemberStatus status, Level level,
                         String mmId, boolean isMMValid) {
         this.userId = userId;
         this.password = password;
