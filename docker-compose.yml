@@ -27,3 +27,17 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ssafy
     restart: on-failure 
+
+  kurento:
+    container_name: kurento
+    image: kurento/kurento-media-server:latest
+    ports:
+      - "8888:8888"
+      - "5001-5050:5001-5050/udp"
+    volumes: 
+      - ./mysql:/var/lib/mysql
+    environment:
+       KMS_MIN_PORT: 5001 
+       KMS_MAX_PORT: 5050
+    restart: on-failure 
+  
