@@ -3,6 +3,9 @@ package com.justudy.backend.member.service;
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.file.domain.UploadFileEntity;
+import com.justudy.backend.file.infra.ImageConst;
+import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.member.domain.MemberCategoryEntity;
 import com.justudy.backend.member.domain.MemberEditor;
 import com.justudy.backend.member.domain.MemberEntity;
@@ -38,11 +41,14 @@ public class MemberService {
 
     private final CategoryRepository categoryRepository;
 
+    private final UploadFileService uploadFileService;
+
     @Transactional
-    public Long saveMember(MemberCreate request) {
+    public Long saveMember(MemberCreate request, UploadFileEntity basicImage) {
         validateCreateRequest(request);
 
         MemberEntity member = request.toEntity();
+        member.changeImage(basicImage);
         addCategory(request, member);
 
         memberRepository.save(member);
@@ -89,7 +95,7 @@ public class MemberService {
     }
 
     @Transactional
-    public Long editMember(Long loginSequence, MemberEdit editRequest) {
+    public Long editMember(Long loginSequence, MemberEdit editRequest, UploadFileEntity imageFile) {
         MemberEntity findMember = memberRepository.findById(loginSequence)
                 .orElseThrow(() -> new MemberNotFound());
         validateEditRequest(findMember, editRequest);
@@ -104,14 +110,49 @@ public class MemberService {
                 .region(Region.valueOf(editRequest.getRegion()))
                 .dream(editRequest.getDream())
                 .introduction(editRequest.getIntroduction())
+                .imageFile(imageFile)
                 .build();
 
         List<MemberCategoryEntity> newCategories = createNewMemberCategories(editRequest);
-
         findMember.changeMemberCategory(newCategories);
+
+        UploadFileEntity oldImageFile = findMember.getImageFile();
         findMember.edit(memberEditor);
+        UploadFileEntity newImageFile = findMember.getImageFile();
+
+        if (validateImageFile(oldImageFile.getSequence(), newImageFile.getSequence())) {
+            uploadFileService.saveUploadFile(newImageFile);
+        }
 
         return findMember.getSequence();
+    }
+
+    private boolean validateImageFile(Long oldImageSequence, Long newImageSequence) {
+        if (isSameImage(oldImageSequence, newImageSequence)) {
+            return false;
+        }
+        if (isBasicImage(oldImageSequence)) {
+            return false;
+        }
+        deleteOldImageFile(oldImageSequence);
+        return true;
+    }
+
+    private Long deleteOldImageFile(Long oldImageSequence) {
+        return uploadFileService.deleteUploadFile(oldImageSequence);
+    }
+
+    private boolean isSameImage(Long oldImageSequence, Long newImageSequence) {
+        if (oldImageSequence == newImageSequence) {
+            return true;
+        }
+        return false;
+    }
+    private boolean isBasicImage(Long sequence) {
+        if (ImageConst.BASIC_MEMBER_IMAGE == sequence) {
+            return true;
+        }
+        return false;
     }
 
     private List<MemberCategoryEntity> createNewMemberCategories(MemberEdit editRequest) {
@@ -154,6 +195,7 @@ public class MemberService {
                 .dream(member.getDream())
                 .introduction(member.getIntroduction())
                 .level(member.getLevel().getValue())
+                .imageSequence(member.getImageFile().getSequence()) //imageFile Sequence
                 .build();
     }
 
@@ -170,6 +212,7 @@ public class MemberService {
                 .category(getCategoryArray(member.getCategories()))
                 .dream(member.getDream())
                 .introduction(member.getIntroduction())
+                .imageSequence(member.getImageFile().getSequence()) //imageFile Sequence
                 .build();
     }
 
@@ -181,6 +224,7 @@ public class MemberService {
                 .status(member.getStatus().getValue())
                 .badgeCount(member.getBadgeCount())
                 .level(member.getLevel().getValue())
+                .imageSequence(member.getImageFile().getSequence()) //imageFile Sequence
                 .build();
     }
 

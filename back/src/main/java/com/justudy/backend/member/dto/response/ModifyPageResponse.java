@@ -24,6 +24,8 @@ public class ModifyPageResponse {
 
     private String[] category;
 
+    private Long imageSequence;
+
     private String dream;
 
     private String introduction;
@@ -33,7 +35,8 @@ public class ModifyPageResponse {
                               String region, String userId,
                               String level, String ssafyId,
                               String phone, String email,
-                              String[] category, String dream, String introduction) {
+                              String[] category, Long imageSequence,
+                              String dream, String introduction) {
         this.username = username;
         this.nickname = nickname;
         this.region = region;
@@ -43,6 +46,7 @@ public class ModifyPageResponse {
         this.phone = phone;
         this.email = email;
         this.category = category;
+        this.imageSequence = imageSequence;
         this.dream = dream;
         this.introduction = introduction;
     }

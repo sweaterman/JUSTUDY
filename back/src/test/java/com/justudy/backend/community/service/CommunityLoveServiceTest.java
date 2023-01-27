@@ -55,7 +55,7 @@ class CommunityLoveServiceTest {
                 .nickname(NICKNAME)
                 .ssafyId(SSAFY_ID)
                 .build();
-        Long savedMemberId = memberService.saveMember(memberRequest);
+        Long savedMemberId = memberService.saveMember(memberRequest, null);
         findMember = memberRepository.findById(savedMemberId).get();
 
         Long savedCommunityId = communityService.createCommunity(CommunityCreate
@@ -75,7 +75,7 @@ class CommunityLoveServiceTest {
                 .nickname(NICKNAME)
                 .ssafyId(SSAFY_ID)
                 .build();
-        Long savedMemberId2 = memberService.saveMember(memberRequest);
+        Long savedMemberId2 = memberService.saveMember(memberRequest, null);
         findMember2 = memberRepository.findById(savedMemberId2).get();
 
 

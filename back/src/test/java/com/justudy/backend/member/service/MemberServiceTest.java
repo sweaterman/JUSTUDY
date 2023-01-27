@@ -3,6 +3,8 @@ package com.justudy.backend.member.service;
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.file.domain.UploadFileEntity;
+import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.domain.MemberRole;
 import com.justudy.backend.member.dto.request.MemberCreate;
@@ -33,6 +35,8 @@ public class MemberServiceTest {
 
     private CategoryRepository categoryRepository = Mockito.mock(CategoryRepository.class);
 
+    private UploadFileService uploadFileService = Mockito.mock(UploadFileService.class);
+
     private MemberService memberService;
 
     private final String USER_ID = "justudy";
@@ -41,7 +45,7 @@ public class MemberServiceTest {
 
     @BeforeEach
     public void setUp() {
-        memberService = new MemberService(memberRepository, categoryRepository);
+        memberService = new MemberService(memberRepository, categoryRepository, uploadFileService);
     }
 
     @Test
@@ -49,6 +53,9 @@ public class MemberServiceTest {
     void getModifyPage() {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+        UploadFileEntity imageFile = new UploadFileEntity("test", "testUuid");
+        savedMember.changeImage(imageFile);
+
 
         BDDMockito.given(memberRepository.findById(1L))
                 .willReturn(Optional.of(savedMember));
@@ -76,7 +83,7 @@ public class MemberServiceTest {
                 .build();
 
         //expected
-        assertThatThrownBy(()-> memberService.saveMember(request))
+        assertThatThrownBy(()-> memberService.saveMember(request, null))
                 .isInstanceOf(ConflictRequest.class)
                 .hasMessage("중복된 값이 존재합니다.");
 
@@ -97,7 +104,7 @@ public class MemberServiceTest {
                 .build();
 
         //expected
-        assertThatThrownBy(()-> memberService.saveMember(request))
+        assertThatThrownBy(()-> memberService.saveMember(request, null))
                 .isInstanceOf(ConflictRequest.class)
                 .hasMessage("중복된 값이 존재합니다.");
     }
@@ -117,7 +124,7 @@ public class MemberServiceTest {
                 .build();
 
         //expected
-        assertThatThrownBy(()-> memberService.saveMember(request))
+        assertThatThrownBy(()-> memberService.saveMember(request, null))
                 .isInstanceOf(ConflictRequest.class)
                 .hasMessage("중복된 값이 존재합니다.");
     }
@@ -132,7 +139,7 @@ public class MemberServiceTest {
                 .build();
 
         //expected
-        assertThatThrownBy(() -> memberService.saveMember(request))
+        assertThatThrownBy(() -> memberService.saveMember(request, null))
                 .isInstanceOf(InvalidRequest.class)
                 .hasMessage("잘못된 요청입니다.");
     }
@@ -142,6 +149,8 @@ public class MemberServiceTest {
     void editMember() {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+        UploadFileEntity oldImageFile = new UploadFileEntity("test", "testUuid");
+        savedMember.changeImage(oldImageFile);
 
         CategoryEntity backend = new CategoryEntity("backend", 1L);
         CategoryEntity java = new CategoryEntity("Java", 1L);
@@ -173,8 +182,10 @@ public class MemberServiceTest {
                 .introduction("나는 싸피생이다.")
                 .build();
 
+        UploadFileEntity newImageFile = new UploadFileEntity("newTest", "newTestUuid");
+
         //when
-        memberService.editMember(1L, editRequest);
+        memberService.editMember(1L, editRequest, newImageFile);
 
         //then
         assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
@@ -191,6 +202,8 @@ public class MemberServiceTest {
     void editMemberWithPassword() {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+        UploadFileEntity oldImageFile = new UploadFileEntity("test", "testUuid");
+        savedMember.changeImage(oldImageFile);
 
         CategoryEntity backend = new CategoryEntity("backend", 1L);
         CategoryEntity java = new CategoryEntity("Java", 1L);
@@ -224,8 +237,10 @@ public class MemberServiceTest {
                 .introduction("나는 싸피생이다.")
                 .build();
 
+        UploadFileEntity newImageFile = new UploadFileEntity("newTest", "newTestUuid");
+
         //when
-        memberService.editMember(1L, editRequest);
+        memberService.editMember(1L, editRequest, newImageFile);
 
         //then
         assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
@@ -236,6 +251,7 @@ public class MemberServiceTest {
         assertThat(savedMember.getDream()).isEqualTo(editRequest.getDream());
         assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
         assertThat(savedMember.getCategories().size()).isEqualTo(3);
+        assertThat(savedMember.getImageFile()).isEqualTo(newImageFile);
     }
 
     @Test

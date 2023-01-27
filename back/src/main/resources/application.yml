@@ -3,11 +3,16 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ssafy
     password: ssafy
-    url: jdbc:mysql://localhost:3306/justudy?serverTimezone=UTC&characterEncoding=UTF-8
-
+    url: jdbc:mysql://db:3306/justudy?serverTimezone=UTC&characterEncoding=UTF-8
+  # swagger
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   # ddl-auto : create -> Entity에 맞게 자동으로 테이블 및 필드 생성
   # show-sql : true -> 해당하는 query를 보여줌 (JPA N + 1 문제 확인용)
   jpa:
+    database: mysql   # 추가 해준 부분
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect # 추가 해준 부분
     hibernate:
       ddl-auto: create
     properties:
@@ -27,3 +32,7 @@ logging:
 
 vue:
   loginUrl: "localhost:8081/login"
+
+file:
+  dir: C:\Users\SSAFY\Desktop\shin\Firs_Project\back\src\main\resources\static\image\
+
