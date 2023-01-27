@@ -1,9 +1,9 @@
-// import axios from "axios";
+import axios from 'axios';
 
 export default {
     namespaced: true,
     state: {
-        // user: {}
+        user: {}
     },
     getters: {
         // dataComputed : function(state){
@@ -11,18 +11,32 @@ export default {
         // }
     },
     mutations: {
-        // getUserMyPageUser(state,payload){
-        //     state.user = payload;
-        // }
+        getMyPageUser(state, payload) {
+            state.user = payload;
+        }
     },
     actions: {
-        // getMyPageUser({commit},{idx}){
-        //     axios({
-        //         url : "aaaaaa",
-        //         method : "GET"
-        //     }).then((res) => {
-        //         commit("getMyPageUser",res.data)
-        //     })
-        // }
+        async getMyPageUser({commit}) {
+            console.log('aaa');
+            await axios.post(
+                'http://localhost:8080/api/login',
+                {
+                    userId: 'abcde',
+                    password: '12345'
+                },
+                {
+                    withCredentials: true
+                }
+            );
+            console.log('aaaaa');
+            await axios
+                .get('http://localhost:8080/api/mypage/member', {
+                    withCredentials: true
+                })
+                .then(res => {
+                    console.log('aaa', res.data);
+                    commit('getMyPageUser', res.data);
+                });
+        }
     }
 };

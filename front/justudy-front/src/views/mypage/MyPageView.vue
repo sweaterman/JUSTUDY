@@ -40,7 +40,8 @@
 
                     <!-- 프로필 상세 -->
                     <v-col cols="12" md="3">
-                        <ProfileDetail :user="user" />
+                        <!-- <ProfileDetail :user="user" /> -->
+                        {{ user }}
                     </v-col>
 
                     <!-- 팔로우 N 팔로잉 -->
@@ -115,7 +116,7 @@
 </template>
 <script>
 import StudyAnalyze from '@/components/mypage/StudyAnalyze.vue';
-import ProfileDetail from '@/components/mypage/ProfileDetail.vue';
+// import ProfileDetail from '@/components/mypage/ProfileDetail.vue';
 // import Follow from '@/components/common/Follow.vue';
 import ProfilePicture from '@/components/mypage/ProfilePicture.vue';
 import Calendar from '@/components/common/Calendar.vue';
@@ -123,7 +124,7 @@ import RadarChart from '@/components/common/RadarChart.vue';
 import ModalComponent from '@/components/mypage/ModalComponent.vue';
 import BoardList from '@/components/common/BoardList.vue';
 // import TextButton from '@/components/common/TextButton.vue';
-
+// import {mapState} from 'vuex';
 export default {
     name: 'MyPageView',
     data() {
@@ -131,7 +132,7 @@ export default {
             level: '초보 개발자',
             dialog: false,
             // store에서 담아올 값
-            user: {},
+
             following: {},
             follow: {},
             studyAnalyzeValue: [],
@@ -141,7 +142,9 @@ export default {
         };
     },
     computed: {
-        // ...mapState(['aaa'])
+        user() {
+            return this.$store.state.moduleUser.user;
+        }
         // userLoginIdx(){
         // return this.$store.state.user.userIdx;
         // },
@@ -149,7 +152,7 @@ export default {
     components: {
         BoardList,
         StudyAnalyze,
-        ProfileDetail,
+        // ProfileDetail,
         // Follow,
         ProfilePicture,
         Calendar,
@@ -169,7 +172,7 @@ export default {
     },
     created() {
         // 로그인한 유저 사진과 유저 정보 (닉네임,희망상태,희망진로)
-        //     this.$store.dispatch("user/getUser");
+        this.$store.dispatch('moduleUser/getMyPageUser');
         // 팔로잉
         // this.$store.dispatch("user/following");
         // 팔로우
