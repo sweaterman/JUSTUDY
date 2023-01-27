@@ -1,45 +1,57 @@
 <template>
     <v-app>
-        <div class="d-flex flex-column align-center pt-16">
-            <h1>당신의 프로그래밍 수준은?</h1>
-            <h2>{{ problem[this.$route.params.number - 1].question }}</h2>
-            <div class="pt-10 pb-10">
-                <div v-if="this.$route.params.number == 1">
-                    <img src="@/assets/javaburning.png" />
-                </div>
-                <div v-if="this.$route.params.number == 2">
-                    <img src="@/assets/language.png" />
-                </div>
-                <div v-if="this.$route.params.number == 3">
-                    <img src="@/assets/webpage.png" />
-                </div>
-                <div v-for="(item, index) in problem[this.$route.params.number - 1].option" v-bind:key="index">
-                    <div v-on:click="setSelect(index)">
-                        <v-checkbox :label="`${item}`" v-model="selected" color="orange" :value="`${index}`" hide-details></v-checkbox>
+        <v-row>
+            <v-col cols="12" md="2" />
+            <v-col cols="12" md="8">
+                <v-row :style="{marginTop: '4%'}">
+                    <v-col>
+                        <h1>당신의 프로그래밍 수준은?</h1>
+                        <hr width="50%" />
+                    </v-col>
+                </v-row>
+                <v-row :style="{marginTop: '9%'}" justify="center" align="center">
+                    <div v-if="this.$route.params.number == 1">
+                        <img src="@/assets/test01.png" width="450px" height="450px" />
                     </div>
+                    <div v-if="this.$route.params.number == 2">
+                        <img src="@/assets/test02.png" />
+                    </div>
+                    <div v-if="this.$route.params.number == 3">
+                        <img src="@/assets/test03.png" />
+                    </div>
+                </v-row>
+                <v-row justify="center" align="center">
+                    <h2 :style="{marginTop: '4%'}" justify="center" align="center">{{ problem[this.$route.params.number - 1].question }}</h2>
+                </v-row>
+                <v-row justify="center" align="center">
+                    <div style="padding: 2%" v-for="(item, index) in problem[this.$route.params.number - 1].option" v-bind:key="index" padding>
+                        <div v-on:click="setSelect(index)">
+                            <v-checkbox :label="`${item}`" v-model="selected" color="orange" :value="`${index}`" hide-details></v-checkbox>
+                        </div>
+                        <!-- 얘는 여의치 않으면 직접 구현 -->
+                    </div>
+                </v-row>
 
-                    <!-- 얘는 여의치 않으면 직접 구현 -->
-                </div>
-            </div>
-            <div class="d-flex" v-on:click="nextOrPrev()">
-                <a :href="`/self-test/problem/${Number(this.$route.params.number) - 1}`" style="text-decoration: none; color: black; margin-right: 10px">
-                    <BasicButton :buttonLength="150" :height="60" :fontSize="25" content="뒤로" standard="px" />
-                </a>
-                <a :href="`/self-test/${this.$route.params.number != 3 ? 'problem/' + Number(Number(this.$route.params.number) + 1) : 'confirm'}`" style="text-decoration: none; color: black">
-                    <BasicButton :buttonLength="150" :height="60" :fontSize="25" content="다음" standard="px" />
-                </a>
-                <!-- {{ selected }} -->
-            </div>
-        </div>
+                <v-row justify="center" align="center">
+                    <div class="d-flex" v-on:click="nextOrPrev()">
+                        <a :href="`/self-test/problem/${Number(this.$route.params.number) - 1}`" style="text-decoration: none; color: black; margin-right: 10px">
+                            <BasicButton :buttonLength="150" :height="60" :fontSize="25" content="뒤로" standard="px" />
+                        </a>
+                        <a :href="`/self-test/${this.$route.params.number != 3 ? 'problem/' + Number(Number(this.$route.params.number) + 1) : 'confirm'}`" style="text-decoration: none; color: black">
+                            <BasicButton :buttonLength="150" :height="60" :fontSize="25" content="다음" standard="px" />
+                        </a>
+                        <!-- {{ selected }} -->
+                    </div>
+                </v-row>
+            </v-col>
+            <v-col cols="12" md="2" />
+        </v-row>
     </v-app>
 </template>
 <script>
-import BasicButton from '@/components/common/BasicButton.vue';
 export default {
     name: 'SelfTestProblem',
-    components: {
-        BasicButton
-    },
+    components: {},
     data() {
         return {
             selected: [],
