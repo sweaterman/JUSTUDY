@@ -30,8 +30,7 @@ public class RankRepositoryImpl implements RankRepositoryCustom {
   @Override
   public List<RankResponse> findAllByGroupAndType(RankGroup rankGroup, RankType rankType) {
     return queryFactory
-        .select(Projections.constructor(RankResponse.class, qRank.rankOrder, qRank.rankName,
-            qRank.rankTime))
+        .select(Projections.constructor(RankResponse.class, qRank.rankOrder, qRank.rankName,qRank.rankTime,qRank.rankImage))
         .from(qRank)
         .where(qRank.rankGroup.eq(rankGroup), qRank.rankType.eq(rankType))
         .orderBy(qRank.rankOrder.asc())

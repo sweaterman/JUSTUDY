@@ -11,13 +11,15 @@ import lombok.NoArgsConstructor;
 @Data
 public class RankResponse {
 
-  private Integer rankOrder;
-  private String rankName;
-  private Time rankTime;
+  private Integer order;
+  private String nickName;
+  private Time time;
+  private String img;
 
-  public RankResponse(Integer rankOrder, String rankName, Time rankTime) {
-    this.rankOrder = rankOrder;
-    this.rankName = rankName;
-    this.rankTime = rankTime;
+  public RankResponse(Integer rankOrder, String rankName, Time rankTime, String rankImage) {
+    this.order = rankOrder;
+    this.nickName = rankName;
+    this.time = rankTime;
+    this.img = rankImage;
   }
 }
