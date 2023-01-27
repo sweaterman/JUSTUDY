@@ -36,8 +36,8 @@ services:
       - "8888:8888"
       - "5001-5050:5001-5050/udp"
     environment:
-       KMS_MIN_PORT: 5001 
-       KMS_MAX_PORT: 5050
+      KMS_MIN_PORT: 5001 
+      KMS_MAX_PORT: 5050
     volumes: 
       - /kurento:/etc/kurento
     restart: on-failure 
