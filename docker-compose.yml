@@ -38,8 +38,8 @@ services:
     environment:
       KMS_MIN_PORT: 5001 
       KMS_MAX_PORT: 5050
-    #volumes: 
-    #  - /kurento:/etc/kurento
+    volumes: 
+      - /kurento/modules/kurento:/etc/kurento/modules/kurento
     restart: on-failure 
   
   coturn:
