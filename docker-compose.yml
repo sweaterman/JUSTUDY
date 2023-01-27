@@ -39,7 +39,7 @@ services:
       KMS_MIN_PORT: 5001 
       KMS_MAX_PORT: 5050
     volumes: 
-      - /kurento/modules/kurento/WebRtcEndpoint.conf.ini:/etc/kurento/modules/kurento/WebRtcEndpoint.conf.ini
+      - /kurento/modules/kurento:/etc/kurento/modules/kurento
     restart: on-failure 
   
   coturn:
