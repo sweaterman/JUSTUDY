@@ -11,24 +11,27 @@ public class MypageResponse {
 
     String nickname;
 
-    List<MemberCategoryEntity> category;
+    String[] category;
 
     String dream;
 
     String status;
+
+    Long imageSequence;
 
     int badgeCount;
 
     String level;
 
     @Builder
-    public MypageResponse(String nickname, List<MemberCategoryEntity> category,
-                          String dream, String status,
+    public MypageResponse(String nickname, String[] category,
+                          String dream, String status, Long imageSequence,
                           int badgeCount, String level) {
         this.nickname = nickname;
         this.category = category;
         this.dream = dream;
         this.status = status;
+        this.imageSequence = imageSequence;
         this.badgeCount = badgeCount;
         this.level = level;
     }

@@ -64,7 +64,7 @@ public class MemberControllerTest {
                 .mmId("sklee0206")
                 .region("SEOUL")
                 .dream("백엔드취업 희망")
-                .category(new String[]{"JAVA", "Spring", "JPA"})
+                .category(new String[]{"JAVA", "Spring"})
                 .introduction("이신광이다.")
                 .build();
 
@@ -132,7 +132,7 @@ public class MemberControllerTest {
                 .userId("tjwnrhkd")
                 .phone("0101111111")
                 .email("tjwnrhkd@naver.com")
-                .category(null)
+                .category(new String[]{"Spring", "Java"})
                 .dream("백엔드 + 프론트 마스터")
                 .introduction("귀여운 돌로스 원숭숭입니다.")
                 .build();
@@ -141,7 +141,7 @@ public class MemberControllerTest {
     private static MypageResponse makeTestMypageResponse() {
         return MypageResponse.builder()
                 .nickname("닉네임")
-                .category(null)
+                .category(new String[] {"Java", "Spring"})
                 .dream("백엔드개발자")
                 .status(MemberStatus.ONLINE.getValue())
                 .badgeCount(2)

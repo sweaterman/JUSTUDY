@@ -3,8 +3,8 @@ package com.justudy.backend.community.service;
 import com.justudy.backend.community.dto.request.CommunityCreate;
 import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.community.dto.response.CommunityResponse;
-import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.community.repository.CommunityLoveRepository;
+import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.repository.MemberRepository;
@@ -56,7 +56,7 @@ class CommunityServiceTest {
                 .nickname(NICKNAME)
                 .ssafyId(SSAFY_ID)
                 .build();
-        Long savedMemberId = memberService.saveMember(memberRequest);
+        Long savedMemberId = memberService.saveMember(memberRequest, null);
         findMember = memberRepository.findById(savedMemberId).get();
         log.info("정보2 : end set up->{}", findMember);
     }
