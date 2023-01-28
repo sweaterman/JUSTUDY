@@ -1,6 +1,8 @@
 package com.justudy.backend.study.dto.response;
 
 import com.justudy.backend.study.domain.StudyEntity;
+import com.justudy.backend.study.domain.StudyFrequencyEntity;
+import com.justudy.backend.study.domain.StudyResumeEntity;
 import com.justudy.backend.studyMember.domain.StudyMemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +17,8 @@ import java.util.List;
 public class StudyResponse {
     private Long sequence;
     private List<StudyMemberEntity> studyMembers;
-    private List<ResumeEntity> resume;
+    private List<StudyResumeEntity> resumes;
+    private List<StudyFrequencyEntity> frequencies;
     private Long category_seq;
     private String name;
     private Long leaderSeq;
@@ -28,12 +31,16 @@ public class StudyResponse {
     private String notion;
     private LocalDateTime createdTime;
     private String startTime;
+    private Boolean last;
 
     public static StudyResponse makeBuilder(StudyEntity entity) {
         return StudyResponse.builder()
                 .sequence(entity.getSequence())
                 .studyMembers(entity.getStudyMembers())
-                .resume(entity.getResume())
+                .resumes(entity.getResumes())
+                .frequencies(entity.getFrequencies())
+                .category_seq(entity.getCategory_seq())
+                .name(entity.getName())
                 .leaderSeq(entity.getLeaderSeq())
                 .introduction(entity.getIntroduction())
                 .personnel(entity.getPersonnel())
@@ -46,4 +53,5 @@ public class StudyResponse {
                 .startTime(entity.getStartTime())
                 .build();
     }
+
 }

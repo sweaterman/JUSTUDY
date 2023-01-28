@@ -1,11 +1,15 @@
 package com.justudy.backend.study.dto.request;
 
+import com.justudy.backend.study.domain.StudyCommunityEntity;
 import com.justudy.backend.study.domain.StudyEntity;
+import com.justudy.backend.study.domain.StudyFrequencyEntity;
+import com.justudy.backend.study.domain.StudyResumeEntity;
 import com.justudy.backend.studyMember.domain.StudyMemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,8 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class StudyCreate {
-    private List<StudyMemberEntity> studyMembers;
-    private List<ResumeEntity> resume;
+
+    private List<StudyFrequencyEntity> frequencies;
     private Long category_seq;
     private String name;
     private Long leaderSeq;
@@ -27,11 +31,11 @@ public class StudyCreate {
     private String notion;
     private String startTime;
 
+
     public StudyEntity toEntity() {
         return StudyEntity
                 .builder()
-                .studyMembers(studyMembers)
-                .resume(resume)
+                .frequencies(frequencies)
                 .category_seq(category_seq)
                 .name(name)
                 .leaderSeq(leaderSeq)

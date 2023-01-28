@@ -22,9 +22,15 @@ public class StudyEntity {
     @JoinColumn(name = "study_member_seq")
     private List<StudyMemberEntity> studyMembers;
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resume_seq")
-    private List<ResumeEntity> resume;
-    @JoinColumn(name = "category_seq")
+    @JoinColumn(name = "study_resume_seq")
+    private List<StudyResumeEntity> resumes;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_community_seq")
+    private List<StudyCommunityEntity> communities;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_frequency_seq")
+    private List<StudyFrequencyEntity> frequencies;
+    @JoinColumn(name = "study_category_seq")
     private Long category_seq;
     @Column(name = "study_name")
     private String name;
@@ -46,14 +52,17 @@ public class StudyEntity {
     private String notion;
     @Column(name = "study_created_time")
     private LocalDateTime createdTime;
-    @Column(name = "community_modified_time")
+    @Column(name = "study_modified_time")
     private LocalDateTime modifiedTime;
     @Column(name = "study_start_time")
     private String startTime;
+    //스터디방
 
-    public void update(String name, String introduction, Integer personnel, String level, String onlineOffline,
+
+    public void update(String name, Long leaderSeq, String introduction, Integer personnel, String level, String onlineOffline,
                        Boolean isOpen, String github, String notion, String startTime) {
         this.name = name;
+        this.leaderSeq = leaderSeq;
         this.introduction = introduction;
         this.personnel = personnel;
         this.level = level;
