@@ -5,15 +5,15 @@ import com.justudy.backend.exception.CustomException;
 /**
  * status -> 404
  */
-public class StudyNotFound extends CustomException {
+public class StudyMemberNotFound extends CustomException {
 
     private static final String MESSAGE = "존재하지 않는 스터디 입니다.";
 
-    public StudyNotFound() {
+    public StudyMemberNotFound() {
         super(MESSAGE);
     }
 
-    public StudyNotFound(String message, Throwable cause) {
+    public StudyMemberNotFound(String message, Throwable cause) {
         super(message, cause);
     }
 

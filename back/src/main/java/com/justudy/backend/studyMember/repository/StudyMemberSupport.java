@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface StudyRepositorySupport {
+public interface StudyMemberSupport {
 
 
     Page<StudyMemberEntity> findAllByNotice(Pageable pageable);

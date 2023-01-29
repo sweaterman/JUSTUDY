@@ -1,7 +1,9 @@
 package com.justudy.backend.study.controller;
 
+import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.study.dto.request.*;
 import com.justudy.backend.study.dto.response.StudyResponse;
+import com.justudy.backend.study.exception.InvalidRequest;
 import com.justudy.backend.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
@@ -9,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/study")
@@ -17,6 +21,7 @@ import java.util.List;
 public class StudyController {
 
     private final StudyService studyService;
+    private final CategoryService categoryService;
     // ---------------------------------------------------------------스터디---------------------------------------------------------------
 
 //    /**
@@ -45,7 +50,16 @@ public class StudyController {
      */
     @GetMapping("/")
     public ResponseEntity<Slice<StudyResponse>> readAllStudy(@RequestParam("page") int page, @RequestParam("sub") String sub, @RequestParam("type") String type, @RequestParam("search") String search) {
-        return ResponseEntity.status(HttpStatus.OK).body(studyService.search(page, sub, type, search));
+        List<String> subCategories = null;
+        if (sub != null) {
+            subCategories = Arrays.asList(sub.split(","));
+            List<String> response = categoryService.getSubCategories();
+            for (String subCategory : subCategories) {
+                if (response.contains(subCategory) == false)
+                    throw new InvalidRequest();
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(studyService.search(page, subCategories, type, search));
     }
 
     /**

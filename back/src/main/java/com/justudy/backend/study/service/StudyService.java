@@ -1,5 +1,8 @@
 package com.justudy.backend.study.service;
 
+import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.repository.CategoryRepository;
+import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.dto.request.StudyEdit;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 public class StudyService {
 
     private final StudyRepository studyRepository;
+    private final MemberRepository memberRepository;
     private final int MAX_STUDY_PAGE_SIZE = 1;
     private final int MAX_NOTICE_SIZE = 3;
 
@@ -60,21 +64,20 @@ public class StudyService {
         studyRepository.deleteById(studySequence);
     }
 
-    public Slice<StudyResponse> search(int page, String sub, String type, String search) {
+    public Slice<StudyResponse> search(int page, List<String> sub, String type, String search) {
         Pageable pageable = PageRequest.of(page, MAX_STUDY_PAGE_SIZE);
-        //todo sub category parsing
 
+        Long leaderSeq = null;
+        String studyName = null;
 
-        String name = null;
-        String title = null;
-
+        //todo member 이름으로 검색
         if (type.compareTo("name") == 0) {
-            name = search;
+//            leaderSeq = memberRepository.(Long.parseLong(search)).get().getSequence();
         } else if (type.compareTo("title") == 0) {
-            title = search;
+            studyName = search;
         }
-        //todo work?
-        return studyRepository.findAllBySearchOption(pageable, name, title)
+
+        return studyRepository.findAllBySearchOption(pageable, sub, leaderSeq, studyName)
                 .map(StudyResponse::makeBuilder);
     }
 }

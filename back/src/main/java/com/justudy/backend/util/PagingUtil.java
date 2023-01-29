@@ -6,6 +6,7 @@ import com.querydsl.jpa.JPQLQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.stereotype.Component;
 
@@ -30,4 +31,12 @@ public class PagingUtil {
         return new PageImpl<>(results, pageable, totalCount);
     }
 
+    public <T> SliceImpl<T> getSliceImpl(Pageable pageable, JPQLQuery<T> query, Class clazz) {    // 2)
+        Boolean hasNext = false;
+        List<T> results = getQuerydsl(clazz).applyPagination(pageable, query).fetch();
+        //todo work?
+        if (results.size() > pageable.getPageSize())
+            hasNext = true;
+        return new SliceImpl(results, pageable, hasNext);
+    }
 }

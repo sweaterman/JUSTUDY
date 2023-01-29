@@ -1,5 +1,6 @@
 package com.justudy.backend.study.dto.request;
 
+import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.domain.StudyFrequencyEntity;
 import com.justudy.backend.study.domain.StudyResumeEntity;
@@ -19,7 +20,7 @@ public class StudyEdit {
     private List<StudyMemberEntity> studyMembers;
     private List<StudyResumeEntity> resumes;
     private List<StudyFrequencyEntity> frequencies;
-    private Long category_seq;
+    private CategoryEntity category;
     private String name;
     private Long leaderSeq;
     private String introduction;
@@ -38,7 +39,7 @@ public class StudyEdit {
                 .sequence(sequence)
                 .studyMembers(studyMembers)
                 .resumes(resumes)
-                .category_seq(category_seq)
+                .category(category)
                 .name(name)
                 .leaderSeq(leaderSeq)
                 .introduction(introduction)

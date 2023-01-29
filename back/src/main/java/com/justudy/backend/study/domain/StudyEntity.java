@@ -1,5 +1,6 @@
 package com.justudy.backend.study.domain;
 
+import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.studyMember.domain.StudyMemberEntity;
 import lombok.*;
 
@@ -30,8 +31,9 @@ public class StudyEntity {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_frequency_seq")
     private List<StudyFrequencyEntity> frequencies;
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_category_seq")
-    private Long category_seq;
+    private CategoryEntity category;
     @Column(name = "study_name")
     private String name;
     @Column(name = "study_leader_seq")

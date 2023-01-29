@@ -1,5 +1,7 @@
 package com.justudy.backend.study.service;
 
+import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.dto.request.MemberCreate;
@@ -23,6 +25,10 @@ import org.springframework.data.domain.Slice;
 import org.springframework.test.context.event.annotation.BeforeTestClass;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
@@ -39,11 +45,18 @@ class StudyServiceTest {
     MemberService memberService;
     @Autowired
     MemberRepository memberRepository;
+    @Autowired
+    CategoryRepository categoryRepository;
+
     private final String USER_ID = "justudy";
     private final String NICKNAME = "levi";
     private final String SSAFY_ID = "0847968";
     private MemberEntity findMember;
     Long id;
+    CategoryEntity java;
+
+    StudyServiceTest() {
+    }
 
     @Transactional
     @BeforeEach
@@ -60,6 +73,11 @@ class StudyServiceTest {
                 .build();
         Long savedMemberId = memberService.saveMember(memberRequest, null);
         findMember = memberRepository.findById(savedMemberId).get();
+
+        CategoryEntity backend = createMainCategory("backend", 0L);
+        categoryRepository.save(backend);
+        java = createSubCategory("Java", 1L, backend);
+        categoryRepository.save(java);
         log.info("정보2 : end set up->{}", findMember.getSequence());
     }
 
@@ -132,16 +150,22 @@ class StudyServiceTest {
     @Order(4)
     void search() {
         // Given
-//        StudyCreate create = makeRequest(findMember);
-//        Long studyId = service.createStudy(create);
-//
-//        // When
-//        Slice<StudyResponse> study = service.search(0," ","name","");
+        StudyCreate create = makeRequest(findMember);
+        Long studyId = service.createStudy(create);
+
+        List<String> sub = new ArrayList<>();
+        sub.add("Figma");
+        sub.add("Java");
+
+        // When
+        Slice<StudyResponse> study = service.search(0, sub, "", "");
 
         // Then
-//
-//        log.info("slice info : {}", study.toString());
+
+        log.info("slice info : {}", study.toString());
 //        Assertions.assertThat(study.hasNext()).isEqualTo(true);
+        Assertions.assertThat(study.get().collect(Collectors.toList()).size()).isEqualTo(1);
+        Assertions.assertThat(study.get().collect(Collectors.toList()).get(0).getCategory().getName()).isEqualTo("Java");
 //        Assertions.assertThat(repository.findAll().size()).isEqualTo(2);
     }
 
@@ -165,7 +189,7 @@ class StudyServiceTest {
         return StudyCreate
                 .builder()
                 .frequencies(null)
-                .category_seq(1L)
+                .category(java)
                 .name("test study")
                 .leaderSeq(findMember.getSequence())
                 .introduction("소개입니당")
@@ -186,7 +210,7 @@ class StudyServiceTest {
                 .studyMembers(null)
                 .resumes(null)
                 .frequencies(null)
-                .category_seq(1L)
+                .category(java)
                 .name("test study2")
                 .leaderSeq(findMember.getSequence())
                 .introduction("소개입니당2")
@@ -211,5 +235,21 @@ class StudyServiceTest {
                 .dream("백엔드취업 희망")
                 .category(new String[]{"JAVA", "Spring", "JPA"})
                 .introduction("test.");
+    }
+
+    private CategoryEntity createSubCategory(String name, Long level, CategoryEntity parent) {
+        CategoryEntity subCategory = CategoryEntity.builder()
+                .name(name)
+                .categoryLevel(level)
+                .build();
+        subCategory.addParentCategory(parent);
+        return subCategory;
+    }
+
+    private CategoryEntity createMainCategory(String name, Long level) {
+        return CategoryEntity.builder()
+                .name(name)
+                .categoryLevel(level)
+                .build();
     }
 }

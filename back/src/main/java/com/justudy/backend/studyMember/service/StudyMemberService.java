@@ -4,8 +4,8 @@ import com.justudy.backend.studyMember.domain.StudyMemberEntity;
 import com.justudy.backend.studyMember.dto.request.StudyMemberCreate;
 import com.justudy.backend.studyMember.dto.request.StudyMemberEdit;
 import com.justudy.backend.studyMember.dto.response.StudyMemberResponse;
-import com.justudy.backend.studyMember.exception.StudyNotFound;
-import com.justudy.backend.studyMember.repository.StudyRepository;
+import com.justudy.backend.studyMember.exception.StudyMemberNotFound;
+import com.justudy.backend.studyMember.repository.StudyMemberMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class StudyMemberService {
 
-    private final StudyRepository studyRepository;
+    private final StudyMemberMember studyMemberRepository;
     private final int MAX_STUDY_PAGE_SIZE = 10;
     private final int MAX_NOTICE_SIZE = 3;
     //crud readall search readopen readopencategory readsubcategory myapplystudy myapplyCRUD mystudyall
@@ -29,17 +29,19 @@ public class StudyMemberService {
     // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
     @Transactional
     public StudyMemberResponse readCommunity(Long communitySequence) {
-        StudyMemberEntity entity = studyRepository.findById(communitySequence)
-                .orElseThrow(StudyNotFound::new);
-        Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
-        addViewCount(entity);
-        return StudyMemberResponse.makeBuilder(entity, loveCount);
+//        StudyMemberEntity entity = studyRepository.findById(communitySequence)
+//                .orElseThrow(StudyNotFound::new);
+//        Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
+//        addViewCount(entity);
+//        return StudyMemberResponse.makeBuilder(entity, loveCount);
+
+        return null;
     }
 
     @Transactional
     public Long createCommunity(StudyMemberCreate request) {
         StudyMemberEntity community = request.toEntity();
-        return studyRepository.save(community).getSequence();
+        return studyMemberRepository.save(community).getSequence();
     }
 
 
@@ -48,17 +50,17 @@ public class StudyMemberService {
         Pageable pageable = PageRequest.of(page, MAX_STUDY_PAGE_SIZE);
         //맨 처음페이지는 공지3개 추가
         //공지 없을 시 일반글로 출력
-        Long noticeCount = studyRepository.noticeCount();
+        Long noticeCount = studyMemberRepository.noticeCount();
         if (page == 0 && noticeCount > 0) {
             noticeCount = noticeCount < MAX_NOTICE_SIZE ? noticeCount : MAX_NOTICE_SIZE;
             Pageable noticePageable = PageRequest.of(0, noticeCount.intValue());
             Pageable categoryPageable = PageRequest.of(0, MAX_STUDY_PAGE_SIZE - noticeCount.intValue());
 
-            List<StudyMemberResponse> noticeList = studyRepository.findAllByNotice(noticePageable)
+            List<StudyMemberResponse> noticeList = studyMemberRepository.findAllByNotice(noticePageable)
                     .stream()
                     .map(StudyMemberResponse::makeBuilder)
                     .collect(Collectors.toList());
-            List<StudyMemberResponse> categoryList = studyRepository.findAll(categoryPageable, category)
+            List<StudyMemberResponse> categoryList = studyMemberRepository.findAll(categoryPageable, category)
                     .stream()
                     .map(StudyMemberResponse::makeBuilder)
                     .collect(Collectors.toList());
@@ -67,7 +69,7 @@ public class StudyMemberService {
             return noticeList;
         }
 
-        return studyRepository.findAll(pageable, category)
+        return studyMemberRepository.findAll(pageable, category)
                 .stream()
                 .map(StudyMemberResponse::makeBuilder)
                 .collect(Collectors.toList());
@@ -75,23 +77,24 @@ public class StudyMemberService {
 
     @Transactional
     public Long updateCommunity(long id, StudyMemberEdit request) {
-        StudyMemberEntity entity = studyRepository.findById(id)
-                .orElseThrow(StudyNotFound::new);
-
-        entity.update(request.getTitle(), request.getContent(), request.getViewCount(), request.getModifiedTime());
-        return id;
+//        StudyMemberEntity entity = studyRepository.findById(id)
+//                .orElseThrow(StudyNotFound::new);
+//
+//        entity.update(request.getTitle(), request.getContent(), request.getViewCount(), request.getModifiedTime());
+//        return id;
+        return null;
     }
 
     @Transactional
     public void deleteCommunity(Long communitySequence) {
-        studyRepository.findById(communitySequence)
-                .orElseThrow(StudyNotFound::new);
-        studyRepository.deleteById(communitySequence);
+        studyMemberRepository.findById(communitySequence)
+                .orElseThrow(StudyMemberNotFound::new);
+        studyMemberRepository.deleteById(communitySequence);
     }
 
     public List<StudyMemberResponse> readAllNoticeCommunity(int page) {
         Pageable pageable = PageRequest.of(page, MAX_STUDY_PAGE_SIZE);
-        return studyRepository.findAllByNotice(pageable)
+        return studyMemberRepository.findAllByNotice(pageable)
                 .stream()
                 .map(StudyMemberResponse::makeBuilder)
                 .collect(Collectors.toList());
@@ -100,8 +103,8 @@ public class StudyMemberService {
     @Transactional
     //조회수 증가
     public void addViewCount(StudyMemberEntity entity) {
-        int temp = entity.getViewCount();
-        entity.changeViewCount(temp + 1);
+//        int temp = entity.getViewCount();
+//        entity.changeViewCount(temp + 1);
     }
 
     public List<StudyMemberResponse> search(int page, String type, String search) {
@@ -118,14 +121,14 @@ public class StudyMemberService {
             content = search;
         }
 
-        return studyRepository.findAllBySearchOption(pageable, name, title, content)
+        return studyMemberRepository.findAllBySearchOption(pageable, name, title, content)
                 .stream()
                 .map(StudyMemberResponse::makeBuilder)
                 .collect(Collectors.toList());
     }
 
     public List<StudyMemberResponse> readPopularCommunity() {
-        return studyRepository.findPopularCommunity()
+        return studyMemberRepository.findPopularCommunity()
                 .stream()
                 .map(StudyMemberResponse::makeBuilder)
                 .collect(Collectors.toList());
