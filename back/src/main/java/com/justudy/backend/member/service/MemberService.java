@@ -196,11 +196,12 @@ public class MemberService {
     private ProfileResponse createProfileResponse(MemberEntity member) {
         return ProfileResponse.builder()
                 .nickname(member.getNickname())
-                .category(getCategoryArray(member.getCategories()))
+                .category(fromCategoryToArray(member.getCategories()))
                 .dream(member.getDream())
                 .introduction(member.getIntroduction())
                 .level(member.getLevel().getValue())
                 .imageSequence(member.getImageFile().getSequence()) //imageFile Sequence
+                .badgeCount(member.getBadgeCount())
                 .build();
     }
 
@@ -214,7 +215,7 @@ public class MemberService {
                 .userId(member.getUserId())
                 .phone(member.getPhone())
                 .email(member.getEmail())
-                .category(getCategoryArray(member.getCategories()))
+                .category(fromCategoryToArray(member.getCategories()))
                 .dream(member.getDream())
                 .introduction(member.getIntroduction())
                 .imageSequence(member.getImageFile().getSequence()) //imageFile Sequence
@@ -224,7 +225,7 @@ public class MemberService {
     private MypageResponse createMypageResponse(MemberEntity member) {
         return MypageResponse.builder()
                 .nickname(member.getNickname())
-                .category(getCategoryArray(member.getCategories()))
+                .category(fromCategoryToArray(member.getCategories()))
                 .dream(member.getDream())
                 .status(member.getStatus().getValue())
                 .badgeCount(member.getBadgeCount())
@@ -233,7 +234,7 @@ public class MemberService {
                 .build();
     }
 
-    private static String[] getCategoryArray(List<MemberCategoryEntity> categories) {
+    private static String[] fromCategoryToArray(List<MemberCategoryEntity> categories) {
         List<String> categoryToString = categories.stream().map(category -> category.getCategory().getName())
                 .collect(Collectors.toList());
         String[] categoryResponse = categoryToString.toArray(new String[categoryToString.size()]);
