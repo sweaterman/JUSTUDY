@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.justudy.backend.member.dto.request.MemberCreate.MemberCreateBuilder;
@@ -74,8 +73,8 @@ public class MemberServiceTest {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
 
-        BDDMockito.given(memberRepository.findAll())
-                .willReturn(List.of(savedMember));
+        BDDMockito.given(memberRepository.findUserId(USER_ID))
+                .willReturn(Optional.of(USER_ID));
 
         //when
         MemberCreate request = makeMemberCreateBuilder()
@@ -95,8 +94,8 @@ public class MemberServiceTest {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
 
-        BDDMockito.given(memberRepository.findAll())
-                .willReturn(List.of(savedMember));
+        BDDMockito.given(memberRepository.findNickname(NICKNAME))
+                .willReturn(Optional.of(NICKNAME));
 
         //when
         MemberCreate request = makeMemberCreateBuilder()
@@ -115,8 +114,8 @@ public class MemberServiceTest {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
 
-        BDDMockito.given(memberRepository.findAll())
-                .willReturn(List.of(savedMember));
+        BDDMockito.given(memberRepository.findSsafyId(SSAFY_ID))
+                .willReturn(Optional.of(SSAFY_ID));
 
         //when
         MemberCreate request = makeMemberCreateBuilder()
