@@ -32,7 +32,6 @@ public class CommunityController {
     private final CommunityCommentService communityCommentService;
     private final CommunityLoveService communityLoveService;
     private final CommunityBookmarkService communityBookmarkService;
-
     private final CategoryService categoryService;
     // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
