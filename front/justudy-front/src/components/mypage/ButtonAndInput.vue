@@ -5,7 +5,7 @@
                 <BasicButton :buttonLength="buttonLength" :height="height" :fontSize="fontSize" :content="`${content}`" :standard="`${standard}`" />
             </v-col>
             <v-col cols="16" md="8">
-                <v-text-field :label="`${placeholder}`" outlined />
+                <v-text-field :label="`${placeholder}`" outlined :value="value" @input="myChange" />
             </v-col>
         </v-row>
     </div>
@@ -14,6 +14,7 @@
 import BasicButton from '@/components/common/BasicButton.vue';
 export default {
     name: 'ButtonAndInput',
+
     components: {
         BasicButton
     },
@@ -36,6 +37,12 @@ export default {
         placeholder: {
             type: String,
             default: ''
+        },
+        value: {}
+    },
+    methods: {
+        myChange($event) {
+            this.$emit('input', $event);
         }
     }
 };
