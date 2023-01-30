@@ -76,6 +76,7 @@ export default {
                 reader.readAsDataURL(input.files[0]);
                 this.file = input.files[0];
             }
+            console.log(this.uploadImageFile);
         }
     }
 };

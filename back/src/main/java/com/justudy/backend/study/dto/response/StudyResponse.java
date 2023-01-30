@@ -30,6 +30,8 @@ public class StudyResponse {
     private Boolean isOpen;
     private String github;
     private String notion;
+
+    private Long imageSeqence;
     private LocalDateTime createdTime;
     private String startTime;
     private Boolean last;
@@ -50,6 +52,7 @@ public class StudyResponse {
                 .isOpen(entity.getIsOpen())
                 .github(entity.getGithub())
                 .notion(entity.getNotion())
+                .imageSeqence(entity.getImageFile().getSequence())
                 .createdTime(entity.getCreatedTime())
                 .startTime(entity.getStartTime())
                 .build();
