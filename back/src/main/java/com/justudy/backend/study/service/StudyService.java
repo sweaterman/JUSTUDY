@@ -2,6 +2,7 @@ package com.justudy.backend.study.service;
 
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
+import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
@@ -35,8 +36,9 @@ public class StudyService {
 // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
     @Transactional
-    public Long createStudy(StudyCreate request) {
+    public Long createStudy(StudyCreate request, UploadFileEntity basicImage) {
         StudyEntity study = request.toEntity();
+    study.changeImage(basicImage);
         return studyRepository.save(study).getSequence();
     }
 
@@ -63,6 +65,8 @@ public class StudyService {
                 .orElseThrow(StudyNotFound::new);
         studyRepository.deleteById(studySequence);
     }
+
+
 
     public Slice<StudyResponse> search(int page, List<String> sub, String type, String search) {
         Pageable pageable = PageRequest.of(page, MAX_STUDY_PAGE_SIZE);

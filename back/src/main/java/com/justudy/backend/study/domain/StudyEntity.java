@@ -1,12 +1,15 @@
 package com.justudy.backend.study.domain;
 
 import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.studyMember.domain.StudyMemberEntity;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static javax.persistence.FetchType.LAZY;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
@@ -52,6 +55,9 @@ public class StudyEntity {
     private String github;
     @Column(name = "study_notion")
     private String notion;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "upload_file_seq")
+    private UploadFileEntity imageFile;
     @Column(name = "study_created_time")
     private LocalDateTime createdTime;
     @Column(name = "study_modified_time")
@@ -60,6 +66,9 @@ public class StudyEntity {
     private String startTime;
     //스터디방
 
+    public void changeImage(UploadFileEntity imageFile) {
+        this.imageFile = imageFile;
+    }
 
     public void update(String name, Long leaderSeq, String introduction, Integer personnel, String level, String onlineOffline,
                        Boolean isOpen, String github, String notion, String startTime) {

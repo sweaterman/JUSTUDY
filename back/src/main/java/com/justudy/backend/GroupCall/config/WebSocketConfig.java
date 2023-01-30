@@ -23,9 +23,10 @@ public class WebSocketConfig {
     public UserRegistry registry() {
         return new UserRegistry();
     }
+//    "ws://kurento:8888/kurento"
     @Bean
     public KurentoClient kurentoClient() {
-        return KurentoClient.create("ws://kurento:8888/kurento");
+        return KurentoClient.create();
     }
 
     @Bean
