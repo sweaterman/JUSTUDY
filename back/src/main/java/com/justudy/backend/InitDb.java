@@ -2,13 +2,26 @@ package com.justudy.backend;
 
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
+import com.justudy.backend.community.dto.request.CommunityCreate;
+import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.file.domain.UploadFileEntity;
+import com.justudy.backend.file.exception.UploadFileNotFound;
+import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.repository.UploadFileRepository;
+import com.justudy.backend.member.domain.MemberEntity;
+import com.justudy.backend.member.dto.request.MemberCreate;
+import com.justudy.backend.member.repository.MemberRepository;
+import com.justudy.backend.member.service.MemberService;
+import com.justudy.backend.study.domain.StudyFrequencyEntity;
+import com.justudy.backend.study.dto.request.StudyCreate;
+import com.justudy.backend.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -30,11 +43,87 @@ public class InitDb {
 
         private final UploadFileRepository uploadFileRepository;
 
+        private final MemberService memberService;
+
+        private final CommunityService communityService;
+        private final StudyService studyService;
 
 
         public void init() {
             saveCategory();
             saveImageFile();
+            saveMember();
+            saveCommunity();
+            saveStudy();
+        }
+
+
+        private void saveCommunity() {
+            for (int i = 0; i < 10; i++) {
+                long memberSequence = 50 + (3 * i);
+                MemberEntity findMember = memberService.getMember(memberSequence);
+                for (int count = 1; count <= 5; count++)
+                communityService.createCommunity(makeBoard(count), findMember);
+            }
+        }
+
+        private CommunityCreate makeBoard(int number) {
+            return CommunityCreate.builder()
+                    .category_seq(1L)
+                    .title("제목 " + number)
+                    .content("내용 " + number)
+                    .createdTime(LocalDateTime.now())
+                    .isHighlighted(false)
+                    .build();
+        }
+
+        private void saveMember() {
+            UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
+                    .orElseThrow(UploadFileNotFound::new);
+
+            for (int i = 1; i <= 10; i++) {
+                MemberCreate request = makeMemberCreate(i);
+                memberService.saveMember(request, basicImage);
+            }
+        }
+
+        private void saveStudy(){
+            UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
+                    .orElseThrow(UploadFileNotFound::new);
+            for(int i=0; i<10; i++){
+                long memberSequence = 50 + (3*i);
+                MemberEntity findmember = memberService.getMember(memberSequence);
+                for(int count = 1; count <= 5; count++){
+                    if(count%2 == 0) studyService.createStudy(StudyCreate.builder().name("스터디"+memberSequence)
+                                    .leaderSeq(50L).introduction("아주 좋은 스터디1").personnel(32).level("초보")
+                                    .onlineOffline("온라인").isOpen(true).github("https://github.com").notion("https://notion.com")
+                            .build(),basicImage);
+                    else studyService.createStudy(StudyCreate.builder().name("스터디"+memberSequence)
+                            .leaderSeq(50L).introduction("아주 좋은 스터디2").personnel(32).level("초보")
+                            .onlineOffline("온라인").isOpen(false).github("https://github.com").notion("https://notion.com")
+                            .build(),basicImage);
+
+                }
+            }
+        }
+
+
+        private static MemberCreate makeMemberCreate(int number) {
+            MemberCreate request = MemberCreate.builder()
+                    .userId("test" + number)
+                    .password("1234")
+                    .passwordCheck("1234")
+                    .username("테스트" + number)
+                    .nickname("테스트 봇" + number)
+                    .ssafyId("08" + number)
+                    .phone(String.valueOf(number))
+                    .email("testEmail" + number + "@ssafy.com")
+                    .mmId(number + "test")
+                    .region("SEOUL")
+                    .category(new String[]{"Java", "Spring"})
+                    .introduction("테스트 봇" + number + " 입니다.")
+                    .build();
+            return request;
         }
 
         private void saveImageFile() {

@@ -1,6 +1,10 @@
 package com.justudy.backend.study.controller;
 
 import com.justudy.backend.category.service.CategoryService;
+import com.justudy.backend.file.domain.UploadFileEntity;
+import com.justudy.backend.file.exception.UploadFileNotFound;
+import com.justudy.backend.file.infra.ImageConst;
+import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.study.dto.request.*;
 import com.justudy.backend.study.dto.response.StudyResponse;
 import com.justudy.backend.study.exception.InvalidRequest;
@@ -16,12 +20,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/study")
+@RequestMapping("/api/study")
 @RequiredArgsConstructor
 public class StudyController {
 
     private final StudyService studyService;
     private final CategoryService categoryService;
+
+    private final UploadFileService uploadFileService;
+
     // ---------------------------------------------------------------스터디---------------------------------------------------------------
 
 //    /**
@@ -59,8 +66,12 @@ public class StudyController {
                     throw new InvalidRequest();
             }
         }
+
         return ResponseEntity.status(HttpStatus.OK).body(studyService.search(page, subCategories, type, search));
     }
+
+
+
 
     /**
      * 스터디 상세 정보를 가져오는 API
@@ -81,7 +92,8 @@ public class StudyController {
      */
     @PostMapping("/")
     public ResponseEntity<StudyResponse> createStudy(@RequestBody StudyCreate request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(studyService.readStudy(studyService.createStudy(request)));
+        UploadFileEntity basicImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
+        return ResponseEntity.status(HttpStatus.CREATED).body(studyService.readStudy(studyService.createStudy(request, basicImage)));
     }
 
     /**

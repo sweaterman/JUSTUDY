@@ -26,6 +26,8 @@ public class StudyCreate {
     private Boolean isOpen;
     private String github;
     private String notion;
+
+    private Long imageSequence;
     private String startTime;
 
 
