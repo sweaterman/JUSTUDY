@@ -128,7 +128,7 @@
                                         <v-card-text>
                                             <br />
                                             스터디장에게 남기고 싶은 메시지
-                                            <v-textarea outlined rows="10" :rules="message_rules" v-model="user.message"></v-textarea>
+                                            <v-textarea outlined rows="10" :rules="message_rules" v-model="sendData.message"></v-textarea>
                                         </v-card-text>
 
                                         <v-card-actions>
@@ -155,6 +155,15 @@ import {mapState} from 'vuex';
 
 export default {
     name: 'ApplyStudyView',
+    computed: {
+        ...mapState(['applyStudyInfo'])
+    },
+    created() {
+        const pathName = new URL(document.location).pathname.split('/');
+        const studySeq = pathName[pathName.length - 1];
+        this.$store.dispatch('getApplyStudyInfo', studySeq);
+        //스터디 멤버에 내가 포함되어있거나 지원을 완료한 상태라면? applyDisplay 바꿔야함
+    },
     data() {
         return {
             study: {
@@ -178,36 +187,26 @@ export default {
                 effective_date: '협의가능'
             },
             message_rules: [value => !!value || '보낼 메시지를 입력해주세요.'],
-            user: {
-                message: '안녕하세용'
+            sendData: {
+                userSeq: 0,
+                message: null
             },
             applyData: false, //모달창
             applyDisplay: true //이미 보냈거나 가입했는지 확인
         };
     },
-    computed: {
-        ...mapState(['studyInfo']), //study로 추후에 바꿀 예정(하드코딩)
-        ...mapState(['loginUser'])
-    },
-    created() {
-        const pathName = new URL(document.location).pathname.split('/');
-        const studySeq = pathName[pathName.length - 1];
-        this.study.seq = studySeq;
-        this.$store.dispatch('getStudy', studySeq);
 
-        //내가 지원한 스터디인지 확인하는 과정 필요하다.
-    },
     methods: {
         applyDialog(check) {
             if (check == 'open') {
                 this.applyData = true;
             } else if (check == 'T') {
-                //지원을한다. -> 마이페이지로 이동함.
+                //지원을한다. -> 마이스터디페이지로 이동함.
                 if (this.user.message == '') {
                     alert('보낼 메시지를 입력해주세요!');
                 } else {
                     this.applyData = false;
-                    this.$router.push({path: `/study/myStudy`});
+                    this.$store.dispatch('applyStudy', this.applyStudyInfo.seq, this.sendData);
                 }
             } else if (check == 'F') {
                 this.applyData = false;

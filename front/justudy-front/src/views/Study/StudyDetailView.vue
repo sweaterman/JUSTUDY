@@ -11,18 +11,18 @@
                         <v-row>
                             <!-- 스터디방 -->
                             <v-col cols="12" md="4">
-                                <StudyRoomIcon />
+                                <StudyRoomIcon :study="studyInfo" />
                             </v-col>
 
                             <!-- 스터디 정보 -->
                             <v-col cols="12" md="8">
-                                <StudyInfo />
+                                <StudyInfo :study="studyInfo" />
                             </v-col>
                         </v-row>
 
                         <v-row>
                             <v-col>
-                                <KingOfStudy />
+                                <KingOfStudy :study="studyInfo" />
                             </v-col>
                         </v-row>
                     </v-container>
@@ -46,7 +46,23 @@ export default {
     name: 'SearchStudyView',
     components: {StudyRoomIcon, StudyInfo, KingOfStudy},
     data() {
-        return {};
+        return {
+            studyInfo: {
+                sequence: 1,
+                name: '리액트 용자 모임',
+                leader: '돌로스원숭숭',
+                population: 10,
+                category: 'vue',
+                //후추 수정
+                member: [1, 2, 3],
+                level: '초보',
+                meeting: '온라인',
+                status: true,
+                github: 'http://깃허브/어쩌구',
+                notion: 'http://노션주소입니다/하하하',
+                start_time: '2023.01.02'
+            }
+        };
     }
 };
 </script>
