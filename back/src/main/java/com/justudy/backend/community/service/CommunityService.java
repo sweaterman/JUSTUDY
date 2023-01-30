@@ -1,21 +1,20 @@
 package com.justudy.backend.community.service;
 
+import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.dto.request.CommunityCreate;
 import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.community.dto.response.CommunityResponse;
-import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.exception.CommunityNotFound;
-import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.community.repository.CommunityLoveRepository;
+import com.justudy.backend.community.repository.CommunityRepository;
+import com.justudy.backend.member.domain.MemberEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,8 +32,9 @@ public class CommunityService {
 // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
     @Transactional
-    public Long createCommunity(CommunityCreate request) {
+    public Long createCommunity(CommunityCreate request, MemberEntity findMember) {
         CommunityEntity community = request.toEntity();
+        community.addMember(findMember);
         return communityRepository.save(community).getSequence();
     }
 
