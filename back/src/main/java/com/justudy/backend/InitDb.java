@@ -12,12 +12,16 @@ import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.member.service.MemberService;
+import com.justudy.backend.study.domain.StudyFrequencyEntity;
+import com.justudy.backend.study.dto.request.StudyCreate;
+import com.justudy.backend.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -42,6 +46,7 @@ public class InitDb {
         private final MemberService memberService;
 
         private final CommunityService communityService;
+        private final StudyService studyService;
 
 
         public void init() {
@@ -49,7 +54,9 @@ public class InitDb {
             saveImageFile();
             saveMember();
             saveCommunity();
+            saveStudy();
         }
+
 
         private void saveCommunity() {
             for (int i = 0; i < 10; i++) {
@@ -79,6 +86,27 @@ public class InitDb {
                 memberService.saveMember(request, basicImage);
             }
         }
+
+        private void saveStudy(){
+            UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
+                    .orElseThrow(UploadFileNotFound::new);
+            for(int i=0; i<10; i++){
+                long memberSequence = 50 + (3*i);
+                MemberEntity findmember = memberService.getMember(memberSequence);
+                for(int count = 1; count <= 5; count++){
+                    if(count%2 == 0) studyService.createStudy(StudyCreate.builder().name("스터디"+memberSequence)
+                                    .leaderSeq(50L).introduction("아주 좋은 스터디1").personnel(32).level("초보")
+                                    .onlineOffline("온라인").isOpen(true).github("https://github.com").notion("https://notion.com")
+                            .build(),basicImage);
+                    else studyService.createStudy(StudyCreate.builder().name("스터디"+memberSequence)
+                            .leaderSeq(50L).introduction("아주 좋은 스터디2").personnel(32).level("초보")
+                            .onlineOffline("온라인").isOpen(false).github("https://github.com").notion("https://notion.com")
+                            .build(),basicImage);
+
+                }
+            }
+        }
+
 
         private static MemberCreate makeMemberCreate(int number) {
             MemberCreate request = MemberCreate.builder()
