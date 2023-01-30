@@ -9,18 +9,23 @@ import com.justudy.backend.community.service.CommunityBookmarkService;
 import com.justudy.backend.community.service.CommunityCommentService;
 import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.community.service.CommunityLoveService;
+import com.justudy.backend.login.infra.SessionConst;
+import com.justudy.backend.member.domain.MemberEntity;
+import com.justudy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
-@RequestMapping("/community")
+@RequestMapping("/api/community")
 @RequiredArgsConstructor
 public class CommunityController {
 
+    private final MemberService memberService;
     private final CommunityService communityService;
     private final CommunityCommentService communityCommentService;
     private final CommunityLoveService communityLoveService;
