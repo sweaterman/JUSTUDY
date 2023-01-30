@@ -25,7 +25,7 @@
                         <v-subheader>아이디</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="id" dense outlined label="아이디" :rules="[v => !!v || '아이디는 필수입니다.']"></v-text-field>
+                        <v-text-field v-model="user.userId" dense outlined label="아이디" :rules="[v => !!v || '아이디는 필수입니다.']"></v-text-field>
                     </v-col>
                     <v-col cols="2" />
                 </v-row>
@@ -36,7 +36,7 @@
                         <v-subheader>비밀번호</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="password" dense outlined label="비밀번호" :rules="[v => !!v || '비밀번호는 필수입니다.']"></v-text-field>
+                        <v-text-field v-model="user.password" dense outlined label="비밀번호" :rules="[v => !!v || '비밀번호는 필수입니다.']"></v-text-field>
                     </v-col>
                 </v-row>
             </v-col>
@@ -70,11 +70,19 @@ export default {
     },
 
     data() {
-        return {};
+        return {
+            user: {
+                userId: '',
+                password: ''
+            }
+        };
     },
 
     methods: {
         movetomain() {
+            this.$store.dispatch('moduleLogin/login', {
+                user: this.user
+            });
             window.location.href = '/';
         },
         movetosignin() {

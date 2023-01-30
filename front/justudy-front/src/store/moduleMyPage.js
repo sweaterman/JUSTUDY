@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+// import port from './port';
 export default {
     namespaced: true,
     state: {
@@ -17,18 +17,6 @@ export default {
     },
     actions: {
         async getMyPageUser({commit}) {
-            console.log('aaa');
-            await axios.post(
-                'http://localhost:8080/api/login',
-                {
-                    userId: 'abcde',
-                    password: '12345'
-                },
-                {
-                    withCredentials: true
-                }
-            );
-            console.log('aaaaa');
             await axios
                 .get('http://localhost:8080/api/mypage/member', {
                     withCredentials: true
