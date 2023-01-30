@@ -2,7 +2,10 @@ package com.justudy.backend.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.justudy.backend.common.enum_util.Level;
+import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
+import com.justudy.backend.file.service.FileStore;
+import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberStatus;
 import com.justudy.backend.member.dto.request.MemberCreate;
@@ -15,45 +18,51 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(MemberController.class)
 public class MemberControllerTest {
 
+    @Autowired
     MockMvc mockMvc;
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    ObjectMapper objectMapper;
 
-    @InjectMocks
-    private MemberController memberController;
-
-    @Mock
+    @MockBean
     private MemberService memberService;
 
-    @BeforeEach
-    void init() {
-        mockMvc = MockMvcBuilders.standaloneSetup(memberController)
-                .build();
-    }
+    @MockBean
+    private UploadFileService uploadFileService;
 
+    @MockBean
+    private FileStore fileStore;
 
     @Test
     @DisplayName("POST /register 요청")
     void signupMember() throws Exception {
         //given
+        UploadFileEntity imageFile = new UploadFileEntity("test", "test");
+        ReflectionTestUtils.setField(imageFile, "sequence", 1L);
+        BDDMockito.given(uploadFileService.getUploadFile(anyLong()))
+                .willReturn(imageFile);
+
         MemberCreate request = MemberCreate.builder()
                 .userId("sklee0206")
                 .password("1234")
@@ -73,12 +82,14 @@ public class MemberControllerTest {
         String json = objectMapper.writeValueAsString(request);
 
         //expected
-        mockMvc.perform(post("/api/register")
+        mockMvc.perform(post("/api/member/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated())
                 .andExpect(content().string(""))
                 .andDo(print());
+
+        BDDMockito.then(uploadFileService).should().getUploadFile(anyLong());
     }
 
     @Test
@@ -88,11 +99,13 @@ public class MemberControllerTest {
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(SessionConst.LOGIN_USER, 1L);
 
+        MypageResponse mypageResponse = makeTestMypageResponse();
+
         BDDMockito.given(memberService.getMypage(1L))
-                .willReturn(makeTestMypageResponse());
+                .willReturn(mypageResponse);
 
         //expected
-        mockMvc.perform(get("/api/mypage/member")
+        mockMvc.perform(get("/api/member/mypage")
                         .contentType(MediaType.APPLICATION_JSON)
                         .session(session)
                         .accept(MediaType.APPLICATION_JSON))
@@ -116,7 +129,7 @@ public class MemberControllerTest {
                 .willReturn(makeTestModifyPageResponse());
 
         //expected
-        mockMvc.perform(get("/api/mypage/modify")
+        mockMvc.perform(get("/api/member/mypage/modify")
                         .contentType(MediaType.APPLICATION_JSON)
                         .session(session)
                         .accept(MediaType.APPLICATION_JSON))
