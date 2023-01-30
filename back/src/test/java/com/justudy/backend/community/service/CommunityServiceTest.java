@@ -1,5 +1,6 @@
 package com.justudy.backend.community.service;
 
+import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.dto.request.CommunityCreate;
 import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.community.dto.response.CommunityResponse;
@@ -22,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 class CommunityServiceTest {
@@ -68,11 +71,12 @@ class CommunityServiceTest {
         CommunityCreate create = makeRequest(findMember);
 
         // When
-        Long after = service.createCommunity(create);
+        Long after = service.createCommunity(create, findMember);
+        CommunityEntity savedBoard = repository.findById(after).get();
 
         // Then
-        Assertions.assertThat(service.readAllCommunity(0, "3").size()).isEqualTo(1);
-        Assertions.assertThat(after).isEqualTo(2L);
+        assertThat(savedBoard.getTitle()).isEqualTo("title");
+        assertThat(savedBoard.getContent()).isEqualTo("내용");
     }
 
     @Transactional
@@ -82,12 +86,12 @@ class CommunityServiceTest {
         CommunityCreate create = makeRequest(findMember);
 
         // When
-        service.createCommunity(create);
+        service.createCommunity(create, findMember);
         CommunityResponse response = service.readCommunity(2L);
 
         // Then
-        Assertions.assertThat(response.getSequence()).isEqualTo(2L);
-        Assertions.assertThat(response.getViewCount()).isEqualTo(1);
+        assertThat(response.getSequence()).isEqualTo(2L);
+        assertThat(response.getViewCount()).isEqualTo(1);
     }
 
     @Transactional
@@ -99,10 +103,10 @@ class CommunityServiceTest {
 
         // When
         for (int i = 0; i < 4; i++) {
-            service.createCommunity(create2);
+            service.createCommunity(create2, findMember);
         }
         for (int i = 0; i < 20; i++) {
-            service.createCommunity(create);
+            service.createCommunity(create, findMember);
         }
 
         // Then
@@ -110,7 +114,7 @@ class CommunityServiceTest {
         for (int i = 0; i < list.size(); i++) {
             log.info("정보3 : ->{}", list.get(i).getTitle());
         }
-        Assertions.assertThat(service.readAllCommunity(0, "3").size()).isEqualTo(10);
+        assertThat(service.readAllCommunity(0, "3").size()).isEqualTo(10);
     }
 
     @Transactional
@@ -120,11 +124,11 @@ class CommunityServiceTest {
         CommunityCreate create = makeRequest(findMember);
 
         // When
-        service.createCommunity(create);
+        service.createCommunity(create, findMember);
         service.updateCommunity(2L, makeEditRequest());
 
         // Then
-        Assertions.assertThat(service.readCommunity(2L).getTitle()).isEqualTo("update");
+        assertThat(service.readCommunity(2L).getTitle()).isEqualTo("update");
 
     }
 
@@ -134,11 +138,11 @@ class CommunityServiceTest {
         CommunityCreate create = makeRequest(findMember);
 
         // When
-        service.createCommunity(create);
+        service.createCommunity(create, findMember);
         service.deleteCommunity(2L);
 
         // Then
-        Assertions.assertThat(service.readAllCommunity(0, "3").size()).isEqualTo(0);
+        assertThat(service.readAllCommunity(0, "3").size()).isEqualTo(0);
     }
 
     @Transactional
@@ -148,11 +152,11 @@ class CommunityServiceTest {
         CommunityCreate create = makeNotice();
 
         // When
-        service.createCommunity(create);
-        service.createCommunity(create);
+        service.createCommunity(create, findMember);
+        service.createCommunity(create, findMember);
 
         // Then
-        Assertions.assertThat(service.readAllNoticeCommunity(0).size()).isEqualTo(2);
+        assertThat(service.readAllNoticeCommunity(0).size()).isEqualTo(2);
 
     }
 
@@ -164,15 +168,15 @@ class CommunityServiceTest {
         CommunityCreate create = makeRequest(findMember);
 
         // When
-        Long after = service.createCommunity(create);
+        Long after = service.createCommunity(create, findMember);
 
         // Then
-        Assertions.assertThat(service.search(0, "name", "levi").size()).isEqualTo(1);
-        Assertions.assertThat(service.search(0, "title", "tit").size()).isEqualTo(1);
-        Assertions.assertThat(service.search(0, "content", "내용").size()).isEqualTo(1);
-        Assertions.assertThat(service.search(0, "name", "김싸피").size()).isEqualTo(0);
-        Assertions.assertThat(service.search(0, "title", "t2").size()).isEqualTo(0);
-        Assertions.assertThat(service.search(0, "content", "제목").size()).isEqualTo(0);
+        assertThat(service.search(0, "name", "levi").size()).isEqualTo(1);
+        assertThat(service.search(0, "title", "tit").size()).isEqualTo(1);
+        assertThat(service.search(0, "content", "내용").size()).isEqualTo(1);
+        assertThat(service.search(0, "name", "김싸피").size()).isEqualTo(0);
+        assertThat(service.search(0, "title", "t2").size()).isEqualTo(0);
+        assertThat(service.search(0, "content", "제목").size()).isEqualTo(0);
 
     }
 
@@ -192,7 +196,6 @@ class CommunityServiceTest {
     private CommunityCreate makeNotice() {
         return CommunityCreate
                 .builder()
-                .member(findMember)
                 .category_seq(33L)
                 .title("공지")
                 .content("내용")
@@ -204,7 +207,6 @@ class CommunityServiceTest {
     private CommunityCreate makeRequest(MemberEntity findMember) {
         return CommunityCreate
                 .builder()
-                .member(findMember)
                 .category_seq(3L)
                 .title("title")
                 .content("내용")
@@ -221,7 +223,7 @@ class CommunityServiceTest {
                 .email("ssafylee@ssafy.com")
                 .region("SEOUL")
                 .dream("백엔드취업 희망")
-                .category(new String[]{"JAVA", "Spring", "JPA"})
+                .category(new String[]{"Java", "Spring"})
                 .introduction("test.");
     }
 }
