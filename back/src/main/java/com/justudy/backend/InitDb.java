@@ -64,10 +64,8 @@ public class InitDb {
 
         private CommunityCreate makeBoard(int number) {
             return CommunityCreate.builder()
-                    .category_seq(1L)
                     .title("제목 " + number)
                     .content("내용 " + number)
-                    .createdTime(LocalDateTime.now())
                     .isHighlighted(false)
                     .build();
         }
