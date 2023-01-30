@@ -263,22 +263,19 @@ public class MemberService {
     }
 
     private void isDuplicatedUserId(String userId) {
-        List<MemberEntity> members = memberRepository.findAll();
-        if (members.stream().anyMatch(member -> member.getUserId().equals(userId))) {
+        if (memberRepository.findUserId(userId).isPresent()) {
             throw new ConflictRequest("userId", "이미 가입된 아이디입니다.");
         }
     }
 
     private void isDuplicatedNickname(String nickname) {
-        List<MemberEntity> members = memberRepository.findAll();
-        if (members.stream().anyMatch(member -> member.getNickname().equals(nickname))) {
+        if (memberRepository.findNickname(nickname).isPresent()) {
             throw new ConflictRequest("nickname", "이미 가입된 닉네임입니다.");
         }
     }
 
     private void isDuplicatedSsafyId(String ssafyId) {
-        List<MemberEntity> members = memberRepository.findAll();
-        if (members.stream().anyMatch(member -> member.getSsafyId().equals(ssafyId))) {
+        if (memberRepository.findSsafyId(ssafyId).isPresent()) {
             throw new ConflictRequest("ssafyId", "이미 가입된 SSAFY학번입니다.");
         }
     }
