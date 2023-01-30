@@ -16,6 +16,4 @@ public class CommunityEdit {
     private Long category_seq;
     private String title;
     private String content;
-    private Integer viewCount;
-    private LocalDateTime modifiedTime;
 }

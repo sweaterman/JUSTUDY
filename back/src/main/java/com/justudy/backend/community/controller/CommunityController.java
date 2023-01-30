@@ -111,24 +111,30 @@ public class CommunityController {
     /**
      * 커뮤니티 수정 API
      *
-     * @param id      커뮤니티 sequence (PK)
+     * @param communitySequence      커뮤니티 sequence (PK)
      * @param request 수정 정보
      * @return ResponseEntity<UserResponse> 200 OK, 수정된 커뮤니티글 정보
      */
     @PutMapping("/board/{id}")
-    public ResponseEntity<CommunityResponse> updateCommunity(@PathVariable("id") long id, @RequestBody CommunityEdit request) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunity(communityService.updateCommunity(id, request)));
+    public ResponseEntity<CommunityResponse> updateCommunity(@PathVariable("id") Long communitySequence, @RequestBody CommunityEdit request, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        communityService.updateCommunity(communitySequence, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunity());
     }
 
     /**
      * 커뮤니티 삭제 API
      *
-     * @param id 커뮤니티 sequence (PK)
+     * @param communitySequence 커뮤니티 sequence (PK)
      * @return ResponseEntity<Void> 204 No Content
      */
     @DeleteMapping("/board/{id}")
-    public ResponseEntity<Void> deleteCommunity(@PathVariable("id") long id) {
-        communityService.deleteCommunity(id);
+    public ResponseEntity<Void> deleteCommunity(@PathVariable("id") long communitySequence, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        communityService.deleteCommunity(loginSequence, communitySequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 

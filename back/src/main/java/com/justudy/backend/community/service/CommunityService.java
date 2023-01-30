@@ -9,6 +9,7 @@ import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.community.repository.CommunityLoveRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.member.domain.MemberEntity;
+import com.justudy.backend.member.exception.ForbiddenRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -42,11 +43,11 @@ public class CommunityService {
 
     @Transactional
     public CommunityResponse readCommunity(Long communitySequence) {
-        CommunityEntity entity = communityRepository.findById(communitySequence)
+        CommunityEntity community = communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
-        addViewCount(entity);
-        return CommunityResponse.makeBuilder(entity, loveCount);
+        addViewCount(community);
+        return CommunityResponse.makeBuilder(community, loveCount);
     }
 
     @Transactional
@@ -84,14 +85,16 @@ public class CommunityService {
         CommunityEntity entity = communityRepository.findById(id)
                 .orElseThrow(CommunityNotFound::new);
 
-        entity.update(request.getTitle(), request.getContent(), request.getViewCount(), request.getModifiedTime());
+        entity.update(request.getTitle(), request.getContent(),);
         return id;
     }
 
     @Transactional
-    public void deleteCommunity(Long communitySequence) {
-        communityRepository.findById(communitySequence)
+    public void deleteCommunity(Long loginSequence, Long communitySequence) {
+        CommunityEntity community = communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
+        validateWriter(loginSequence, community.getMember().getSequence());
+
         communityRepository.deleteById(communitySequence);
     }
 
@@ -135,6 +138,12 @@ public class CommunityService {
                 .stream()
                 .map(CommunityResponse::makeBuilder)
                 .collect(Collectors.toList());
+    }
+
+    private void validateWriter(Long loginSequence, Long writerSequence) {
+        if (loginSequence != writerSequence) {
+            throw new ForbiddenRequest();
+        }
     }
 
 }
