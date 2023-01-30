@@ -40,6 +40,11 @@ public class CommunityEntity {
     @Column(name = "community_week_love_count")
     private Integer weekLoveCount;
 
+    //== 연관관계 편의메소드 ==//
+    public void addMember(MemberEntity member) {
+        this.member = member;
+        //todo Member와 연관관계 업데이트
+    }
 
     public void changeViewCount(Integer viewCount) {
         this.viewCount = viewCount;

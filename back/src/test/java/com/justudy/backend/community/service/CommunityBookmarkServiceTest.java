@@ -61,12 +61,11 @@ class CommunityBookmarkServiceTest {
 
         Long savedCommunityId = communityService.createCommunity(CommunityCreate
                 .builder()
-                .member(findMember)
                 .category_seq(33L)
                 .title("title")
                 .content("내용")
                 .createdTime(LocalDateTime.now())
-                .build()
+                .build(), findMember
         );
         findCommunity = repository.findById(savedCommunityId);
         log.info("정보2 : end set up->{},{}", findMember, findCommunity);
@@ -112,12 +111,11 @@ class CommunityBookmarkServiceTest {
         //2번째 커뮤니티 생성
         Long savedCommunityId2 = communityService.createCommunity(CommunityCreate
                 .builder()
-                .member(findMember)
                 .category_seq(33L)
                 .title("title")
                 .content("내용")
                 .createdTime(LocalDateTime.now())
-                .build()
+                .build(), findMember
         );
         Optional<CommunityEntity> findCommunity2 = repository.findById(savedCommunityId2);
 
@@ -150,7 +148,7 @@ class CommunityBookmarkServiceTest {
                 .email("ssafylee@ssafy.com")
                 .region("SEOUL")
                 .dream("백엔드취업 희망")
-                .category(new String[]{"JAVA", "Spring", "JPA"})
+                .category(new String[]{"Java", "Spring"})
                 .introduction("test.");
     }
 }
