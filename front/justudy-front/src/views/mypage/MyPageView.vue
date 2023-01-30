@@ -143,7 +143,7 @@ export default {
     },
     computed: {
         user() {
-            return this.$store.state.moduleUser.user;
+            return this.$store.state.moduleMyPage.user;
         }
         // userLoginIdx(){
         // return this.$store.state.user.userIdx;
@@ -172,7 +172,7 @@ export default {
     },
     created() {
         // 로그인한 유저 사진과 유저 정보 (닉네임,희망상태,희망진로)
-        this.$store.dispatch('moduleUser/getMyPageUser');
+        this.$store.dispatch('moduleMyPage/getMyPageUser');
         // 팔로잉
         // this.$store.dispatch("user/following");
         // 팔로우
