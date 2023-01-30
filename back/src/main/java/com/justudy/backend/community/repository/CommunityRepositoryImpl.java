@@ -47,11 +47,13 @@ public class CommunityRepositoryImpl implements CommunityRepositorySupport {
 
     @Override
     public Page<CommunityEntity> findAll(Pageable pageable, String category) {
-        JPQLQuery<CommunityEntity> query = queryFactory
-                .selectFrom(qCommunity)
-                .where(qCommunity.category_seq.eq(Long.valueOf(category)));
 
-        return pagingUtil.getPageImpl(pageable, query, qCommunity.getClass());
+        return null;
+//        JPQLQuery<CommunityEntity> query = queryFactory
+//                .selectFrom(qCommunity)
+//                .where(qCommunity.category_seq.eq(Long.valueOf(category)));
+//
+//        return pagingUtil.getPageImpl(pageable, query, qCommunity.getClass());
     }
 
     @Override
