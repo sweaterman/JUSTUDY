@@ -1,5 +1,6 @@
 package com.justudy.backend.community.service;
 
+import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.dto.request.CommunityCreate;
 import com.justudy.backend.community.dto.request.CommunityEdit;
@@ -32,9 +33,10 @@ public class CommunityService {
 // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
     @Transactional
-    public Long createCommunity(CommunityCreate request, MemberEntity findMember) {
+    public Long createCommunity(CommunityCreate request, MemberEntity findMember, CategoryEntity category) {
         CommunityEntity community = request.toEntity();
         community.addMember(findMember);
+        community.changeCategory(category);
         return communityRepository.save(community).getSequence();
     }
 
