@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class CommunityResponse {
     private Long sequence;
     private MemberEntity member;
-    private Long category_seq;
+    private String category;
     private String title;
     private String content;
     private Integer viewCount;
@@ -22,10 +22,12 @@ public class CommunityResponse {
     private Integer loveCount;
 
     @Builder
-    public CommunityResponse(Long sequence, MemberEntity member, Long category_seq, String title, String content, Integer viewCount, LocalDateTime createdTime, LocalDateTime modifiedTime, Integer loveCount) {
+    public CommunityResponse(Long sequence, MemberEntity member,
+                             String category, String title, String content, Integer viewCount,
+                             LocalDateTime createdTime, LocalDateTime modifiedTime, Integer loveCount) {
         this.sequence = sequence;
         this.member = member;
-        this.category_seq = category_seq;
+        this.category = category;
         this.title = title;
         this.content = content;
         this.viewCount = viewCount;
@@ -36,11 +38,11 @@ public class CommunityResponse {
     public static CommunityResponse makeBuilder(CommunityEntity entity) {
         return makeBuilder(entity,0);
     }
-    public static CommunityResponse makeBuilder(CommunityEntity entity,Integer loveCount) {
+    public static CommunityResponse makeBuilder(CommunityEntity entity, Integer loveCount) {
         return CommunityResponse.builder()
                 .sequence(entity.getSequence())
                 .member(entity.getMember())
-                .category_seq(entity.getCategory_seq())
+                .category(entity.getCategory().getName())
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .viewCount(entity.getViewCount())
