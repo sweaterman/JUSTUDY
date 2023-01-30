@@ -1,5 +1,5 @@
 import axios from 'axios';
-// import port from './port';
+import port from './port';
 export default {
     namespaced: true,
     state: {
@@ -18,7 +18,7 @@ export default {
     actions: {
         async getMyPageUser({commit}) {
             await axios
-                .get('http://localhost:8080/api/mypage/member', {
+                .get(port + 'member/mypage/member', {
                     withCredentials: true
                 })
                 .then(res => {

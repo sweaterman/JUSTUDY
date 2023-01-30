@@ -60,12 +60,11 @@ class CommunityLoveServiceTest {
 
         Long savedCommunityId = communityService.createCommunity(CommunityCreate
                 .builder()
-                .member(findMember)
                 .category_seq(33L)
                 .title("title")
                 .content("내용")
                 .createdTime(LocalDateTime.now())
-                .build()
+                .build(), findMember
         );
         findCommunity = repository.findById(savedCommunityId);
 
@@ -150,7 +149,7 @@ class CommunityLoveServiceTest {
                 .email("ssafylee@ssafy.com")
                 .region("SEOUL")
                 .dream("백엔드취업 희망")
-                .category(new String[]{"JAVA", "Spring", "JPA"})
+                .category(new String[]{"JAVA", "Spring"})
                 .introduction("test.");
     }
 }

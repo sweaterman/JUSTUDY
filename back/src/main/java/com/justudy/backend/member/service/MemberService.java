@@ -127,6 +127,11 @@ public class MemberService {
         return findMember.getSequence();
     }
 
+    public MemberEntity getMember(Long loginSequence) {
+        return memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+    }
+
     private boolean validateImageFile(Long oldImageSequence, Long newImageSequence) {
         if (isSameImage(oldImageSequence, newImageSequence)) {
             return false;

@@ -9,18 +9,23 @@ import com.justudy.backend.community.service.CommunityBookmarkService;
 import com.justudy.backend.community.service.CommunityCommentService;
 import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.community.service.CommunityLoveService;
+import com.justudy.backend.login.infra.SessionConst;
+import com.justudy.backend.member.domain.MemberEntity;
+import com.justudy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
-@RequestMapping("/community")
+@RequestMapping("/api/community")
 @RequiredArgsConstructor
 public class CommunityController {
 
+    private final MemberService memberService;
     private final CommunityService communityService;
     private final CommunityCommentService communityCommentService;
     private final CommunityLoveService communityLoveService;
@@ -90,8 +95,12 @@ public class CommunityController {
      * @return ResponseEntity<CommunityResponse> 201 Created, 생성된 커뮤니티 정보
      */
     @PostMapping("/board")
-    public ResponseEntity<CommunityResponse> createCommunity(@RequestBody CommunityCreate request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(communityService.readCommunity(communityService.createCommunity(request)));
+    public ResponseEntity<CommunityResponse> createCommunity(@RequestBody CommunityCreate request, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        MemberEntity findMember = memberService.getMember(loginSequence);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(communityService.readCommunity(communityService.createCommunity(request, findMember)));
     }
 
     /**
