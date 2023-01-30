@@ -1,7 +1,6 @@
 package com.justudy.backend.timer.domain;
 
 import java.sql.Date;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,8 +10,6 @@ import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,11 +25,11 @@ public class RoomActivityEntity {
 //  @Column(name ="study_room_seq")//추후 추가 예정
 //  private Long studyRoomSeq;
 
-  @Column(name ="room_activity_date")
+  @Column(name = "room_activity_date")
   private Date date;
-  @Column(name ="room_activity_time")
+  @Column(name = "room_activity_time")
   private Integer time;
-  @Column(name ="room_activity_category")
+  @Column(name = "room_activity_category")
   private String category;
 
 }

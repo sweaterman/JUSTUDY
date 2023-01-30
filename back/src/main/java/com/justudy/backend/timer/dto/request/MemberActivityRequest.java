@@ -1,13 +1,14 @@
 package com.justudy.backend.timer.dto.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
+@ToString
 public class MemberActivityRequest {
-  private String id;
+
   private Integer minute;
   private String category;
 }

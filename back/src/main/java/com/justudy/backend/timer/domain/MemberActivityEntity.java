@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,19 +20,29 @@ import lombok.NoArgsConstructor;
 @Table(name = "member_activity")
 @Entity
 public class MemberActivityEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "member_activity_seq")
   private Long sequence;
 
   @OneToOne
-  @JoinColumn(name ="member_seq")
+  @JoinColumn(name = "member_seq")
   private MemberEntity member;
 
-  @Column(name ="member_activity_date")
+
+  @Column(name = "member_activity_date")
   private Date date;
-  @Column(name ="member_activity_time")
+  @Column(name = "member_activity_time")
   private Integer time;
-  @Column(name ="member_activity_category")
+  @Column(name = "member_activity_category")
   private String category;
+
+  @Builder
+  public MemberActivityEntity(MemberEntity member, Date date, Integer time, String category) {
+    this.member = member;
+    this.date = date;
+    this.time = time;
+    this.category = category;
+  }
 }

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MemberActivityRepository extends JpaRepository<MemberActivityEntity,Long>,MemberActivityRepositoryCustom {
+public interface MemberActivityRepository extends JpaRepository<MemberActivityEntity, Long>,
+    MemberActivityRepositoryCustom {
 
 }
