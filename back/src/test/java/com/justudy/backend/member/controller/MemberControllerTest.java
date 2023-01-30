@@ -93,7 +93,7 @@ public class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("GET /mypage/member")
+    @DisplayName("GET /mypage")
     void getMemberOfMypage() throws Exception {
         //given
         MockHttpSession session = new MockHttpSession();
