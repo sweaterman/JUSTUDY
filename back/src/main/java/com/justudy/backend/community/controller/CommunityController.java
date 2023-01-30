@@ -1,5 +1,7 @@
 package com.justudy.backend.community.controller;
 
+import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.community.domain.CommunityBookmarkEntity;
 import com.justudy.backend.community.domain.CommunityLoveEntity;
 import com.justudy.backend.community.dto.request.*;
@@ -30,6 +32,8 @@ public class CommunityController {
     private final CommunityCommentService communityCommentService;
     private final CommunityLoveService communityLoveService;
     private final CommunityBookmarkService communityBookmarkService;
+
+    private final CategoryService categoryService;
     // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
     /**
@@ -99,8 +103,10 @@ public class CommunityController {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         MemberEntity findMember = memberService.getMember(loginSequence);
 
+        CategoryEntity category = categoryService.getCategory(request.getCategory());
+
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(communityService.readCommunity(communityService.createCommunity(request, findMember)));
+                .body(communityService.readCommunity(communityService.createCommunity(request, findMember, category)));
     }
 
     /**
