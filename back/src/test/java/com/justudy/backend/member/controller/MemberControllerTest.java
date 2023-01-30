@@ -2,11 +2,13 @@ package com.justudy.backend.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.justudy.backend.common.enum_util.Level;
+import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberStatus;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
+import com.justudy.backend.member.dto.response.ProfileResponse;
 import com.justudy.backend.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,12 +22,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -74,9 +76,9 @@ public class MemberControllerTest {
         mockMvc.perform(post("/api/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.content().string(""))
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isCreated())
+                .andExpect(content().string(""))
+                .andDo(print());
     }
 
     @Test
@@ -94,13 +96,13 @@ public class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .session(session)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.nickname").value("닉네임"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.dream").value("백엔드개발자"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(MemberStatus.ONLINE.getValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.badgeCount").value(2))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.level").value(Level.BEGINNER.getValue()))
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nickname").value("닉네임"))
+                .andExpect(jsonPath("$.dream").value("백엔드개발자"))
+                .andExpect(jsonPath("$.status").value(MemberStatus.ONLINE.getValue()))
+                .andExpect(jsonPath("$.badgeCount").value(2))
+                .andExpect(jsonPath("$.level").value(Level.BEGINNER.getValue()))
+                .andDo(print());
     }
 
     @Test
@@ -118,11 +120,48 @@ public class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .session(session)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 
-    private static ModifyPageResponse makeTestModifyPageResponse() {
+    @Test
+    @DisplayName("GET /profiles/{memberSequence}")
+    void getProfile() throws Exception {
+        //given
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(SessionConst.LOGIN_USER, 1L);
+
+        Long MEMBER_SEQUENCE = 2L;
+
+        BDDMockito.given(memberService.getProfile(2L))
+                .willReturn(makeTestProfile());
+
+        //expected
+        mockMvc.perform(get("/api/member/profiles/{memberSequence}", MEMBER_SEQUENCE)
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.nickname").value("테스트닉네임"))
+                .andExpect(jsonPath("$.imageSequence").value(ImageConst.BASIC_MEMBER_IMAGE))
+                .andExpect(jsonPath("$.dream").value("백엔드 희망"))
+                .andExpect(jsonPath("$.introduction").value("테스트용"))
+                .andExpect(jsonPath("$.level").value(Level.BEGINNER.getValue()))
+                .andExpect(jsonPath("$.badgeCount").value(5))
+                .andDo(print());
+    }
+
+    private ProfileResponse makeTestProfile() {
+        return ProfileResponse.builder()
+                .nickname("테스트닉네임")
+                .category(new String[]{"Java", "Spring"})
+                .imageSequence(ImageConst.BASIC_MEMBER_IMAGE)
+                .dream("백엔드 희망")
+                .introduction("테스트용")
+                .level(Level.BEGINNER.getValue())
+                .badgeCount(5)
+                .build();
+    }
+
+    private ModifyPageResponse makeTestModifyPageResponse() {
         return ModifyPageResponse.builder()
                 .username("서주광")
                 .nickname("돌로스원숭숭")
@@ -138,10 +177,10 @@ public class MemberControllerTest {
                 .build();
     }
 
-    private static MypageResponse makeTestMypageResponse() {
+    private MypageResponse makeTestMypageResponse() {
         return MypageResponse.builder()
                 .nickname("닉네임")
-                .category(new String[] {"Java", "Spring"})
+                .category(new String[]{"Java", "Spring"})
                 .dream("백엔드개발자")
                 .status(MemberStatus.ONLINE.getValue())
                 .badgeCount(2)
