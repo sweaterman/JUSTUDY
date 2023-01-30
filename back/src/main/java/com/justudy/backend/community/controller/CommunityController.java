@@ -95,8 +95,12 @@ public class CommunityController {
      * @return ResponseEntity<CommunityResponse> 201 Created, 생성된 커뮤니티 정보
      */
     @PostMapping("/board")
-    public ResponseEntity<CommunityResponse> createCommunity(@RequestBody CommunityCreate request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(communityService.readCommunity(communityService.createCommunity(request)));
+    public ResponseEntity<CommunityResponse> createCommunity(@RequestBody CommunityCreate request, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        MemberEntity findMember = memberService.getMember(loginSequence);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(communityService.readCommunity(communityService.createCommunity(request, findMember)));
     }
 
     /**

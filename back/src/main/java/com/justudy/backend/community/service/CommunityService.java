@@ -33,8 +33,9 @@ public class CommunityService {
 // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
     @Transactional
-    public Long createCommunity(CommunityCreate request) {
+    public Long createCommunity(CommunityCreate request, MemberEntity findMember) {
         CommunityEntity community = request.toEntity();
+        community.addMember(findMember);
         return communityRepository.save(community).getSequence();
     }
 
