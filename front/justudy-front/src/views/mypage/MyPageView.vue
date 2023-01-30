@@ -40,7 +40,7 @@
 
                     <!-- 프로필 상세 -->
                     <v-col cols="12" md="3">
-                        <!-- <ProfileDetail :user="user" /> -->
+                        <ProfileDetail :user="user" />
                         {{ user }}
                     </v-col>
 
@@ -116,7 +116,7 @@
 </template>
 <script>
 import StudyAnalyze from '@/components/mypage/StudyAnalyze.vue';
-// import ProfileDetail from '@/components/mypage/ProfileDetail.vue';
+import ProfileDetail from '@/components/mypage/ProfileDetail.vue';
 // import Follow from '@/components/common/Follow.vue';
 import ProfilePicture from '@/components/mypage/ProfilePicture.vue';
 import Calendar from '@/components/common/Calendar.vue';
@@ -152,7 +152,7 @@ export default {
     components: {
         BoardList,
         StudyAnalyze,
-        // ProfileDetail,
+        ProfileDetail,
         // Follow,
         ProfilePicture,
         Calendar,

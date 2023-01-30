@@ -8,7 +8,7 @@ export default {
     actions: {
         login(_, {user}) {
             axios.post(
-                port + '/login',
+                port + 'login',
                 {
                     userId: user.userId,
                     password: user.password
