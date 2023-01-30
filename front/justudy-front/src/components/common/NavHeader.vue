@@ -8,7 +8,7 @@
                         <a href="/" class="logo"><img alt="Vue logo" width="150" height="120" src="../../assets/justudy.png" /></a>
                     </v-col>
                     <v-col class="nav" @click="moveTo('/study/search')" cols="3" md="2"><div class="hover">스터디</div></v-col>
-                    <v-col class="nav" @click="moveTo('/community')" cols="3" md="2"><div class="hover">커뮤니티</div></v-col>
+                    <v-col class="nav" @click="moveTo('/community/1')" cols="3" md="2"><div class="hover">커뮤니티</div></v-col>
                     <v-col class="nav" @click="moveTo('/timer/study-start')" cols="3" md="2"><div class="hover">타이머</div></v-col>
                     <v-col class="nav" cols="3" md="2"><div class="hover">랭킹</div></v-col>
                     <v-col class="nav" cols="12" md="2"></v-col>
