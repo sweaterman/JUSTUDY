@@ -76,10 +76,9 @@
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <v-row>
-                    <v-textarea outlined readonly value="text" style="width: 100%; margin-left: 9%; margin-top: 2%; margin-bottom: 15%">여기는 아닌가</v-textarea>
+                    <CommuComment :contentId="contentId" />
                 </v-row>
             </v-col>
-
             <v-col cols="12" md="2" />
         </v-row>
     </v-app>
@@ -87,10 +86,11 @@
 
 <script>
 import CommuHeader from '../../components/Community/CommuHeader.vue';
+import CommuComment from './CommuComment.vue';
 
 export default {
-    components: {CommuHeader},
-
+    name: 'CommuContent',
+    components: {CommuHeader, CommuComment},
     data() {
         return {
             writer: '돌숭이', // 작성자

@@ -3,6 +3,7 @@
     <v-row>
         <v-col cols="12" md="2" />
         <v-col cols="12" md="8">
+            <!-- 카테고리 지정 -->
             <v-row style="margin-top: 2%; margin-bottom: 2%; padding: 3%" justify="center" align="center">
                 <v-tabs color="black" v-model="tab" justify="center" align="center">
                     <v-tabs-slider color="yellow"></v-tabs-slider>
@@ -18,7 +19,7 @@
 
 <script>
 export default {
-    name: 'CategoryHeader',
+    name: 'CommuHeader',
     components: {},
     methods: {},
     data() {
