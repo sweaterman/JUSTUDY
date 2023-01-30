@@ -32,6 +32,7 @@
 
 export default {
     name: 'StudyRoomIcon',
+    props: ['study'],
     data() {
         return {
             roomOpen: false
