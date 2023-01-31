@@ -128,7 +128,7 @@
                                         <v-card-text>
                                             <br />
                                             스터디장에게 남기고 싶은 메시지
-                                            <v-textarea outlined rows="10" :rules="message_rules" v-model="sendData.message"></v-textarea>
+                                            <v-textarea outlined rows="10" :rules="message_rules" v-model="sendData.content"></v-textarea>
                                         </v-card-text>
 
                                         <v-card-actions>
@@ -188,8 +188,9 @@ export default {
             },
             message_rules: [value => !!value || '보낼 메시지를 입력해주세요.'],
             sendData: {
+                studySeq: this.study.seq,
                 userSeq: 0,
-                message: null
+                content: null
             },
             applyData: false, //모달창
             applyDisplay: true //이미 보냈거나 가입했는지 확인
@@ -202,11 +203,11 @@ export default {
                 this.applyData = true;
             } else if (check == 'T') {
                 //지원을한다. -> 마이스터디페이지로 이동함.
-                if (this.user.message == '') {
+                this.$store.dispatch('applyStudy', this.applyStudyInfo.seq, this.sendData);
+                if (this.sendData.content == '') {
                     alert('보낼 메시지를 입력해주세요!');
                 } else {
                     this.applyData = false;
-                    this.$store.dispatch('applyStudy', this.applyStudyInfo.seq, this.sendData);
                 }
             } else if (check == 'F') {
                 this.applyData = false;
