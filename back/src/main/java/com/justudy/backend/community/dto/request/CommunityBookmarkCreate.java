@@ -5,11 +5,11 @@ import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.member.domain.MemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Getter
+@Data
 @AllArgsConstructor
 @Builder
 public class CommunityBookmarkCreate {
