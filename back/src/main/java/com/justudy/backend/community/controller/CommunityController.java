@@ -122,7 +122,6 @@ public class CommunityController {
                                                              @RequestBody CommunityEdit request,
                                                              HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-
         CommunityResponse response = communityService.updateCommunity(loginSequence, communitySequence, request);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -156,28 +155,33 @@ public class CommunityController {
     // ---------------------------------------------------------------북마크---------------------------------------------------------------
 
     /**
-     * 북마크 생성 API
-     *
-     * @param id 커뮤니티 sequence (PK)
-     * @return ResponseEntity<Void>> 201 CREATED
+     * 북마크 생성 API - DONE
+     * @param communitySequence
+     * @param session
      */
     @PostMapping("/board/{id}/bookmark")
-    public ResponseEntity<Void> createBookmark(@PathVariable("id") long id, @RequestBody CommunityBookmarkCreate request) {
-        communityBookmarkService.createBookmark(request);
+    public ResponseEntity<Void> createBookmark(@PathVariable("id") Long communitySequence,
+                                               HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        communityBookmarkService.createBookmark(loginSequence, communitySequence);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
     /**
      * 북마크 삭제 API
      *
-     * @param id 커뮤니티 sequence (PK)
+     * @param communitySequence 커뮤니티 sequence (PK)
      * @return ResponseEntity<List < CommunityResponse>> 204 NO_CONTENT'
      * 북마크는 유저기능아닌가? 매핑 바꿔야할듯
      * 복합키로 delete 어캐구현하지
      */
-    @DeleteMapping("/board/{id}/bookmark/{userId}")
-    public ResponseEntity<List<CommunityResponse>> deleteBookmark(@PathVariable("id") Long id,@PathVariable("userId") Long userId) {
-        communityBookmarkService.deleteBookmark(id,userId);
+    @DeleteMapping("/board/{id}/bookmark")
+    public ResponseEntity<Void> deleteBookmark(@PathVariable("id") Long communitySequence,
+                                               HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        communityBookmarkService.deleteBookmark(loginSequence, communitySequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
@@ -186,10 +190,10 @@ public class CommunityController {
      *
      * @return ResponseEntity<List < CommunityResponse>> 200 OK, 유저별 북마크 목록
      */
-    @GetMapping("/board/bookmark/{userId}")
-    public ResponseEntity<List<CommunityBookmarkEntity>> readAllBookmarkByMember(@PathVariable("userId") Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityBookmarkService.readAllBookmarkByMember(userId));
-    }
+//    @GetMapping("/board/bookmark/{userId}")
+//    public ResponseEntity<List<CommunityBookmarkEntity>> readAllBookmarkByMember(@PathVariable("userId") Long userId) {
+//        return ResponseEntity.status(HttpStatus.OK).body(communityBookmarkService.readAllBookmarkByMember(userId));
+//    }
     // ---------------------------------------------------------------좋아요---------------------------------------------------------------
 
     /**
