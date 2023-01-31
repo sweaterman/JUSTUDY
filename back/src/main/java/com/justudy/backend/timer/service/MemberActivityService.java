@@ -5,13 +5,16 @@ import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.timer.domain.MemberActivityEntity;
 import com.justudy.backend.timer.domain.QMemberActivityEntity;
 import com.justudy.backend.timer.dto.request.MemberActivityRequest;
+import com.justudy.backend.timer.dto.response.MemberActivityBeforeRank;
 import com.justudy.backend.timer.dto.response.MemberActivityCalendarResponse;
 import com.justudy.backend.timer.dto.response.MemberActivitySubjectChange;
 import com.justudy.backend.timer.dto.response.MemberActivitySubjectResponse;
+import com.justudy.backend.timer.dto.response.MemberActivityToRank;
 import com.justudy.backend.timer.dto.response.MemberActivityYesterdayResponse;
 import com.justudy.backend.timer.repository.MemberActivityRepository;
 import com.querydsl.core.Tuple;
 import java.sql.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +30,6 @@ public class MemberActivityService {
 
   private final MemberRepository memberRepository;
   private final MemberActivityRepository memberActivityRepository;
-
   private final QMemberActivityEntity qMemberActivity = QMemberActivityEntity.memberActivityEntity;
 
   @Transactional
@@ -105,13 +107,37 @@ public class MemberActivityService {
 
 
   @Transactional
-  public List<MemberActivityCalendarResponse> getCalendarTimeById(Date ago, Date cur, Long userSeq) {
+  public List<MemberActivityCalendarResponse> getCalendarTimeById(Date ago, Date cur,
+      Long userSeq) {
     MemberEntity member = memberRepository.getReferenceById(userSeq);
     if (member == null) {
       return null;//에러 페이지 넣기
     }
 
-    return memberActivityRepository.findCalendarById(ago,cur,member);
+    return memberActivityRepository.findCalendarById(ago, cur, member);
 
+  }
+
+
+  @Transactional
+  public List<MemberActivityToRank> getSumTimeByPeriod(Date ago, Date before) {
+    List<MemberActivityBeforeRank> mabrList = memberActivityRepository.sumTimeByPeriod(ago, before);
+    List<MemberActivityToRank> ret = new LinkedList<MemberActivityToRank>();
+
+    log.info("getSumTimeByPeriod start!!!");
+    for (int index = 0; index < mabrList.size(); index++) {
+      MemberActivityBeforeRank mabr = mabrList.get(index);
+
+      Long image = mabr.getMember().getImageFile().getSequence();
+      Integer order = index + 1;
+      String name = mabr.getMember().getNickname();
+      Integer sumTime = mabr.getMinute();
+      String time = new StringBuilder(String.format("%02d", sumTime / 1440)).append(":")
+          .append(String.format("%02d", (sumTime % 1440) / 24)).append(":")
+          .append(String.format("%02d", sumTime % 60)).toString();
+
+      ret.add(new MemberActivityToRank(order,time,name,image));
+    }
+    return ret;
   }
 }
