@@ -4,6 +4,7 @@ import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.file.domain.UploadFileEntity;
+import com.justudy.backend.file.service.FileStore;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.domain.MemberRole;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import static com.justudy.backend.member.dto.request.MemberCreate.MemberCreateBuilder;
@@ -36,6 +38,8 @@ public class MemberServiceTest {
 
     private UploadFileService uploadFileService = Mockito.mock(UploadFileService.class);
 
+    private FileStore fileStore = Mockito.mock(FileStore.class);
+
     private MemberService memberService;
 
     private final String USER_ID = "justudy";
@@ -44,7 +48,7 @@ public class MemberServiceTest {
 
     @BeforeEach
     public void setUp() {
-        memberService = new MemberService(memberRepository, categoryRepository, uploadFileService);
+        memberService = new MemberService(memberRepository, categoryRepository, uploadFileService, fileStore);
     }
 
     @Test
@@ -145,7 +149,7 @@ public class MemberServiceTest {
 
     @Test
     @DisplayName("멤버 업데이트")
-    void editMember() {
+    void editMember() throws IOException {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
         UploadFileEntity oldImageFile = new UploadFileEntity("test", "testUuid");
@@ -184,7 +188,7 @@ public class MemberServiceTest {
         UploadFileEntity newImageFile = new UploadFileEntity("newTest", "newTestUuid");
 
         //when
-        memberService.editMember(1L, editRequest, newImageFile);
+        memberService.editMember(1L, editRequest, null);
 
         //then
         assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
@@ -198,7 +202,7 @@ public class MemberServiceTest {
 
     @Test
     @DisplayName("멤버 비밀번호도 함께 업데이트")
-    void editMemberWithPassword() {
+    void editMemberWithPassword() throws IOException {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
         UploadFileEntity oldImageFile = new UploadFileEntity("test", "testUuid");
@@ -239,7 +243,7 @@ public class MemberServiceTest {
         UploadFileEntity newImageFile = new UploadFileEntity("newTest", "newTestUuid");
 
         //when
-        memberService.editMember(1L, editRequest, newImageFile);
+        memberService.editMember(1L, editRequest, null);
 
         //then
         assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
