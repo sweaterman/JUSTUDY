@@ -1,17 +1,14 @@
 package com.justudy.backend.community.domain;
 
 import com.justudy.backend.member.domain.MemberEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 @Table(name = "community_bookmark")
@@ -24,11 +21,11 @@ public class CommunityBookmarkEntity implements Serializable {
     private Long sequence;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "community_seq", name = "community_seq")
+    @JoinColumn(name = "community_seq")
     private CommunityEntity community;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "member_seq", name = "member_seq")
+    @JoinColumn(name = "member_seq")
     private MemberEntity member;
 
     @Column
