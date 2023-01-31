@@ -113,9 +113,8 @@ export default {
                 console.log(seq);
             } else if (click == 'T') {
                 //deleteNum 을 서버에 보내기
+                this.$store.dispatch('deleteApply', this.deleteNum);
                 this.deleteModal = false;
-                console.log(seq);
-
                 this.deleteNum = null;
             } else {
                 this.deleteModal = false;
