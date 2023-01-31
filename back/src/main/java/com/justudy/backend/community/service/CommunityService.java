@@ -1,6 +1,7 @@
 package com.justudy.backend.community.service;
 
 import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.dto.request.CommunityCreate;
 import com.justudy.backend.community.dto.request.CommunityEdit;
@@ -36,11 +37,22 @@ public class CommunityService {
 // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
     @Transactional
-    public Long createCommunity(CommunityCreate request, MemberEntity findMember, CategoryEntity category) {
+    public CommunityResponse createCommunity(CommunityCreate request, MemberEntity findMember, CategoryEntity category) {
         CommunityEntity community = request.toEntity();
         community.addMember(findMember);
         community.changeCategory(category);
-        return communityRepository.save(community).getSequence();
+        CommunityEntity savedCommunity = communityRepository.save(community);
+
+        return CommunityResponse.makeBuilder(savedCommunity, 0);
+    }
+
+    @Transactional
+    public Long deleteCommunity(Long loginSequence, Long communitySequence) {
+        CommunityEntity community = communityRepository.findById(communitySequence)
+                .orElseThrow(CommunityNotFound::new);
+        validateWriter(loginSequence, community.getMember().getSequence());
+        community.deleteCommunity();
+        return community.getSequence();
     }
 
     @Transactional
@@ -98,37 +110,12 @@ public class CommunityService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public Long updateCommunity(long id, CommunityEdit request) {
-        CommunityEntity entity = communityRepository.findById(id)
-                .orElseThrow(CommunityNotFound::new);
-
-        entity.update(request.getTitle(), request.getContent(),);
-        return id;
-    }
-
-    @Transactional
-    public void deleteCommunity(Long loginSequence, Long communitySequence) {
-        CommunityEntity community = communityRepository.findById(communitySequence)
-                .orElseThrow(CommunityNotFound::new);
-        validateWriter(loginSequence, community.getMember().getSequence());
-
-        communityRepository.deleteById(communitySequence);
-    }
-
     public List<CommunityResponse> readAllNoticeCommunity(int page) {
         Pageable pageable = PageRequest.of(page, MAX_PAGE_SIZE);
         return communityRepository.findAllByNotice(pageable)
                 .stream()
                 .map(CommunityResponse::makeBuilder)
                 .collect(Collectors.toList());
-    }
-
-    @Transactional
-    //조회수 증가
-    public void addViewCount(CommunityEntity entity) {
-        int temp = entity.getViewCount();
-        entity.changeViewCount(temp + 1);
     }
 
     public List<CommunityResponse> search(int page, String type, String search) {
