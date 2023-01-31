@@ -11,9 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class CommunityEdit {
-    private Long sequence;
-    private MemberEntity member;
-    private Long category_seq;
     private String title;
     private String content;
+    private String category;
 }

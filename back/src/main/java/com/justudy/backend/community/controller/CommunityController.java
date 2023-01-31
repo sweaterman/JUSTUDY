@@ -15,6 +15,7 @@ import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/community")
 @RequiredArgsConstructor
@@ -101,11 +103,11 @@ public class CommunityController {
     public ResponseEntity<CommunityResponse> createCommunity(@RequestBody CommunityCreate request, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         MemberEntity findMember = memberService.getMember(loginSequence);
-
         CategoryEntity category = categoryService.getCategory(request.getCategory());
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(communityService.readCommunity(communityService.createCommunity(request, findMember, category)));
+        CommunityResponse response = communityService.createCommunity(request, findMember, category);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**

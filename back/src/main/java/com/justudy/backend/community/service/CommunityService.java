@@ -28,6 +28,8 @@ public class CommunityService {
 
     private final CommunityRepository communityRepository;
     private final CommunityLoveRepository communityLoveRepository;
+    private final CategoryService categoryService;
+
     private final int MAX_PAGE_SIZE = 10;
     private final int MAX_NOTICE_SIZE = 3;
 
@@ -45,8 +47,24 @@ public class CommunityService {
     public CommunityResponse readCommunity(Long communitySequence) {
         CommunityEntity community = communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
+        community.addViewCount();
+
         Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
-        addViewCount(community);
+
+        return CommunityResponse.makeBuilder(community, loveCount);
+    }
+
+    @Transactional
+    public CommunityResponse updateCommunity(Long loginSequence, Long communitySequence, CommunityEdit request) {
+        CommunityEntity community = communityRepository.findById(communitySequence)
+                .orElseThrow(CommunityNotFound::new);
+        validateWriter(loginSequence, community.getMember().getSequence());
+
+        community.update(request.getTitle(),
+                request.getContent(),
+                categoryService.getCategory(request.getCategory()));
+
+        Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
         return CommunityResponse.makeBuilder(community, loveCount);
     }
 
