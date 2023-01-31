@@ -100,15 +100,17 @@ public class ActivityController {
     return ResponseEntity.status(HttpStatus.OK).body(ret);
   }
 
-  @GetMapping("member-calendar")
+  @GetMapping("/member-calendar")
   public ResponseEntity<List<MemberActivityCalendarResponse>> readCalendarTimeBySeq(
       @RequestParam Long seq) {
-    LocalDate today =LocalDate.now();
-    LocalDate startDay = LocalDate.of(today.getYear(),today.getMonthValue(),1);
+    LocalDate today = LocalDate.now();
+    LocalDate startDay = LocalDate.of(today.getYear(), today.getMonthValue(), 1);
     Date firstDay = Date.valueOf(startDay);
     Date lastDay = Date.valueOf(today);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(memberActivityService.getCalendarTimeById(firstDay,lastDay,seq));
+        .body(memberActivityService.getCalendarTimeById(firstDay, lastDay, seq));
   }
+
+
 }
