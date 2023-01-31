@@ -62,21 +62,21 @@ public class MemberService {
     }
 
     public MypageResponse getMypage(Long loginSequence) {
-        MemberEntity findMember = memberRepository.findById(loginSequence)
+        MemberEntity findMember = memberRepository.findBySequenceWithJoin(loginSequence)
                 .orElseThrow(() -> new MemberNotFound());
 
         return createMypageResponse(findMember);
     }
 
     public ModifyPageResponse getModifyPage(Long loginSequence) {
-        MemberEntity findMember = memberRepository.findById(loginSequence)
+        MemberEntity findMember = memberRepository.findBySequenceWithJoin(loginSequence)
                 .orElseThrow(() -> new MemberNotFound());
 
         return createModifyPageResponse(findMember);
     }
 
     public ProfileResponse getProfile(Long memberSequence) {
-        MemberEntity findMember = memberRepository.findById(memberSequence)
+        MemberEntity findMember = memberRepository.findBySequenceWithJoin(memberSequence)
                 .orElseThrow(() -> new MemberNotFound());
 
         return createProfileResponse(findMember);
@@ -102,7 +102,7 @@ public class MemberService {
 
     @Transactional
     public Long editMember(Long loginSequence, MemberEdit editRequest, MultipartFile multipartFile) throws IOException {
-        MemberEntity findMember = memberRepository.findById(loginSequence)
+        MemberEntity findMember = memberRepository.findBySequenceWithJoin(loginSequence)
                 .orElseThrow(() -> new MemberNotFound());
         validateEditRequest(findMember, editRequest);
 

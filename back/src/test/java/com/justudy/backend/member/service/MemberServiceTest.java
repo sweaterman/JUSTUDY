@@ -59,8 +59,7 @@ public class MemberServiceTest {
         UploadFileEntity imageFile = new UploadFileEntity("test", "testUuid");
         savedMember.changeImage(imageFile);
 
-
-        BDDMockito.given(memberRepository.findById(1L))
+        BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
                 .willReturn(Optional.of(savedMember));
 
         //when
@@ -163,7 +162,7 @@ public class MemberServiceTest {
         CategoryEntity python = new CategoryEntity("Python", 1L);
         python.addParentCategory(backend);
 
-        BDDMockito.given(memberRepository.findById(1L))
+        BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
                 .willReturn(Optional.of(savedMember));
 
         BDDMockito.given(categoryRepository.findByName("Java"))
@@ -216,7 +215,7 @@ public class MemberServiceTest {
         CategoryEntity python = new CategoryEntity("Python", 1L);
         python.addParentCategory(backend);
 
-        BDDMockito.given(memberRepository.findById(1L))
+        BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
                 .willReturn(Optional.of(savedMember));
 
         BDDMockito.given(categoryRepository.findByName("Java"))
