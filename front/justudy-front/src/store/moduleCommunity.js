@@ -1,43 +1,84 @@
-// import axios from "axios";
+import axios from 'axios';
+import port from '@/store/port';
 
 export default {
     namespaced: true,
-    state: {},
+    state: {
+        CommunityBoard: [],
+        topCategory: [],
+        CommunityContent: {}
+    },
     getters: {},
-    mutations: {},
-    actions: {}
-    // main page
-    // mounted() {
-    //     // mounted는 페이지가 켜질때 실행됨, 페이지가 켜질때 글 리스트들을 db에서 불러옴
-    //     axios({
-    //         // 게시글 작성자, 제목, 작성일 가져오기
-    //         url: 'http://127.0.0.1:52273/content/boardlist/',
-    //         method: 'POST',
-    //         data: {
-    //             // back 서버에 현재 게시판번호와 페이지번호를 넘겨줘야 해당하는 글 리스트 불러올 수 있음
-    //             boardnum: this.$route.params.id,
-    //             page: this.$route.query.page
-    //         }
-    //     })
-    //         .then(res => {
-    //             this.contentlist = res.data;
-    //         })
-    //         .catch(err => {
-    //             alert(err);
-    //         });
-    //     axios({
-    //         // 현재 게시판 글 개수 가져오기
-    //         url: 'http://127.0.0.1:52273/content/boardlistcnt/',
-    //         method: 'POST',
-    //         data: {
-    //             boardnum: this.$route.params.id
-    //         }
-    //     })
-    //         .then(res => {
-    //             this.cnt = res.data;
-    //         })
-    //         .catch(err => {
-    //             alert(err);
-    //         });
-    // },
+    mutations: {
+        GET_COMMUNITYBOARD(state, payload) {
+            state.CommunityBoard = payload;
+        },
+        GET_COMMUNITYSEARCH(state, payload) {
+            state.CommunitySearch = payload;
+        },
+        GET_COMMUNITYCONTENT(state, payload) {
+            state.CommunityContent = payload;
+        },
+        GET_COMMUNITYCONTENTUPDATE(state, payload) {
+            state.CommunityContentUpdate = payload;
+        },
+        GET_TOPCATEGORY(state, payload) {
+            state.topCategory = payload;
+        }
+    },
+    actions: {
+        getCommunityBoard({commit}, number, category) {
+            const API_URL = `${port}/community/boards?page=${number}&category=${category}`;
+            axios({
+                url: API_URL,
+                method: 'GET'
+            })
+                .then(res => {
+                    commit('GET_COMMUNITYBOARD', res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        getCommunitySearch({commit}, number, category, type, search) {
+            const API_URL = `${port}/community/boards?page=${number}&search=${search}&type=${type}&search=${search}`;
+            axios({
+                url: API_URL,
+                method: 'GET'
+            })
+                .then(res => {
+                    commit('GET_MOREPROMOTIONSTUDY', res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        getCommunityContent({commit}, id) {
+            const API_URL = `${port}/community/board/${id}`;
+            axios({
+                url: API_URL,
+                method: 'GET'
+            })
+                .then(res => {
+                    commit('GET_MOREPROMOTIONSTUDY', res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        getCommunityContentUpdate({commit}, id) {
+            const API_URL = `${port}/community/board/${id}`;
+            axios({
+                url: API_URL,
+                method: 'GET'
+            })
+                .then(res => {
+                    commit('GET_MOREPROMOTIONSTUDY', res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        getTopCategory() {}
+    }
 };
