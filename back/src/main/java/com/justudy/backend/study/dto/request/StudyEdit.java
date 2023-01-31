@@ -5,6 +5,7 @@ import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.domain.StudyFrequencyEntity;
 import com.justudy.backend.study.domain.StudyResumeEntity;
 import com.justudy.backend.studyMember.domain.StudyMemberEntity;
+import com.justudy.backend.studyMember.dto.request.StudyMemberEdit;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,9 +18,9 @@ import java.util.List;
 @Builder
 public class StudyEdit {
     private Long sequence;
-    private List<StudyMemberEntity> studyMembers;
-    private List<StudyResumeEntity> resumes;
-    private List<StudyFrequencyEntity> frequencies;
+    private List<StudyMemberEdit> studyMembers;
+    private List<StudyResumeEdit> resumes;
+    private List<StudyFrequencyEdit> frequencies;
     private CategoryEntity category;
     private String name;
     private Long leaderSeq;
@@ -33,7 +34,7 @@ public class StudyEdit {
     private String startTime;
 
 
-    public StudyEntity toEntity() {
+    public StudyEntity toEntity(Long leaderSeq) {
         return StudyEntity
                 .builder()
                 .sequence(sequence)

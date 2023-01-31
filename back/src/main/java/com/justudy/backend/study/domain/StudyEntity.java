@@ -69,6 +69,10 @@ public class StudyEntity {
     public void changeImage(UploadFileEntity imageFile) {
         this.imageFile = imageFile;
     }
+    //todo change frequencies
+//    public void changeFrequencies(StudyFrequencyEntity frequencies) {
+//        this.frequencies = frequencies;
+//    }
 
     public void update(String name, Long leaderSeq, String introduction, Integer personnel, String level, String onlineOffline,
                        Boolean isOpen, String github, String notion, String startTime) {

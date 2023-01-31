@@ -17,12 +17,12 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class StudyFrequencyCreate {
-    private StudyEntity study;
+    private Long studySeq;
     private String week;
     private Date startTime;
     private Date endTime;
 
-    public StudyFrequencyEntity toEntity() {
+    public StudyFrequencyEntity toEntity(StudyEntity study) {
         return StudyFrequencyEntity
                 .builder()
                 .study(study)

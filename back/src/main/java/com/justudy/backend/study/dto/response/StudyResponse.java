@@ -20,7 +20,8 @@ public class StudyResponse {
     private List<StudyMemberEntity> studyMembers;
     private List<StudyResumeEntity> resumes;
     private List<StudyFrequencyEntity> frequencies;
-    private CategoryEntity category;
+    private String topCategory;
+    private String bottomCategory;
     private String name;
     private Long leaderSeq;
     private String introduction;
@@ -30,8 +31,7 @@ public class StudyResponse {
     private Boolean isOpen;
     private String github;
     private String notion;
-
-    private Long imageSeqence;
+    private Long imageSequence;
     private LocalDateTime createdTime;
     private String startTime;
     private Boolean last;
@@ -42,7 +42,8 @@ public class StudyResponse {
                 .studyMembers(entity.getStudyMembers())
                 .resumes(entity.getResumes())
                 .frequencies(entity.getFrequencies())
-                .category(entity.getCategory())
+                .topCategory(entity.getCategory().getParentCategory().getName())
+                .bottomCategory(entity.getCategory().getName())
                 .name(entity.getName())
                 .leaderSeq(entity.getLeaderSeq())
                 .introduction(entity.getIntroduction())
@@ -52,7 +53,7 @@ public class StudyResponse {
                 .isOpen(entity.getIsOpen())
                 .github(entity.getGithub())
                 .notion(entity.getNotion())
-                .imageSeqence(entity.getImageFile().getSequence())
+                .imageSequence(entity.getImageFile().getSequence())
                 .createdTime(entity.getCreatedTime())
                 .startTime(entity.getStartTime())
                 .build();

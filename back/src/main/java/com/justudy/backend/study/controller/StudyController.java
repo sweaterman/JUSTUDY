@@ -2,12 +2,16 @@ package com.justudy.backend.study.controller;
 
 import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.file.domain.UploadFileEntity;
-import com.justudy.backend.file.exception.UploadFileNotFound;
 import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.service.UploadFileService;
+import com.justudy.backend.member.service.MemberService;
 import com.justudy.backend.study.dto.request.*;
+import com.justudy.backend.study.dto.response.StudyFrequencyResponse;
 import com.justudy.backend.study.dto.response.StudyResponse;
+import com.justudy.backend.study.dto.response.StudyResumeResponse;
 import com.justudy.backend.study.exception.InvalidRequest;
+import com.justudy.backend.study.service.StudyFrequencyService;
+import com.justudy.backend.study.service.StudyResumeService;
 import com.justudy.backend.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
@@ -17,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/study")
@@ -26,6 +29,11 @@ public class StudyController {
 
     private final StudyService studyService;
     private final CategoryService categoryService;
+
+    private final StudyFrequencyService studyFrequencyService;
+    private final StudyResumeService studyResumeService;
+
+    private final MemberService memberService;
 
     private final UploadFileService uploadFileService;
 
@@ -71,8 +79,6 @@ public class StudyController {
     }
 
 
-
-
     /**
      * 스터디 상세 정보를 가져오는 API
      *
@@ -92,8 +98,21 @@ public class StudyController {
      */
     @PostMapping("/")
     public ResponseEntity<StudyResponse> createStudy(@RequestBody StudyCreate request) {
+        //todo 이미지 생성
         UploadFileEntity basicImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
-        return ResponseEntity.status(HttpStatus.CREATED).body(studyService.readStudy(studyService.createStudy(request, basicImage)));
+
+
+        //스터디 생성
+        Long studySeq = studyService.createStudy(request, basicImage);
+
+        //todo 활동주기 생성
+        frequencyService.createFrequency(request);
+
+        //todo 스터디맴버 리더 추가
+
+        //todo 스터디 룸 생성
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(studyService.readStudy(studySeq));
     }
 
     /**
@@ -105,7 +124,18 @@ public class StudyController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<StudyResponse> updateStudy(@PathVariable("id") Long id, @RequestBody StudyEdit request) {
-        return ResponseEntity.status(HttpStatus.OK).body(studyService.readStudy(studyService.updateStudy(id, request)));
+
+        //todo 이미지 수정
+
+
+        //todo 활동주기 수정
+
+        //스터디 수정
+        Long studySeq = studyService.updateStudy(id, request);
+
+        //todo 스터디 맴버 수정?
+
+        return ResponseEntity.status(HttpStatus.OK).body(studyService.readStudy(studySeq));
     }
 
     /**
@@ -116,9 +146,143 @@ public class StudyController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStudy(@PathVariable("id") Long id) {
+        //todo 이미지 삭제
+
+        //todo 활동주기 삭제
+
+        //todo 스터디 맴버 삭제?
+
+        //todo 스터디룸 삭제
+
+        //스터디 삭제
         studyService.deleteStudy(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
     // ---------------------------------------------------------------스터디 지원---------------------------------------------------------------
+
+    /**
+     * 스터디 지원목록을 생성하는 API
+     *
+     * @param id 지원서 id
+     * @param request 생성정보
+     * @return ResponseEntity<StudyResumeResponse> 201 CREATE, 생성된 스터디 지원목록
+     */
+    @PostMapping("/apply/{id}")
+    public ResponseEntity<StudyFrequencyResponse> createStudyResume(@PathVariable("id") Long id, @RequestBody StudyResumeCreate request) {
+        Long resumeSeq = studyResumeService.createStudyResume(id, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(studyResumeService.readStudyResume(resumeSeq));
+    }
+
+    /**
+     * 스터디 지원목록을 삭제하는 API
+     *
+     * @param id 지원서 id
+     * @param id 스터디 sequence (PK)
+     * @return ResponseEntity<Void> 204 NO CONTENT
+     */
+    @DeleteMapping("/apply/{id}")
+    public ResponseEntity<Void> deleteStudyResume(@PathVariable("id") Long id) {
+        //todo 활동주기 삭제
+        studyResumeService.deleteStudyResume(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+    /**
+     * 스터디 내의 지원목록 가져오는 API
+     *
+     * @param id 스터디 id
+     * @return ResponseEntity<List < StudyFrequencyResponse>> 200 OK, 스터디 지원목록 정보
+     */
+    @GetMapping("/{id}/members/apply")
+    public ResponseEntity<List<StudyResumeResponse>> readAllResumeByStudy(@PathVariable("id") Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(studyResumeService.readAllStudyResumeByStudy(id));
+    }
+
+    /**
+     * 나의 스터디 지원목록 가져오는 API
+     *
+     * @param id 멤버 id
+     * @return ResponseEntity<List < StudyResumeResponse>> 200 OK, 스터디 지원목록 정보
+     */
+    @GetMapping("/mystudy/{id}")
+    public ResponseEntity<List<StudyResumeResponse>> readAllResumeByMember(@PathVariable("id") Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(studyResumeService.readAllResumeByMember(id));
+    }
+    // ---------------------------------------------------------------스터디 활동주기---------------------------------------------------------------
+
+    /**
+     * 선택한 스터디 활동주기를 가져오는 API
+     *
+     * @param id 스터디 id
+     * @return ResponseEntity<List < StudyFrequencyResponse>> 200 OK, 스터디 활동주기 정보
+     */
+    @GetMapping("/{id}/frequency")
+    public ResponseEntity<List<StudyFrequencyResponse>> readAllFrequency(@PathVariable("id") Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(studyFrequencyService.readAllStudyFrequency(id));
+    }
+
+    /**
+     * 스터디 활동주기를 생성하는 API
+     *
+     * @param request 생성정보
+     * @return ResponseEntity<StudyFrequencyResponse> 201 CREATE, 생성된 스터디 활동주기
+     */
+    @PostMapping("/{id}/frequency")
+    public ResponseEntity<StudyFrequencyResponse> createStudyFrequency(@PathVariable("id") Long id, @RequestBody StudyFrequencyCreate request) {
+        // 활동주기 생성
+        Long frequencySeq = studyFrequencyService.createStudyFrequency(id, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(studyFrequencyService.readStudyFrequency(frequencySeq));
+    }
+
+    /**
+     * 스터디 활동주기를 수정하는 API
+     *
+     * @param id          스터디 sequence (PK)
+     * @param frequencyId 스터디 활동주기 sequence (PK)
+     * @param request     수정정보
+     * @return ResponseEntity<StudyFrequencyResponse> 200 OK, 수정된 스터디 활동주기 정보
+     */
+    @PutMapping("/{id}/frequency/{frequencyid}")
+    public ResponseEntity<StudyFrequencyResponse> updateStudyFrequency(@PathVariable("id") Long id, @PathVariable("frequencyid") Long frequencyId, @RequestBody StudyFrequencyEdit request) {
+        // 활동주기 수정
+        Long frequencySeq = studyFrequencyService.updateStudyFrequency(id, frequencyId, request);
+        return ResponseEntity.status(HttpStatus.OK).body(studyFrequencyService.readStudyFrequency(frequencySeq));
+    }
+
+    /**
+     * 스터디 활동주기를 삭제하는 API
+     *
+     * @param id          스터디 sequence (PK)
+     * @param frequencyId 스터디 활동주기 sequence (PK)
+     * @return ResponseEntity<Void> 204 NO CONTENT
+     */
+    @DeleteMapping("/{id}/frequency/{frequencyid}")
+    public ResponseEntity<Void> deleteStudyFrequency(@PathVariable("id") Long id, @PathVariable("frequencyid") Long frequencyId) {
+        // 활동주기 삭제
+        studyFrequencyService.deleteStudyFrequency(id, frequencyId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+    //스터디 게시글 목록
+    //스터디 게시글 상세보기
+    //스터디 게시글 수정
+    //스터디 게시글 삭제
+
+    //스터디 댓글 목록
+    //스터디 댓글 상세보기
+    //스터디 댓글 수정
+    //스터디 댓글 삭제
+
+
+    //알람 보내기
+    //스터디 뱃지 출력
+    //스터디 참석률(일,월)
+
+    //스터디원 추방
+    //스터디장 위임
+    // 스터디 탈퇴
+    //스터디 신청 업데이트(확인,거절)
+    //스터디내 지원 목록 불러오기
+
 }
