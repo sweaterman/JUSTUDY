@@ -145,6 +145,51 @@ class CommunityControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+    @Test
+    @DisplayName("게시글 업데이트 [PUT] /board/{id}")
+    void updateCommunity() throws Exception {
+        //given
+        final Long LOGIN_SEQUENCE = 15L;
+        final Long COMMUNITY_SEQUENCE = 100L;
+
+        final String NEW_TITLE = "수정제목";
+        final String NEW_CONTENT = "수정내용";
+        final String NEW_CATEGORY = "algorithm";
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(SessionConst.LOGIN_USER, LOGIN_SEQUENCE);
+
+        CommunityEdit request = new CommunityEdit(NEW_TITLE, NEW_CONTENT, NEW_CATEGORY);
+        String json = objectMapper.writeValueAsString(request);
+
+        CommunityResponse response = makeEditResponse(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, NEW_TITLE, NEW_CONTENT, NEW_CATEGORY);
+        BDDMockito.given(communityService.updateCommunity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, request))
+                .willReturn(response);
+
+        //expected
+        mockMvc.perform(put(COMMON_URL + "/board/{id}", COMMUNITY_SEQUENCE)
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(jsonPath("$.title").value(NEW_TITLE))
+                .andExpect(jsonPath("$.content").value(NEW_CONTENT))
+                .andExpect(jsonPath("$.category").value(NEW_CATEGORY))
+                .andDo(print());
+    }
+
+
+    private CommunityResponse makeEditResponse(Long LOGIN_SEQUENCE, Long COMMUNITY_SEQUENCE, String NEW_TITLE, String NEW_CONTENT, String NEW_CATEGORY) {
+        return CommunityResponse.builder()
+                .sequence(COMMUNITY_SEQUENCE)
+                .memberSequence(LOGIN_SEQUENCE)
+                .nickname("nickname")
+                .category(NEW_CATEGORY)
+                .title(NEW_TITLE)
+                .content(NEW_CONTENT)
+                .viewCount(15)
+                .build();
+    }
+
     private CommunityResponse makeCommunityResponse(MemberEntity mockMember, CategoryEntity mockCategory) {
         return CommunityResponse.builder()
                 .sequence(10L)
