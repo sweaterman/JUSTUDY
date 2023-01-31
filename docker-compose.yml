@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   back:
@@ -8,26 +8,26 @@ services:
       - "8080:8080"
     depends_on:
       - db
-    restart: on-failure 
+    restart: on-failure
 
   front:
     container_name: fe
     build: ./front
     ports:
       - "5000:5000"
-    restart: on-failure 
+    restart: on-failure
 
   db:
     container_name: db
     image: mysql:8.0.30
     ports:
       - "3306:3306"
-    volumes: 
+    volumes:
       - /mysql:/var/lib/mysql
       - /mysql/config/my.cnf:/etc/mysql/my.cnf
     environment:
       MYSQL_ROOT_PASSWORD: ssafy
-    restart: on-failure 
+    restart: on-failure
 
   kurento:
     container_name: kurento
@@ -36,32 +36,32 @@ services:
       - "8888:8888"
       - "5001-5050:5001-5050/udp"
     environment:
-      KMS_MIN_PORT: 5001 
+      KMS_MIN_PORT: 5001
       KMS_MAX_PORT: 5050
-      KMS_STUN_IP: "3.38.116.236" 
+      KMS_STUN_IP: "3.38.116.236"
       KMS_STUN_PORT: "3478"
       KMS_TURN_URL: "a104t:ssafy@3.38.116.236:3478?transport=udp"
-    # volumes: 
+    # volumes:
     #   - /kurento/modules/kurento:/etc/kurento/modules/kurento
-    restart: on-failure 
-  
+    restart: on-failure
+
   #coturn:
-    #container_name: coturn
-    #image: coturn/coturn
-    #ports:
-    ## STUN/TURN
-    #  - "3478:3478"
-    #  - "3478:3478/udp"
-      
-    ## STUN/TURN SSL
-    #  - "5349:5349"
-    #  - "5349:5349/udp"
-      
-    # Relay Ports
-    #  - "49160-49200:49160-49200/udp"
-    #volumes:
-    #  - /coturn/turnserver.conf:/etc/turnserver.conf:ro
-    #  - /coturn/privkey.pem:/etc/ssl/private/privkey.pem:ro
-    #  - /coturn/cert.pem:/etc/ssl/certs/cert.pem:ro
-    # env_file:
-    #  - coturn/coturn.env
+  #container_name: coturn
+  #image: coturn/coturn
+  #ports:
+  ## STUN/TURN
+  #  - "3478:3478"
+  #  - "3478:3478/udp"
+
+  ## STUN/TURN SSL
+  #  - "5349:5349"
+  #  - "5349:5349/udp"
+
+  # Relay Ports
+  #  - "49160-49200:49160-49200/udp"
+  #volumes:
+  #  - /coturn/turnserver.conf:/etc/turnserver.conf:ro
+  #  - /coturn/privkey.pem:/etc/ssl/private/privkey.pem:ro
+  #  - /coturn/cert.pem:/etc/ssl/certs/cert.pem:ro
+  # env_file:
+  #  - coturn/coturn.env
