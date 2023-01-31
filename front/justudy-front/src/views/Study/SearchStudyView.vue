@@ -25,7 +25,8 @@
                         <v-col cols="12">
                             <v-tabs color="black" v-model="tab">
                                 <v-tabs-slider color="yellow"></v-tabs-slider>
-                                <v-tab v-for="top in topCategory" :key="top">
+                                <v-tab><h1>전체</h1></v-tab>
+                                <v-tab v-for="top in topCategories" :key="top" @click="changeBottom(top)">
                                     <h1>{{ top }}</h1>
                                 </v-tab>
                             </v-tabs>
@@ -37,11 +38,11 @@
                     <!-- 하위 카테고리 buttons -->
                     <v-row>
                         <v-col cols="12">
-                            <div class="btnGroup" v-for="bot in bottomCategory" :key="bot.name">
-                                <v-btn outlined class="btnBot" rounded x-large v-if="topCategory[tab] == bot.top" @click="doSearch('category', bot.name)">
+                            <div class="btnGroup" v-for="bot in bottomCategories" :key="bot">
+                                <v-btn outlined class="btnBot" rounded x-large @click="doSearch('category', bot)">
                                     <!-- 추후 SVG 아이콘으로 수정예정 -->
                                     <v-avatar size="50"><img src="@/assets/icon_70x70.png" alt="stackIcon" /></v-avatar>
-                                    {{ bot.name }}
+                                    {{ bot }}
                                 </v-btn>
                             </div>
                         </v-col>
@@ -108,20 +109,20 @@ export default {
         }
 
         //카테고리 받아오기
-        this.$store.dispatch('getTopCategory');
-        this.$store.dispatch('getBottomCategory');
+        this.$store.dispatch('getTopCategories');
     },
     computed: {
         ...mapState['promotionStudies'],
         ...mapState['morePromotionStudies'],
-        ...mapState['topCategory'],
-        ...mapState['bottomCategory'],
+        ...mapState['topCategories'],
+        ...mapState['bottomCategories'],
         ...mapState['checkMore']
     },
     data() {
         return {
             tab: null,
             button: null,
+
             //선택한 카테고리가 담기는 곳
             choice: [],
 
@@ -191,6 +192,10 @@ export default {
         },
         moveToCreate() {
             this.$router.push({path: `/study/create`});
+        },
+        //top에 해당하는 bottom 카테고리 가져오기
+        changeBottom(top) {
+            this.$store.dispatch('getBottomCategories', top);
         }
     }
 };
