@@ -240,8 +240,6 @@ public class MemberServiceTest {
                 .introduction("나는 싸피생이다.")
                 .build();
 
-        UploadFileEntity newImageFile = new UploadFileEntity("newTest", "newTestUuid");
-
         //when
         memberService.editMember(1L, editRequest, null);
 
@@ -254,7 +252,7 @@ public class MemberServiceTest {
         assertThat(savedMember.getDream()).isEqualTo(editRequest.getDream());
         assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
         assertThat(savedMember.getCategories().size()).isEqualTo(3);
-        assertThat(savedMember.getImageFile()).isEqualTo(newImageFile);
+        assertThat(savedMember.getImageFile()).isEqualTo(oldImageFile);
     }
 
     @Test

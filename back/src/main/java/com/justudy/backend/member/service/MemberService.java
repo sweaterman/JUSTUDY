@@ -106,10 +106,8 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFound());
         validateEditRequest(findMember, editRequest);
 
-        Optional<UploadFileEntity> uploadImage = fileStore.storeFile(multipartFile);
-        if (uploadImage.isPresent()) {
-            uploadFileService.saveUploadFile(uploadImage.get());
-        }
+        UploadFileEntity uploadImage = fileStore.storeFile(multipartFile);
+        saveUploadImage(uploadImage);
 
         MemberEditor.MemberEditorBuilder editorBuilder = findMember.toEditor();
 
@@ -121,7 +119,7 @@ public class MemberService {
                 .region(Region.valueOf(editRequest.getRegion()))
                 .dream(editRequest.getDream())
                 .introduction(editRequest.getIntroduction())
-                .imageFile(uploadImage.orElseGet(null))
+                .imageFile(uploadImage)
                 .build();
 
         List<MemberCategoryEntity> newCategories = createNewMemberCategories(editRequest);
@@ -141,6 +139,12 @@ public class MemberService {
     public MemberEntity getMember(Long loginSequence) {
         return memberRepository.findById(loginSequence)
                 .orElseThrow(MemberNotFound::new);
+    }
+
+    private void saveUploadImage(UploadFileEntity uploadImage) {
+        if (uploadImage != null) {
+            uploadFileService.saveUploadFile(uploadImage);
+        }
     }
 
     private boolean validateImageFile(Long oldImageSequence, Long newImageSequence) {
