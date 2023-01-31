@@ -33,8 +33,6 @@ public class MemberController {
 
     private final UploadFileService uploadFileService;
 
-    private final FileStore fileStore;
-
     @PostMapping("/register")
     public ResponseEntity<Void> signupMember(@RequestBody @Validated MemberCreate request) {
         UploadFileEntity basicImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
@@ -67,11 +65,9 @@ public class MemberController {
     public ResponseEntity<Void> modifyMember(@RequestPart(name = "request") @Validated MemberEdit request,
                                              @RequestPart MultipartFile multipartFile,
                                              HttpSession session) throws IOException {
-
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        UploadFileEntity uploadImage = fileStore.storeFile(multipartFile);
 
-        memberService.editMember(loginSequence, request, uploadImage);
+        memberService.editMember(loginSequence, request, multipartFile);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
