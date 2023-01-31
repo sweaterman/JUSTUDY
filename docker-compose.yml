@@ -38,27 +38,30 @@ services:
     environment:
       KMS_MIN_PORT: 5001 
       KMS_MAX_PORT: 5050
-    volumes: 
-      - /kurento/modules/kurento:/etc/kurento/modules/kurento
+      KMS_STUN_IP: "3.38.116.236" 
+      KMS_STUN_PORT: "3478"
+      KMS_TURN_URL: "a104t:ssafy@3.38.116.236:3478?transport=udp"
+    # volumes: 
+    #   - /kurento/modules/kurento:/etc/kurento/modules/kurento
     restart: on-failure 
   
-  coturn:
-    container_name: coturn
-    image: coturn/coturn
-    ports:
+  #coturn:
+    #container_name: coturn
+    #image: coturn/coturn
+    #ports:
     ## STUN/TURN
-      - "3478:3478"
-      - "3478:3478/udp"
+    #  - "3478:3478"
+    #  - "3478:3478/udp"
       
     ## STUN/TURN SSL
-      - "5349:5349"
-      - "5349:5349/udp"
+    #  - "5349:5349"
+    #  - "5349:5349/udp"
       
     # Relay Ports
-      - "49160-49200:49160-49200/udp"
-    volumes:
-      - /coturn/turnserver.conf:/etc/turnserver.conf:ro
-      - /coturn/privkey.pem:/etc/ssl/private/privkey.pem:ro
-      - /coturn/cert.pem:/etc/ssl/certs/cert.pem:ro
+    #  - "49160-49200:49160-49200/udp"
+    #volumes:
+    #  - /coturn/turnserver.conf:/etc/turnserver.conf:ro
+    #  - /coturn/privkey.pem:/etc/ssl/private/privkey.pem:ro
+    #  - /coturn/cert.pem:/etc/ssl/certs/cert.pem:ro
     # env_file:
     #  - coturn/coturn.env
