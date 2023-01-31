@@ -28,13 +28,13 @@ public class RankEntity {
   @Column(name = "rank_name")
   private String rankName;
   @Column(name = "rank_time")
-  private Time rankTime;
+  private String rankTime;
   @Column(name = "rank_image")
-  private String rankImage;
+  private Long rankImage;
 
   @Builder
   public RankEntity(Long sequence, RankGroup rankGroup, RankType rankType, Integer rankOrder,
-      String rankName, Time rankTime,String rankImage) {
+      String rankName, String rankTime,Long rankImage) {
     this.sequence = sequence;
     this.rankGroup = rankGroup;
     this.rankType = rankType;
