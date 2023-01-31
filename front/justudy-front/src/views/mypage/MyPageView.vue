@@ -21,7 +21,7 @@
                                 :fontSize="32"
                                 content="LV"
                                 standard="px"
-                                :src="require('@/assets/banner.jpg')"
+                                :src="`${port}images/${user.imageSequence}`"
                                 style="padding: 5%"
                                 justify="center"
                                 align="center"
@@ -41,7 +41,7 @@
                     <!-- 프로필 상세 -->
                     <v-col cols="12" md="3">
                         <ProfileDetail :user="user" />
-                        {{ user }}
+                        <!-- {{ user }} -->
                     </v-col>
 
                     <!-- 팔로우 N 팔로잉 -->
@@ -125,12 +125,14 @@ import ModalComponent from '@/components/mypage/ModalComponent.vue';
 import BoardList from '@/components/common/BoardList.vue';
 // import TextButton from '@/components/common/TextButton.vue';
 // import {mapState} from 'vuex';
+import port from '@/store/port';
 export default {
     name: 'MyPageView',
     data() {
         return {
             level: '초보 개발자',
             dialog: false,
+            port: port,
             // store에서 담아올 값
 
             following: {},
