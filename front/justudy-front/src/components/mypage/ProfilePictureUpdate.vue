@@ -2,7 +2,7 @@
     <div>
         <!-- 여기에 사진들 배너 .... -->
         <div>
-            <ProfileUpdate :diameter="diameter" :standard="`${standard}`" :src="`${src}`" />
+            <ProfileUpdate :diameter="diameter" :standard="`${standard}`" :src="`${src}`" @sendData="sendData" />
         </div>
         <div class="d-flex">
             <BasicButton :buttonLength="buttonLength" :height="height" :fontSize="fontSize" :content="`${content}`" :standard="`${standard}`" />
@@ -18,6 +18,11 @@ export default {
     components: {
         BasicButton,
         ProfileUpdate
+    },
+    methods: {
+        sendData(data) {
+            this.$emit('sendData', data);
+        }
     },
     props: {
         diameter: {

@@ -21,7 +21,7 @@
                                 :fontSize="32"
                                 content="LV"
                                 standard="px"
-                                :src="`${port}/images/${user.imageSequence}`"
+                                :src="`${port}images/${user.imageSequence}`"
                                 style="padding: 5%"
                                 justify="center"
                                 align="center"
