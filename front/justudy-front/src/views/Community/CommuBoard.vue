@@ -22,7 +22,7 @@
 
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2" align="right">
-                        <v-btn color="yellow" @click="movetowrite" :style="{height: '50px', width: '200px', fontWeight: 'bold', fontSize: 'large'}">글작성</v-btn>
+                        <v-btn color="yellow" @click="movetowrite(index)" :style="{height: '50px', width: '200px', fontWeight: 'bold', fontSize: 'large'}">글작성</v-btn>
                     </v-col>
                 </v-row>
             </v-col>
@@ -46,7 +46,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(value, index) in Data" :key="index" @click="movetocontent(value.index)">
+                            <tr v-for="(value, index) in Data" :key="index" @click="movetocontent(index)">
                                 <td>{{ index + 1 }}</td>
                                 <td>
                                     <div class="line_limit">
@@ -106,11 +106,15 @@
 </template>
 <script>
 import CategoryHeader from '../../components/common/CategoryHeader.vue';
+// import {mapState} from 'vuex';
 import CommunityData from '@/data/CommunityData';
 
 export default {
     name: 'CommuBoard',
     components: {CategoryHeader},
+    created() {
+        this.$store.dispatch('getCommunityBoard');
+    },
     data() {
         return {
             Data: CommunityData,
@@ -132,28 +136,41 @@ export default {
     },
     methods: {
         // 페이지 이동시 params로 게시판 구분, query로 페이지 구분
-        movetoboard1() {
-            window.location.href = '/community/1/?page=1';
-        },
-        movetoboard2() {
-            window.location.href = '/community/2/?page=1';
-        },
-        movetoboard3() {
-            window.location.href = '/community/3/?page=1';
-        },
+        // movetoboard1() {
+        //     window.location.href = '/community/1/?page=1';
+        // },
+        // movetoboard2() {
+        //     window.location.href = '/community/2/?page=1';
+        // },
+        // movetoboard3() {
+        //     window.location.href = '/community/3/?page=1';
+        // },
         movetomain() {
             window.location.href = '/community';
         },
-        movetowrite() {
+        movetowrite(index) {
             // window.location.href = '/community/1/write';
-            window.location.href = window.location.pathname + '/write';
+            this.$router.push({
+                name: 'CommuWrite',
+                params: {
+                    id: index
+                }
+            });
+            // window.location.href = window.location.pathname + '/write/' + id;
             // window.location.href = window.location.pathname + 'write';
             // window.location.pathname이 현재 주소를 의미
             // 여기다 write를 붙여주면 글 작성 페이지로 라우팅 되게 됨
         },
-        movetocontent(id) {
+        movetocontent(index) {
             // 클릭된 글의 id를 받아와야 라우팅할때 보낼 수 있음
-            window.location.href = window.location.pathname + '/content/' + id;
+            this.$router.push({
+                // path: window.location.pathname + '/content/' + id,
+                name: 'CommuContent',
+                params: {
+                    id: index
+                }
+            });
+            // window.location.href = window.location.pathname + '/content/' + id;
         },
         movetopreviouspage() {
             if (this.$route.query.page == 1) {
