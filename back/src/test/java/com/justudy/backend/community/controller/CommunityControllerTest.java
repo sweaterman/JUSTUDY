@@ -5,6 +5,7 @@ import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.community.dto.request.CommunityCreate;
+import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.community.dto.response.CommunityResponse;
 import com.justudy.backend.community.service.CommunityBookmarkService;
 import com.justudy.backend.community.service.CommunityCommentService;
@@ -15,8 +16,8 @@ import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,8 +28,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,25 +39,18 @@ class CommunityControllerTest {
 
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     ObjectMapper objectMapper;
-
     @MockBean
     MemberService memberService;
-
     @MockBean
     CommunityService communityService;
-
     @MockBean
     CommunityCommentService communityCommentService;
-
     @MockBean
     CommunityLoveService communityLoveService;
-
     @MockBean
     CommunityBookmarkService communityBookmarkService;
-
     @MockBean
     CategoryService categoryService;
 
@@ -67,7 +61,31 @@ class CommunityControllerTest {
     private final String CONTENT = "테스트내용";
 
     @Test
-    @DisplayName("게시글 생성 [POST /board]")
+    @DisplayName("게시글 조회 [GET] /board/{id}")
+    void getCommunity() throws Exception {
+        //given
+        final Long COMMUNITY_SEQUENCE = 15L;
+        CommunityResponse response = CommunityResponse.builder()
+                .sequence(COMMUNITY_SEQUENCE)
+                .title("제목")
+                .content("내용")
+                .category("frontend")
+                .build();
+
+        BDDMockito.given(communityService.readCommunity(15L))
+                .willReturn(response);
+
+        mockMvc.perform(get(COMMON_URL + "/board/{id}", COMMUNITY_SEQUENCE))
+                .andExpect(jsonPath("$.title").value("제목"))
+                .andExpect(jsonPath("$.content").value("내용"))
+                .andExpect(jsonPath("$.category").value("frontend"))
+                .andDo(print());
+
+        BDDMockito.then(communityService).should(Mockito.only()).readCommunity(15L);
+    }
+
+    @Test
+    @DisplayName("게시글 생성 [POST] /board")
     void createCommunity() throws Exception {
         //given
         MockHttpSession session = new MockHttpSession();
@@ -75,7 +93,7 @@ class CommunityControllerTest {
 
         MemberEntity mockMember = makeTestMember("test", "test", "test");
         ReflectionTestUtils.setField(mockMember, "sequence", 5L);
-        BDDMockito.given(memberService.getMember(ArgumentMatchers.anyLong()))
+        BDDMockito.given(memberService.getMember(anyLong()))
                 .willReturn(mockMember);
 
         CategoryEntity mockCategory = new CategoryEntity("backend", 0L);
