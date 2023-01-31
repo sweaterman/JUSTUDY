@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 @Table(name = "community_bookmark")
 @Entity
 public class CommunityBookmarkEntity implements Serializable {
@@ -20,16 +18,19 @@ public class CommunityBookmarkEntity implements Serializable {
     @Column(name = "bookmark_seq")
     private Long sequence;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "community_seq")
-    private CommunityEntity community;
+    @Column(name = "member_sequence")
+    private Long memberSequence;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_seq")
-    private MemberEntity member;
+    @Column(name = "community_sequence")
+    private Long communitySequence;
 
-    @Column
-    private Boolean isChecked;
     @Column
     private LocalDateTime createdTime;
+
+    @Builder
+    public CommunityBookmarkEntity(Long memberSequence, Long communitySequence) {
+        this.memberSequence = memberSequence;
+        this.communitySequence = communitySequence;
+        this.createdTime = LocalDateTime.now();
+    }
 }
