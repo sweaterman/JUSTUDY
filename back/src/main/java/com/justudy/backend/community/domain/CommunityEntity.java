@@ -83,10 +83,18 @@ public class CommunityEntity {
         this.weekLoveCount = weekLoveCount;
     }
 
-    public void update(String title, String content, Integer viewCount, LocalDateTime modifiedTime) {
+    public void addViewCount() {
+        this.viewCount += 1;
+    }
+
+    public void deleteCommunity() {
+        this.isDeleted = true;
+    }
+
+    public void update(String title, String content, CategoryEntity category) {
         this.title = title;
         this.content = content;
-        this.viewCount = viewCount;
-        this.modifiedTime = modifiedTime;
+        this.category = category;
+        this.modifiedTime = LocalDateTime.now();
     }
 }
