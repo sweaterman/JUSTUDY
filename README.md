@@ -34,42 +34,29 @@ SSAFY 2학기 공통 프로젝트
 - **프로젝트 명세서**
     
     # 기획.
+
+    [요구사항 명세서](https://www.notion.so/222eead98a7a41b5a2c38d0a227ef9a9)
+
+    [FrontEnd Convention](https://www.notion.so/Frontend-58902da3538e46ed819af8ed1999de41)
     
-    [요구사항 명세서](https://www.notion.so/f64e6c525ecb4651bfd6cac0f5b15016)
+    [BackEnd Convention](https://www.notion.so/Back-End-Convention-c2a0b27112ff45de9dc834dceac5a0d4)
     
-    [API 명세서](https://www.notion.so/023ef6124242475fbba3f8171864ce87)
+    [Git Convention & Jira Convention](https://www.notion.so/Git-Convention-Jira-Convention-51df0771f294443497ab435665bbc3c5)
+    
+    [Git 학습](https://www.notion.so/Git-c97038ca088e4799a4a40ecd3a313b18)
+
+    # 설계
+    
+    [API 명세서](https://www.notion.so/API-3bb2f812a802493ba6eb3e0a9668f32d)
     
     [[DB] ERD 및 테이블 명세서](https://www.notion.so/DB-ERD-0cd67de4cb3d407487207b1733997f4f)
     
     [서비스 아키텍처 구조](https://www.notion.so/313d5a098e8049dd8947b351bc11cc28)
     
-    [Frontend 코딩 컨벤션](https://www.notion.so/Frontend-58902da3538e46ed819af8ed1999de41)
-    
-    [Back-End Convention](https://www.notion.so/Back-End-Convention-c2a0b27112ff45de9dc834dceac5a0d4)
-    
-    [Git Convention & Jira Convention](https://www.notion.so/Git-Convention-Jira-Convention-51df0771f294443497ab435665bbc3c5)
-    
-    [Git 학습](https://www.notion.so/Git-c97038ca088e4799a4a40ecd3a313b18)
-    
-    [스터디 명세서](https://www.notion.so/24b6700094024f8aa2624eaf5a3efdb1)
-    
-    [Error 명세서](https://www.notion.so/6a6f08b9953548de8b92fb164da616d9)
-    
-    /api/enum → enum 리스트 가져오기
-    
-    [로그인 및 회원 명세서](https://www.notion.so/1ed6c018edec4614bee26578346fdf05)
-    
-    추가
-    
-    [새로운 요구사항 명세서](https://www.notion.so/222eead98a7a41b5a2c38d0a227ef9a9)
-    
-    [새로운 API 명세서](https://www.notion.so/API-3bb2f812a802493ba6eb3e0a9668f32d)
+
+    # 개발
     
     [트러블 슈팅 문서](https://www.notion.so/45928b42382d432aa8804f41f0c5d7b0)
-    
-    # 설계
-    
-    # 개발
     
     # 테스트
     
