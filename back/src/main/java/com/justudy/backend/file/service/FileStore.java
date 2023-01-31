@@ -22,17 +22,17 @@ public class FileStore {
         return fileDir + fileName;
     }
 
-    public Optional<UploadFileEntity> storeFile(MultipartFile multipartFile) throws IOException {
+    public UploadFileEntity storeFile(MultipartFile multipartFile) throws IOException {
 
-        if (multipartFile.isEmpty()) {
-            return Optional.empty();
+        if (multipartFile == null) {
+            return null;
         }
 
         String originalFilename = multipartFile.getOriginalFilename();
         String storeFileName = createStoreFileName(originalFilename);
         multipartFile.transferTo(new File(getFullPath(storeFileName)));
 
-        return Optional.of(new UploadFileEntity(originalFilename, storeFileName));
+        return new UploadFileEntity(originalFilename, storeFileName);
     }
 
     private String createStoreFileName(String originalFilename) {
