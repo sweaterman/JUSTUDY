@@ -3,7 +3,8 @@ import port from './port';
 export default {
     namespaced: true,
     state: {
-        user: {}
+        user: {},
+        modifyUser: {}
     },
     getters: {
         // dataComputed : function(state){
@@ -13,6 +14,9 @@ export default {
     mutations: {
         getMyPageUser(state, payload) {
             state.user = payload;
+        },
+        getModifyUser(state, payload) {
+            state.modifyUser = payload;
         }
     },
     actions: {
@@ -22,8 +26,17 @@ export default {
                     withCredentials: true
                 })
                 .then(res => {
-                    console.log('aaa', res.data);
                     commit('getMyPageUser', res.data);
+                });
+        },
+
+        getModifyUser({commit}) {
+            axios
+                .get(port + 'member/mypage/modify', {
+                    withCredentials: true
+                })
+                .then(res => {
+                    commit('getModifyUser', res.data);
                 });
         }
     }
