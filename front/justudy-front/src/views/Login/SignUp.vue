@@ -4,7 +4,7 @@
         <v-row :style="{marginTop: '5%'}">
             <v-col cols="12" md="4" />
             <v-col cols="12" md="4" justify="center" align="center">
-                <TextButton :buttonLength="100" :height="70" :fontSize="10" :content="`회원가입`" :standard="px" />
+                <TextButton :buttonLength="100" :height="70" :fontSize="10" :content="`회원가입`" standard="px" />
             </v-col>
             <v-col cols="12" md="4" />
         </v-row>
@@ -27,7 +27,7 @@
                         <v-subheader>이름</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="name" dense outlined label="이름" :rules="[v => !!v || '이름은 필수입니다.']"></v-text-field>
+                        <v-text-field v-model="user.username" dense outlined label="이름" :rules="[v => !!v || '이름은 필수입니다.']"></v-text-field>
                     </v-col>
                 </v-row>
 
@@ -37,10 +37,10 @@
                         <v-subheader>닉네임</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="nickname" dense outlined label="닉네임" :rules="[v => !!v || '별명은 필수입니다.']"></v-text-field>
+                        <v-text-field v-model="user.nickname" dense outlined label="닉네임" :rules="[v => !!v || '별명은 필수입니다.']"></v-text-field>
                     </v-col>
                     <v-col cols="2">
-                        <v-btn color="yellow" @click="movetoboard1" :style="{fontWeight: 'bold', fontSize: 'large'}">중복 확인</v-btn>
+                        <v-btn color="yellow" @click="movetoboard1('nickName')" :style="{fontWeight: 'bold', fontSize: 'large'}">중복 확인</v-btn>
                     </v-col>
                 </v-row>
 
@@ -50,7 +50,7 @@
                         <v-subheader>SSAFY 학번</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="ssafycode" dense outlined label="SSAFY 학번" :rules="[v => !!v || 'SSAFY 학번은 필수입니다.']"></v-text-field>
+                        <v-text-field v-model="user.ssafyId" dense outlined label="SSAFY 학번" :rules="[v => !!v || 'SSAFY 학번은 필수입니다.']"></v-text-field>
                     </v-col>
                 </v-row>
 
@@ -60,10 +60,10 @@
                         <v-subheader>아이디</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="id" dense outlined label="아이디" :rules="[v => !!v || '아이디는 필수입니다.']"></v-text-field>
+                        <v-text-field v-model="user.userId" dense outlined label="아이디" :rules="[v => !!v || '아이디는 필수입니다.']"></v-text-field>
                     </v-col>
                     <v-col cols="2">
-                        <v-btn color="yellow" @click="movetoboard1" :style="{fontWeight: 'bold', fontSize: 'large'}">중복 확인</v-btn>
+                        <v-btn color="yellow" @click="movetoboard1('id')" :style="{fontWeight: 'bold', fontSize: 'large'}">중복 확인</v-btn>
                     </v-col>
                 </v-row>
 
@@ -73,7 +73,7 @@
                         <v-subheader>비밀번호</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="password" dense outlined label="비밀번호" :rules="[v => !!v || '비밀번호는 필수입니다.']"></v-text-field>
+                        <v-text-field v-model="user.password" dense outlined label="비밀번호" :rules="[v => !!v || '비밀번호는 필수입니다.']"></v-text-field>
                     </v-col>
                 </v-row>
 
@@ -83,7 +83,7 @@
                         <v-subheader>비밀번호 재확인</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="password" dense outlined label="비밀번호 재확인" :rules="[v => !!v || '비밀번호가 다릅니다.']"></v-text-field>
+                        <v-text-field v-model="user.passwordCheck" dense outlined label="비밀번호 재확인" :rules="[v => !!v || '비밀번호가 다릅니다.']"></v-text-field>
                     </v-col>
                 </v-row>
 
@@ -93,7 +93,7 @@
                         <v-subheader>전화번호</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="telephone" dense outlined label="전화번호" :rules="[v => !!v || '전화번호는 필수입니다.']"></v-text-field>
+                        <v-text-field v-model="user.phone" dense outlined label="전화번호" :rules="[v => !!v || '전화번호는 필수입니다.']"></v-text-field>
                     </v-col>
                 </v-row>
 
@@ -103,7 +103,7 @@
                         <v-subheader>이메일</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="email" dense outlined label="이메일" :rules="[v => !!v || '이메일은 필수입니다.']"></v-text-field>
+                        <v-text-field v-model="user.email" dense outlined label="이메일" :rules="[v => !!v || '이메일은 필수입니다.']"></v-text-field>
                     </v-col>
                 </v-row>
 
@@ -113,10 +113,10 @@
                         <v-subheader>MatterMost 인증하기</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="mmid" dense outlined label="MatterMost 아이디" :rules="[v => !!v || 'MM 인증은 필수입니다.']"></v-text-field>
+                        <v-text-field v-model="user.mmid" dense outlined label="MatterMost 아이디" :rules="[v => !!v || 'MM 인증은 필수입니다.']"></v-text-field>
                     </v-col>
                     <v-col cols="2">
-                        <v-btn color="yellow" @click="movetoboard1" :style="{fontWeight: 'bold', fontSize: 'large'}">인증하기</v-btn>
+                        <v-btn color="yellow" @click="movetoboard1('mattermost')" :style="{fontWeight: 'bold', fontSize: 'large'}">인증하기</v-btn>
                     </v-col>
                 </v-row>
             </v-col>
@@ -137,7 +137,7 @@
                         <v-subheader>지역</v-subheader>
                     </v-col>
                     <v-col cols="8">
-                        <v-combobox v-model="region" :items="regionList" label="지역 선택"></v-combobox>
+                        <v-combobox v-model="user.region" :items="regionList" label="지역 선택"></v-combobox>
                     </v-col>
                 </v-row>
 
@@ -147,7 +147,7 @@
                         <v-subheader>희망 진로</v-subheader>
                     </v-col>
                     <v-col cols="8">
-                        <v-text-field v-model="wanttobe" dense outlined label="희망 진로"></v-text-field>
+                        <v-text-field v-model="user.dream" dense outlined label="희망 진로"></v-text-field>
                     </v-col>
                 </v-row>
 
@@ -157,7 +157,7 @@
                         <v-subheader>관심 기술 스택</v-subheader>
                     </v-col>
                     <v-col cols="8">
-                        <v-combobox v-model="stacks" :items="stackList" label="관심있는 기술 선택" multiple></v-combobox>
+                        <v-combobox v-model="user.stacks" :items="stackList" label="관심있는 기술 선택" multiple></v-combobox>
                     </v-col>
                 </v-row>
 
@@ -167,7 +167,7 @@
                         <v-subheader>자기 소개</v-subheader>
                     </v-col>
                     <v-col cols="8">
-                        <v-textarea v-model="text" label="자기 소개를 해주세요!" outlined rows="13"></v-textarea>
+                        <v-textarea v-model="user.introduction" label="자기 소개를 해주세요!" outlined rows="13"></v-textarea>
                     </v-col>
                 </v-row>
             </v-col>
@@ -215,7 +215,7 @@
         </v-row>
         <!-- 끝 ~ 선택 입력 -->
 
-        <NavFooter />
+        <!-- <NavFooter /> -->
     </v-app>
 </template>
 
@@ -233,7 +233,23 @@ export default {
             showmodal: false,
             regionList: ['서울', '대전', '부울경', '광주'],
             stackList: ['Vuejs', 'nodejs', 'React', 'Spring', 'SpringBoot', 'TensorFlow'],
-            selfTest: false
+            selfTest: false,
+            // 담아서 store로 보낼 값
+            user: {
+                userId: '',
+                password: '',
+                passwordCheck: '',
+                username: '',
+                nickname: '',
+                ssafyId: '',
+                phone: '',
+                email: '',
+                mmId: '',
+                region: '',
+                dream: '',
+                category: '',
+                introduction: ''
+            }
         };
     },
 
@@ -243,6 +259,8 @@ export default {
         },
         selftestDialog(check) {
             if (check == 'open') {
+                // 회원가입 API
+                // this.$store.dispatch("user/createUser",{ user : this.user})
                 this.selfTest = true;
             } else if (check == 'close') {
                 this.selfTest = false;
@@ -250,6 +268,18 @@ export default {
                 window.location.href = '/self-test/problem/1';
             } else if (check == 'home') {
                 window.location.href = '/';
+            }
+        },
+        movetoboard1(check) {
+            if (check == 'id') {
+                // 아이디 중복 체크 API
+                // this.$store.dispatch("user/idCheck",{id : this.user.id})
+            } else if (check == 'nickName') {
+                // 닉네임 중복 체크 API
+                // this.$store.dispatch("user/nickName",{nickname : this.user.nickname})
+            } else if (check == 'mattermost') {
+                // mattermost 인증
+                // this.$store.dispatch("user/mattermost",{mmId : this.user.mmId})
             }
         }
     }
