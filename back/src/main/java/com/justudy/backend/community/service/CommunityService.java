@@ -1,5 +1,7 @@
 package com.justudy.backend.community.service;
 
+import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.dto.request.CommunityCreate;
 import com.justudy.backend.community.dto.request.CommunityEdit;
@@ -8,6 +10,7 @@ import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.community.repository.CommunityLoveRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.member.domain.MemberEntity;
+import com.justudy.backend.member.exception.ForbiddenRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -26,25 +29,55 @@ public class CommunityService {
 
     private final CommunityRepository communityRepository;
     private final CommunityLoveRepository communityLoveRepository;
+    private final CategoryService categoryService;
+
     private final int MAX_PAGE_SIZE = 10;
     private final int MAX_NOTICE_SIZE = 3;
 
 // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
     @Transactional
-    public Long createCommunity(CommunityCreate request, MemberEntity findMember) {
+    public CommunityResponse createCommunity(CommunityCreate request, MemberEntity findMember, CategoryEntity category) {
         CommunityEntity community = request.toEntity();
         community.addMember(findMember);
-        return communityRepository.save(community).getSequence();
+        community.changeCategory(category);
+        CommunityEntity savedCommunity = communityRepository.save(community);
+
+        return CommunityResponse.makeBuilder(savedCommunity, 0);
+    }
+
+    @Transactional
+    public Long deleteCommunity(Long loginSequence, Long communitySequence) {
+        CommunityEntity community = communityRepository.findById(communitySequence)
+                .orElseThrow(CommunityNotFound::new);
+        validateWriter(loginSequence, community.getMember().getSequence());
+        community.deleteCommunity();
+        return community.getSequence();
     }
 
     @Transactional
     public CommunityResponse readCommunity(Long communitySequence) {
-        CommunityEntity entity = communityRepository.findById(communitySequence)
+        CommunityEntity community = communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
+        community.addViewCount();
+
         Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
-        addViewCount(entity);
-        return CommunityResponse.makeBuilder(entity, loveCount);
+
+        return CommunityResponse.makeBuilder(community, loveCount);
+    }
+
+    @Transactional
+    public CommunityResponse updateCommunity(Long loginSequence, Long communitySequence, CommunityEdit request) {
+        CommunityEntity community = communityRepository.findById(communitySequence)
+                .orElseThrow(CommunityNotFound::new);
+        validateWriter(loginSequence, community.getMember().getSequence());
+
+        community.update(request.getTitle(),
+                request.getContent(),
+                categoryService.getCategory(request.getCategory()));
+
+        Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
+        return CommunityResponse.makeBuilder(community, loveCount);
     }
 
     @Transactional
@@ -77,35 +110,12 @@ public class CommunityService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public Long updateCommunity(long id, CommunityEdit request) {
-        CommunityEntity entity = communityRepository.findById(id)
-                .orElseThrow(CommunityNotFound::new);
-
-        entity.update(request.getTitle(), request.getContent(), request.getViewCount(), request.getModifiedTime());
-        return id;
-    }
-
-    @Transactional
-    public void deleteCommunity(Long communitySequence) {
-        communityRepository.findById(communitySequence)
-                .orElseThrow(CommunityNotFound::new);
-        communityRepository.deleteById(communitySequence);
-    }
-
     public List<CommunityResponse> readAllNoticeCommunity(int page) {
         Pageable pageable = PageRequest.of(page, MAX_PAGE_SIZE);
         return communityRepository.findAllByNotice(pageable)
                 .stream()
                 .map(CommunityResponse::makeBuilder)
                 .collect(Collectors.toList());
-    }
-
-    @Transactional
-    //조회수 증가
-    public void addViewCount(CommunityEntity entity) {
-        int temp = entity.getViewCount();
-        entity.changeViewCount(temp + 1);
     }
 
     public List<CommunityResponse> search(int page, String type, String search) {
@@ -133,6 +143,12 @@ public class CommunityService {
                 .stream()
                 .map(CommunityResponse::makeBuilder)
                 .collect(Collectors.toList());
+    }
+
+    private void validateWriter(Long loginSequence, Long writerSequence) {
+        if (loginSequence != writerSequence) {
+            throw new ForbiddenRequest();
+        }
     }
 
 }
