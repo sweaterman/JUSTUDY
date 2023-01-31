@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 @PropertySource("classpath:file.properties")
@@ -21,17 +22,17 @@ public class FileStore {
         return fileDir + fileName;
     }
 
-    public UploadFileEntity storeFile(MultipartFile multipartFile) throws IOException {
+    public Optional<UploadFileEntity> storeFile(MultipartFile multipartFile) throws IOException {
 
         if (multipartFile.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
 
         String originalFilename = multipartFile.getOriginalFilename();
         String storeFileName = createStoreFileName(originalFilename);
         multipartFile.transferTo(new File(getFullPath(storeFileName)));
 
-        return new UploadFileEntity(originalFilename, storeFileName);
+        return Optional.of(new UploadFileEntity(originalFilename, storeFileName));
     }
 
     private String createStoreFileName(String originalFilename) {

@@ -15,11 +15,7 @@ public class CommunityLoveRepositoryImpl implements CommunityLoveRepositorySuppo
 
     @Override
     public Long saveLove(CommunityLoveCreate request) {
-        return queryFactory
-                .insert(qLove)
-                .columns(qLove.community, qLove.isChecked)
-                .values(CommunityEntity.builder().sequence(request.getCommunity().getSequence()).member(request.getCommunity().getMember()).build(), true)
-                .execute();
+        return null;
     }
 
     @Override
