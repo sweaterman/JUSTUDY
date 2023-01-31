@@ -10,7 +10,7 @@ import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.repository.UploadFileRepository;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.dto.request.MemberCreate;
-import com.justudy.backend.member.repository.MemberRepository;
+import com.justudy.backend.member.exception.InvalidRequest;
 import com.justudy.backend.member.service.MemberService;
 import com.justudy.backend.study.domain.StudyFrequencyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
@@ -59,20 +59,21 @@ public class InitDb {
 
 
         private void saveCommunity() {
+            CategoryEntity category = categoryRepository.findByName("backend")
+                    .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
+
             for (int i = 0; i < 10; i++) {
                 long memberSequence = 50 + (3 * i);
                 MemberEntity findMember = memberService.getMember(memberSequence);
                 for (int count = 1; count <= 5; count++)
-                communityService.createCommunity(makeBoard(count), findMember);
+                    communityService.createCommunity(makeBoard(count), findMember, category);
             }
         }
 
         private CommunityCreate makeBoard(int number) {
             return CommunityCreate.builder()
-                    .category_seq(1L)
                     .title("제목 " + number)
                     .content("내용 " + number)
-                    .createdTime(LocalDateTime.now())
                     .isHighlighted(false)
                     .build();
         }

@@ -44,6 +44,9 @@ export default {
         BasicButton
     },
     created() {
+        // API 받기
+
+        // 날짜 받기
         let today = new Date();
         let year = today.getFullYear();
         let month = today.getMonth() >= 9 ? today.getMonth() + 1 : '0' + (today.getMonth() + 1);
