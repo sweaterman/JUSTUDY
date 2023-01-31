@@ -41,8 +41,8 @@ services:
       KMS_STUN_IP: "3.38.116.236" 
       KMS_STUN_PORT: "3478"
       KMS_TURN_URL: "a104t:ssafy@3.38.116.236:3478?transport=udp"
-    volumes: 
-      - /kurento/modules/kurento:/etc/kurento/modules/kurento
+    # volumes: 
+    #   - /kurento/modules/kurento:/etc/kurento/modules/kurento
     restart: on-failure 
   
   #coturn:
