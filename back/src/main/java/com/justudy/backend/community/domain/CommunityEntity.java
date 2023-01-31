@@ -75,10 +75,6 @@ public class CommunityEntity {
         this.category = category;
     }
 
-    public void changeViewCount(Integer viewCount) {
-        this.viewCount = viewCount;
-    }
-
     public void changeWeekLoveCount(Integer weekLoveCount) {
         this.weekLoveCount = weekLoveCount;
     }
