@@ -24,12 +24,14 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.time.LocalDateTime;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CommunityController.class)
 class CommunityControllerTest {
@@ -69,11 +71,11 @@ class CommunityControllerTest {
     void createCommunity() throws Exception {
         //given
         MockHttpSession session = new MockHttpSession();
-        session.setAttribute(SessionConst.LOGIN_USER, 1L);
+        session.setAttribute(SessionConst.LOGIN_USER, 5L);
 
         MemberEntity mockMember = makeTestMember("test", "test", "test");
         ReflectionTestUtils.setField(mockMember, "sequence", 5L);
-        BDDMockito.given(memberService.getMember(1L))
+        BDDMockito.given(memberService.getMember(ArgumentMatchers.anyLong()))
                 .willReturn(mockMember);
 
         CategoryEntity mockCategory = new CategoryEntity("backend", 0L);
@@ -88,21 +90,41 @@ class CommunityControllerTest {
                 .isHighlighted(false)
                 .build();
         BDDMockito.given(communityService.createCommunity(request, mockMember, mockCategory))
-                .willReturn(10L);
-
-        BDDMockito.given(communityService.readCommunity(ArgumentMatchers.anyLong()))
                 .willReturn(makeCommunityResponse(mockMember, mockCategory));
 
         String json = objectMapper.writeValueAsString(request);
 
         //expected
         mockMvc.perform(post(COMMON_URL + "/board")
+                        .session(session)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.sequence").value(10L))
                 .andExpect(jsonPath("$.title").value(TITLE))
                 .andExpect(jsonPath("$.content").value(CONTENT))
-                .andDo(MockMvcResultHandlers.print());
+                .andDo(print());
+
+        BDDMockito.then(communityService).should().createCommunity(request, mockMember, mockCategory);
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 [DELETE] /board/{id}")
+    void deleteCommunity() throws Exception {
+        //given
+        final Long COMMUNITY_SEQUENCE = 100L;
+        final Long LOGIN_SEQUENCE = 1L;
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(SessionConst.LOGIN_USER, LOGIN_SEQUENCE);
+
+        BDDMockito.given(communityService.deleteCommunity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE))
+                .willReturn(COMMUNITY_SEQUENCE);
+
+        //expected
+        mockMvc.perform(delete(COMMON_URL + "/board/{sequence}", COMMUNITY_SEQUENCE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .session(session))
+                .andExpect(status().isNoContent());
     }
 
     private CommunityResponse makeCommunityResponse(MemberEntity mockMember, CategoryEntity mockCategory) {
