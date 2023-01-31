@@ -2,6 +2,7 @@ package com.justudy.backend.timer.repository;
 
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.timer.domain.QMemberActivityEntity;
+import com.justudy.backend.timer.dto.response.MemberActivityBeforeRank;
 import com.justudy.backend.timer.dto.response.MemberActivityCalendarResponse;
 import com.justudy.backend.timer.dto.response.MemberActivitySubjectResponse;
 import com.querydsl.core.Tuple;
@@ -79,6 +80,18 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
         .where(qMemberActivity.member.eq(member), qMemberActivity.date.goe(ago),
             qMemberActivity.date.loe(cur))
         .groupBy(qMemberActivity.date)
+        .fetch();
+  }
+
+  @Override
+  public List<MemberActivityBeforeRank> sumTimeByPeriod(Date ago, Date cur) {
+    return queryFactory
+        .select(Projections.constructor(MemberActivityBeforeRank.class,qMemberActivity.member,qMemberActivity.time.sum()))
+        .from(qMemberActivity)
+        .where( qMemberActivity.date.goe(ago),qMemberActivity.date.loe(cur))
+        .groupBy(qMemberActivity.member)
+        .orderBy(qMemberActivity.time.sum().desc())
+        .limit(10)
         .fetch();
   }
 
