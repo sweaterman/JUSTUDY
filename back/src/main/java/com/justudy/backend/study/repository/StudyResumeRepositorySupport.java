@@ -7,10 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;
+import java.util.Optional;
 
 
-public interface StudyRepositorySupport {
+public interface StudyResumeRepositorySupport {
 
-    Slice<StudyEntity> findAllBySearchOption(Pageable pageable, List<String> sub, Long leaderSeq, String studyName);
+    List<StudyResumeEntity> readAllStudyResumeByStudy(Long id);
 
+    List<StudyResumeEntity> readAllStudyResumeByMember(Long id);
 }

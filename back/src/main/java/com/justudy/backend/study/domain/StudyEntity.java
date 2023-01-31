@@ -2,7 +2,6 @@ package com.justudy.backend.study.domain;
 
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.file.domain.UploadFileEntity;
-import com.justudy.backend.studyMember.domain.StudyMemberEntity;
 import lombok.*;
 
 import javax.persistence.*;

@@ -8,6 +8,7 @@ import com.justudy.backend.study.dto.request.StudyEdit;
 import com.justudy.backend.study.dto.response.StudyResponse;
 import com.justudy.backend.study.exception.StudyNotFound;
 import com.justudy.backend.study.repository.StudyRepository;
+import com.justudy.backend.study.repository.StudyResumeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,8 +26,8 @@ public class StudyService {
 
     private final StudyRepository studyRepository;
     private final MemberRepository memberRepository;
+    private final StudyResumeRepository studyResumeRepository;
     private final int MAX_STUDY_PAGE_SIZE = 1;
-    private final int MAX_NOTICE_SIZE = 3;
 
     //crud readall search readopen readopencategory readsubcategory myapplystudy myapplyCRUD mystudyall
     // studycommunityCRUD studycommunitycommentCRUD studyfrequencyCRUD
@@ -81,4 +83,6 @@ public class StudyService {
         return studyRepository.findAllBySearchOption(pageable, sub, leaderSeq, studyName)
                 .map(StudyResponse::makeBuilder);
     }
+
+
 }

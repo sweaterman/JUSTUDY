@@ -1,7 +1,9 @@
 package com.justudy.backend.study.repository;
 
+import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.study.domain.QStudyEntity;
 import com.justudy.backend.study.domain.StudyEntity;
+import com.justudy.backend.study.domain.StudyResumeEntity;
 import com.justudy.backend.util.PagingUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
+import java.lang.reflect.Member;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -38,7 +41,7 @@ public class StudyRepositoryImpl implements StudyRepositorySupport {
         for (String sub : subCategories) {
 
 //            if (entity.category.name.containsIgnoreCase(sub)= )
-                return entity.category.name.containsIgnoreCase(sub);
+            return entity.category.name.containsIgnoreCase(sub);
         }
         return null;
     }
