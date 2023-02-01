@@ -2,19 +2,30 @@ package com.justudy.backend.community.service;
 
 import com.justudy.backend.community.domain.CommunityBookmarkEntity;
 import com.justudy.backend.community.repository.CommunityBookmarkRepository;
-import org.assertj.core.api.Assertions;
+import com.justudy.backend.exception.InvalidRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+
 class CommunityBookmarkServiceTest {
 
-    private CommunityBookmarkRepository bookmarkRepository = Mockito.mock(CommunityBookmarkRepository.class);
+    private final Long LOGIN_SEQUENCE = 1L;
+    private final Long COMMUNITY_SEQUENCE = 5L;
+    private final Long BOOKMARK_SEQUENCE = 10L;
+
+    private CommunityBookmarkRepository bookmarkRepository = mock(CommunityBookmarkRepository.class);
 
     private CommunityBookmarkService bookmarkService;
 
@@ -23,28 +34,67 @@ class CommunityBookmarkServiceTest {
         bookmarkService = new CommunityBookmarkService(bookmarkRepository);
     }
 
+    @Transactional
     @Test
     @DisplayName("북마크 생성")
     void createBookmark() {
         //given
-        final Long LOGIN_SEQUENCE = 1L;
-        final Long COMMUNITY_SEQUENCE = 1L;
-        final Long BOOKMARK_SEQUENCE = 10L;
+        CommunityBookmarkEntity newBookmark = new CommunityBookmarkEntity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+        ReflectionTestUtils.setField(newBookmark, "sequence", BOOKMARK_SEQUENCE, Long.class);
 
-        CommunityBookmarkEntity newBookmark = bookmarkRepository.save(new CommunityBookmarkEntity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE));
-        ReflectionTestUtils.setField(newBookmark, "sequence", BOOKMARK_SEQUENCE);
+        BDDMockito.given(bookmarkRepository.findBookmark(anyLong(), anyLong()))
+                .willReturn(Optional.empty());
 
-//        BDDMockito.given(bookmarkRepository.readBookmark(2L, 2L))
-//                .willReturn(Optional.of(new CommunityBookmarkEntity(2L, 2L)));
-
-        BDDMockito.given(bookmarkRepository.save(newBookmark))
+        BDDMockito.given(bookmarkRepository.save(any(CommunityBookmarkEntity.class)))
                 .willReturn(newBookmark);
 
         //when
         Long bookmarkSequence = bookmarkService.createBookmark(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
 
         //then
-        Assertions.assertThat(bookmarkSequence).isEqualTo(BOOKMARK_SEQUENCE);
+        assertThat(bookmarkSequence).isEqualTo(BOOKMARK_SEQUENCE);
+        BDDMockito.then(bookmarkRepository).should(times(1)).save(any(CommunityBookmarkEntity.class));
+    }
 
+    @Transactional
+    @Test
+    @DisplayName("북마크 삭제")
+    void deleteBookmark() {
+        //given
+        CommunityBookmarkEntity newBookmark = new CommunityBookmarkEntity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+        ReflectionTestUtils.setField(newBookmark, "sequence", BOOKMARK_SEQUENCE, Long.class);
+
+        BDDMockito.given(bookmarkRepository.findBookmark(anyLong(), anyLong()))
+                .willReturn(Optional.of(newBookmark));
+        BDDMockito.willDoNothing().given(bookmarkRepository).delete(newBookmark);
+
+        //when
+        bookmarkService.deleteBookmark(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+
+        //then
+        BDDMockito.then(bookmarkRepository).should(times(1)).findBookmark(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+        BDDMockito.then(bookmarkRepository).should(times(1)).delete(newBookmark);
+    }
+
+    @Transactional
+    @Test
+    @DisplayName("북마크 삭제 실패 - NotFound")
+    void deleteBookmarkNotFoundException() {
+        //given
+        final Long WRONG_LOGIN = 100L;
+        final Long WRONG_COMMUNITY = 1000L;
+
+        CommunityBookmarkEntity newBookmark = new CommunityBookmarkEntity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+        ReflectionTestUtils.setField(newBookmark, "sequence", BOOKMARK_SEQUENCE, Long.class);
+
+        BDDMockito.given(bookmarkRepository.findBookmark(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE))
+                .willReturn(Optional.of(newBookmark));
+        BDDMockito.willDoNothing().given(bookmarkRepository).delete(newBookmark);
+
+        //expected
+        assertThatThrownBy(() -> bookmarkService.deleteBookmark(WRONG_LOGIN, COMMUNITY_SEQUENCE))
+                .isInstanceOf(InvalidRequest.class);
+        assertThatThrownBy(() -> bookmarkService.deleteBookmark(LOGIN_SEQUENCE, WRONG_COMMUNITY))
+                .isInstanceOf(InvalidRequest.class);
     }
 }
