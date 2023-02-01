@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 public class StudyRoomRepositoryImpl implements StudyRoomRepositoryCustom {
 
   private final JPAQueryFactory queryFactory;
-  private QStudyRoomEntity qStudyRoomEntity;
+  private final QStudyRoomEntity qStudyRoomEntity;
 
   @Override
   public StudyRoomResponse findUUIDByStudy(StudyEntity study) {
