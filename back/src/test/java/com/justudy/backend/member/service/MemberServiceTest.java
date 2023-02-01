@@ -154,24 +154,24 @@ public class MemberServiceTest {
         UploadFileEntity oldImageFile = new UploadFileEntity("test", "testUuid");
         savedMember.changeImage(oldImageFile);
 
-        CategoryEntity backend = new CategoryEntity("backend", 1L);
-        CategoryEntity java = new CategoryEntity("Java", 1L);
+        CategoryEntity backend = new CategoryEntity("backend", "백엔드", 0L);
+        CategoryEntity java = new CategoryEntity("java", "Java", 1L);
         java.addParentCategory(backend);
-        CategoryEntity spring = new CategoryEntity("Spring", 1L);
+        CategoryEntity spring = new CategoryEntity("spring", "Spring", 1L);
         spring.addParentCategory(backend);
-        CategoryEntity python = new CategoryEntity("Python", 1L);
+        CategoryEntity python = new CategoryEntity("python", "Python", 1L);
         python.addParentCategory(backend);
 
         BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
                 .willReturn(Optional.of(savedMember));
 
-        BDDMockito.given(categoryRepository.findByKey("Java"))
+        BDDMockito.given(categoryRepository.findByValue("Java"))
                 .willReturn(Optional.of(java));
 
-        BDDMockito.given(categoryRepository.findByKey("Spring"))
+        BDDMockito.given(categoryRepository.findByValue("Spring"))
                 .willReturn(Optional.of(spring));
 
-        BDDMockito.given(categoryRepository.findByKey("Python"))
+        BDDMockito.given(categoryRepository.findByValue("Python"))
                 .willReturn(Optional.of(python));
 
         MemberEdit editRequest = MemberEdit.builder()
@@ -207,24 +207,24 @@ public class MemberServiceTest {
         UploadFileEntity oldImageFile = new UploadFileEntity("test", "testUuid");
         savedMember.changeImage(oldImageFile);
 
-        CategoryEntity backend = new CategoryEntity("backend", 1L);
-        CategoryEntity java = new CategoryEntity("Java", 1L);
+        CategoryEntity backend = new CategoryEntity("backend", "백엔드", 0L);
+        CategoryEntity java = new CategoryEntity("java", "Java", 1L);
         java.addParentCategory(backend);
-        CategoryEntity spring = new CategoryEntity("Spring", 1L);
+        CategoryEntity spring = new CategoryEntity("spring", "Spring", 1L);
         spring.addParentCategory(backend);
-        CategoryEntity python = new CategoryEntity("Python", 1L);
+        CategoryEntity python = new CategoryEntity("python", "Python", 1L);
         python.addParentCategory(backend);
 
         BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
                 .willReturn(Optional.of(savedMember));
 
-        BDDMockito.given(categoryRepository.findByKey("Java"))
+        BDDMockito.given(categoryRepository.findByValue("Java"))
                 .willReturn(Optional.of(java));
 
-        BDDMockito.given(categoryRepository.findByKey("Spring"))
+        BDDMockito.given(categoryRepository.findByValue("Spring"))
                 .willReturn(Optional.of(spring));
 
-        BDDMockito.given(categoryRepository.findByKey("Python"))
+        BDDMockito.given(categoryRepository.findByValue("Python"))
                 .willReturn(Optional.of(python));
 
         MemberEdit editRequest = MemberEdit.builder()

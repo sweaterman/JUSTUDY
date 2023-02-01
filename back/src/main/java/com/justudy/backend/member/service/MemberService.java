@@ -1,9 +1,13 @@
 package com.justudy.backend.member.service;
 
 import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.dto.request.CategoryResponse;
 import com.justudy.backend.category.exception.CategoryNotFound;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.exception.ConflictRequest;
+import com.justudy.backend.exception.ForbiddenRequest;
+import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.service.FileStore;
@@ -17,9 +21,6 @@ import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
 import com.justudy.backend.member.dto.response.ProfileResponse;
-import com.justudy.backend.exception.ConflictRequest;
-import com.justudy.backend.exception.ForbiddenRequest;
-import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -179,7 +180,7 @@ public class MemberService {
         List<MemberCategoryEntity> memberCategories = new ArrayList<>();
 
         for (String c : editRequest.getCategory()) {
-            CategoryEntity category = categoryRepository.findByKey(c)
+            CategoryEntity category = categoryRepository.findByValue(c)
                     .orElseThrow(CategoryNotFound::new);
             MemberCategoryEntity memberCategory = MemberCategoryEntity.createMemberCategory(category);
             memberCategories.add(memberCategory);
@@ -190,7 +191,7 @@ public class MemberService {
 
     private void addCategory(MemberCreate request, MemberEntity member) {
         List<CategoryEntity> categories = Arrays.stream(request.getCategory())
-                .map(category -> (categoryRepository.findByKey(category)
+                .map(category -> (categoryRepository.findByValue(category)
                         .orElseThrow(CategoryNotFound::new)))
                 .collect(Collectors.toList());
         for (CategoryEntity category : categories) {
@@ -250,7 +251,7 @@ public class MemberService {
     }
 
     private static String[] fromCategoryToArray(List<MemberCategoryEntity> categories) {
-        List<String> categoryToString = categories.stream().map(category -> category.getCategory().getKey())
+        List<String> categoryToString = categories.stream().map(category -> category.getCategory().getValue())
                 .collect(Collectors.toList());
         String[] categoryResponse = categoryToString.toArray(new String[categoryToString.size()]);
         return categoryResponse;

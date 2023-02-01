@@ -105,7 +105,7 @@ public class MemberServiceIntegrationTest {
         assertThat(findMember.getIntroduction()).isEqualTo(MODIFIED_INTRODUCTION);
 
         List<String> categories = findMember.getCategories().stream()
-                .map(memberCategory -> memberCategory.getCategory().getName())
+                .map(memberCategory -> memberCategory.getCategory().getValue())
                 .collect(Collectors.toList());
 
         assertThat(categories.contains("JavaScript")).isTrue();
