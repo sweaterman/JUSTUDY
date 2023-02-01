@@ -2,7 +2,6 @@ package com.justudy.backend.study.service;
 
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
-import com.justudy.backend.community.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.study.domain.StudyEntity;
@@ -44,7 +43,10 @@ public class StudyService {
 
     @Transactional
     public Long createStudy(StudyCreate request, UploadFileEntity basicImage) {
-        CategoryEntity categoryEntity = categoryRepository.findByName(request.getBottomCategory()).orElseThrow(InvalidRequest::new);
+
+        //todo 카테고리검색
+        CategoryEntity categoryEntity = null;
+//        CategoryEntity categoryEntity = categoryRepository.findByName(request.getBottomCategory()).orElseThrow(InvalidRequest::new);
 //        memberRepository.find
         //todo leaderSeq 멤버에서 검색해야함
         Long leaderSeq=1L;

@@ -1,10 +1,16 @@
 package com.justudy.backend.member.service;
 
 import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.dto.request.CategoryResponse;
+import com.justudy.backend.category.exception.CategoryNotFound;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.exception.ConflictRequest;
+import com.justudy.backend.exception.ForbiddenRequest;
+import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
+import com.justudy.backend.file.service.FileStore;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.member.domain.MemberCategoryEntity;
 import com.justudy.backend.member.domain.MemberEditor;
@@ -15,9 +21,6 @@ import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
 import com.justudy.backend.member.dto.response.ProfileResponse;
-import com.justudy.backend.member.exception.ConflictRequest;
-import com.justudy.backend.member.exception.ForbiddenRequest;
-import com.justudy.backend.member.exception.InvalidRequest;
 import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +28,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +48,8 @@ public class MemberService {
 
     private final UploadFileService uploadFileService;
 
+    private final FileStore fileStore;
+
     @Transactional
     public Long saveMember(MemberCreate request, UploadFileEntity basicImage) {
         validateCreateRequest(request);
@@ -56,21 +63,21 @@ public class MemberService {
     }
 
     public MypageResponse getMypage(Long loginSequence) {
-        MemberEntity findMember = memberRepository.findById(loginSequence)
+        MemberEntity findMember = memberRepository.findBySequenceWithJoin(loginSequence)
                 .orElseThrow(() -> new MemberNotFound());
 
         return createMypageResponse(findMember);
     }
 
     public ModifyPageResponse getModifyPage(Long loginSequence) {
-        MemberEntity findMember = memberRepository.findById(loginSequence)
+        MemberEntity findMember = memberRepository.findBySequenceWithJoin(loginSequence)
                 .orElseThrow(() -> new MemberNotFound());
 
         return createModifyPageResponse(findMember);
     }
 
     public ProfileResponse getProfile(Long memberSequence) {
-        MemberEntity findMember = memberRepository.findById(memberSequence)
+        MemberEntity findMember = memberRepository.findBySequenceWithJoin(memberSequence)
                 .orElseThrow(() -> new MemberNotFound());
 
         return createProfileResponse(findMember);
@@ -95,10 +102,13 @@ public class MemberService {
     }
 
     @Transactional
-    public Long editMember(Long loginSequence, MemberEdit editRequest, UploadFileEntity imageFile) {
-        MemberEntity findMember = memberRepository.findById(loginSequence)
+    public Long editMember(Long loginSequence, MemberEdit editRequest, MultipartFile multipartFile) throws IOException {
+        MemberEntity findMember = memberRepository.findBySequenceWithJoin(loginSequence)
                 .orElseThrow(() -> new MemberNotFound());
         validateEditRequest(findMember, editRequest);
+
+        UploadFileEntity uploadImage = fileStore.storeFile(multipartFile);
+        saveUploadImage(uploadImage);
 
         MemberEditor.MemberEditorBuilder editorBuilder = findMember.toEditor();
 
@@ -110,7 +120,7 @@ public class MemberService {
                 .region(Region.valueOf(editRequest.getRegion()))
                 .dream(editRequest.getDream())
                 .introduction(editRequest.getIntroduction())
-                .imageFile(imageFile)
+                .imageFile(uploadImage)
                 .build();
 
         List<MemberCategoryEntity> newCategories = createNewMemberCategories(editRequest);
@@ -130,6 +140,12 @@ public class MemberService {
     public MemberEntity getMember(Long loginSequence) {
         return memberRepository.findById(loginSequence)
                 .orElseThrow(MemberNotFound::new);
+    }
+
+    private void saveUploadImage(UploadFileEntity uploadImage) {
+        if (uploadImage != null) {
+            uploadFileService.saveUploadFile(uploadImage);
+        }
     }
 
     private boolean validateImageFile(Long oldImageSequence, Long newImageSequence) {
@@ -164,8 +180,8 @@ public class MemberService {
         List<MemberCategoryEntity> memberCategories = new ArrayList<>();
 
         for (String c : editRequest.getCategory()) {
-            CategoryEntity category = categoryRepository.findByName(c)
-                    .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
+            CategoryEntity category = categoryRepository.findByValue(c)
+                    .orElseThrow(CategoryNotFound::new);
             MemberCategoryEntity memberCategory = MemberCategoryEntity.createMemberCategory(category);
             memberCategories.add(memberCategory);
         }
@@ -175,8 +191,8 @@ public class MemberService {
 
     private void addCategory(MemberCreate request, MemberEntity member) {
         List<CategoryEntity> categories = Arrays.stream(request.getCategory())
-                .map(category -> (categoryRepository.findByName(category)
-                        .orElseThrow(InvalidRequest::new)))
+                .map(category -> (categoryRepository.findByValue(category)
+                        .orElseThrow(CategoryNotFound::new)))
                 .collect(Collectors.toList());
         for (CategoryEntity category : categories) {
             MemberCategoryEntity memberCategory = MemberCategoryEntity.createMemberCategory(category);
@@ -196,11 +212,12 @@ public class MemberService {
     private ProfileResponse createProfileResponse(MemberEntity member) {
         return ProfileResponse.builder()
                 .nickname(member.getNickname())
-                .category(getCategoryArray(member.getCategories()))
+                .category(fromCategoryToArray(member.getCategories()))
                 .dream(member.getDream())
                 .introduction(member.getIntroduction())
                 .level(member.getLevel().getValue())
                 .imageSequence(member.getImageFile().getSequence()) //imageFile Sequence
+                .badgeCount(member.getBadgeCount())
                 .build();
     }
 
@@ -214,7 +231,7 @@ public class MemberService {
                 .userId(member.getUserId())
                 .phone(member.getPhone())
                 .email(member.getEmail())
-                .category(getCategoryArray(member.getCategories()))
+                .category(fromCategoryToArray(member.getCategories()))
                 .dream(member.getDream())
                 .introduction(member.getIntroduction())
                 .imageSequence(member.getImageFile().getSequence()) //imageFile Sequence
@@ -224,7 +241,7 @@ public class MemberService {
     private MypageResponse createMypageResponse(MemberEntity member) {
         return MypageResponse.builder()
                 .nickname(member.getNickname())
-                .category(getCategoryArray(member.getCategories()))
+                .category(fromCategoryToArray(member.getCategories()))
                 .dream(member.getDream())
                 .status(member.getStatus().getValue())
                 .badgeCount(member.getBadgeCount())
@@ -233,8 +250,8 @@ public class MemberService {
                 .build();
     }
 
-    private static String[] getCategoryArray(List<MemberCategoryEntity> categories) {
-        List<String> categoryToString = categories.stream().map(category -> category.getCategory().getName())
+    private static String[] fromCategoryToArray(List<MemberCategoryEntity> categories) {
+        List<String> categoryToString = categories.stream().map(category -> category.getCategory().getValue())
                 .collect(Collectors.toList());
         String[] categoryResponse = categoryToString.toArray(new String[categoryToString.size()]);
         return categoryResponse;
@@ -263,22 +280,19 @@ public class MemberService {
     }
 
     private void isDuplicatedUserId(String userId) {
-        List<MemberEntity> members = memberRepository.findAll();
-        if (members.stream().anyMatch(member -> member.getUserId().equals(userId))) {
+        if (memberRepository.findUserId(userId).isPresent()) {
             throw new ConflictRequest("userId", "이미 가입된 아이디입니다.");
         }
     }
 
     private void isDuplicatedNickname(String nickname) {
-        List<MemberEntity> members = memberRepository.findAll();
-        if (members.stream().anyMatch(member -> member.getNickname().equals(nickname))) {
+        if (memberRepository.findNickname(nickname).isPresent()) {
             throw new ConflictRequest("nickname", "이미 가입된 닉네임입니다.");
         }
     }
 
     private void isDuplicatedSsafyId(String ssafyId) {
-        List<MemberEntity> members = memberRepository.findAll();
-        if (members.stream().anyMatch(member -> member.getSsafyId().equals(ssafyId))) {
+        if (memberRepository.findSsafyId(ssafyId).isPresent()) {
             throw new ConflictRequest("ssafyId", "이미 가입된 SSAFY학번입니다.");
         }
     }

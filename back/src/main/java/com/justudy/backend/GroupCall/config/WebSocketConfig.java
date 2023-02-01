@@ -26,7 +26,7 @@ public class WebSocketConfig {
 //    "ws://kurento:8888/kurento"
     @Bean
     public KurentoClient kurentoClient() {
-        return KurentoClient.create("wss://i8a104.p.ssafy.io/groupcall");
+        return KurentoClient.create("ws://kurento:8888/kurento");
     }
 
     @Bean

@@ -1,4 +1,4 @@
-package com.justudy.backend.member.exception;
+package com.justudy.backend.exception;
 
 import com.justudy.backend.exception.CustomException;
 

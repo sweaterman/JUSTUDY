@@ -1,14 +1,16 @@
 package com.justudy.backend.study.controller;
 
 import com.justudy.backend.category.service.CategoryService;
+import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.service.UploadFileService;
-import com.justudy.backend.member.exception.InvalidRequest;
-import com.justudy.backend.member.service.MemberService;
-import com.justudy.backend.study.dto.request.*;
+import com.justudy.backend.study.dto.request.StudyCreate;
+import com.justudy.backend.study.dto.request.StudyEdit;
+import com.justudy.backend.study.dto.request.StudyMemberCreate;
+import com.justudy.backend.study.dto.request.StudyResumeApply;
 import com.justudy.backend.study.dto.response.*;
-import com.justudy.backend.study.exception.StudyResumeNotFound;
+import com.justudy.backend.member.service.MemberService;
 import com.justudy.backend.study.service.StudyFrequencyService;
 import com.justudy.backend.study.service.StudyMemberService;
 import com.justudy.backend.study.service.StudyResumeService;
@@ -64,15 +66,16 @@ public class StudyController {
         //todo session 과 id 체크
         List<String> subCategories = null;
         //타입이 카테고리 검색이면
-        if (type != null && type.compareTo("category") == 0) {
-            subCategories = Arrays.asList(search.split(","));
-            List<String> response = categoryService.getSubCategories();
-            for (String subCategory : subCategories) {
-                if (response.contains(subCategory) == false)
-                    throw new InvalidRequest();
-            }
-            search = null;
-        }
+        //todo category 수정해야함
+//        if (type != null && type.compareTo("category") == 0) {
+//            subCategories = Arrays.asList(search.split(","));
+//            List<String> response = categoryService.getSubCategories();
+//            for (String subCategory : subCategories) {
+//                if (response.contains(subCategory) == false)
+//                    throw new InvalidRequest();
+//            }
+//            search = null;
+//        }
 
         return ResponseEntity.status(HttpStatus.OK).body(studyService.search(page, subCategories, type, search));
     }
@@ -356,7 +359,7 @@ public class StudyController {
                 .stream()
                 .filter(resume -> resume.longValue() == applyId.longValue())
                 .findFirst()
-                .orElseThrow(StudyResumeNotFound::new);
+                .orElseThrow(InvalidRequest::new);
 
         //스터티 승인
         if (request.getIsAccept()) {

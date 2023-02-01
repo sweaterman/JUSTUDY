@@ -1,6 +1,7 @@
 package com.justudy.backend.community.controller;
 
-import com.justudy.backend.community.domain.CommunityBookmarkEntity;
+import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.community.domain.CommunityLoveEntity;
 import com.justudy.backend.community.dto.request.*;
 import com.justudy.backend.community.dto.response.CommunityCommentResponse;
@@ -13,6 +14,7 @@ import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/community")
 @RequiredArgsConstructor
@@ -30,6 +33,7 @@ public class CommunityController {
     private final CommunityCommentService communityCommentService;
     private final CommunityLoveService communityLoveService;
     private final CommunityBookmarkService communityBookmarkService;
+    private final CategoryService categoryService;
     // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
     /**
@@ -80,12 +84,12 @@ public class CommunityController {
     /**
      * 커뮤니티 상세 정보를 가져오는 API
      *
-     * @param id 커뮤니티 sequence (PK)
+     * @param communitySequence PK
      * @return ResponseEntity<CommunityResponse> 200 OK, 커뮤니티 상세 정보
      */
     @GetMapping("/board/{id}")
-    public ResponseEntity<CommunityResponse> readCommunityById(@PathVariable("id") Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunity(id));
+    public ResponseEntity<CommunityResponse> readCommunityById(@PathVariable("id") Long communitySequence) {
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunity(communitySequence));
     }
 
     /**
@@ -98,32 +102,41 @@ public class CommunityController {
     public ResponseEntity<CommunityResponse> createCommunity(@RequestBody CommunityCreate request, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         MemberEntity findMember = memberService.getMember(loginSequence);
+        CategoryEntity category = categoryService.getCategoryEntityByKey(request.getCategory());
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(communityService.readCommunity(communityService.createCommunity(request, findMember)));
+        CommunityResponse response = communityService.createCommunity(request, findMember, category);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
      * 커뮤니티 수정 API
      *
-     * @param id      커뮤니티 sequence (PK)
+     * @param communitySequence      커뮤니티 sequence (PK)
      * @param request 수정 정보
      * @return ResponseEntity<UserResponse> 200 OK, 수정된 커뮤니티글 정보
      */
     @PutMapping("/board/{id}")
-    public ResponseEntity<CommunityResponse> updateCommunity(@PathVariable("id") long id, @RequestBody CommunityEdit request) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunity(communityService.updateCommunity(id, request)));
+    public ResponseEntity<CommunityResponse> updateCommunity(@PathVariable("id") Long communitySequence,
+                                                             @RequestBody CommunityEdit request,
+                                                             HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        CommunityResponse response = communityService.updateCommunity(loginSequence, communitySequence, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     /**
      * 커뮤니티 삭제 API
      *
-     * @param id 커뮤니티 sequence (PK)
+     * @param communitySequence 커뮤니티 sequence (PK)
      * @return ResponseEntity<Void> 204 No Content
      */
     @DeleteMapping("/board/{id}")
-    public ResponseEntity<Void> deleteCommunity(@PathVariable("id") long id) {
-        communityService.deleteCommunity(id);
+    public ResponseEntity<Void> deleteCommunity(@PathVariable("id") long communitySequence, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        communityService.deleteCommunity(loginSequence, communitySequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
@@ -141,28 +154,33 @@ public class CommunityController {
     // ---------------------------------------------------------------북마크---------------------------------------------------------------
 
     /**
-     * 북마크 생성 API
-     *
-     * @param id 커뮤니티 sequence (PK)
-     * @return ResponseEntity<Void>> 201 CREATED
+     * 북마크 생성 API - DONE
+     * @param communitySequence
+     * @param session
      */
     @PostMapping("/board/{id}/bookmark")
-    public ResponseEntity<Void> createBookmark(@PathVariable("id") long id, @RequestBody CommunityBookmarkCreate request) {
-        communityBookmarkService.createBookmark(request);
+    public ResponseEntity<Void> createBookmark(@PathVariable("id") Long communitySequence,
+                                               HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        communityBookmarkService.createBookmark(loginSequence, communitySequence);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
     /**
      * 북마크 삭제 API
      *
-     * @param id 커뮤니티 sequence (PK)
+     * @param communitySequence 커뮤니티 sequence (PK)
      * @return ResponseEntity<List < CommunityResponse>> 204 NO_CONTENT'
      * 북마크는 유저기능아닌가? 매핑 바꿔야할듯
      * 복합키로 delete 어캐구현하지
      */
-    @DeleteMapping("/board/{id}/bookmark/{userId}")
-    public ResponseEntity<List<CommunityResponse>> deleteBookmark(@PathVariable("id") Long id,@PathVariable("userId") Long userId) {
-        communityBookmarkService.deleteBookmark(id,userId);
+    @DeleteMapping("/board/{id}/bookmark")
+    public ResponseEntity<Void> deleteBookmark(@PathVariable("id") Long communitySequence,
+                                               HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        communityBookmarkService.deleteBookmark(loginSequence, communitySequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
@@ -171,10 +189,10 @@ public class CommunityController {
      *
      * @return ResponseEntity<List < CommunityResponse>> 200 OK, 유저별 북마크 목록
      */
-    @GetMapping("/board/bookmark/{userId}")
-    public ResponseEntity<List<CommunityBookmarkEntity>> readAllBookmarkByMember(@PathVariable("userId") Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityBookmarkService.readAllBookmarkByMember(userId));
-    }
+//    @GetMapping("/board/bookmark/{userId}")
+//    public ResponseEntity<List<CommunityBookmarkEntity>> readAllBookmarkByMember(@PathVariable("userId") Long userId) {
+//        return ResponseEntity.status(HttpStatus.OK).body(communityBookmarkService.readAllBookmarkByMember(userId));
+//    }
     // ---------------------------------------------------------------좋아요---------------------------------------------------------------
 
     /**

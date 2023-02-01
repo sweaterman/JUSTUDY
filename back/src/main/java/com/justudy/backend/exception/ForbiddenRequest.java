@@ -1,27 +1,27 @@
-package com.justudy.backend.community.exception;
+package com.justudy.backend.exception;
 
 import com.justudy.backend.exception.CustomException;
 
-public class InvalidRequest extends CustomException {
+public class ForbiddenRequest extends CustomException {
 
-    private static final String MESSAGE = "잘못된 요청입니다.";
+    private static final String MESSAGE = "접근 권한이 없습니다.";
 
-    public InvalidRequest() {
+    public ForbiddenRequest() {
         super(MESSAGE);
     }
 
-    public InvalidRequest(String message, Throwable cause) {
+    public ForbiddenRequest(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public InvalidRequest(String fieldName, String errorMessage) {
+    public ForbiddenRequest(String fieldName, String errorMessage) {
         super(MESSAGE);
         addValidation(fieldName, errorMessage);
     }
 
     @Override
     public int getStatusCode() {
-        return 400;
+        return 403;
     }
 
     @Override

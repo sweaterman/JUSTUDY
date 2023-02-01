@@ -1,19 +1,14 @@
 package com.justudy.backend.community.domain;
 
 import com.justudy.backend.member.domain.MemberEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "community_bookmark")
 @Entity
 public class CommunityBookmarkEntity implements Serializable {
@@ -23,16 +18,19 @@ public class CommunityBookmarkEntity implements Serializable {
     @Column(name = "bookmark_seq")
     private Long sequence;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "community_seq", name = "community_seq")
-    private CommunityEntity community;
+    @Column(name = "member_sequence")
+    private Long memberSequence;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "member_seq", name = "member_seq")
-    private MemberEntity member;
+    @Column(name = "community_sequence")
+    private Long communitySequence;
 
-    @Column
-    private Boolean isChecked;
     @Column
     private LocalDateTime createdTime;
+
+    @Builder
+    public CommunityBookmarkEntity(Long memberSequence, Long communitySequence) {
+        this.memberSequence = memberSequence;
+        this.communitySequence = communitySequence;
+        this.createdTime = LocalDateTime.now();
+    }
 }
