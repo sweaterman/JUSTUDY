@@ -19,7 +19,7 @@ public class StudyRoomRepositoryImpl implements StudyRoomRepositoryCustom {
     return queryFactory
         .select(
             Projections.constructor(StudyRoomResponse.class, qStudyRoomEntity.studyRoomUUID,
-                qStudyRoomEntity.studyEntity))
+                qStudyRoomEntity.sequence))
         .from(qStudyRoomEntity)
         .where(qStudyRoomEntity.studyEntity.eq(study))
         .fetchOne();
