@@ -15,6 +15,10 @@ import com.justudy.backend.member.service.MemberService;
 import com.justudy.backend.study.domain.StudyFrequencyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.service.StudyService;
+import com.justudy.backend.timer.dto.request.MemberActivityRequest;
+import com.justudy.backend.timer.service.MemberActivityService;
+import java.sql.Date;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +52,7 @@ public class InitDb {
         private final CommunityService communityService;
         private final StudyService studyService;
 
+        private final MemberActivityService memberActivityService;
 
         public void init() {
             saveCategory();
@@ -55,9 +60,27 @@ public class InitDb {
             saveMember();
             saveCommunity();
             saveStudy();
+            saveTimer();
         }
 
+        private void saveTimer() {
+            for (int i = 0; i < 10; i++) {
+                long memberSequence = 50 + (3 * i);
+                for (int count = 1; count <= 30; count++) {
+                    Date day = Date.valueOf(LocalDate.now().minusDays(count));
+                    memberActivityService.saveMemberAcitivity(
+                        new MemberActivityRequest((long) (Math.random() * 50), "frontend"), memberSequence,
+                        day);
+                }
+                for (int count = 1; count <= 30; count++) {
+                    Date day = Date.valueOf(LocalDate.now().minusDays(count));
+                    memberActivityService.saveMemberAcitivity(
+                        new MemberActivityRequest((long) (Math.random() * 50), "backend"), memberSequence,
+                        day);
+                }
 
+            }
+        }
         private void saveCommunity() {
             CategoryEntity category = categoryRepository.findByName("backend")
                     .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
