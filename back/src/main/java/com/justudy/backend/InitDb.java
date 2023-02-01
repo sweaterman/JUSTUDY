@@ -1,5 +1,6 @@
 package com.justudy.backend;
 
+import com.justudy.backend.GroupCall.service.StudyRoomService;
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.community.dto.request.CommunityCreate;
@@ -53,6 +54,7 @@ public class InitDb {
         private final StudyService studyService;
 
         private final MemberActivityService memberActivityService;
+        private final StudyRoomService studyRoomService;
 
         public void init() {
             saveCategory();
@@ -60,6 +62,7 @@ public class InitDb {
             saveMember();
             saveCommunity();
             saveStudy();
+            saveStudyRoom();
             saveTimer();
         }
 
@@ -130,7 +133,10 @@ public class InitDb {
                 }
             }
         }
-
+        public void saveStudyRoom(){
+            for(long i =130;i<180;i++)
+                studyRoomService.saveStudyRoom(i);
+        }
 
         private static MemberCreate makeMemberCreate(int number) {
             MemberCreate request = MemberCreate.builder()
