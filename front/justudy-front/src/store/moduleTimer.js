@@ -2,15 +2,23 @@ import axios from 'axios';
 import port from './port';
 export default {
     namespaced: true,
-    state: {},
+    state: {
+        firstYesterday: {}
+    },
     getters: {},
-    mutations: {},
+    mutations: {
+        getFirstYesterday(state, payload) {
+            state.firstYesterday = payload;
+        }
+    },
     actions: {
         saveIndividualTime() {
             axios.post(port + 'timer/member');
         },
-        getFirstYesterday() {
-            axios.get(port + 'timer/member/yesterday-top');
+        getFirstYesterday({commit}) {
+            axios.get(port + 'timer/member/yesterday-top').then(res => {
+                commit('getFirstYesterday', res.data);
+            });
         },
         getStudyTimeWeek(_, {seq}) {
             axios.get(port + `timer/member/week?seq=${seq}`);

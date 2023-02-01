@@ -8,14 +8,21 @@
                     <DigitalClock :allTime="allTimeMe" :fontSize="300" />
                 </div>
                 <Boundary content="" standard="px" :startPoint="100" :hasContent="false"></Boundary>
-                <BasicButton :buttonLength="500" :height="60" standard="px" :content="`${today} 현재 공부량 1등`" />
-                <h1>
-                    <span style="color: #ffb000">돌로스원숭숭</span>
-                    님
-                </h1>
-                <DigitalClock :allTime="allTimeFirst" :fontSize="150" />
-                <BasicButton :buttonLength="500" :height="60" standard="px" content="지금 같이 공부하는 싸피인들" />
-                <h1 style="color: #ffb000; font-size: 100px">256명</h1>
+                <v-row>
+                    <v-col class="d-flex flex-column align-center mt-10">
+                        <BasicButton :buttonLength="500" :height="60" standard="px" :content="`${today} 전날 공부량 1등`" />
+                        <h1>
+                            {{ firstYesterday }}
+                            <span style="color: #ffb000">돌로스원숭숭</span>
+                            님
+                        </h1>
+                        <DigitalClock :allTime="allTimeFirst" :fontSize="150" />
+                    </v-col>
+                    <v-col class="d-flex flex-column align-center mt-10">
+                        <BasicButton :buttonLength="500" :height="60" standard="px" content="지금 같이 공부하는 싸피인들" />
+                        <h1 style="color: #ffb000; font-size: 100px">256명</h1>
+                    </v-col>
+                </v-row>
             </v-col>
 
             <v-col cols="12" md="2" />
@@ -31,9 +38,10 @@ export default {
     name: 'StudyStart',
     data() {
         return {
-            allTimeMe: 3582,
+            allTimeMe: 0,
             allTimeFirst: 9000,
-            today: ''
+            today: '',
+            firstYesterday: this.$store.state.moduleTimer.firstYesterday
         };
     },
 
@@ -45,7 +53,9 @@ export default {
     },
     created() {
         // API 받기
-
+        this.$store.dispatch('moduleTimer/getFirstYesterday');
+        // 무언가 하면 개인 공부 시간 저장
+        // this.$store.dispatch('moduleTimer/saveIndividualTime');
         // 날짜 받기
         let today = new Date();
         let year = today.getFullYear();
@@ -55,7 +65,7 @@ export default {
 
         setInterval(() => {
             this.allTimeMe++;
-            this.allTimeFirst++;
+            // this.allTimeFirst++;
         }, 1000);
     }
 };
