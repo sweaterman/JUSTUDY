@@ -41,7 +41,7 @@ export default {
             allTimeMe: 0,
             allTimeFirst: 9000,
             today: '',
-            firstYesterday: this.$store.state.moduleTimer.firstYesterday
+            firstYesterday: {}
         };
     },
 
@@ -51,9 +51,10 @@ export default {
         Boundary,
         BasicButton
     },
-    created() {
+    async created() {
         // API 받기
-        this.$store.dispatch('moduleTimer/getFirstYesterday');
+        await this.$store.dispatch('moduleTimer/getFirstYesterday');
+        this.firstYesterday = this.$store.state.moduleTimer.firstYesterday;
         // 무언가 하면 개인 공부 시간 저장
         // this.$store.dispatch('moduleTimer/saveIndividualTime');
         // 날짜 받기

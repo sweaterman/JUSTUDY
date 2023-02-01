@@ -8,7 +8,7 @@
                 <v-tabs color="black" v-model="tab" justify="center" align="center">
                     <v-tabs-slider color="yellow"></v-tabs-slider>
                     <v-tab v-for="top in top_categories" :key="top">
-                        <h1>{{ top }}</h1>
+                        <h1 v-on:click="updateData(top[1])">{{ top[0] }}</h1>
                     </v-tab>
                 </v-tabs>
             </v-row>
@@ -21,10 +21,24 @@
 export default {
     name: 'CommuHeader',
     components: {},
-    methods: {},
+    methods: {
+        updateData(data) {
+            // console.log('aaaa');
+            this.$emit('click', data);
+            this.$router.push(`${this.$route.path}?category=${data}`);
+        }
+    },
     data() {
         return {
-            top_categories: ['Front-end', 'Back-end', 'Infra', 'CS', 'Algorithm', 'Leading-edge', 'Bulletin board']
+            top_categories: [
+                ['Front-end', 'frontend'],
+                ['Back-end', 'backend'],
+                ['Infra', 'infra'],
+                ['CS', 'cs'],
+                ['Algorithm', 'algorithm'],
+                ['Leading-edge', 'leading-edge'],
+                ['Bulletin board', 'bulletinboard']
+            ]
         };
     }
 };

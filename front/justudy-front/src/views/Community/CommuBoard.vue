@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <CategoryHeader />
+        <CategoryHeader @click="updateData" />
 
         <!-- 자유게시판 / 검색 기능 / 글쓰기 -->
         <v-row>
@@ -46,7 +46,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(value, index) in Data" :key="index" @click="movetocontent(index)">
+                            <tr v-for="(value, index) in Data" :key="index" @click="movetocontent(value.sequence)">
                                 <td>{{ index + 1 }}</td>
                                 <td>
                                     <div class="line_limit">
@@ -55,12 +55,12 @@
                                 </td>
                                 <td>
                                     <div class="line_limit">
-                                        {{ value.writer }}
+                                        {{ value.nickname }}
                                     </div>
                                 </td>
-                                <td>{{ value.created_time }}</td>
-                                <td>{{ value.view_count }}</td>
-                                <td>{{ value.love_count }}</td>
+                                <td>{{ value.createdTime }}</td>
+                                <td>{{ value.viewCount }}</td>
+                                <td>{{ value.loveCount }}</td>
                                 <!-- Sequelize의 createdAt, updatedAt의 날짜 형식이 '2021-12-10T12:38:52.000Z' 이런 식이여서 
                                split('T')[0]을 통해 날짜만 표시 -->
                             </tr>
@@ -112,12 +112,13 @@ import CommunityData from '@/data/CommunityData';
 export default {
     name: 'CommuBoard',
     components: {CategoryHeader},
-    created() {
-        this.$store.dispatch('getCommunityBoard');
+    async created() {
+        await this.$store.dispatch('moduleCommunity/getCommunityBoard', {number: this.$route.params.page - 1, category: this.$route.query.category});
+        this.Data = this.$store.state.moduleCommunity.CommunityBoard;
     },
     data() {
         return {
-            Data: CommunityData,
+            Data: [],
             cnt: CommunityData.length
             //contentlist: [], // 현재 게시판과 페이지에 맞는 글 리스트들
             //cnt: 0 // 현재 게시판의 총 글 개수
@@ -145,6 +146,11 @@ export default {
         // movetoboard3() {
         //     window.location.href = '/community/3/?page=1';
         // },
+        async updateData(data) {
+            await this.$store.dispatch('moduleCommunity/getCommunityBoard', {number: this.$route.params.page - 1, category: data});
+            this.Data = this.$store.state.moduleCommunity.CommunityBoard;
+        },
+
         movetomain() {
             window.location.href = '/community';
         },
@@ -154,6 +160,9 @@ export default {
                 name: 'CommuWrite',
                 params: {
                     id: index
+                },
+                query: {
+                    category: this.$route.query.category
                 }
             });
             // window.location.href = window.location.pathname + '/write/' + id;
