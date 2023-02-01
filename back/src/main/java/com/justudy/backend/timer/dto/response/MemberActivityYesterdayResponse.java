@@ -6,10 +6,10 @@ import lombok.Data;
 public class MemberActivityYesterdayResponse {
 
   String ninkName;
-  String time;
+  Long second;
 
-  public MemberActivityYesterdayResponse(String ninkName, String time) {
+  public MemberActivityYesterdayResponse(String ninkName, Long second) {
     this.ninkName = ninkName;
-    this.time = time;
+    this.second = second;
   }
 }
