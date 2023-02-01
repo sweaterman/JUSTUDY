@@ -52,6 +52,8 @@ public class CommunityService {
                 .orElseThrow(CommunityNotFound::new);
         validateWriter(loginSequence, community.getMember().getSequence());
         community.deleteCommunity();
+        bookmarkService.deleteBookmarkByCommunity(communitySequence);
+        loveService.deleteAllByCommunity(communitySequence);
         return community.getSequence();
     }
 
