@@ -7,10 +7,10 @@ import lombok.Data;
 public class StudyRoomResponse {
 
   private String uuid;
-  private StudyEntity study;
+  private Long sequence;
 
-  public StudyRoomResponse(String uuid, StudyEntity study) {
+  public StudyRoomResponse(String uuid, Long sequence) {
     this.uuid = uuid;
-    this.study = study;
+    this.sequence = sequence;
   }
 }
