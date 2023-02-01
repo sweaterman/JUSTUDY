@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface CommunityBookmarkRepositoryCustom {
 
     Optional<CommunityBookmarkEntity> findBookmark(Long loginSequence, Long communitySequence);
+
+    void deleteAllByCommunity(Long communitySequence);
 }

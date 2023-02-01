@@ -22,4 +22,14 @@ public class CommunityBookmarkRepositoryImpl implements CommunityBookmarkReposit
                 .where(qBookmark.memberSequence.eq(loginSequence), qBookmark.communitySequence.eq(communitySequence))
                 .fetchFirst());
     }
+
+    @Override
+    public void deleteAllByCommunity(Long communitySequence) {
+        queryFactory
+                .delete(qBookmark)
+                .where(qBookmark.communitySequence.eq(communitySequence))
+                .execute();
+        entityManager.flush();
+        entityManager.clear();
+    }
 }
