@@ -38,7 +38,7 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
         return queryFactory
                 .select(categoryEntity)
                 .from(categoryEntity)
-                .where(parentEq(condition.getMainKey()))
+                .where(parentEq(condition.getMain()))
                 .where(categoryEntity.parentCategory.isNotNull())
                 .fetch();
     }

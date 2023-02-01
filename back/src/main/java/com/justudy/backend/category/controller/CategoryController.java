@@ -11,13 +11,13 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/category")
 @RestController
 public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @GetMapping("/category")
+    @GetMapping
     public List<CategoryResponse> getCategories(@ModelAttribute CategorySearch  categorySearch) {
         return categoryService.getList(categorySearch);
     }

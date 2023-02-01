@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class CategorySearch {
 
-    private String mainKey;
+    private String main;
 
-    public CategorySearch(String mainKey) {
-        this.mainKey = mainKey;
+    public CategorySearch(String main) {
+        this.main = main;
     }
 }
