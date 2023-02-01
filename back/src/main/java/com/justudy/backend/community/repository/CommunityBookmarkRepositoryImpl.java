@@ -5,8 +5,6 @@ import com.justudy.backend.community.domain.QCommunityBookmarkEntity;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -15,7 +13,7 @@ public class CommunityBookmarkRepositoryImpl implements CommunityBookmarkReposit
     private final QCommunityBookmarkEntity qBookmark = QCommunityBookmarkEntity.communityBookmarkEntity;
 
     @Override
-    public Optional<CommunityBookmarkEntity> readBookmark(Long loginSequence, Long communitySequence) {
+    public Optional<CommunityBookmarkEntity> findBookmark(Long loginSequence, Long communitySequence) {
         return Optional.ofNullable(queryFactory
                 .selectFrom(qBookmark)
                 .where(qBookmark.memberSequence.eq(loginSequence), qBookmark.communitySequence.eq(communitySequence))
