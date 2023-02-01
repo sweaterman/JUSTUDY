@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Component
@@ -119,12 +120,12 @@ public class InitDb {
                 MemberEntity findmember = memberService.getMember(memberSequence);
                 for(int count = 1; count <= 5; count++){
                     if(count%2 == 0) studyService.createStudy(StudyCreate.builder().name("스터디"+memberSequence)
-                                    .leaderSeq(50L).introduction("아주 좋은 스터디1").personnel(32).level("초보")
-                                    .onlineOffline("온라인").isOpen(true).github("https://github.com").notion("https://notion.com")
+                                    .leader("50L").introduction("아주 좋은 스터디1").population(32).level("초보")
+                                    .meeting("온라인").github("https://github.com").notion("https://notion.com")
                             .build(),basicImage);
                     else studyService.createStudy(StudyCreate.builder().name("스터디"+memberSequence)
-                            .leaderSeq(50L).introduction("아주 좋은 스터디2").personnel(32).level("초보")
-                            .onlineOffline("온라인").isOpen(false).github("https://github.com").notion("https://notion.com")
+                            .leader("50L").introduction("아주 좋은 스터디2").population(32).level("초보")
+                            .meeting("온라인").github("https://github.com").notion("https://notion.com")
                             .build(),basicImage);
 
                 }
