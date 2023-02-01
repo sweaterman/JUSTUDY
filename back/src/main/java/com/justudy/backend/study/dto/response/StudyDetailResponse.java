@@ -1,13 +1,15 @@
 package com.justudy.backend.study.dto.response;
 
+import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.study.domain.StudyEntity;
-import com.justudy.backend.study.domain.StudyFrequencyEntity;
+import com.justudy.backend.study.domain.StudyMemberEntity;
 import com.justudy.backend.study.domain.StudyResumeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,11 +17,11 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 @Builder
-public class StudyResponse {
+public class StudyDetailResponse {
     private Long sequence;
     private List<StudyMemberResponse> member;
     private List<Long> resumeSeq;
-    private List<Long> frequency;
+    private List<StudyFrequencyResponse> frequency;
     private String topCategory;
     private String bottomCategory;
     private String name;
@@ -34,10 +36,9 @@ public class StudyResponse {
     private Long imageSequence;
     private LocalDateTime createdTime;
     private String startTime;
-    private Boolean checkMore;
 
-    public static StudyResponse makeBuilder(StudyEntity entity) {
-        return StudyResponse.builder()
+    public static StudyDetailResponse makeBuilder(StudyEntity entity) {
+        return StudyDetailResponse.builder()
                 .sequence(entity.getSequence())
                 .member(entity.getStudyMembers()
                         .stream()
@@ -50,7 +51,7 @@ public class StudyResponse {
                         .collect(Collectors.toList()))
                 .frequency(entity.getFrequency()
                         .stream()
-                        .map(StudyFrequencyEntity::getSequence)
+                        .map(StudyFrequencyResponse::makeBuilder)
                         .collect(Collectors.toList()))
                 .topCategory(entity.getCategory().getParentCategory().getName())
                 .bottomCategory(entity.getCategory().getName())
@@ -68,5 +69,4 @@ public class StudyResponse {
                 .startTime(entity.getStartTime())
                 .build();
     }
-
 }

@@ -2,7 +2,6 @@ package com.justudy.backend.study.dto.request;
 
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.study.domain.StudyEntity;
-import com.justudy.backend.study.domain.StudyFrequencyEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,15 +15,15 @@ import java.util.stream.Collectors;
 @Builder
 public class StudyCreate {
 
-    private List<StudyFrequencyCreate> frequencies;
+    private List<StudyFrequencyCreate> frequency;
     private String topCategory;
     private String bottomCategory;
     private String name;
-    private Long leaderSeq;
+    private String leader;
     private String introduction;
-    private Integer personnel;
+    private Integer population;
     private String level;
-    private String onlineOffline;
+    private String meeting;
     private String github;
     private String notion;
     private Long imageSequence;
@@ -32,20 +31,17 @@ public class StudyCreate {
     private String leaderName;
 
 
-    public StudyEntity toEntity() {
+    public StudyEntity toEntity(CategoryEntity categoryEntity,Long leaderSeq) {
+        //frequency는 따로 저장
         return StudyEntity
                 .builder()
-                .frequencies(frequencies
-                        .stream()
-                        .map(StudyFrequencyCreate::toEntity)
-                        .collect(Collectors.toList()))
-                .category()
+                .category(categoryEntity)
                 .name(name)
                 .leaderSeq(leaderSeq)
                 .introduction(introduction)
-                .personnel(personnel)
+                .population(population)
                 .level(level)
-                .onlineOffline(onlineOffline)
+                .onlineOffline(meeting)
                 .isOpen(true)
                 .github(github)
                 .notion(notion)

@@ -43,7 +43,8 @@ public class StudyFrequencyService {
     public Long createStudyFrequency(Long studySequence, StudyFrequencyCreate request) {
         StudyEntity studyEntity = studyRepository.findById(studySequence)
                 .orElseThrow(StudyNotFound::new);
-        return studyFrequencyRepository.save(request.toEntity(studyEntity)).getSequence();
+        Long studyFrequencySeq =studyFrequencyRepository.save(request.toEntity(studyEntity)).getSequence();
+        return studyFrequencySeq;
 
     }
 
@@ -71,6 +72,11 @@ public class StudyFrequencyService {
         return StudyFrequencyResponse.makeBuilder(entity);
     }
 
+    public void deleteStudyFrequencyByStudy(Long studySequence) {
+        studyRepository.findById(studySequence)
+                .orElseThrow(StudyNotFound::new);
+        studyFrequencyRepository.deleteByStudy(studySequence);
+    }
 }
 
 

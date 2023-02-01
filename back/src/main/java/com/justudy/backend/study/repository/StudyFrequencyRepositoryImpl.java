@@ -20,4 +20,13 @@ public class StudyFrequencyRepositoryImpl implements StudyFrequencyRepositorySup
                 .where(qStudyFrequencyEntity.study.sequence.eq(studySequence))
                 .fetch();
     }
+
+    @Override
+    public void deleteByStudy(Long studyId) {
+        queryFactory
+                .delete(qStudyFrequencyEntity)
+                .where(qStudyFrequencyEntity.study.sequence.eq(studyId))
+                .execute();
+    }
+
 }

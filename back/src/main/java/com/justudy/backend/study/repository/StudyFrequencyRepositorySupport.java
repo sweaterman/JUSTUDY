@@ -9,4 +9,6 @@ import java.util.List;
 public interface StudyFrequencyRepositorySupport {
 
     List<StudyFrequencyEntity> readAllStudyFrequency(Long studySequence);
+
+    void deleteByStudy(Long studyId);
 }

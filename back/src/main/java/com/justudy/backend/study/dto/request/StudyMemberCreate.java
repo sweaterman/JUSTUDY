@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class StudyMemberCreate {
-    private String memberSeq;
-    private String studySeq;
+    private Long memberSeq;
+    private Long studySeq;
 
     public StudyMemberEntity toEntity(MemberEntity memberEntity, StudyEntity studyEntity) {
         return StudyMemberEntity.builder()

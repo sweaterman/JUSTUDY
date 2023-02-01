@@ -1,12 +1,18 @@
 package com.justudy.backend.study.service;
 
+import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.repository.CategoryRepository;
+import com.justudy.backend.community.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.dto.request.StudyEdit;
+import com.justudy.backend.study.dto.response.StudyDetailResponse;
 import com.justudy.backend.study.dto.response.StudyResponse;
+import com.justudy.backend.study.dto.response.StudySearchResponse;
 import com.justudy.backend.study.exception.StudyNotFound;
+import com.justudy.backend.study.repository.StudyFrequencyRepository;
 import com.justudy.backend.study.repository.StudyRepository;
 import com.justudy.backend.study.repository.StudyResumeRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +32,9 @@ public class StudyService {
 
     private final StudyRepository studyRepository;
     private final MemberRepository memberRepository;
+    private final CategoryRepository categoryRepository;
     private final StudyResumeRepository studyResumeRepository;
+    private final StudyFrequencyRepository studyFrequencyRepository;
     private final int MAX_STUDY_PAGE_SIZE = 1;
 
     //crud readall search readopen readopencategory readsubcategory myapplystudy myapplyCRUD mystudyall
@@ -36,8 +44,11 @@ public class StudyService {
 
     @Transactional
     public Long createStudy(StudyCreate request, UploadFileEntity basicImage) {
-
-        StudyEntity study = request.toEntity();
+        CategoryEntity categoryEntity = categoryRepository.findByName(request.getBottomCategory()).orElseThrow(InvalidRequest::new);
+//        memberRepository.find
+        //todo leaderSeq 멤버에서 검색해야함
+        Long leaderSeq=1L;
+        StudyEntity study = request.toEntity(categoryEntity, leaderSeq);
         study.changeImage(basicImage);
         return studyRepository.save(study).getSequence();
     }
@@ -48,12 +59,25 @@ public class StudyService {
         return StudyResponse.makeBuilder(entity);
     }
 
+    public StudyDetailResponse readDetailStudy(Long studySequence) {
+        StudyEntity entity = studyRepository.findById(studySequence)
+                .orElseThrow(StudyNotFound::new);
+        return StudyDetailResponse.makeBuilder(entity);
+    }
+
     @Transactional
     public Long updateStudy(long id, StudyEdit request) {
         StudyEntity entity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
+        //이전 활동주기 삭제
+        studyFrequencyRepository.deleteByStudy(id);
+        //활동주기 생성
+        studyFrequencyRepository.saveAll(request.getFrequency()
+                .stream()
+                .map(studyFrequencyCreate -> studyFrequencyCreate.toEntity(entity))
+                .collect(Collectors.toList()));
 
-        entity.update(request.getName(), request.getLeaderSeq(), request.getIntroduction(), request.getPersonnel(),
+        entity.update(request.getName(), request.getIntroduction(), request.getPopulation(),
                 request.getLevel(), request.getOnlineOffline(), request.getIsOpen(), request.getGithub(),
                 request.getNotion(), request.getStartTime());
         return id;
@@ -67,21 +91,21 @@ public class StudyService {
     }
 
 
-    public Slice<StudyResponse> search(int page, List<String> sub, String type, String search) {
+    public StudySearchResponse search(int page, List<String> sub, String type, String search) {
         Pageable pageable = PageRequest.of(page, MAX_STUDY_PAGE_SIZE);
 
-        Long leaderSeq = null;
+        String studyLeader = null;
         String studyName = null;
 
-        //todo member 이름으로 검색
-        if (type.compareTo("name") == 0) {
-//            leaderSeq = memberRepository.(Long.parseLong(search)).get().getSequence();
-        } else if (type.compareTo("title") == 0) {
+        //todo 스터디장 스터디명 검색
+        if (type.compareTo("스터디장") == 0) {
+            studyLeader = search;
+        } else if (type.compareTo("스터디명") == 0) {
             studyName = search;
         }
-
-        return studyRepository.findAllBySearchOption(pageable, sub, leaderSeq, studyName)
+        Slice<StudyResponse> studyResponses = studyRepository.findAllBySearchOption(pageable, sub, studyLeader, studyName)
                 .map(StudyResponse::makeBuilder);
+        return StudySearchResponse.makeBuilder(studyResponses.stream().collect(Collectors.toList()), studyResponses.isLast());
     }
 
 
