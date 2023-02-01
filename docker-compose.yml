@@ -36,7 +36,6 @@ services:
       - "8888:8888"
       - "5001-5050:5001-5050/udp"
     environment:
-      KMS_MIN_PORT: 5001
       KMS_MAX_PORT: 5050
       KMS_STUN_IP: "3.38.116.236"
       KMS_STUN_PORT: "3478"

@@ -61,7 +61,7 @@
                                     <v-subheader no-gutters>팀장</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    <v-text-field v-model="leader" solo readonly></v-text-field>
+                                    <v-text-field v-model="study.leader" solo readonly></v-text-field>
                                 </v-col>
                             </v-row>
 
@@ -71,7 +71,7 @@
                                     <v-subheader>상위 카테고리</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    <v-combobox v-model="study.topCategory" :items="topCategories" label="상위 카테고리 선택" @change="checkTopCategory()"></v-combobox>
+                                    <v-combobox v-model="study.topCategory" :items="topCategories.value" label="상위 카테고리 선택" @change="checkTopCategory()"></v-combobox>
                                 </v-col>
                             </v-row>
 
@@ -81,7 +81,7 @@
                                     <v-subheader>하위 카테고리</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    <v-combobox v-model="study.bottomCategory" :items="bottomCategories" label="하위 카테고리 선택"></v-combobox>
+                                    <v-combobox v-model="study.bottomCategory" :items="bottomCategories.value" label="하위 카테고리 선택"></v-combobox>
                                 </v-col>
                             </v-row>
 
@@ -178,6 +178,16 @@
                                 </v-col>
                             </v-row>
 
+                            <!-- 시작예정일 -->
+                            <v-row>
+                                <v-col cols="4">
+                                    <v-subheader>시작 예정일</v-subheader>
+                                </v-col>
+                                <v-col cols="8">
+                                    <v-text-field v-model="study.start_time"></v-text-field>
+                                </v-col>
+                            </v-row>
+
                             <v-row>
                                 <v-col cols="4">
                                     <v-subheader>Github (선택)</v-subheader>
@@ -235,7 +245,7 @@ export default {
                 name: '',
                 introduction: 'test',
                 population: '',
-                leader: '',
+                leader: '', //본인닉네임들어가기
                 level: '',
                 topCategory: '',
                 bottomCategory: '',
@@ -282,7 +292,8 @@ export default {
                 this.study.frequency.frequency_week == '' ||
                 this.study.frequency.frequency_start == '' ||
                 this.study.frequency.frequency_end == '' ||
-                this.study.meeting == ''
+                this.study.meeting == '' ||
+                this.study.start_time == ''
             ) {
                 console.log(this.study);
                 alert('모든 항목을 입력해주세요.');
@@ -290,7 +301,13 @@ export default {
                 alert('스터디 이름 중복체크를 완료해주세요.');
             } else {
                 //등록 요청 보내기.
-                this.$store.dispatch('createStudy');
+                //비동기방식 처리해야할거 같기도.. 일단 go
+
+                //top 카테고리 key로 바꾸기
+
+                //bottom 카테고리 key로 바꾸기
+
+                this.$store.dispatch('createStudy', this.study);
             }
         }
     }

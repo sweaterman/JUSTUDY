@@ -34,12 +34,12 @@ public class MemberActivityEntity {
   @Column(name = "member_activity_date")
   private Date date;
   @Column(name = "member_activity_time")
-  private Integer time;
+  private Long time;
   @Column(name = "member_activity_category")
   private String category;
 
   @Builder
-  public MemberActivityEntity(MemberEntity member, Date date, Integer time, String category) {
+  public MemberActivityEntity(MemberEntity member, Date date, Long time, String category) {
     this.member = member;
     this.date = date;
     this.time = time;
