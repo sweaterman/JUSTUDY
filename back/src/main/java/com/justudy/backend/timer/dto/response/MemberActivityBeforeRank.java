@@ -7,12 +7,12 @@ import lombok.Data;
 public class MemberActivityBeforeRank {
 
   private MemberEntity member;
-  private Integer minute;
+  private Long second;
 
 
-  public MemberActivityBeforeRank(MemberEntity member, Integer minute) {
+  public MemberActivityBeforeRank(MemberEntity member, Long second) {
     this.member = member;
-    this.minute = minute;
+    this.second = second;
   }
 
 
