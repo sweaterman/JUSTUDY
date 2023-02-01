@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 public class CategoryController {
 
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
     @GetMapping("/category")
     public List<String> getCategories(@ModelAttribute CategorySearch  categorySearch) {
