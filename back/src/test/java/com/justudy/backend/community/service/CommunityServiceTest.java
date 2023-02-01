@@ -92,7 +92,8 @@ class CommunityServiceTest {
         //then
         assertThat(response.getTitle()).isEqualTo(TITLE);
         assertThat(response.getContent()).isEqualTo(CONTENT);
-        assertThat(response.getCategory()).isEqualTo(mockCategory.getKey());
+        assertThat(response.getCategory().getKey()).isEqualTo(mockCategory.getKey());
+        assertThat(response.getCategory().getValue()).isEqualTo(mockCategory.getValue());
         assertThat(response.getNickname()).isEqualTo(mockMember.getNickname());
         assertThat(response.getViewCount()).isEqualTo(0);
     }
@@ -197,7 +198,8 @@ class CommunityServiceTest {
         //then
         assertThat(response.getTitle()).isEqualTo(NEW_TITLE);
         assertThat(response.getContent()).isEqualTo(NEW_CONTENT);
-        assertThat(response.getCategory()).isEqualTo(NEW_CATEGORY_KEY);
+        assertThat(response.getCategory().getKey()).isEqualTo(NEW_CATEGORY_KEY);
+        assertThat(response.getCategory().getValue()).isEqualTo(NEW_CATEGORY_VALUE);
     }
 
     @Test
