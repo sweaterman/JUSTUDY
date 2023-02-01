@@ -74,7 +74,7 @@ public class CommunityService {
 
         community.update(request.getTitle(),
                 request.getContent(),
-                categoryService.getCategory(request.getCategory()));
+                categoryService.getCategoryEntityByKey(request.getCategory()));
 
         Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
         return CommunityResponse.makeBuilder(community, loveCount);

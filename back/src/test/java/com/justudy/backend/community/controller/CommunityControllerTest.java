@@ -56,7 +56,8 @@ class CommunityControllerTest {
 
     private final String COMMON_URL = "/api/community";
 
-    private final String CATEGORY_BACKEND = "backend";
+    private final String CATEGORY_KEY = "backend";
+    private final String CATEGORY_VALUE = "백엔드";
     private final String TITLE = "테스트제목";
     private final String CONTENT = "테스트내용";
 
@@ -96,13 +97,13 @@ class CommunityControllerTest {
         BDDMockito.given(memberService.getMember(anyLong()))
                 .willReturn(mockMember);
 
-        CategoryEntity mockCategory = new CategoryEntity("backend", 0L);
+        CategoryEntity mockCategory = new CategoryEntity(CATEGORY_KEY, CATEGORY_VALUE, 0L);
         ReflectionTestUtils.setField(mockCategory, "sequence", 7L);
-        BDDMockito.given(categoryService.getCategory("backend"))
+        BDDMockito.given(categoryService.getCategoryEntityByKey("backend"))
                 .willReturn(mockCategory);
 
         CommunityCreate request = CommunityCreate.builder()
-                .category(CATEGORY_BACKEND)
+                .category(CATEGORY_KEY)
                 .title(TITLE)
                 .content(CONTENT)
                 .isHighlighted(false)
@@ -195,7 +196,7 @@ class CommunityControllerTest {
                 .sequence(10L)
                 .memberSequence(mockMember.getSequence())
                 .nickname(mockMember.getNickname())
-                .category(mockCategory.getName())
+                .category(mockCategory.getKey())
                 .title(TITLE)
                 .content(CONTENT)
                 .viewCount(0)
