@@ -2,7 +2,6 @@ package com.justudy.backend.community.controller;
 
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.service.CategoryService;
-import com.justudy.backend.community.domain.CommunityBookmarkEntity;
 import com.justudy.backend.community.domain.CommunityLoveEntity;
 import com.justudy.backend.community.dto.request.*;
 import com.justudy.backend.community.dto.response.CommunityCommentResponse;
@@ -85,12 +84,12 @@ public class CommunityController {
     /**
      * 커뮤니티 상세 정보를 가져오는 API
      *
-     * @param id 커뮤니티 sequence (PK)
+     * @param communitySequence PK
      * @return ResponseEntity<CommunityResponse> 200 OK, 커뮤니티 상세 정보
      */
     @GetMapping("/board/{id}")
-    public ResponseEntity<CommunityResponse> readCommunityById(@PathVariable("id") Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunity(id));
+    public ResponseEntity<CommunityResponse> readCommunityById(@PathVariable("id") Long communitySequence) {
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunity(communitySequence));
     }
 
     /**
@@ -103,7 +102,7 @@ public class CommunityController {
     public ResponseEntity<CommunityResponse> createCommunity(@RequestBody CommunityCreate request, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         MemberEntity findMember = memberService.getMember(loginSequence);
-        CategoryEntity category = categoryService.getCategory(request.getCategory());
+        CategoryEntity category = categoryService.getCategoryEntityByKey(request.getCategory());
 
         CommunityResponse response = communityService.createCommunity(request, findMember, category);
 

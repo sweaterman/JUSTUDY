@@ -2,6 +2,7 @@ package com.justudy.backend.community.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.dto.request.CategoryResponse;
 import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.community.dto.request.CommunityCreate;
@@ -29,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -57,7 +59,7 @@ class CommunityControllerTest {
     private final String COMMON_URL = "/api/community";
 
     private final String CATEGORY_KEY = "backend";
-    private final String CATEGORY_VALUE = "백엔드";
+    private final String CATEGORY_VALUE = "BACK-END";
     private final String TITLE = "테스트제목";
     private final String CONTENT = "테스트내용";
 
@@ -70,7 +72,7 @@ class CommunityControllerTest {
                 .sequence(COMMUNITY_SEQUENCE)
                 .title("제목")
                 .content("내용")
-                .category("frontend")
+                .category(new CategoryResponse("frontend", "FRONT-END"))
                 .build();
 
         BDDMockito.given(communityService.readCommunity(15L))
@@ -79,10 +81,11 @@ class CommunityControllerTest {
         mockMvc.perform(get(COMMON_URL + "/board/{id}", COMMUNITY_SEQUENCE))
                 .andExpect(jsonPath("$.title").value("제목"))
                 .andExpect(jsonPath("$.content").value("내용"))
-                .andExpect(jsonPath("$.category").value("frontend"))
+                .andExpect(jsonPath("$.category.key").value("frontend"))
+                .andExpect(jsonPath("$.category.value").value("FRONT-END"))
                 .andDo(print());
 
-        BDDMockito.then(communityService).should(Mockito.only()).readCommunity(15L);
+        BDDMockito.then(communityService).should(only()).readCommunity(15L);
     }
 
     @Test
@@ -122,6 +125,8 @@ class CommunityControllerTest {
                 .andExpect(jsonPath("$.sequence").value(10L))
                 .andExpect(jsonPath("$.title").value(TITLE))
                 .andExpect(jsonPath("$.content").value(CONTENT))
+                .andExpect(jsonPath("$.category.key").value(CATEGORY_KEY))
+                .andExpect(jsonPath("$.category.value").value(CATEGORY_VALUE))
                 .andDo(print());
 
         BDDMockito.then(communityService).should().createCommunity(request, mockMember, mockCategory);
@@ -144,6 +149,9 @@ class CommunityControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .session(session))
                 .andExpect(status().isNoContent());
+        BDDMockito.then(communityService)
+                .should(times(1))
+                .deleteCommunity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
     }
 
     @Test
@@ -163,7 +171,8 @@ class CommunityControllerTest {
         CommunityEdit request = new CommunityEdit(NEW_TITLE, NEW_CONTENT, NEW_CATEGORY);
         String json = objectMapper.writeValueAsString(request);
 
-        CommunityResponse response = makeEditResponse(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, NEW_TITLE, NEW_CONTENT, NEW_CATEGORY);
+        CategoryResponse categoryResponse = new CategoryResponse(NEW_CATEGORY, "Algorithm");
+        CommunityResponse response = makeEditResponse(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, NEW_TITLE, NEW_CONTENT, categoryResponse);
         BDDMockito.given(communityService.updateCommunity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, request))
                 .willReturn(response);
 
@@ -174,19 +183,24 @@ class CommunityControllerTest {
                         .content(json))
                 .andExpect(jsonPath("$.title").value(NEW_TITLE))
                 .andExpect(jsonPath("$.content").value(NEW_CONTENT))
-                .andExpect(jsonPath("$.category").value(NEW_CATEGORY))
+                .andExpect(jsonPath("$.category.key").value(NEW_CATEGORY))
+                .andExpect(jsonPath("$.category.value").value("Algorithm"))
                 .andDo(print());
     }
 
 
-    private CommunityResponse makeEditResponse(Long LOGIN_SEQUENCE, Long COMMUNITY_SEQUENCE, String NEW_TITLE, String NEW_CONTENT, String NEW_CATEGORY) {
+    private CommunityResponse makeEditResponse(Long loginSequence,
+                                               Long communitySequence,
+                                               String title,
+                                               String content,
+                                               CategoryResponse categoryResponse) {
         return CommunityResponse.builder()
-                .sequence(COMMUNITY_SEQUENCE)
-                .memberSequence(LOGIN_SEQUENCE)
+                .sequence(communitySequence)
+                .memberSequence(loginSequence)
                 .nickname("nickname")
-                .category(NEW_CATEGORY)
-                .title(NEW_TITLE)
-                .content(NEW_CONTENT)
+                .category(categoryResponse)
+                .title(title)
+                .content(content)
                 .viewCount(15)
                 .build();
     }
@@ -196,7 +210,7 @@ class CommunityControllerTest {
                 .sequence(10L)
                 .memberSequence(mockMember.getSequence())
                 .nickname(mockMember.getNickname())
-                .category(mockCategory.getKey())
+                .category(new CategoryResponse(mockCategory))
                 .title(TITLE)
                 .content(CONTENT)
                 .viewCount(0)
