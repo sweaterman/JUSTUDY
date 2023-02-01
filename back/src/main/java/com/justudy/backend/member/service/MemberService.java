@@ -179,7 +179,7 @@ public class MemberService {
         List<MemberCategoryEntity> memberCategories = new ArrayList<>();
 
         for (String c : editRequest.getCategory()) {
-            CategoryEntity category = categoryRepository.findByName(c)
+            CategoryEntity category = categoryRepository.findByKey(c)
                     .orElseThrow(CategoryNotFound::new);
             MemberCategoryEntity memberCategory = MemberCategoryEntity.createMemberCategory(category);
             memberCategories.add(memberCategory);
@@ -190,7 +190,7 @@ public class MemberService {
 
     private void addCategory(MemberCreate request, MemberEntity member) {
         List<CategoryEntity> categories = Arrays.stream(request.getCategory())
-                .map(category -> (categoryRepository.findByName(category)
+                .map(category -> (categoryRepository.findByKey(category)
                         .orElseThrow(CategoryNotFound::new)))
                 .collect(Collectors.toList());
         for (CategoryEntity category : categories) {
@@ -250,7 +250,7 @@ public class MemberService {
     }
 
     private static String[] fromCategoryToArray(List<MemberCategoryEntity> categories) {
-        List<String> categoryToString = categories.stream().map(category -> category.getCategory().getName())
+        List<String> categoryToString = categories.stream().map(category -> category.getCategory().getKey())
                 .collect(Collectors.toList());
         String[] categoryResponse = categoryToString.toArray(new String[categoryToString.size()]);
         return categoryResponse;

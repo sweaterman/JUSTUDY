@@ -42,7 +42,8 @@ class CommunityServiceTest {
 
     private CommunityService communityService;
 
-    private final String CATEGORY_BACKEND = "backend";
+    private final String CATEGORY_KEY = "backend";
+    private final String CATEGORY_VALUE = "백엔드";
     private final String TITLE = "테스트제목";
     private final String CONTENT = "테스트내용";
 
@@ -58,14 +59,14 @@ class CommunityServiceTest {
     void createCommunity() {
         //given
         CommunityCreate request = CommunityCreate.builder()
-                .category(CATEGORY_BACKEND)
+                .category(CATEGORY_KEY)
                 .title(TITLE)
                 .content(CONTENT)
                 .isHighlighted(false)
                 .build();
 
         MemberEntity mockMember = makeTestMember("test", "test", "test");
-        CategoryEntity mockCategory = new CategoryEntity("backend", 0L);
+        CategoryEntity mockCategory = new CategoryEntity(CATEGORY_KEY, CATEGORY_VALUE, 0L);
 
 
         CommunityEntity community = request.toEntity();
@@ -75,7 +76,7 @@ class CommunityServiceTest {
 
         BDDMockito.given(memberService.getMember(1L))
                 .willReturn(mockMember);
-        BDDMockito.given(categoryService.getCategory(CATEGORY_BACKEND))
+        BDDMockito.given(categoryService.getCategory(CATEGORY_KEY))
                 .willReturn(mockCategory);
         BDDMockito.given(communityRepository.save(any(CommunityEntity.class)))
                 .willReturn(community);
@@ -86,7 +87,7 @@ class CommunityServiceTest {
         //when
         CommunityResponse response = communityService.createCommunity(request,
                 memberService.getMember(1L),
-                categoryService.getCategory(CATEGORY_BACKEND));
+                categoryService.getCategory(CATEGORY_KEY));
 
         //then
         assertThat(response.getTitle()).isEqualTo(TITLE);

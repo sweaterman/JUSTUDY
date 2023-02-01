@@ -44,7 +44,7 @@ public class CommunityResponse {
                 .sequence(entity.getSequence())
                 .memberSequence(entity.getMember().getSequence())
                 .nickname(entity.getMember().getNickname())
-                .category(entity.getCategory().getName())
+                .category(entity.getCategory().getKey())
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .viewCount(entity.getViewCount())

@@ -165,13 +165,13 @@ public class MemberServiceTest {
         BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
                 .willReturn(Optional.of(savedMember));
 
-        BDDMockito.given(categoryRepository.findByName("Java"))
+        BDDMockito.given(categoryRepository.findByKey("Java"))
                 .willReturn(Optional.of(java));
 
-        BDDMockito.given(categoryRepository.findByName("Spring"))
+        BDDMockito.given(categoryRepository.findByKey("Spring"))
                 .willReturn(Optional.of(spring));
 
-        BDDMockito.given(categoryRepository.findByName("Python"))
+        BDDMockito.given(categoryRepository.findByKey("Python"))
                 .willReturn(Optional.of(python));
 
         MemberEdit editRequest = MemberEdit.builder()
@@ -218,13 +218,13 @@ public class MemberServiceTest {
         BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
                 .willReturn(Optional.of(savedMember));
 
-        BDDMockito.given(categoryRepository.findByName("Java"))
+        BDDMockito.given(categoryRepository.findByKey("Java"))
                 .willReturn(Optional.of(java));
 
-        BDDMockito.given(categoryRepository.findByName("Spring"))
+        BDDMockito.given(categoryRepository.findByKey("Spring"))
                 .willReturn(Optional.of(spring));
 
-        BDDMockito.given(categoryRepository.findByName("Python"))
+        BDDMockito.given(categoryRepository.findByKey("Python"))
                 .willReturn(Optional.of(python));
 
         MemberEdit editRequest = MemberEdit.builder()

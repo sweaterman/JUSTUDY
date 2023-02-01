@@ -56,7 +56,7 @@ public class InitDb {
 
 
         private void saveCommunity() {
-            CategoryEntity category = categoryRepository.findByName("backend")
+            CategoryEntity category = categoryRepository.findByKey("backend")
                     .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
 
             for (int i = 0; i < 10; i++) {
@@ -215,18 +215,18 @@ public class InitDb {
             categoryRepository.save(createSubCategory("Svelte", 1L, frontend));
         }
 
-        private CategoryEntity createSubCategory(String name, Long level, CategoryEntity parent) {
+        private CategoryEntity createSubCategory(String key, Long level, CategoryEntity parent) {
             CategoryEntity subCategory = CategoryEntity.builder()
-                    .name(name)
+                    .key(key)
                     .categoryLevel(level)
                     .build();
             subCategory.addParentCategory(parent);
             return subCategory;
         }
 
-        private CategoryEntity createMainCategory(String name, Long level) {
+        private CategoryEntity createMainCategory(String key, Long level) {
             return CategoryEntity.builder()
-                    .name(name)
+                    .key(key)
                     .categoryLevel(level)
                     .build();
         }
