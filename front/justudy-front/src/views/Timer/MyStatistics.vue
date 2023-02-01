@@ -1,14 +1,29 @@
 <template>
     <v-app style="padding-left: 10%; padding-right: 10%">
         <Common />
+
         <TimerCalendar />
         <div style="margin-bottom: 100px"></div>
         <Boundary content="TOTAL" standard="%" :startPoint="40"></Boundary>
-        <DigitalClockPerDate content="THIS WEEK" />
-        <DigitalClockPerDate content="THIS MONTH" />
+        <v-row>
+            <v-col>
+                <DigitalClockPerDate content="THIS WEEK" />
+            </v-col>
+            <v-col>
+                <DigitalClockPerDate content="THIS MONTH" />
+            </v-col>
+        </v-row>
+        <div class="mt-16"></div>
         <Boundary content="AVERAGE" standard="%" :startPoint="40"></Boundary>
-        <DigitalClockAverage content="THIS WEEK" :studyTime="15" />
-        <DigitalClockAverage content="THIS MONTH" :studyTime="-15" />
+        <v-row>
+            <v-col>
+                <DigitalClockAverage content="THIS WEEK" :studyTime="15" />
+            </v-col>
+            <v-col>
+                <DigitalClockAverage content="THIS MONTH" :studyTime="-15" />
+            </v-col>
+        </v-row>
+        <div style="margin-top: 100px"></div>
         <Boundary content="SUBJECT" standard="%" :startPoint="40"></Boundary>
         <TimeAndRadarChart />
     </v-app>
