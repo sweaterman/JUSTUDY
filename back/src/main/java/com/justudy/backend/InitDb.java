@@ -69,13 +69,13 @@ public class InitDb {
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
-                        new MemberActivityRequest((int) (Math.random() * 50), "frontend"), memberSequence,
+                        new MemberActivityRequest((long) (Math.random() * 50), "frontend"), memberSequence,
                         day);
                 }
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
-                        new MemberActivityRequest((int) (Math.random() * 50), "backend"), memberSequence,
+                        new MemberActivityRequest((long) (Math.random() * 50), "backend"), memberSequence,
                         day);
                 }
 
