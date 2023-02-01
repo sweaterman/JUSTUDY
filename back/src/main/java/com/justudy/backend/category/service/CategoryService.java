@@ -24,7 +24,7 @@ public class CategoryService {
     }
 
     public CategoryEntity getCategory(String categoryName) {
-        return categoryRepository.findByName(categoryName)
+        return categoryRepository.findByKey(categoryName)
                 .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
     }
 

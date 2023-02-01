@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface CategoryRepositoryCustom {
 
-    Optional<CategoryEntity> findByName(String name);
+    Optional<CategoryEntity> findByKey(String key);
 
     List<String> findByParent(CategorySearch condition);
 

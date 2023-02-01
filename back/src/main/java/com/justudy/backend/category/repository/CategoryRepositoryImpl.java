@@ -18,15 +18,15 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<CategoryEntity> findByName(String name) {
+    public Optional<CategoryEntity> findByKey(String key) {
         return Optional.ofNullable(queryFactory.selectFrom(categoryEntity)
-                .where(nameEq(name))
+                .where(keyEq(key))
                 .fetchOne());
     }
 
     @Override
     public List<String> findByParent(CategorySearch condition) {
-        return queryFactory.select(categoryEntity.name)
+        return queryFactory.select(categoryEntity.key)
                 .from(categoryEntity)
                 .where(parentEq(condition.getMain()))
                 .fetch();
@@ -34,7 +34,7 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
 
     @Override
     public List<String> getAllChildrenName() {
-        return queryFactory.select(categoryEntity.name)
+        return queryFactory.select(categoryEntity.key)
                 .from(categoryEntity)
                 .where(categoryEntity.parentCategory.isNotNull())
                 .fetch();
@@ -42,19 +42,19 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
 
     @Override
     public List<String> getAllParentsName() {
-        return queryFactory.select(categoryEntity.name)
+        return queryFactory.select(categoryEntity.key)
                 .from(categoryEntity)
                 .where(categoryEntity.parentCategory.isNull())
                 .fetch();
     }
 
-    private BooleanExpression nameEq(String name) {
-        return name != null ? categoryEntity.name.eq(name) : null;
+    private BooleanExpression keyEq(String key) {
+        return key != null ? categoryEntity.key.eq(key) : null;
     }
 
     private BooleanExpression parentEq(String mainName) {
         if (mainName != null) {
-            CategoryEntity parent = findByName(mainName)
+            CategoryEntity parent = findByKey(mainName)
                     .orElseThrow(InvalidRequest::new);
             return categoryEntity.parentCategory.eq(parent);
         }
