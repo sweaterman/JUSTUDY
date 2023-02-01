@@ -1,5 +1,6 @@
 package com.justudy.backend;
 
+import com.justudy.backend.GroupCall.service.StudyRoomService;
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.community.dto.request.CommunityCreate;
@@ -14,6 +15,10 @@ import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.member.service.MemberService;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.service.StudyService;
+import com.justudy.backend.timer.dto.request.MemberActivityRequest;
+import com.justudy.backend.timer.service.MemberActivityService;
+import java.sql.Date;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +50,8 @@ public class InitDb {
         private final CommunityService communityService;
         private final StudyService studyService;
 
+        private final MemberActivityService memberActivityService;
+        private final StudyRoomService studyRoomService;
 
         public void init() {
             saveCategory();
@@ -52,9 +59,28 @@ public class InitDb {
             saveMember();
             saveCommunity();
             saveStudy();
+            saveStudyRoom();
+            saveTimer();
         }
 
+        private void saveTimer() {
+            for (int i = 0; i < 10; i++) {
+                long memberSequence = 50 + (3 * i);
+                for (int count = 1; count <= 30; count++) {
+                    Date day = Date.valueOf(LocalDate.now().minusDays(count));
+                    memberActivityService.saveMemberAcitivity(
+                        new MemberActivityRequest((long) (Math.random() * 50), "frontend"), memberSequence,
+                        day);
+                }
+                for (int count = 1; count <= 30; count++) {
+                    Date day = Date.valueOf(LocalDate.now().minusDays(count));
+                    memberActivityService.saveMemberAcitivity(
+                        new MemberActivityRequest((long) (Math.random() * 50), "backend"), memberSequence,
+                        day);
+                }
 
+            }
+        }
         private void saveCommunity() {
             CategoryEntity category = categoryRepository.findByKey("backend")
                     .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
@@ -104,7 +130,10 @@ public class InitDb {
                 }
             }
         }
-
+        public void saveStudyRoom(){
+            for(long i =130;i<180;i++)
+                studyRoomService.saveStudyRoom(i);
+        }
 
         private static MemberCreate makeMemberCreate(int number) {
             MemberCreate request = MemberCreate.builder()
