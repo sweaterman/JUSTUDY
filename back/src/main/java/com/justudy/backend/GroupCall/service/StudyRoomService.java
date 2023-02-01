@@ -3,6 +3,7 @@ package com.justudy.backend.GroupCall.service;
 import com.justudy.backend.GroupCall.domain.StudyRoomEntity;
 import com.justudy.backend.GroupCall.repository.StudyRoomRepository;
 import com.justudy.backend.study.domain.StudyEntity;
+import com.justudy.backend.study.exception.StudyNotFound;
 import com.justudy.backend.study.repository.StudyRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -16,23 +17,28 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class StudyRoomService {
 
-  private StudyRepository studyRepository;
-  private StudyRoomRepository studyRoomRepository;
+  private final  StudyRepository studyRepository;
+  private final  StudyRoomRepository studyRoomRepository;
 
   @Transactional
   public void saveStudyRoom(Long studySeq) {
     String uuid = UUID.randomUUID().toString();
+    StudyEntity study = studyRepository.getReferenceById(studySeq);
+
     studyRoomRepository.save(StudyRoomEntity
         .builder()
         .studyRoomUUID(uuid)
-        .studyEntity(studyRepository.getReferenceById(studySeq))
+        .studyEntity(study)
         .build());
   }
+
 
   @Transactional
   public String getUUIDStudy(Long studySeq) {
     StudyEntity study = studyRepository.getReferenceById(studySeq);
+
     return studyRoomRepository.findUUIDByStudy(study);
+
   }
 
 
