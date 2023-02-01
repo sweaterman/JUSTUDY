@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,7 +59,7 @@ public class MemberServiceIntegrationTest {
     @Transactional
     @Test
     @DisplayName("유저 수정")
-    void updateMember() {
+    void updateMember() throws IOException {
         //given
         final String MODIFIED_NICKNAME = "modified";
         final String MODIFIED_PASSWORD = "modified";

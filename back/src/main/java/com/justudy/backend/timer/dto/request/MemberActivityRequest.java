@@ -6,9 +6,8 @@ import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
-@ToString
 public class MemberActivityRequest {
 
-  private Integer minute;
+  private Long second;
   private String category;
 }

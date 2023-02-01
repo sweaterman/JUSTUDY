@@ -28,7 +28,7 @@ public class RoomActivityEntity {
   @Column(name = "room_activity_date")
   private Date date;
   @Column(name = "room_activity_time")
-  private Integer time;
+  private Long time;
   @Column(name = "room_activity_category")
   private String category;
 
