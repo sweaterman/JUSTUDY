@@ -180,7 +180,7 @@ public class MemberService {
 
         for (String c : editRequest.getCategory()) {
             CategoryEntity category = categoryRepository.findByName(c)
-                    .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
+                    .orElseThrow(CategoryNotFound::new);
             MemberCategoryEntity memberCategory = MemberCategoryEntity.createMemberCategory(category);
             memberCategories.add(memberCategory);
         }
@@ -191,7 +191,7 @@ public class MemberService {
     private void addCategory(MemberCreate request, MemberEntity member) {
         List<CategoryEntity> categories = Arrays.stream(request.getCategory())
                 .map(category -> (categoryRepository.findByName(category)
-                        .orElseThrow(InvalidRequest::new)))
+                        .orElseThrow(CategoryNotFound::new)))
                 .collect(Collectors.toList());
         for (CategoryEntity category : categories) {
             MemberCategoryEntity memberCategory = MemberCategoryEntity.createMemberCategory(category);
