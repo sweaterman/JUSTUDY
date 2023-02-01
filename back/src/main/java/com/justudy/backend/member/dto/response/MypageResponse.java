@@ -1,27 +1,24 @@
 package com.justudy.backend.member.dto.response;
 
-import com.justudy.backend.member.domain.MemberCategoryEntity;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class MypageResponse {
 
-    String nickname;
+    private String nickname;
 
-    String[] category;
+    private String[] category;
 
-    String dream;
+    private String dream;
 
-    String status;
+    private String status;
 
-    Long imageSequence;
+    private Long imageSequence;
 
-    int badgeCount;
+    private int badgeCount;
 
-    String level;
+    private String level;
 
     @Builder
     public MypageResponse(String nickname, String[] category,
