@@ -28,8 +28,8 @@ class CategoryControllerTest {
 
     private final String COMMON_URL = "/api/category";
 
-    final CategoryResponse BACKEND = new CategoryResponse("backend", "백엔드");
-    final CategoryResponse FRONTEND = new CategoryResponse("frontend", "프론트엔드");
+    final CategoryResponse BACKEND = new CategoryResponse("backend", "BACK-END");
+    final CategoryResponse FRONTEND = new CategoryResponse("frontend", "FRONT-END");
     final CategoryResponse CS = new CategoryResponse("computer-science", "CS");
     final CategoryResponse JAVA = new CategoryResponse("java", "Java");
     final CategoryResponse SPRING = new CategoryResponse("spring", "Spring");
@@ -72,7 +72,7 @@ class CategoryControllerTest {
     }
 
     @Test
-    @DisplayName("메인카테고리 반환")
+    @DisplayName("전체 메인카테고리 반환")
     void getMainCategories() throws Exception {
         //given
         BDDMockito.given(categoryService.getMainCategories())
@@ -94,7 +94,7 @@ class CategoryControllerTest {
     }
 
     @Test
-    @DisplayName("서브카테고리 반환")
+    @DisplayName("전체 서브카테고리 반환")
     void getSubCategories() throws Exception {
         //given
         BDDMockito.given(categoryService.getSubCategories())
