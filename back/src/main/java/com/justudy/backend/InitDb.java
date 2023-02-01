@@ -11,9 +11,8 @@ import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.repository.UploadFileRepository;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.dto.request.MemberCreate;
-import com.justudy.backend.member.exception.InvalidRequest;
+import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.member.service.MemberService;
-import com.justudy.backend.study.domain.StudyFrequencyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.service.StudyService;
 import com.justudy.backend.timer.dto.request.MemberActivityRequest;
@@ -25,8 +24,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -85,7 +82,7 @@ public class InitDb {
             }
         }
         private void saveCommunity() {
-            CategoryEntity category = categoryRepository.findByName("backend")
+            CategoryEntity category = categoryRepository.findByKey("backend")
                     .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
 
             for (int i = 0; i < 10; i++) {
@@ -168,23 +165,26 @@ public class InitDb {
         }
 
         private void saveCategory() {
-            CategoryEntity frontend = createMainCategory("frontend", 0L);
+            CategoryEntity frontend = createMainCategory("frontend", "FRONT-END", 0L);
             categoryRepository.save(frontend);
-            CategoryEntity backend = createMainCategory("backend", 0L);
+            CategoryEntity backend = createMainCategory("backend", "BACK-END", 0L);
             categoryRepository.save(backend);
-            CategoryEntity mobile = createMainCategory("mobile", 0L);
+            CategoryEntity infra = createMainCategory("infra", "INFRA", 0L);
+            categoryRepository.save(infra);
+            CategoryEntity mobile = createMainCategory("mobile", "MOBILE", 0L);
             categoryRepository.save(mobile);
-            CategoryEntity algorithm = createMainCategory("algorithm", 0L);
+            CategoryEntity algorithm = createMainCategory("algorithm", "ALGORITHM", 0L);
             categoryRepository.save(algorithm);
-            CategoryEntity computerScience = createMainCategory("computer-science", 0L);
+            CategoryEntity computerScience = createMainCategory("computer-science", "CS", 0L);
             categoryRepository.save(computerScience);
-            CategoryEntity project = createMainCategory("project", 0L);
+            CategoryEntity project = createMainCategory("project", "PROJECT", 0L);
             categoryRepository.save(project);
-            CategoryEntity etc = createMainCategory("etc", 0L);
+            CategoryEntity etc = createMainCategory("etc", "ETC", 0L);
             categoryRepository.save(etc);
 
             makeFrontSubCategory(frontend);
             makeBackSubCategory(backend);
+            makeInfraSubCategory(infra);
             makeMobileSubCategory(mobile);
             makeAlgorithmSubCategory(algorithm);
             makeComputerScienceSubCategory(computerScience);
@@ -192,73 +192,78 @@ public class InitDb {
         }
 
         private void makeEctSubCategory(CategoryEntity etc) {
-            categoryRepository.save(createSubCategory("Docker", 1L, etc));
-            categoryRepository.save(createSubCategory("Kubernetes", 1L, etc));
-            categoryRepository.save(createSubCategory("AWS", 1L, etc));
-            categoryRepository.save(createSubCategory("Git", 1L, etc));
-            categoryRepository.save(createSubCategory("Jenkins", 1L, etc));
-            categoryRepository.save(createSubCategory("Figma", 1L, etc));
+            categoryRepository.save(createSubCategory("git", "Git", 1L, etc));
+            categoryRepository.save(createSubCategory("figma", "Figma", 1L, etc));
         }
 
         private void makeComputerScienceSubCategory(CategoryEntity computerScience) {
-            categoryRepository.save(createSubCategory("DataStructure", 1L, computerScience));
-            categoryRepository.save(createSubCategory("OperatingSystem", 1L, computerScience));
-            categoryRepository.save(createSubCategory("Network", 1L, computerScience));
-            categoryRepository.save(createSubCategory("ComputerArchitecture", 1L, computerScience));
+            categoryRepository.save(createSubCategory("dataStructure", "자료구조", 1L, computerScience));
+            categoryRepository.save(createSubCategory("operatingSystem", "운영체제", 1L, computerScience));
+            categoryRepository.save(createSubCategory("network", "네트워크", 1L, computerScience));
+            categoryRepository.save(createSubCategory("computer-architecture", "컴퓨터구조", 1L, computerScience));
         }
 
         private void makeAlgorithmSubCategory(CategoryEntity algorithm) {
-            categoryRepository.save(createSubCategory("Bronze", 1L, algorithm));
-            categoryRepository.save(createSubCategory("Silver", 1L, algorithm));
-            categoryRepository.save(createSubCategory("Gold", 1L, algorithm));
-            categoryRepository.save(createSubCategory("Platinum", 1L, algorithm));
-            categoryRepository.save(createSubCategory("Diamond", 1L, algorithm));
+            categoryRepository.save(createSubCategory("bronze", "Bronze", 1L, algorithm));
+            categoryRepository.save(createSubCategory("silver", "Silver", 1L, algorithm));
+            categoryRepository.save(createSubCategory("gold", "Gold", 1L, algorithm));
+            categoryRepository.save(createSubCategory("platinum", "Platinum", 1L, algorithm));
+            categoryRepository.save(createSubCategory("diamond", "Diamond", 1L, algorithm));
         }
 
         private void makeMobileSubCategory(CategoryEntity mobile) {
-            categoryRepository.save(createSubCategory("Flutter", 1L, mobile));
-            categoryRepository.save(createSubCategory("Swift", 1L, mobile));
-            categoryRepository.save(createSubCategory("Kotlin", 1L, mobile));
-            categoryRepository.save(createSubCategory("ReactNative", 1L, mobile));
-            categoryRepository.save(createSubCategory("Unity", 1L, mobile));
+            categoryRepository.save(createSubCategory("flutter", "Flutter", 1L, mobile));
+            categoryRepository.save(createSubCategory("swift", "Swift", 1L, mobile));
+            categoryRepository.save(createSubCategory( "kotlin", "Kotlin", 1L, mobile));
+            categoryRepository.save(createSubCategory("react-native","ReactNative", 1L, mobile));
+            categoryRepository.save(createSubCategory("unity", "Unity", 1L, mobile));
         }
 
         private void makeBackSubCategory(CategoryEntity backend) {
-            categoryRepository.save(createSubCategory("Java", 1L, backend));
-            categoryRepository.save(createSubCategory("Spring", 1L, backend));
-            categoryRepository.save(createSubCategory("NodeJs", 1L, backend));
-            categoryRepository.save(createSubCategory("NestJs", 1L, backend));
-            categoryRepository.save(createSubCategory("Go", 1L, backend));
-            categoryRepository.save(createSubCategory("Kotlin", 1L, backend));
-            categoryRepository.save(createSubCategory("Express", 1L, backend));
-            categoryRepository.save(createSubCategory("Python", 1L, backend));
-            categoryRepository.save(createSubCategory("Django", 1L, backend));
-            categoryRepository.save(createSubCategory("php", 1L, backend));
-            categoryRepository.save(createSubCategory("MySql", 1L, backend));
-            categoryRepository.save(createSubCategory("MongoDB", 1L, backend));
+            categoryRepository.save(createSubCategory("java", "Java", 1L, backend));
+            categoryRepository.save(createSubCategory("spring", "Spring", 1L, backend));
+            categoryRepository.save(createSubCategory("nodejs", "NodeJs", 1L, backend));
+            categoryRepository.save(createSubCategory("nestjs", "NestJs", 1L, backend));
+            categoryRepository.save(createSubCategory("go", "Go", 1L, backend));
+            categoryRepository.save(createSubCategory("kotlin", "Kotlin", 1L, backend));
+            categoryRepository.save(createSubCategory("express", "Express", 1L, backend));
+            categoryRepository.save(createSubCategory("python", "Python", 1L, backend));
+            categoryRepository.save(createSubCategory("django", "Django", 1L, backend));
+            categoryRepository.save(createSubCategory("php", "php", 1L, backend));
+            categoryRepository.save(createSubCategory("mysql", "MySql", 1L, backend));
+            categoryRepository.save(createSubCategory("mongodb","MongoDB", 1L, backend));
+        }
+
+        private void makeInfraSubCategory(CategoryEntity infra) {
+            categoryRepository.save(createSubCategory("docker", "Docker", 1L, infra));
+            categoryRepository.save(createSubCategory("kubernetes", "Kubernetes", 1L, infra));
+            categoryRepository.save(createSubCategory("aws", "AWS", 1L, infra));
+            categoryRepository.save(createSubCategory("jenkins", "Jenkins", 1L, infra));
         }
 
         private void makeFrontSubCategory(CategoryEntity frontend) {
-            categoryRepository.save(createSubCategory("JavaScript", 1L, frontend));
-            categoryRepository.save(createSubCategory("TypeScript", 1L, frontend));
-            categoryRepository.save(createSubCategory("React", 1L, frontend));
-            categoryRepository.save(createSubCategory("Vue", 1L, frontend));
-            categoryRepository.save(createSubCategory("NextJs", 1L, frontend));
-            categoryRepository.save(createSubCategory("Svelte", 1L, frontend));
+            categoryRepository.save(createSubCategory("javascript", "JavaScript", 1L, frontend));
+            categoryRepository.save(createSubCategory("typescript", "TypeScript", 1L, frontend));
+            categoryRepository.save(createSubCategory( "react", "React", 1L, frontend));
+            categoryRepository.save(createSubCategory("vue", "Vue", 1L, frontend));
+            categoryRepository.save(createSubCategory("nextjs","NextJs", 1L, frontend));
+            categoryRepository.save(createSubCategory("svelte", "Svelte", 1L, frontend));
         }
 
-        private CategoryEntity createSubCategory(String name, Long level, CategoryEntity parent) {
+        private CategoryEntity createSubCategory(String key, String value, Long level, CategoryEntity parent) {
             CategoryEntity subCategory = CategoryEntity.builder()
-                    .name(name)
+                    .key(key)
+                    .value(value)
                     .categoryLevel(level)
                     .build();
             subCategory.addParentCategory(parent);
             return subCategory;
         }
 
-        private CategoryEntity createMainCategory(String name, Long level) {
+        private CategoryEntity createMainCategory(String key, String value, Long level) {
             return CategoryEntity.builder()
-                    .name(name)
+                    .key(key)
+                    .value(value)
                     .categoryLevel(level)
                     .build();
         }

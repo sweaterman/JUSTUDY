@@ -1,13 +1,13 @@
 package com.justudy.backend.study.controller;
 
 import com.justudy.backend.category.service.CategoryService;
+import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
-import com.justudy.backend.file.exception.UploadFileNotFound;
 import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.service.UploadFileService;
-import com.justudy.backend.study.dto.request.*;
+import com.justudy.backend.study.dto.request.StudyCreate;
+import com.justudy.backend.study.dto.request.StudyEdit;
 import com.justudy.backend.study.dto.response.StudyResponse;
-import com.justudy.backend.study.exception.InvalidRequest;
 import com.justudy.backend.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/study")

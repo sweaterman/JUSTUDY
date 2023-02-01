@@ -38,7 +38,7 @@ public class StudyRepositoryImpl implements StudyRepositorySupport {
         for (String sub : subCategories) {
 
 //            if (entity.category.name.containsIgnoreCase(sub)= )
-                return entity.category.name.containsIgnoreCase(sub);
+                return entity.category.key.containsIgnoreCase(sub);
         }
         return null;
     }
