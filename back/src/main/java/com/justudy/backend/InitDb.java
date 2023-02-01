@@ -10,9 +10,8 @@ import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.repository.UploadFileRepository;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.dto.request.MemberCreate;
-import com.justudy.backend.member.exception.InvalidRequest;
+import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.member.service.MemberService;
-import com.justudy.backend.study.domain.StudyFrequencyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Component

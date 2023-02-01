@@ -3,7 +3,7 @@ package com.justudy.backend.category.service;
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.dto.request.CategorySearch;
 import com.justudy.backend.category.repository.CategoryRepository;
-import com.justudy.backend.member.exception.InvalidRequest;
+import com.justudy.backend.exception.InvalidRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -10,7 +10,7 @@ import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.community.repository.CommunityLoveRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.member.domain.MemberEntity;
-import com.justudy.backend.member.exception.ForbiddenRequest;
+import com.justudy.backend.exception.ForbiddenRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;

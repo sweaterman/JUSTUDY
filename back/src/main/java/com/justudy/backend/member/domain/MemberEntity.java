@@ -4,7 +4,7 @@ package com.justudy.backend.member.domain;
 import com.justudy.backend.common.enum_util.Level;
 import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.file.domain.UploadFileEntity;
-import com.justudy.backend.member.exception.ForbiddenRequest;
+import com.justudy.backend.exception.ForbiddenRequest;
 import lombok.*;
 
 import javax.persistence.*;

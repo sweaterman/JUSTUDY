@@ -2,11 +2,10 @@ package com.justudy.backend.category.repository;
 
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.dto.request.CategorySearch;
-import com.justudy.backend.member.exception.InvalidRequest;
+import com.justudy.backend.exception.InvalidRequest;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
