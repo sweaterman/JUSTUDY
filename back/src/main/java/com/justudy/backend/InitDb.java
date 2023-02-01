@@ -16,8 +16,10 @@ import com.justudy.backend.member.service.MemberService;
 import com.justudy.backend.study.domain.StudyFrequencyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.service.StudyService;
-import com.justudy.backend.timer.dto.request.MemberActivityRequest;
+import com.justudy.backend.timer.dto.request.ActivityRequest;
+import com.justudy.backend.timer.dto.request.ActivityRequest;
 import com.justudy.backend.timer.service.MemberActivityService;
+import com.justudy.backend.timer.service.RoomActivityService;
 import java.sql.Date;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +57,7 @@ public class InitDb {
 
         private final MemberActivityService memberActivityService;
         private final StudyRoomService studyRoomService;
+        private final RoomActivityService roomActivityService;
 
         public void init() {
             saveCategory();
@@ -72,13 +75,28 @@ public class InitDb {
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
-                        new MemberActivityRequest((long) (Math.random() * 50), "frontend"), memberSequence,
+                        new ActivityRequest((long) (Math.random() * 50), "frontend"), memberSequence,
                         day);
                 }
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
-                        new MemberActivityRequest((long) (Math.random() * 50), "backend"), memberSequence,
+                        new ActivityRequest((long) (Math.random() * 50), "backend"), memberSequence,
+                        day);
+                }
+
+            }
+            for (long i = 180; i < 230; i++) {
+                for (int count = 1; count <= 30; count++) {
+                    Date day = Date.valueOf(LocalDate.now().minusDays(count));
+                    roomActivityService.saveRoomAcitivity(
+                        new ActivityRequest((long) (Math.random() * 50), "frontend"), i,
+                        day);
+                }
+                for (int count = 1; count <= 30; count++) {
+                    Date day = Date.valueOf(LocalDate.now().minusDays(count));
+                    roomActivityService.saveRoomAcitivity(
+                        new ActivityRequest((long) (Math.random() * 50), "backend"), i,
                         day);
                 }
 
