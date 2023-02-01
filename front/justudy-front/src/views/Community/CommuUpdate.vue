@@ -1,10 +1,11 @@
 <template>
     <v-app>
         <!-- 글읽기 제목 -->
+
         <v-row :style="{marginTop: '3%'}">
             <v-col cols="12" md="4" />
             <v-col cols="12" md="4" justify="center" align="center">
-                <TextButton :buttonLength="100" :height="70" :fontSize="10" :content="`게시판 수정하기`" :standard="px" />
+                <TextButton :buttonLength="100" :height="70" :fontSize="10" :content="`게시판 수정`" :standard="px" />
             </v-col>
             <v-col cols="12" md="4" />
         </v-row>
@@ -36,7 +37,7 @@
                             </v-col>
                             <v-col cols="12" md="10">
                                 <v-text-field
-                                    v-model="title"
+                                    v-model="board.title"
                                     outlined
                                     label="제목을 입력하세요"
                                     style="width: 80%; margin-right: 10%; margin-left: 5%"
@@ -52,7 +53,7 @@
                                 <v-btn depressed color="white" :style="{height: '40px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '1%', marginLeft: '15%'}">내용</v-btn>
                             </v-col>
                             <v-col cols="12" md="10">
-                                <v-textarea v-model="content" label="내용" outlined rows="13" style="width: 80%; margin-right: 10%; margin-left: 5%; margintop: 4%"></v-textarea>
+                                <v-textarea v-model="board.content" label="내용" outlined rows="13" style="width: 80%; margin-right: 10%; margin-left: 5%; margintop: 4%"></v-textarea>
                             </v-col>
                         </v-row>
                     </v-card>
@@ -70,7 +71,9 @@
                     </v-col>
                     <v-col cols="12" md="9"></v-col>
                     <v-col cols="12" md="2" align="right">
-                        <v-btn :disabled="title.length >= 30 || title.length < 1" @click="update()" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정일까나</v-btn>
+                        <v-btn :disabled="board.title.length >= 30 || board.title.length < 1" @click="write()" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}"
+                            >작성</v-btn
+                        >
                     </v-col>
                 </v-row>
             </v-col>
@@ -80,79 +83,51 @@
 </template>
 
 <script>
-import CommunityData from '@/data/CommunityData';
 import CategoryHeader from '../../components/common/CategoryHeader.vue';
 import TextButton from '../../components/common/TextButton.vue';
 
 export default {
     components: {TextButton, CategoryHeader},
     data() {
-        const index = this.$route.params.id;
+        // const index = this.$route.params.id;
         return {
-            data: CommunityData,
-            writer: CommunityData[index].writer,
-            title: CommunityData[index].title,
-            content: CommunityData[index].content,
-            tab: null,
-            button: null,
-            choice: null,
-            top_categories: ['Front-end', 'Back-end', 'Infra', 'CS', 'Algorithm', 'Leading-edge', 'Bulletin board']
+            Data: {},
+            board: {
+                title: '',
+                content: '',
+                category: this.$route.query.category,
+                isHighlighted: false
+            }
         };
     },
     methods: {
         moveback() {
             window.history.back(); // window.history.back()을 통해 뒤로가기
         },
-        update() {
-            // CommunityData[this.index].title = this.title;
-            // CommunityData[this.index].content = this.content;
-            this.$router.push({
-                // path: window.history.back()
-                path: '/'
-            });
-        },
-        write() {
-            this.data.push({
-                index: this.index,
-                title: this.title,
-                created_time: this.created_time,
-                view_count: this.view_count,
-                love_count: this.love_count,
-                content: this.content,
-                writer: this.writer
-            });
+        async write() {
+            // this.data.push({
+            //     index: 1,
+            //     title: this.title,
+            //     created_time: '2022-01-22',
+            //     view_count: 0,
+            //     love_count: 0,
+            //     content: this.content,
+            //     writer: this.writer
+            // });
+            this.board.category = this.$route.query.category;
+            this.board.isHighlighted = false;
+            console.log(this.board.category);
+            await this.$store.dispatch('moduleCommunity/getCommunityContentUpdate', {id: this.Data.sequence, board: this.board});
             this.$router.push({
                 path: window.history.back()
             });
         }
-        // onSubmitForm() {
-        //     if (this.$refs.form.validate()) {
-        //         // 위에 써준 rules를 만족하면 실행
-        //         axios({
-        //             url: 'http://127.0.0.1:52273/content/write/',
-        //             method: 'POST',
-        //             data: {
-        //                 boardnum: this.$route.params.id,
-        //                 writer: this.writer,
-        //                 title: this.title,
-        //                 text: this.text
-        //             }
-        //         })
-        //             .then(res => {
-        //                 alert(res.data.message);
-        //                 window.history.back();
-        //             })
-        //             .catch(err => {
-        //                 alert(err);
-        //             });
-        //     }
-        // },
-        // moveback() {
-        //     window.history.back();
-        // },
-        // movetomain() {
-        //     window.location.href = '/community';
-        // }
+    },
+    async created() {
+        await this.$store.dispatch('moduleCommunity/getCommunityContent', {id: this.$route.params.id});
+        this.Data = this.$store.state.moduleCommunity.CommunityContent;
+        this.board.title = this.Data.title;
+        this.board.content = this.Data.content;
     }
 };
 </script>

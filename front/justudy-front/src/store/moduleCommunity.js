@@ -27,9 +27,9 @@ export default {
         }
     },
     actions: {
-        getCommunityBoard({commit}, number, category) {
-            const API_URL = `${port}/community/boards?page=${number}&category=${category}`;
-            axios({
+        async getCommunityBoard({commit}, {number, category}) {
+            const API_URL = `${port}community/board?page=${number}&category=${category}`;
+            await axios({
                 url: API_URL,
                 method: 'GET'
             })
@@ -53,31 +53,50 @@ export default {
                     console.log(err);
                 });
         },
-        getCommunityContent({commit}, id) {
-            const API_URL = `${port}/community/board/${id}`;
-            axios({
+        async getCommunityContent({commit}, {id}) {
+            const API_URL = `${port}community/board/${id}`;
+            await axios({
                 url: API_URL,
                 method: 'GET'
             })
                 .then(res => {
-                    commit('GET_MOREPROMOTIONSTUDY', res.data);
+                    commit('GET_COMMUNITYCONTENT', res.data);
                 })
                 .catch(err => {
                     console.log(err);
                 });
         },
-        getCommunityContentUpdate({commit}, id) {
-            const API_URL = `${port}/community/board/${id}`;
-            axios({
-                url: API_URL,
-                method: 'GET'
-            })
-                .then(res => {
-                    commit('GET_MOREPROMOTIONSTUDY', res.data);
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+        async getCommunityContentWrite(_, {board}) {
+            const API_URL = `${port}community/board`;
+            await axios.post(
+                API_URL,
+
+                board,
+                {
+                    withCredentials: true
+                }
+            );
+        },
+        async getCommunityContentUpdate(_, {id, board}) {
+            const API_URL = `${port}community/board/${id}`;
+            await axios.put(
+                API_URL,
+
+                board,
+                {
+                    withCredentials: true
+                }
+            );
+        },
+        async getCommunityContentDelete(_, {id}) {
+            const API_URL = `${port}community/board/${id}`;
+            await axios.delete(
+                API_URL,
+
+                {
+                    withCredentials: true
+                }
+            );
         },
         getTopCategory() {}
     }

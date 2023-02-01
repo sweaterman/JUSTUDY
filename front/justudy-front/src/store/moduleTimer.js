@@ -15,8 +15,8 @@ export default {
         saveIndividualTime() {
             axios.post(port + 'timer/member');
         },
-        getFirstYesterday({commit}) {
-            axios.get(port + 'timer/member/yesterday-top').then(res => {
+        async getFirstYesterday({commit}) {
+            await axios.get(port + 'timer/member/yesterday-top').then(res => {
                 commit('getFirstYesterday', res.data);
             });
         },
