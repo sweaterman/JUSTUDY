@@ -30,6 +30,8 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
     private final CommunityLoveRepository communityLoveRepository;
     private final CategoryService categoryService;
+    private final CommunityBookmarkService bookmarkService;
+    private final CommunityLoveService loveService;
 
     private final int MAX_PAGE_SIZE = 10;
     private final int MAX_NOTICE_SIZE = 3;
@@ -63,7 +65,8 @@ public class CommunityService {
                 .orElseThrow(CommunityNotFound::new);
         community.addViewCount();
 
-        Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
+//        Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
+        Integer loveCount = 0;
 
         return CommunityResponse.makeBuilder(community, loveCount);
     }
@@ -78,7 +81,8 @@ public class CommunityService {
                 request.getContent(),
                 categoryService.getCategoryEntityByKey(request.getCategory()));
 
-        Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
+//        Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
+        Integer loveCount = 0;
         return CommunityResponse.makeBuilder(community, loveCount);
     }
 
