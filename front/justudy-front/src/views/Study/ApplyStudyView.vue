@@ -15,14 +15,14 @@
 
                     <v-row>
                         <v-col cols="12">
-                            <h1>{{ study.name }}</h1>
+                            <h1>{{ applyStudyInfo.name }}</h1>
                         </v-col>
                     </v-row>
 
                     <v-row>
                         <v-col cols="12">
                             <div class="studyInfo">
-                                <h3>{{ study.info }}</h3>
+                                <h3>{{ applyStudyInfo.information }}</h3>
                             </div>
                         </v-col>
                     </v-row>
@@ -34,7 +34,7 @@
                     <div class="infoDiv">
                         <v-row>
                             <v-col align="center" style="margin-bottom: 20px; margin-top: 20px">
-                                <h2>{{ study.name }}</h2>
+                                <h2>{{ applyStudyInfo.name }}</h2>
                             </v-col>
                         </v-row>
 
@@ -44,7 +44,7 @@
                                 <v-subheader>팀장</v-subheader>
                             </v-col>
                             <v-col align-self="center" cols="7">
-                                {{ study.teamLeader }}
+                                {{ applyStudyInfo.leader }}
                             </v-col>
                         </v-row>
 
@@ -54,7 +54,7 @@
                                 <v-subheader>카테고리</v-subheader>
                             </v-col>
                             <v-col align-self="center" cols="7">
-                                {{ study.top }}
+                                {{ applyStudyInfo.topCategory }}
                             </v-col>
                         </v-row>
 
@@ -64,7 +64,7 @@
                                 <v-subheader>상세</v-subheader>
                             </v-col>
                             <v-col align-self="center" cols="7">
-                                {{ study.bottom }}
+                                {{ applyStudyInfo.bottomCategory }}
                             </v-col>
                         </v-row>
 
@@ -73,7 +73,7 @@
                             <v-col cols="5">
                                 <v-subheader>모집인원</v-subheader>
                             </v-col>
-                            <v-col cols="7" align-self="center"> {{ study.currrent_num }} / {{ study.apply_num }} </v-col>
+                            <v-col cols="7" align-self="center"> {{ applyStudyInfo.member.length }} / {{ applyStudyInfo.population }} </v-col>
                         </v-row>
 
                         <!-- LEVEL -->
@@ -82,7 +82,7 @@
                                 <v-subheader>LEVEL</v-subheader>
                             </v-col>
                             <v-col cols="7" align-self="center">
-                                {{ study.level }}
+                                {{ applyStudyInfo.level }}
                             </v-col>
                         </v-row>
 
@@ -91,7 +91,9 @@
                             <v-col cols="5">
                                 <v-subheader>활동 주기</v-subheader>
                             </v-col>
-                            <v-col cols="7" align-self="center"> {{ study.week }} / {{ study.start_time }} ~ {{ study.end_time }} </v-col>
+                            <v-col cols="7" align-self="center">
+                                {{ applyStudyInfo.frequencies.frequency_week }} / {{ applyStudyInfo.frequencies.frequency_start }} ~ {{ applyStudyInfo.frequencies.frequency_end }}
+                            </v-col>
                         </v-row>
 
                         <!-- 모임 -->
@@ -100,7 +102,7 @@
                                 <v-subheader>모임</v-subheader>
                             </v-col>
                             <v-col cols="7" align-self="center">
-                                {{ study.on_off }}
+                                {{ applyStudyInfo.meeting }}
                             </v-col>
                         </v-row>
 
@@ -110,7 +112,7 @@
                                 <v-subheader>시작예정일</v-subheader>
                             </v-col>
                             <v-col cols="7" align-self="center">
-                                {{ study.effective_date }}
+                                {{ applyStudyInfo.start_time }}
                             </v-col>
                         </v-row>
 
@@ -166,30 +168,10 @@ export default {
     },
     data() {
         return {
-            study: {
-                seq: '',
-                name: 'React 용자모임',
-                info: `주제: 리액트입니다 \n
-                목표: 모두 리액트 마스터하기 \n
-                예상 커리큘럼: Do it 리액트! 책을 순서대로 공부합니다. \n
-                개설 동기: 리액트를 너무 공부하고 싶었어요.. \n
-                주의사항: 노쇼 금지! `,
-                teamLeader: '돌로스원숭숭',
-                top: '프론트엔드',
-                bottom: '뷰, 리액트 이외 기타등등 모든 프론트엔드를 섭렵하는 스터디이이이이이',
-                currrent_num: '2',
-                apply_num: '4',
-                level: '초급',
-                week: '월,화',
-                start_time: '04:00',
-                end_time: '06:00',
-                on_off: '온/오프라인',
-                effective_date: '협의가능'
-            },
             message_rules: [value => !!value || '보낼 메시지를 입력해주세요.'],
             sendData: {
-                studySeq: this.study.seq,
-                userSeq: 0,
+                studySeq: this.applyStudyInfo.sequence,
+                memberSeq: 0,
                 content: null
             },
             applyData: false, //모달창
@@ -203,7 +185,7 @@ export default {
                 this.applyData = true;
             } else if (check == 'T') {
                 //지원을한다. -> 마이스터디페이지로 이동함.
-                this.$store.dispatch('applyStudy', this.applyStudyInfo.seq, this.sendData);
+                this.$store.dispatch('applyStudy', this.applyStudyInfo.sequence, this.sendData);
                 if (this.sendData.content == '') {
                     alert('보낼 메시지를 입력해주세요!');
                 } else {

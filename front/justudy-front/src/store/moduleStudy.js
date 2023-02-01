@@ -71,7 +71,7 @@ export default {
         },
         //상위 카테고리 받아오기
         getTopCategories({commit}) {
-            const API_URL = `${port}/study/topCategory`;
+            const API_URL = `${port}/category/main-category`;
             axios({
                 url: API_URL,
                 method: 'GET'
@@ -85,7 +85,7 @@ export default {
         },
         //하위 카테고리 받아오기
         getBottomCategories({commit}, top) {
-            const API_URL = `${port}/study/${top}/bottomCategory`;
+            const API_URL = `${port}/category?main=${top}`;
             axios({
                 url: API_URL,
                 method: 'GET'
@@ -156,11 +156,12 @@ export default {
                 });
         },
         //스터디 생성하기
-        createStudy({commit}) {
+        createStudy({commit}, study) {
             const API_URL = `${port}/study`;
             axios({
                 url: API_URL,
-                method: 'POST'
+                method: 'POST',
+                params: study
             })
                 .then(res => {
                     commit;
