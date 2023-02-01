@@ -4,19 +4,19 @@
             <v-row>
                 <v-col cols="12">
                     <v-row>
-                        <v-col cols="4" v-for="study in studies" :key="study.seq">
+                        <v-col cols="4" v-for="study in studies" :key="study.sequence">
                             <!-- 한 개의 스터디를 감싸고 있는 div -->
                             <div class="singleStudy">
                                 <v-row justify="center">
-                                    <img v-if="type != 'apply'" class="hover" style="width: 95%" src="@/assets/test_study.jpg" alt="study_image" @click="moveToStudy(study.seq)" />
+                                    <img v-if="type != 'apply'" class="hover" style="width: 95%" src="@/assets/test_study.jpg" alt="study_image" @click="moveToStudy(study.sequence)" />
                                     <div v-if="type == 'apply'" class="container">
-                                        <img class="hover" style="width: 95%" src="@/assets/test_study.jpg" alt="study_image" @click="moveToStudy(study.seq)" />
-                                        <v-btn rounded color="error" class="cancleApply" @click="deleteApply('open', study.seq)">X</v-btn>
+                                        <img class="hover" style="width: 95%" src="@/assets/test_study.jpg" alt="study_image" @click="moveToStudy(study.sequence)" />
+                                        <v-btn rounded color="error" class="cancleApply" @click="deleteApply('open', study.sequence)">X</v-btn>
                                     </div>
                                 </v-row>
                                 <v-row style="margin-bottom: 5px">
                                     <v-col cols="12">
-                                        <h3 class="hover" @click="moveToStudy(study.seq)">{{ study.name }}</h3>
+                                        <h3 class="hover" @click="moveToStudy(study.sequence)">{{ study.name }}</h3>
                                     </v-col>
                                 </v-row>
 
@@ -24,11 +24,11 @@
                                     <v-col cols="4">
                                         <v-subheader style="height: fit-content; padding: 0px">모집 현황</v-subheader>
                                     </v-col>
-                                    <v-col cols="8" v-if="checkPersonnel(study.current_person, study.personnel)" style="color: #ff0000; font-weight: bold">
-                                        {{ study.current_person }} / {{ study.personnel }}
+                                    <v-col cols="8" v-if="checkPersonnel(study.member.length, study.population)" style="color: #ff0000; font-weight: bold">
+                                        {{ study.member.length }} / {{ study.population }}
                                     </v-col>
-                                    <v-col cols="8" v-if="!checkPersonnel(study.current_person, study.personnel)" style="color: #3edf23; font-weight: bold">
-                                        {{ study.current_person }} / {{ study.personnel }}
+                                    <v-col cols="8" v-if="!checkPersonnel(study.member.length, study.population)" style="color: #3edf23; font-weight: bold">
+                                        {{ study.member.length }} / {{ study.population }}
                                     </v-col>
                                 </v-row>
                                 <v-row no-gutters align="center">
@@ -36,7 +36,7 @@
                                         <v-subheader style="height: fit-content; padding: 0px">시작 예정일</v-subheader>
                                     </v-col>
                                     <v-col cols="8">
-                                        {{ study.starting_day }}
+                                        {{ study.start_time }}
                                     </v-col>
                                 </v-row>
                                 <v-row no-gutters align="center">
@@ -44,12 +44,12 @@
                                         <v-subheader style="height: fit-content; padding: 0px">스터디장</v-subheader>
                                     </v-col>
                                     <v-col cols="8">
-                                        {{ study.teamLeader }}
+                                        {{ study.leader }}
                                     </v-col>
                                 </v-row>
                                 <v-row dense>
-                                    <v-chip class="chip" color="yellow lighten-4">{{ study.weekday }}</v-chip>
-                                    <v-chip class="chip" color="yellow lighten-4">{{ study.on_off }}</v-chip>
+                                    <v-chip class="chip" color="yellow lighten-4">{{ study.frequencies.frequency_week }}</v-chip>
+                                    <v-chip class="chip" color="yellow lighten-4">{{ study.meeting }}</v-chip>
                                     <v-chip class="chip" color="yellow lighten-4">{{ study.level }}</v-chip>
                                 </v-row>
                             </div>
