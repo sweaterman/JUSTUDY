@@ -2,7 +2,7 @@ package com.justudy.backend.category.repository;
 
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.dto.request.CategorySearch;
-import com.justudy.backend.exception.InvalidRequest;
+import com.justudy.backend.category.exception.CategoryNotFound;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -19,31 +19,44 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
 
     @Override
     public Optional<CategoryEntity> findByKey(String key) {
-        return Optional.ofNullable(queryFactory.selectFrom(categoryEntity)
+        return Optional.ofNullable(queryFactory
+                .selectFrom(categoryEntity)
                 .where(keyEq(key))
                 .fetchOne());
     }
 
     @Override
-    public List<String> findByParent(CategorySearch condition) {
-        return queryFactory.select(categoryEntity.key)
-                .from(categoryEntity)
-                .where(parentEq(condition.getMain()))
-                .fetch();
+    public Optional<CategoryEntity> findByValue(String value) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(categoryEntity)
+                .where(valueEq(value))
+                .fetchOne());
     }
 
     @Override
-    public List<String> getAllChildrenName() {
-        return queryFactory.select(categoryEntity.key)
+    public List<CategoryEntity> findByParent(CategorySearch condition) {
+        return queryFactory
+                .select(categoryEntity)
                 .from(categoryEntity)
+                .where(parentEq(condition.getMainKey()))
+                .where(categoryEntity.parentCategory.isNotNull())
+                .fetch();
+    }
+
+    //Todo 이게 굳이 필요한가? CategorySearch가 없으면 되는거 아닌가요?
+    //Todo fetchJoin 필요한가요???
+    @Override
+    public List<CategoryEntity> getAllChildren() {
+        return queryFactory
+                .selectFrom(categoryEntity)
                 .where(categoryEntity.parentCategory.isNotNull())
                 .fetch();
     }
 
     @Override
-    public List<String> getAllParentsName() {
-        return queryFactory.select(categoryEntity.key)
-                .from(categoryEntity)
+    public List<CategoryEntity> getAllParents() {
+        return queryFactory
+                .selectFrom(categoryEntity)
                 .where(categoryEntity.parentCategory.isNull())
                 .fetch();
     }
@@ -52,10 +65,14 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
         return key != null ? categoryEntity.key.eq(key) : null;
     }
 
-    private BooleanExpression parentEq(String mainName) {
-        if (mainName != null) {
-            CategoryEntity parent = findByKey(mainName)
-                    .orElseThrow(InvalidRequest::new);
+    private BooleanExpression valueEq(String value) {
+        return value != null ? categoryEntity.value.eq(value) : null;
+    }
+
+    private BooleanExpression parentEq(String mainKey) {
+        if (mainKey != null) {
+            CategoryEntity parent = findByKey(mainKey)
+                    .orElseThrow(CategoryNotFound::new);
             return categoryEntity.parentCategory.eq(parent);
         }
         return null;

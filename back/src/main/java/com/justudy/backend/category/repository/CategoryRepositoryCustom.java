@@ -10,9 +10,11 @@ public interface CategoryRepositoryCustom {
 
     Optional<CategoryEntity> findByKey(String key);
 
-    List<String> findByParent(CategorySearch condition);
+    Optional<CategoryEntity> findByValue(String value);
 
-    List<String> getAllChildrenName();
+    List<CategoryEntity> findByParent(CategorySearch condition);
 
-    List<String> getAllParentsName();
+    List<CategoryEntity> getAllChildren();
+
+    List<CategoryEntity> getAllParents();
 }
