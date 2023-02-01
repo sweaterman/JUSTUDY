@@ -1,10 +1,7 @@
 package com.justudy.backend.study.dto.request;
 
-import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.study.domain.StudyEntity;
-import com.justudy.backend.study.domain.StudyFrequencyEntity;
-import com.justudy.backend.study.domain.StudyResumeEntity;
-import com.justudy.backend.studyMember.domain.StudyMemberEntity;
+import com.justudy.backend.study.domain.StudyMemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,14 +14,15 @@ import java.util.List;
 @Builder
 public class StudyEdit {
     private Long sequence;
-    private List<StudyMemberEntity> studyMembers;
-    private List<StudyResumeEntity> resumes;
-    private List<StudyFrequencyEntity> frequencies;
-    private CategoryEntity category;
+    private List<Long> member;
+    private List<Long> resume;
+    private List<StudyFrequencyCreate> frequency;
+    private String topCategory;
+    private String bottomCategory;
     private String name;
-    private Long leaderSeq;
+    private String leader;
     private String introduction;
-    private Integer personnel;
+    private Integer population;
     private String level;
     private String onlineOffline;
     private Boolean isOpen;
@@ -33,24 +31,5 @@ public class StudyEdit {
     private String startTime;
 
 
-    public StudyEntity toEntity() {
-        return StudyEntity
-                .builder()
-                .sequence(sequence)
-                .studyMembers(studyMembers)
-                .resumes(resumes)
-                .category(category)
-                .name(name)
-                .leaderSeq(leaderSeq)
-                .introduction(introduction)
-                .personnel(personnel)
-                .level(level)
-                .onlineOffline(onlineOffline)
-                .isOpen(isOpen)
-                .github(github)
-                .notion(notion)
-                .modifiedTime(LocalDateTime.now())
-                .startTime(startTime)
-                .build();
-    }
+
 }
