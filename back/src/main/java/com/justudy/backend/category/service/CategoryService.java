@@ -1,8 +1,9 @@
 package com.justudy.backend.category.service;
 
+import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.dto.request.CategorySearch;
 import com.justudy.backend.category.repository.CategoryRepository;
-import com.justudy.backend.category.repository.CategoryRepositoryImpl;
+import com.justudy.backend.member.exception.InvalidRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,11 @@ public class CategoryService {
 
     public List<String> getList(CategorySearch categorySearch) {
         return categoryRepository.findByParent(categorySearch);
+    }
+
+    public CategoryEntity getCategory(String categoryName) {
+        return categoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
     }
 
     public List<String> getMainCategories() {

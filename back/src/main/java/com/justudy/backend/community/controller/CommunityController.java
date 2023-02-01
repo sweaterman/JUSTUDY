@@ -1,5 +1,7 @@
 package com.justudy.backend.community.controller;
 
+import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.community.domain.CommunityBookmarkEntity;
 import com.justudy.backend.community.domain.CommunityLoveEntity;
 import com.justudy.backend.community.dto.request.*;
@@ -13,6 +15,7 @@ import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/community")
 @RequiredArgsConstructor
@@ -30,6 +34,7 @@ public class CommunityController {
     private final CommunityCommentService communityCommentService;
     private final CommunityLoveService communityLoveService;
     private final CommunityBookmarkService communityBookmarkService;
+    private final CategoryService categoryService;
     // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
     /**
@@ -98,32 +103,42 @@ public class CommunityController {
     public ResponseEntity<CommunityResponse> createCommunity(@RequestBody CommunityCreate request, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         MemberEntity findMember = memberService.getMember(loginSequence);
+        CategoryEntity category = categoryService.getCategory(request.getCategory());
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(communityService.readCommunity(communityService.createCommunity(request, findMember)));
+        CommunityResponse response = communityService.createCommunity(request, findMember, category);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
      * 커뮤니티 수정 API
      *
-     * @param id      커뮤니티 sequence (PK)
+     * @param communitySequence      커뮤니티 sequence (PK)
      * @param request 수정 정보
      * @return ResponseEntity<UserResponse> 200 OK, 수정된 커뮤니티글 정보
      */
     @PutMapping("/board/{id}")
-    public ResponseEntity<CommunityResponse> updateCommunity(@PathVariable("id") long id, @RequestBody CommunityEdit request) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunity(communityService.updateCommunity(id, request)));
+    public ResponseEntity<CommunityResponse> updateCommunity(@PathVariable("id") Long communitySequence,
+                                                             @RequestBody CommunityEdit request,
+                                                             HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        CommunityResponse response = communityService.updateCommunity(loginSequence, communitySequence, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     /**
      * 커뮤니티 삭제 API
      *
-     * @param id 커뮤니티 sequence (PK)
+     * @param communitySequence 커뮤니티 sequence (PK)
      * @return ResponseEntity<Void> 204 No Content
      */
     @DeleteMapping("/board/{id}")
-    public ResponseEntity<Void> deleteCommunity(@PathVariable("id") long id) {
-        communityService.deleteCommunity(id);
+    public ResponseEntity<Void> deleteCommunity(@PathVariable("id") long communitySequence, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        communityService.deleteCommunity(loginSequence, communitySequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
