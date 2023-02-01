@@ -1,4 +1,4 @@
-package com.justudy.backend.community.exception;
+package com.justudy.backend.exception;
 
 import com.justudy.backend.exception.CustomException;
 
