@@ -3,17 +3,17 @@ package com.justudy.backend.timer.dto.response;
 import lombok.Data;
 
 @Data
-public class MemberActivityToRank {
+public class ActivityToRank {
 
   private Integer order;
-  private String time;
+  private Long second;
 
   private String name;
   private Long image;
 
-  public MemberActivityToRank(Integer order, String time, String name, Long image) {
+  public ActivityToRank(Integer order, Long second, String name, Long image) {
     this.order = order;
-    this.time = time;
+    this.second = second;
     this.name = name;
     this.image = image;
   }

@@ -2,8 +2,9 @@ package com.justudy.backend.timer.controller;
 
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.timer.dto.request.MemberActivityRequest;
-import com.justudy.backend.timer.dto.response.MemberActivityCalendarResponse;
-import com.justudy.backend.timer.dto.response.MemberActivitySubjectChange;
+import com.justudy.backend.timer.dto.request.MemberCalendarRequest;
+import com.justudy.backend.timer.dto.response.ActivityCalendarResponse;
+import com.justudy.backend.timer.dto.response.ActivitySubjectResponse;
 import com.justudy.backend.timer.dto.response.MemberActivityYesterdayResponse;
 import com.justudy.backend.timer.service.MemberActivityService;
 import java.sql.Date;
@@ -52,7 +53,7 @@ public class ActivityController {
 
   @GetMapping("/member/week")
   public ResponseEntity<HashMap> readWeekTimeBySeq(@RequestParam Long seq) {
-    HashMap<String, String> ret = new HashMap<String, String>();
+    HashMap<String, Long> ret = new HashMap<String, Long>();
 
     Date agoWeek = Date.valueOf(LocalDate.now().minusWeeks(1));
     Date curWeek = Date.valueOf(LocalDate.now());
@@ -62,7 +63,7 @@ public class ActivityController {
 
   @GetMapping("/member/month")
   public ResponseEntity<HashMap> readMonthTimeBySeq(@RequestParam Long seq) {
-    HashMap<String, String> ret = new HashMap<String, String>();
+    HashMap<String, Long> ret = new HashMap<String, Long>();
 
     Date agoMonth = Date.valueOf(LocalDate.now().minusMonths(1));
     Date curMonth = Date.valueOf(LocalDate.now());
@@ -71,7 +72,7 @@ public class ActivityController {
   }
 
   @GetMapping("/member/category")
-  public ResponseEntity<List<MemberActivitySubjectChange>> readCategoryTimeBySeq(
+  public ResponseEntity<List<ActivitySubjectResponse>> readCategoryTimeBySeq(
       @RequestParam Long seq) {
 
     return ResponseEntity.status(HttpStatus.OK)
@@ -80,7 +81,7 @@ public class ActivityController {
 
   @GetMapping("/members/week")
   public ResponseEntity<HashMap> readWeekTimeAvg() {
-    HashMap<String, String> ret = new HashMap<String, String>();
+    HashMap<String, Long> ret = new HashMap<String, Long>();
 
     Date agoWeek = Date.valueOf(LocalDate.now().minusWeeks(1));
     Date curWeek = Date.valueOf(LocalDate.now());
@@ -91,7 +92,7 @@ public class ActivityController {
 
   @GetMapping("/members/month")
   public ResponseEntity<HashMap> readMonthTimeAvg() {
-    HashMap<String, String> ret = new HashMap<String, String>();
+    HashMap<String, Long> ret = new HashMap<String, Long>();
 
     Date agoMonth = Date.valueOf(LocalDate.now().minusMonths(1));
     Date curMonth = Date.valueOf(LocalDate.now());
@@ -100,16 +101,15 @@ public class ActivityController {
     return ResponseEntity.status(HttpStatus.OK).body(ret);
   }
 
-  @GetMapping("/member-calendar")
-  public ResponseEntity<List<MemberActivityCalendarResponse>> readCalendarTimeBySeq(
-      @RequestParam Long seq) {
-    LocalDate today = LocalDate.now();
-    LocalDate startDay = LocalDate.of(today.getYear(), today.getMonthValue(), 1);
-    Date firstDay = Date.valueOf(startDay);
-    Date lastDay = Date.valueOf(today);
+  @PostMapping("/member-calendar")
+  public ResponseEntity<List<ActivityCalendarResponse>> readCalendarTimeBySeq(
+      @RequestBody  MemberCalendarRequest memberCalendarRequest) {
+    LocalDate wantedMonth = LocalDate.of(memberCalendarRequest.getYear(),memberCalendarRequest.getMonth(),1);
+    Date firstDay = Date.valueOf(wantedMonth.withDayOfMonth(1));
+    Date lastDay = Date.valueOf(wantedMonth.withDayOfMonth(wantedMonth.lengthOfMonth()));
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(memberActivityService.getCalendarTimeById(firstDay, lastDay, seq));
+        .body(memberActivityService.getCalendarTimeById(firstDay, lastDay, memberCalendarRequest.getSeq()));
   }
 
 
