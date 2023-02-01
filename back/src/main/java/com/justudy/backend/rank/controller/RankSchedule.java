@@ -3,7 +3,7 @@ package com.justudy.backend.rank.controller;
 import com.justudy.backend.rank.common.RankGroup;
 import com.justudy.backend.rank.common.RankType;
 import com.justudy.backend.rank.service.RankService;
-import com.justudy.backend.timer.dto.response.MemberActivityToRank;
+import com.justudy.backend.timer.dto.response.ActivityToRank;
 import com.justudy.backend.timer.service.MemberActivityService;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -14,7 +14,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @EnableScheduling
@@ -34,28 +33,27 @@ public class RankSchedule {
     Date curDay = Date.valueOf(LocalDate.now());
 
     rankService.deleteAllByGroupAndType(RankGroup.PERSON, RankType.YESTERDAY);
-    List<MemberActivityToRank> readData = memberActivityService.getSumTimeByPeriod(agoDay, curDay);
+    List<ActivityToRank> readData = memberActivityService.getSumTimeByPeriod(agoDay, curDay);
     rankService.saveRank(RankGroup.PERSON, RankType.YESTERDAY, readData);
   }
-
-  @Scheduled(cron = "0 0 1 ? * MON")
+  @Scheduled(cron = "0 0 1 * * ?")
   public void renewalPersonWeekRank() {
     Date agoDay = Date.valueOf(LocalDate.now().minusWeeks(1));
     Date curDay = Date.valueOf(LocalDate.now());
 
     rankService.deleteAllByGroupAndType(RankGroup.PERSON, RankType.WEEK);
-    List<MemberActivityToRank> readData = memberActivityService.getSumTimeByPeriod(agoDay, curDay);
+    List<ActivityToRank> readData = memberActivityService.getSumTimeByPeriod(agoDay, curDay);
     rankService.saveRank(RankGroup.PERSON, RankType.WEEK, readData);
 
   }
 
-  @Scheduled(cron = "0 0 1 1 * ?")
+  @Scheduled(cron = "0 0 1 * * ?")
   public void renewalPersonMonthRank() {
     Date agoDay = Date.valueOf(LocalDate.now().minusMonths(1));
     Date curDay = Date.valueOf(LocalDate.now());
 
     rankService.deleteAllByGroupAndType(RankGroup.PERSON, RankType.MONTH);
-    List<MemberActivityToRank> readData = memberActivityService.getSumTimeByPeriod(agoDay, curDay);
+    List<ActivityToRank> readData = memberActivityService.getSumTimeByPeriod(agoDay, curDay);
     rankService.saveRank(RankGroup.PERSON, RankType.MONTH, readData);
 
   }

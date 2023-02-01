@@ -5,7 +5,7 @@ import com.justudy.backend.rank.common.RankType;
 import com.justudy.backend.rank.domain.RankEntity;
 import com.justudy.backend.rank.dto.response.RankResponse;
 import com.justudy.backend.rank.repository.RankRepository;
-import com.justudy.backend.timer.dto.response.MemberActivityToRank;
+import com.justudy.backend.timer.dto.response.ActivityToRank;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,14 +32,14 @@ public class RankService {
 
   @Transactional
   public void saveRank(RankGroup rankGroup, RankType rankType,
-      List<MemberActivityToRank> memberActivityToRankList) {
-    for (MemberActivityToRank memberActivityToRank : memberActivityToRankList) {
+      List<ActivityToRank> memberActivityToRankList) {
+    for (ActivityToRank memberActivityToRank : memberActivityToRankList) {
       rankRepository.save(RankEntity.builder()
           .rankGroup(rankGroup)
           .rankType(rankType)
           .rankOrder(memberActivityToRank.getOrder())
           .rankName(memberActivityToRank.getName())
-          .rankTime(memberActivityToRank.getTime())
+          .rankTime(memberActivityToRank.getSecond())
           .rankImage(memberActivityToRank.getImage())
           .build());
     }

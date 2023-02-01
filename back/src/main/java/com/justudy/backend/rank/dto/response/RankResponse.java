@@ -13,10 +13,10 @@ public class RankResponse {
 
   private Integer order;
   private String nickName;
-  private String time;
+  private Long time;
   private Long img;
 
-  public RankResponse(Integer rankOrder, String rankName, String rankTime, Long rankImage) {
+  public RankResponse(Integer rankOrder, String rankName, Long rankTime, Long rankImage) {
     this.order = rankOrder;
     this.nickName = rankName;
     this.time = rankTime;
