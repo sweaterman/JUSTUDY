@@ -157,7 +157,7 @@
                         <v-subheader>관심 기술 스택</v-subheader>
                     </v-col>
                     <v-col cols="8">
-                        <v-combobox v-model="user.stacks" :items="stackList" label="관심있는 기술 선택" multiple></v-combobox>
+                        <v-combobox v-model="user.category" :items="stackList" label="관심있는 기술 선택" multiple></v-combobox>
                     </v-col>
                 </v-row>
 
@@ -232,7 +232,7 @@ export default {
         return {
             showmodal: false,
             regionList: ['서울', '대전', '부울경', '광주'],
-            stackList: ['Vuejs', 'nodejs', 'React', 'Spring', 'SpringBoot', 'TensorFlow'],
+            stackList: ['Vuejs', 'Nodejs', 'React', 'Spring', 'SpringBoot', 'TensorFlow'],
             selfTest: false,
             // 담아서 store로 보낼 값
             user: {

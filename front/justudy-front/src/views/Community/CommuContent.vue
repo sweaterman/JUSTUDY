@@ -28,7 +28,7 @@
 
                     <!-- 작성일 -->
                     <v-row>
-                        <div style="width: 300px; margin-left: 9%; padding-top: 4px; padding-bottom: 25px">작성일 : {{ Data.created_time }}</div>
+                        <div style="width: 300px; margin-left: 9%; padding-top: 4px; padding-bottom: 25px">작성일 : {{ Data.createdTime }}</div>
                         <!-- <v-text-field v-model="createdAt" solo readonly depressed outlined label="작성일" style="width: 80%; margin-right: 15%"></v-text-field> -->
                     </v-row>
                     <!-- 수정일 기능 -->
@@ -83,7 +83,6 @@
 </template>
 
 <script>
-import CommunityData from '@/data/CommunityData';
 import CommuComment from './CommuComment.vue';
 
 export default {
@@ -92,7 +91,7 @@ export default {
     data() {
         const index = this.$route.params.id;
         return {
-            Data: CommunityData[index],
+            Data: {},
             index: index,
             // writer: '돌숭이', // 작성자
             // title: '돌숭이의 꿀팁', // 글 제목
@@ -121,12 +120,17 @@ export default {
         //         alert(err);
         //     });
     },
+    async created() {
+        await this.$store.dispatch('moduleCommunity/getCommunityContent', {id: this.$route.params.id});
+        this.Data = this.$store.state.moduleCommunity.CommunityContent;
+    },
     methods: {
         moveback() {
             window.history.back(); // window.history.back()을 통해 뒤로가기
         },
-        deletecontent() {
-            CommunityData.splice(this.index, 1);
+        async deletecontent() {
+            // CommunityData.splice(this.index, 1);
+            await this.$store.dispatch('moduleCommunity/getCommunityContentDelete', {id: this.Data.sequence});
             this.$router.push({
                 path: window.history.back()
             });
@@ -152,9 +156,9 @@ export default {
         editcontent() {
             this.$router.push({
                 name: 'CommuUpdate',
-                params: {
-                    // id: this.index
-                    path: (window.location.href = window.location.pathname + '/update')
+                path: this.$route.path + 'update',
+                query: {
+                    category: this.Data.category
                 }
             });
         },
