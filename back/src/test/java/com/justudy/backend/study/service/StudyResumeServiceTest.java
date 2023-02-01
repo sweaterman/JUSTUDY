@@ -4,8 +4,6 @@ import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.file.domain.UploadFileEntity;
-import com.justudy.backend.file.exception.UploadFileNotFound;
-import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.repository.UploadFileRepository;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.member.domain.MemberEntity;
@@ -13,13 +11,17 @@ import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.member.service.MemberService;
 import com.justudy.backend.study.domain.StudyEntity;
+import com.justudy.backend.study.domain.StudyMemberEntity;
+import com.justudy.backend.study.domain.StudyResumeEntity;
+import com.justudy.backend.study.domain.StudyResumeRespond;
 import com.justudy.backend.study.dto.request.StudyCreate;
-import com.justudy.backend.study.dto.request.StudyEdit;
-import com.justudy.backend.study.dto.response.StudyDetailResponse;
+import com.justudy.backend.study.dto.request.StudyMemberCreate;
+import com.justudy.backend.study.dto.request.StudyResumeCreate;
 import com.justudy.backend.study.dto.response.StudyResponse;
-import com.justudy.backend.study.dto.response.StudySearchResponse;
+import com.justudy.backend.study.dto.response.StudyResumeResponse;
+import com.justudy.backend.study.repository.StudyMemberRepository;
 import com.justudy.backend.study.repository.StudyRepository;
-import org.assertj.core.api.Assertions;
+import com.justudy.backend.study.repository.StudyResumeRepository;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,17 +31,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
-class StudyServiceTest {
-
-    private final String USER_ID = "justudy";
-    private final String NICKNAME = "levi";
-    private final String SSAFY_ID = "0847968";
+class StudyResumeServiceTest {
     Logger log;
     @Autowired
     MemberService memberService;
@@ -49,173 +47,148 @@ class StudyServiceTest {
     CategoryRepository categoryRepository;
     @Autowired
     UploadFileService uploadFileService;
-    Long id;
-    CategoryEntity java;
+    @Autowired
+    private StudyService service;
+    @Autowired
+    private StudyResumeService studyResumeService;
     @Autowired
     private StudyRepository repository;
     @Autowired
-    private UploadFileRepository uploadFileRepository;
+    private StudyResumeRepository studyResumeRepository;
     @Autowired
-    private StudyService service;
+    private UploadFileRepository uploadFileRepository;
     private Pageable pageable;
     private MemberEntity findMember;
+    private MemberEntity findMember2;
     private CategoryEntity categoryEntity;
     UploadFileEntity basicImage;
-
-    StudyServiceTest() {
-    }
+    Long id;
+    CategoryEntity java;
 
     @Transactional
     @BeforeEach
-//    @Test
-//    @Order(0)
     public void setUp() {
         log = (Logger) LoggerFactory.getLogger(CommunityRepository.class);
         pageable = PageRequest.of(0, 9);
         log.info("정보1 : start set up->{}", findMember);
+        //image
         UploadFileEntity basicMemberImage = new UploadFileEntity("basic_member.png", "basic_member.png");
         uploadFileRepository.save(basicMemberImage);
 //        basicImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//
 //        UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
 //                .orElseThrow(UploadFileNotFound::new);
-
+        //member
         MemberCreate memberRequest = makeMemberCreate(100);
+        MemberCreate memberRequest2 = makeMemberCreate(101);
         Long savedMemberId = memberService.saveMember(memberRequest, basicImage);
+        Long savedMemberId2 = memberService.saveMember(memberRequest2, basicImage);
         findMember = memberRepository.findById(savedMemberId).get();
+        findMember2 = memberRepository.findById(savedMemberId2).get();
 
+        //category
         CategoryEntity backend = createMainCategory("backend", 0L);
         categoryRepository.save(backend);
         java = createSubCategory("Java", 1L, backend);
         categoryRepository.save(java);
 
-
+        //study
+        StudyCreate create = makeRequest(findMember);
+        Long studyId = service.createStudy(create, basicImage);
+        id = studyId;
         log.info("정보2 : end set up->{}", findMember.getSequence());
     }
+
 
     @Transactional
     @Test
     @Order(1)
-    void createStudy() {
+    void createStudyResume() {
         // Given
-        StudyCreate create = makeRequest(findMember);
+        StudyResumeCreate create = makeResumeRequest(id, findMember.getSequence());
+
         // When
-        Long studyId = service.createStudy(create, basicImage);
-        id = studyId;
-        StudyEntity study = repository.findById(studyId).get();
+        Long resumeId = studyResumeService.createStudyResume(id, create);
+        StudyResumeEntity entity = studyResumeRepository.findById(resumeId).get();
 
         // Then
-
-        Assertions.assertThat(study.getLeaderSeq()).isEqualTo(findMember.getSequence());
-        Assertions.assertThat(study.getName()).isEqualTo("test study");
-        Assertions.assertThat(study.getIntroduction()).isEqualTo("소개입니당");
-        Assertions.assertThat(study.getStartTime()).isEqualTo("230202");
+        org.assertj.core.api.Assertions.assertThat(entity.getSequence()).isEqualTo(resumeId);
+        org.assertj.core.api.Assertions.assertThat(entity.getContent()).isEqualTo("content입니다");
     }
 
+    @Transactional
     @Test
     @Order(2)
-    @Transactional
-    void readStudy() {
+    void readStudyResume() {
         // Given
-        StudyCreate create = makeRequest(findMember);
+        StudyResumeCreate create = makeResumeRequest(id, findMember.getSequence());
 
         // When
-        Long id = service.createStudy(create, basicImage);
-        StudyResponse study = service.readStudy(id);
+        Long resumeId = studyResumeService.createStudyResume(id, create);
+//        StudyResumeEntity entity = studyResumeRepository.findById(resumeId).get();
+
+        StudyResumeResponse entity = studyResumeService.readStudyResume(resumeId);
+
 
         // Then
-
-        log.info("정보3 : {}", study.getLeaderSeq());
-        log.info("정보3 : {}", study.getName());
-        log.info("정보3 : {}", study.getIntroduction());
-        log.info("정보3 : {}", study.getStartTime());
-        Assertions.assertThat(study.getLeaderSeq()).isEqualTo(findMember.getSequence());
-        Assertions.assertThat(study.getName()).isEqualTo("test study");
-        Assertions.assertThat(study.getIntroduction()).isEqualTo("소개입니당");
-        Assertions.assertThat(study.getStartTime()).isEqualTo("230202");
+        org.assertj.core.api.Assertions.assertThat(entity.getSequence()).isEqualTo(resumeId);
+        org.assertj.core.api.Assertions.assertThat(entity.getContent()).isEqualTo("content입니다");
+        org.assertj.core.api.Assertions.assertThat(entity.getRespond()).isEqualTo(StudyResumeRespond.WAITING);
     }
+
 
     @Transactional
     @Test
     @Order(3)
-    void updateStudy() {
+    void deleteStudyResume() {
         // Given
-        StudyEdit edit = makeRequest(id, findMember);
-        StudyCreate create = makeRequest(findMember);
+        StudyResumeCreate create = makeResumeRequest(id, findMember.getSequence());
+        StudyResumeCreate create2 = makeResumeRequest(id, findMember2.getSequence());
 
         // When
-        Long id = service.createStudy(create, basicImage);
-        Long studyId = service.updateStudy(id, edit);
-        StudyEntity study = repository.findById(studyId).get();
+        Long resumeId = studyResumeService.createStudyResume(id, create);
+        Long resumeId2 = studyResumeService.createStudyResume(id, create2);
+
+        studyResumeService.deleteStudyResume(resumeId);
+        studyResumeService.deleteStudyResume(resumeId2);
+        List<StudyResumeResponse> entity = studyResumeService.readAllStudyResumeByStudy(id);
 
         // Then
-
-        Assertions.assertThat(study.getLeaderSeq()).isEqualTo(findMember.getSequence());
-        Assertions.assertThat(study.getName()).isEqualTo("test study2");
-        Assertions.assertThat(study.getIntroduction()).isEqualTo("소개입니당2");
-        Assertions.assertThat(study.getStartTime()).isEqualTo("220202");
+        org.assertj.core.api.Assertions.assertThat(entity.size()).isEqualTo(0);
     }
 
-    @Test
     @Transactional
+    @Test
     @Order(4)
-    void search() {
+    void readAllStudyResumeByStudy() {
         // Given
-        StudyCreate create = makeRequest(findMember);
-        Long studyId = service.createStudy(create, basicImage);
-
-        List<String> sub = new ArrayList<>();
-        sub.add("Figma");
-        sub.add("Java");
+        StudyResumeCreate create = makeResumeRequest(id, findMember.getSequence());
+        StudyResumeCreate create2 = makeResumeRequest(id, findMember2.getSequence());
 
         // When
-        StudySearchResponse study = service.search(0, sub, "", "");
+        Long resumeId = studyResumeService.createStudyResume(id, create);
+        Long resumeId2 = studyResumeService.createStudyResume(id, create2);
+//        StudyResumeEntity entity = studyResumeRepository.findById(resumeId).get();
+//        StudyResumeEntity entity2 = studyResumeRepository.findById(resumeId2).get();
+
+        List<StudyResumeResponse> entity = studyResumeService.readAllStudyResumeByStudy(id);
 
         // Then
-
-        log.info("slice info : {}", study.toString());
-        Assertions.assertThat(study.getCheckMore()).isEqualTo(true);
-        Assertions.assertThat(study.getStudyResponse().size()).isEqualTo(1);
-        Assertions.assertThat(study.getStudyResponse().get(0).getBottomCategory()).isEqualTo("Java");
-        Assertions.assertThat(repository.findAll().size()).isEqualTo(2);
+        org.assertj.core.api.Assertions.assertThat(entity.size()).isEqualTo(2);
     }
-
 
     @Transactional
     @Test
     @Order(5)
-    void deleteStudy() {
-        // Given
-        StudyCreate create = makeRequest(findMember);
-
-        // When
-        Long id = service.createStudy(create, basicImage);
-        service.deleteStudy(id);
-        // Then
-
-        Assertions.assertThat(repository.findAll().size()).isEqualTo(0);
+    void readAllApplyStudy() {
     }
 
-    @Test
-    @Order(6)
-    @Transactional
-    void readDetailStudy() {
-        // Given
-        StudyCreate create = makeRequest(findMember);
-
-        // When
-        Long id = service.createStudy(create, basicImage);
-        StudyDetailResponse study = service.readDetailStudy(id);
-
-        // Then
-
-        log.info("정보3 : {}", study.getLeaderSeq());
-        log.info("정보3 : {}", study.getName());
-        log.info("정보3 : {}", study.getIntroduction());
-        log.info("정보3 : {}", study.getStartTime());
-        Assertions.assertThat(study.getLeaderSeq()).isEqualTo(findMember.getSequence());
-        Assertions.assertThat(study.getName()).isEqualTo("test study");
-        Assertions.assertThat(study.getIntroduction()).isEqualTo("소개입니당");
-        Assertions.assertThat(study.getMember().size()).isEqualTo(1);
+    private StudyResumeCreate makeResumeRequest(Long study, Long member) {
+        return StudyResumeCreate
+                .builder()
+                .studySeq(study)
+                .memberSeq(member)
+                .content("content입니다")
+                .build();
     }
 
 
@@ -236,28 +209,6 @@ class StudyServiceTest {
                 .startTime("230202")
                 .build();
     }
-
-    private StudyEdit makeRequest(Long id, MemberEntity findMember) {
-        return StudyEdit
-                .builder()
-                .sequence(id)
-                .member(null)
-                .resume(null)
-                .frequency(null)
-                .bottomCategory("java")
-                .name("test study2")
-                .leaderSeq(findMember.getSequence())
-                .introduction("소개입니당2")
-                .population(10)
-                .level("초보")
-                .onlineOffline("온라인")
-                .isOpen(true)
-                .github("git")
-                .notion("notiono")
-                .startTime("220202")
-                .build();
-    }
-
 
     private CategoryEntity createSubCategory(String name, Long level, CategoryEntity parent) {
         CategoryEntity subCategory = CategoryEntity.builder()
@@ -292,4 +243,5 @@ class StudyServiceTest {
                 .build();
         return request;
     }
+
 }

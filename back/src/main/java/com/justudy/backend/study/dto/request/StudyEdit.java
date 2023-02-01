@@ -1,12 +1,9 @@
 package com.justudy.backend.study.dto.request;
 
-import com.justudy.backend.study.domain.StudyEntity;
-import com.justudy.backend.study.domain.StudyMemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -20,7 +17,7 @@ public class StudyEdit {
     private String topCategory;
     private String bottomCategory;
     private String name;
-    private String leader;
+    private Long leaderSeq;
     private String introduction;
     private Integer population;
     private String level;

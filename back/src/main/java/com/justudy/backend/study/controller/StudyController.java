@@ -1,10 +1,12 @@
 package com.justudy.backend.study.controller;
 
+import com.justudy.backend.category.dto.request.CategoryResponse;
 import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.service.UploadFileService;
+import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.dto.request.StudyEdit;
 import com.justudy.backend.study.dto.request.StudyMemberCreate;
@@ -20,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,20 +65,27 @@ public class StudyController {
      * 페이징, 검색,
      */
     @GetMapping("/")
-    public ResponseEntity<StudySearchResponse> readAllStudy(@RequestParam("page") int page, @RequestParam(value = "type", required = false) String type, @RequestParam(value = "search", required = false) String search) {
+    public ResponseEntity<StudySearchResponse> readAllStudy(HttpSession session,@RequestParam("page") int page, @RequestParam(value = "type", required = false) String type, @RequestParam(value = "search", required = false) String search) {
         //todo session 과 id 체크
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
         List<String> subCategories = null;
         //타입이 카테고리 검색이면
-        //todo category 수정해야함
-//        if (type != null && type.compareTo("category") == 0) {
-//            subCategories = Arrays.asList(search.split(","));
-//            List<String> response = categoryService.getSubCategories();
-//            for (String subCategory : subCategories) {
-//                if (response.contains(subCategory) == false)
-//                    throw new InvalidRequest();
-//            }
-//            search = null;
-//        }
+        if (type != null && type.compareTo("category") == 0) {
+            subCategories = Arrays.asList(search.split(","));
+            List<CategoryResponse> response = categoryService.getSubCategories();
+            for (CategoryResponse categoryResponse : response) {
+                int flg = 0;
+                for (String subCategory : subCategories) {
+                    if (subCategory.compareTo(categoryResponse.getValue()) == 0) {
+                        flg = 1;
+                        break;
+                    }
+                }
+                if (flg == 0) throw new InvalidRequest();
+            }
+            search = null;
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body(studyService.search(page, subCategories, type, search));
     }
@@ -117,8 +127,8 @@ public class StudyController {
 
         //스터디맴버 리더 추가
         //todo nickname으로 검색
-        Long leaderSeq=1L;
-//        Long leaderSeq;
+        Long leaderSeq = 1L;
+//        Long leaderSeq = memberService;
         studyMemberService.createStudyMember(StudyMemberCreate
                 .builder()
                 .studySeq(studySeq)
@@ -280,6 +290,8 @@ public class StudyController {
 //        studyFrequencyService.deleteStudyFrequency(id, frequencyId);
 //        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 //    }
+
+
     // ---------------------------------------------------------------스터디 맴버---------------------------------------------------------------
 
     /**
