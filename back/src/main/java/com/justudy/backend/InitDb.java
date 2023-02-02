@@ -1,6 +1,6 @@
 package com.justudy.backend;
 
-import com.justudy.backend.GroupCall.service.StudyRoomService;z
+import com.justudy.backend.GroupCall.service.StudyRoomService;
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.community.dto.request.CommunityCreate;
@@ -13,6 +13,7 @@ import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.member.service.MemberService;
+import com.justudy.backend.rank.controller.RankDummy;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.service.StudyService;
 import com.justudy.backend.timer.dto.request.ActivityRequest;
@@ -56,6 +57,7 @@ public class InitDb {
         private final MemberActivityService memberActivityService;
         private final StudyRoomService studyRoomService;
         private final RoomActivityService roomActivityService;
+        private final RankDummy rankDummy;
 
         public void init() {
             saveCategory();
@@ -65,8 +67,18 @@ public class InitDb {
             saveStudy();
             saveStudyRoom();
             saveTimer();
+            saveRank();
         }
 
+        private void saveRank(){
+            rankDummy.renewalStudyYesterdayRank();
+            rankDummy.renewalStudyWeekRank();
+            rankDummy.renewalStudyMonthRank();
+            rankDummy.renewalPersonYesterdayRank();
+            rankDummy.renewalPersonWeekRank();
+            rankDummy.renewalPersonMonthRank();
+
+        }
         private void saveTimer() {
             for (int i = 0; i < 10; i++) {
                 long memberSequence = 50 + (3 * i);
@@ -228,7 +240,6 @@ public class InitDb {
             categoryRepository.save(createSubCategory("silver", "Silver", 1L, algorithm));
             categoryRepository.save(createSubCategory("gold", "Gold", 1L, algorithm));
             categoryRepository.save(createSubCategory("platinum", "Platinum", 1L, algorithm));
-            categoryRepository.save(createSubCategory("diamond", "Diamond", 1L, algorithm));
         }
 
         private void makeMobileSubCategory(CategoryEntity mobile) {
