@@ -50,6 +50,7 @@ export default {
             isLogin: false
         };
     },
+
     methods: {
         moveTo(link) {
             window.location.href = link;

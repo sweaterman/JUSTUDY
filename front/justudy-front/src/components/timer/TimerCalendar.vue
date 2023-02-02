@@ -55,7 +55,7 @@
                         <!-- 날짜별 시간 -->
                         <v-row :style="{marginTop: '15%', marginLeft: '15%'}">
                             <div style="font-size: 100%" v-if="7 * (cr - 1) + cc - firstDayOfWeek > 0 && 7 * (cr - 1) + cc - firstDayOfWeek <= monthDate[month]">
-                                {{ recorded[7 * (cr - 1) + cc - firstDayOfWeek - 1] }}
+                                {{ hourMinSecond(studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek]) }}
                             </div>
                         </v-row>
                     </v-col>
@@ -82,7 +82,9 @@ export default {
             date: 0
         };
     },
-
+    props: {
+        studyCalendar: {}
+    },
     methods: {
         monthBefore() {
             if (this.month == 0) {
@@ -101,6 +103,16 @@ export default {
                 this.month++;
             }
             this.firstDayOfWeek = this.WEEKDAY.indexOf(new Date(this.year, this.month, 1).toString().slice(0, 3));
+        },
+
+        hourMinSecond(data) {
+            return (
+                (parseInt(data / 3600) >= 10 ? parseInt(data / 3600) : '0' + parseInt(data / 3600)) +
+                ':' +
+                (parseInt((data % 3600) / 60) >= 10 ? parseInt((data % 3600) / 60) : '0' + parseInt((data % 3600) / 60)) +
+                ':' +
+                (data % 60 >= 10 ? data % 60 : '0' + (data % 60))
+            );
         }
     },
     created() {

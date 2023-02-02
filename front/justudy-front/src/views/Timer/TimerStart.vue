@@ -68,7 +68,13 @@
                                 </div>
                                 <div :style="{fontWeight: 'bold', fontSize: 'xxx-large'}">
                                     <h1>
-                                        <span style="color: black">{{ king_time }}</span>
+                                        <span style="color: black"
+                                            >{{ parseInt(firstYesterday.second / 3600) >= 10 ? parseInt(firstYesterday.second / 3600) : '0' + parseInt(firstYesterday.second / 3600) }}:{{
+                                                parseInt((firstYesterday.second % 3600) / 60) >= 10
+                                                    ? parseInt((firstYesterday.second % 3600) / 60)
+                                                    : '0' + parseInt((firstYesterday.second % 3600) / 60)
+                                            }}:{{ firstYesterday.second % 60 >= 10 ? firstYesterday.second % 60 : '0' + (firstYesterday.second % 60) }}</span
+                                        >
                                     </h1>
                                 </div>
                             </v-col>
@@ -122,9 +128,10 @@ export default {
         DigitalClock,
         TimerCamera
     },
-    created() {
+    async created() {
         // API 받기
-        this.$store.dispatch('moduleTimer/getFirstYesterday');
+        await this.$store.dispatch('moduleTimer/getFirstYesterday');
+        this.firstYesterday = this.$store.state.moduleTimer.firstYesterday;
         // 무언가 하면 개인 공부 시간 저장
         // this.$store.dispatch('moduleTimer/saveIndividualTime');
         // 날짜 받기

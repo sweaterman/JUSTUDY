@@ -11,19 +11,20 @@
                         </router-link>
                     </v-col>
                     <v-col cols="12" md="4" justify="center" align="center">
-                        <router-link to="/timer/my-statistics" style="text-decoration: none; color: #ffb000">
-                            <div :style="{fontWeight: 'bold', fontSize: 'x-large'}"><h2>나의 통계</h2></div>
+                        <router-link to="/timer/my-statistics" style="text-decoration: none; color: black">
+                            <div><h2>나의 통계</h2></div>
                         </router-link>
                     </v-col>
                     <v-col cols="12" md="4" justify="center" align="center">
-                        <router-link to="/timer/friend-statistics" style="text-decoration: none; color: black">
-                            <div><h2>친구 통계</h2></div>
+                        <router-link to="/timer/friend-statistics" style="text-decoration: none; color: #ffb000">
+                            <div :style="{fontWeight: 'bold', fontSize: 'x-large'}"><h2>친구 통계</h2></div>
                         </router-link>
                     </v-col>
                 </v-row>
 
                 <!-- 달력 -->
-                <TimerCalendar :studyCalendar="studyCalendar" />
+                <Follow buttonContent="팔로잉" />
+                <Follow buttonContent="팔로우" />
 
                 <!-- 나의 공부 시간 -->
                 <v-row :style="{marginTop: '5%', marginBottom: '1%'}">
@@ -75,7 +76,7 @@
     </v-app>
 </template>
 <script>
-import TimerCalendar from '@/components/timer/TimerCalendar.vue';
+import Follow from '@/components/common/Follow.vue';
 import TimeAndRadarChart from '@/components/timer/TimeAndRadarChart.vue';
 import DigitalClockPerDate from '@/components/timer/DigitalClockPerDate.vue';
 import DigitalClockAverage from '@/components/timer/DigitalClockAverage.vue';
@@ -92,7 +93,7 @@ export default {
         };
     },
     components: {
-        TimerCalendar,
+        Follow,
         TimeAndRadarChart,
         DigitalClockPerDate,
         DigitalClockAverage
