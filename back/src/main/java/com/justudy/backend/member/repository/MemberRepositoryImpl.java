@@ -64,4 +64,14 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                 .fetchOne()
         );
     }
+
+    @Override
+    public Optional<Long> findSequenceByNickname(String nickname) {
+        return Optional.ofNullable(queryFactory
+                .select(memberEntity.sequence)
+                .from(memberEntity)
+                .where(memberEntity.nickname.eq(nickname))
+                .fetchFirst()
+        );
+    }
 }
