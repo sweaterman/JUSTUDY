@@ -152,6 +152,8 @@ export default {
         const pathName = new URL(document.location).pathname.split('/');
         const studySeq = pathName[pathName.length - 2];
         this.$store.dispatch('getStudyInfo', studySeq);
+
+        //방장인지 확인해야함
     },
     data() {
         return {

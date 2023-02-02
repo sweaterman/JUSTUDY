@@ -22,7 +22,7 @@
                     <v-row>
                         <v-col cols="12">
                             <div class="studyInfo">
-                                <h3>{{ applyStudyInfo.information }}</h3>
+                                <h3>{{ applyStudyInfo.introduction }}</h3>
                             </div>
                         </v-col>
                     </v-row>
@@ -158,12 +158,12 @@ import {mapState} from 'vuex';
 export default {
     name: 'ApplyStudyView',
     computed: {
-        ...mapState(['applyStudyInfo'])
+        ...mapState('moduleStudy', ['applyStudyInfo'])
     },
     created() {
         const pathName = new URL(document.location).pathname.split('/');
         const studySeq = pathName[pathName.length - 1];
-        this.$store.dispatch('getApplyStudyInfo', studySeq);
+        this.$store.dispatch('moduleStudy/getApplyStudyInfo', studySeq);
         //스터디 멤버에 내가 포함되어있거나 지원을 완료한 상태라면? applyDisplay 바꿔야함
     },
     data() {
@@ -185,7 +185,7 @@ export default {
                 this.applyData = true;
             } else if (check == 'T') {
                 //지원을한다. -> 마이스터디페이지로 이동함.
-                this.$store.dispatch('applyStudy', this.applyStudyInfo.sequence, this.sendData);
+                this.$store.dispatch('moduleStudy/applyStudy', this.applyStudyInfo.sequence, this.sendData);
                 if (this.sendData.content == '') {
                     alert('보낼 메시지를 입력해주세요!');
                 } else {
