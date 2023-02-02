@@ -232,12 +232,12 @@ import {mapState} from 'vuex';
 export default {
     name: 'CreateStudyView',
     computed: {
-        ...mapState(['nameCheck']),
-        ...mapState(['topCategories']),
-        ...mapState(['bottomCategories'])
+        ...mapState('moduleStudy', ['nameCheck']),
+        ...mapState('moduleStudy', ['topCategories']),
+        ...mapState('moduleStudy', ['bottomCategories'])
     },
     created() {
-        this.$store.dispatch('getTopCategories');
+        this.$store.dispatch('moduleStudy/getTopCategories');
     },
     data() {
         return {
@@ -274,10 +274,10 @@ export default {
     methods: {
         //상위 카테고리에 맞게 하위 카테고리 변환
         checkTopCategory() {
-            this.$store.dispatch('getBottomCategories');
+            this.$store.dispatch('moduleStudy/getBottomCategories');
         },
         nameCheckBtn(name) {
-            this.$store.dispatch('nameCheck', name);
+            this.$store.dispatch('moduleStudy/nameCheck', name);
             //중복체크 미완성 -> 확인 해봐야함.
             this.nameCheckVal = this.$store.state.nameCheck;
         },
