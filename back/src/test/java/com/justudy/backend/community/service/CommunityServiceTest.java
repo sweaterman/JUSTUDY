@@ -10,8 +10,8 @@ import com.justudy.backend.community.dto.response.CommunityResponse;
 import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.community.repository.CommunityLoveRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
-import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.exception.ForbiddenRequest;
+import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.service.MemberService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,13 +33,11 @@ import static org.mockito.ArgumentMatchers.anyLong;
 class CommunityServiceTest {
 
     private CommunityRepository communityRepository = Mockito.mock(CommunityRepository.class);
-
     private CommunityLoveRepository loveRepository = Mockito.mock(CommunityLoveRepository.class);
-
+    private CommunityBookmarkService bookmarkService = Mockito.mock(CommunityBookmarkService.class);
+    private CommunityLoveService loveService = Mockito.mock(CommunityLoveService.class);
     private MemberService memberService = Mockito.mock(MemberService.class);
-
     private CategoryService categoryService = Mockito.mock(CategoryService.class);
-
     private CommunityService communityService;
 
     private final String CATEGORY_KEY = "backend";
@@ -50,7 +48,12 @@ class CommunityServiceTest {
 
     @BeforeEach
     void setUp() {
-        communityService = new CommunityService(communityRepository, loveRepository, categoryService);
+        communityService = new CommunityService(communityRepository,
+                loveRepository,
+                categoryService,
+                bookmarkService,
+                loveService
+                );
     }
 
     @Test
@@ -189,8 +192,8 @@ class CommunityServiceTest {
                 .willReturn(Optional.of(community));
         BDDMockito.given(categoryService.getCategoryEntityByKey(NEW_CATEGORY_KEY))
                 .willReturn(new CategoryEntity(NEW_CATEGORY_KEY, NEW_CATEGORY_VALUE, 0L));
-        BDDMockito.given(loveRepository.readLoveCountByCommunity(ArgumentMatchers.anyLong()))
-                .willReturn(10);
+//        BDDMockito.given(loveRepository.readLoveCountByCommunity(ArgumentMatchers.anyLong()))
+//                .willReturn(10);
 
         //when
         CommunityResponse response = communityService.updateCommunity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, new CommunityEdit(NEW_TITLE, NEW_CONTENT, NEW_CATEGORY_KEY));
@@ -225,8 +228,8 @@ class CommunityServiceTest {
                 .willReturn(Optional.of(community));
         BDDMockito.given(categoryService.getCategoryEntityByKey(NEW_CATEGORY_KEY))
                 .willReturn(new CategoryEntity(NEW_CATEGORY_KEY, NEW_CATEGORY_VALUE, 0L));
-        BDDMockito.given(loveRepository.readLoveCountByCommunity(ArgumentMatchers.anyLong()))
-                .willReturn(10);
+//        BDDMockito.given(loveRepository.readLoveCountByCommunity(ArgumentMatchers.anyLong()))
+//                .willReturn(10);
 
         //expected
         assertThatThrownBy(() -> communityService.updateCommunity(LOGIN_SEQUENCE,
