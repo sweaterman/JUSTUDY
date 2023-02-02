@@ -36,7 +36,9 @@ public class StudyRoomService {
   @Transactional
   public StudyRoomResponse getUUIDStudy(Long studySeq) {
     StudyEntity study = studyRepository.getReferenceById(studySeq);
-
+    if(study == null){
+      return null;
+    }
     return studyRoomRepository.findUUIDByStudy(study);
 
   }
