@@ -208,7 +208,6 @@ public class InitDb {
             categoryRepository.save(createSubCategory("silver", "Silver", 1L, algorithm));
             categoryRepository.save(createSubCategory("gold", "Gold", 1L, algorithm));
             categoryRepository.save(createSubCategory("platinum", "Platinum", 1L, algorithm));
-            categoryRepository.save(createSubCategory("diamond", "Diamond", 1L, algorithm));
         }
 
         private void makeMobileSubCategory(CategoryEntity mobile) {
