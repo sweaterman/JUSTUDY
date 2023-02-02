@@ -1,6 +1,8 @@
 package com.justudy.backend.community.repository;
 
 import com.justudy.backend.community.domain.*;
+import com.justudy.backend.community.dto.request.CommunitySearch;
+import com.justudy.backend.community.exception.ImportBoardFail;
 import com.justudy.backend.util.PagingUtil;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
@@ -11,12 +13,14 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
+import static com.justudy.backend.community.domain.QCommunityEntity.*;
+
 @RequiredArgsConstructor
 public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
 
     private final PagingUtil pagingUtil;
     private final JPAQueryFactory queryFactory;
-    private final QCommunityEntity qCommunity = QCommunityEntity.communityEntity;
+    private final QCommunityEntity qCommunity = communityEntity;
     private final long MAX_POPULAR_SIZE = 20;
 
     @Override
@@ -75,7 +79,7 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
 
 
     private BooleanExpression eqNickname(String name) {
-        QCommunityEntity entity = QCommunityEntity.communityEntity;
+        QCommunityEntity entity = communityEntity;
         if (name == null || name.isEmpty()) {
             return null;
         }
@@ -83,7 +87,7 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
     }
 
     private BooleanExpression eqTitle(String title) {
-        QCommunityEntity entity = QCommunityEntity.communityEntity;
+        QCommunityEntity entity = communityEntity;
         if (title == null || title.isEmpty()) {
             return null;
         }
@@ -91,7 +95,7 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
     }
 
     private BooleanExpression eqContent(String content) {
-        QCommunityEntity entity = QCommunityEntity.communityEntity;
+        QCommunityEntity entity = communityEntity;
         if (content == null || content.isEmpty()) {
             return null;
         }

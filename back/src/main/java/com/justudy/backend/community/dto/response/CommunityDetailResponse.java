@@ -3,14 +3,14 @@ package com.justudy.backend.community.dto.response;
 import com.justudy.backend.category.dto.request.CategoryResponse;
 import com.justudy.backend.community.domain.CommunityEntity;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Getter
+@Data
 @NoArgsConstructor
-public class CommunityResponse {
+public class CommunityDetailResponse {
     private Long sequence;
     private Long memberSequence;
     private String nickname;
@@ -23,9 +23,9 @@ public class CommunityResponse {
     private Integer loveCount;
 
     @Builder
-    public CommunityResponse(Long sequence, Long memberSequence,String nickname,
-                             CategoryResponse category, String title, String content, Integer viewCount,
-                             LocalDateTime createdTime, LocalDateTime modifiedTime, Integer loveCount) {
+    public CommunityDetailResponse(Long sequence, Long memberSequence, String nickname,
+                                   CategoryResponse category, String title, String content, Integer viewCount,
+                                   LocalDateTime createdTime, LocalDateTime modifiedTime, Integer loveCount) {
         this.sequence = sequence;
         this.memberSequence = memberSequence;
         this.nickname = nickname;
@@ -37,11 +37,11 @@ public class CommunityResponse {
         this.modifiedTime = modifiedTime;
         this.loveCount = loveCount;
     }
-    public static CommunityResponse makeBuilder(CommunityEntity entity) {
+    public static CommunityDetailResponse makeBuilder(CommunityEntity entity) {
         return makeBuilder(entity,0);
     }
-    public static CommunityResponse makeBuilder(CommunityEntity entity, Integer loveCount) {
-        return CommunityResponse.builder()
+    public static CommunityDetailResponse makeBuilder(CommunityEntity entity, Integer loveCount) {
+        return CommunityDetailResponse.builder()
                 .sequence(entity.getSequence())
                 .memberSequence(entity.getMember().getSequence())
                 .nickname(entity.getMember().getNickname())

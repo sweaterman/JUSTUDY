@@ -7,7 +7,7 @@ import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.community.dto.request.CommunityCreate;
 import com.justudy.backend.community.dto.request.CommunityEdit;
-import com.justudy.backend.community.dto.response.CommunityResponse;
+import com.justudy.backend.community.dto.response.CommunityDetailResponse;
 import com.justudy.backend.community.service.CommunityBookmarkService;
 import com.justudy.backend.community.service.CommunityCommentService;
 import com.justudy.backend.community.service.CommunityLoveService;
@@ -18,7 +18,6 @@ import com.justudy.backend.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -68,7 +67,7 @@ class CommunityControllerTest {
     void getCommunity() throws Exception {
         //given
         final Long COMMUNITY_SEQUENCE = 15L;
-        CommunityResponse response = CommunityResponse.builder()
+        CommunityDetailResponse response = CommunityDetailResponse.builder()
                 .sequence(COMMUNITY_SEQUENCE)
                 .title("제목")
                 .content("내용")
@@ -78,7 +77,7 @@ class CommunityControllerTest {
         BDDMockito.given(communityService.readCommunity(COMMUNITY_SEQUENCE))
                 .willReturn(response);
 
-        mockMvc.perform(get(COMMON_URL + "/board/{id}", COMMUNITY_SEQUENCE))
+        mockMvc.perform(get(COMMON_URL + "/board/{id}" , COMMUNITY_SEQUENCE))
                 .andExpect(jsonPath("$.title").value("제목"))
                 .andExpect(jsonPath("$.content").value("내용"))
                 .andExpect(jsonPath("$.category.key").value("frontend"))
@@ -172,7 +171,7 @@ class CommunityControllerTest {
         String json = objectMapper.writeValueAsString(request);
 
         CategoryResponse categoryResponse = new CategoryResponse(NEW_CATEGORY, "Algorithm");
-        CommunityResponse response = makeEditResponse(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, NEW_TITLE, NEW_CONTENT, categoryResponse);
+        CommunityDetailResponse response = makeEditResponse(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, NEW_TITLE, NEW_CONTENT, categoryResponse);
         BDDMockito.given(communityService.updateCommunity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, request))
                 .willReturn(response);
 
@@ -189,12 +188,12 @@ class CommunityControllerTest {
     }
 
 
-    private CommunityResponse makeEditResponse(Long loginSequence,
-                                               Long communitySequence,
-                                               String title,
-                                               String content,
-                                               CategoryResponse categoryResponse) {
-        return CommunityResponse.builder()
+    private CommunityDetailResponse makeEditResponse(Long loginSequence,
+                                                     Long communitySequence,
+                                                     String title,
+                                                     String content,
+                                                     CategoryResponse categoryResponse) {
+        return CommunityDetailResponse.builder()
                 .sequence(communitySequence)
                 .memberSequence(loginSequence)
                 .nickname("nickname")
@@ -205,8 +204,8 @@ class CommunityControllerTest {
                 .build();
     }
 
-    private CommunityResponse makeCommunityResponse(MemberEntity mockMember, CategoryEntity mockCategory) {
-        return CommunityResponse.builder()
+    private CommunityDetailResponse makeCommunityResponse(MemberEntity mockMember, CategoryEntity mockCategory) {
+        return CommunityDetailResponse.builder()
                 .sequence(10L)
                 .memberSequence(mockMember.getSequence())
                 .nickname(mockMember.getNickname())

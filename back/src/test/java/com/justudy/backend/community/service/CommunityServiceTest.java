@@ -33,7 +33,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 class CommunityServiceTest {
 
     private CommunityRepository communityRepository = Mockito.mock(CommunityRepository.class);
-    private CommunityLoveRepository loveRepository = Mockito.mock(CommunityLoveRepository.class);
     private CommunityBookmarkService bookmarkService = Mockito.mock(CommunityBookmarkService.class);
     private CommunityLoveService loveService = Mockito.mock(CommunityLoveService.class);
     private MemberService memberService = Mockito.mock(MemberService.class);
@@ -87,7 +86,7 @@ class CommunityServiceTest {
 
 
         //when
-        CommunityResponse response = communityService.createCommunity(request,
+        CommunityDetailResponse response = communityService.createCommunity(request,
                 memberService.getMember(1L),
                 categoryService.getCategoryEntityByKey(CATEGORY_KEY));
 
@@ -195,7 +194,7 @@ class CommunityServiceTest {
 //                .willReturn(10);
 
         //when
-        CommunityResponse response = communityService.updateCommunity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, new CommunityEdit(NEW_TITLE, NEW_CONTENT, NEW_CATEGORY_KEY));
+        CommunityDetailResponse response = communityService.updateCommunity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, new CommunityEdit(NEW_TITLE, NEW_CONTENT, NEW_CATEGORY_KEY));
 
         //then
         assertThat(response.getTitle()).isEqualTo(NEW_TITLE);
