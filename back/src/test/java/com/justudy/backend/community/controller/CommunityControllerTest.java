@@ -2,9 +2,11 @@ package com.justudy.backend.community.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.justudy.backend.category.domain.CategoryEntity;
+import com.justudy.backend.category.dto.request.CategoryResponse;
 import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.community.dto.request.CommunityCreate;
+import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.community.dto.response.CommunityResponse;
 import com.justudy.backend.community.service.CommunityBookmarkService;
 import com.justudy.backend.community.service.CommunityCommentService;
@@ -15,8 +17,8 @@ import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,8 +29,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,36 +41,55 @@ class CommunityControllerTest {
 
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     ObjectMapper objectMapper;
-
     @MockBean
     MemberService memberService;
-
     @MockBean
     CommunityService communityService;
-
     @MockBean
     CommunityCommentService communityCommentService;
-
     @MockBean
     CommunityLoveService communityLoveService;
-
     @MockBean
     CommunityBookmarkService communityBookmarkService;
-
     @MockBean
     CategoryService categoryService;
 
     private final String COMMON_URL = "/api/community";
 
-    private final String CATEGORY_BACKEND = "backend";
+    private final String CATEGORY_KEY = "backend";
+    private final String CATEGORY_VALUE = "BACK-END";
     private final String TITLE = "테스트제목";
     private final String CONTENT = "테스트내용";
 
     @Test
-    @DisplayName("게시글 생성 [POST /board]")
+    @DisplayName("게시글 조회 [GET] /board/{id}")
+    void getCommunity() throws Exception {
+        //given
+        final Long COMMUNITY_SEQUENCE = 15L;
+        CommunityResponse response = CommunityResponse.builder()
+                .sequence(COMMUNITY_SEQUENCE)
+                .title("제목")
+                .content("내용")
+                .category(new CategoryResponse("frontend", "FRONT-END"))
+                .build();
+
+        BDDMockito.given(communityService.readCommunity(15L))
+                .willReturn(response);
+
+        mockMvc.perform(get(COMMON_URL + "/board/{id}", COMMUNITY_SEQUENCE))
+                .andExpect(jsonPath("$.title").value("제목"))
+                .andExpect(jsonPath("$.content").value("내용"))
+                .andExpect(jsonPath("$.category.key").value("frontend"))
+                .andExpect(jsonPath("$.category.value").value("FRONT-END"))
+                .andDo(print());
+
+        BDDMockito.then(communityService).should(only()).readCommunity(15L);
+    }
+
+    @Test
+    @DisplayName("게시글 생성 [POST] /board")
     void createCommunity() throws Exception {
         //given
         MockHttpSession session = new MockHttpSession();
@@ -75,16 +97,16 @@ class CommunityControllerTest {
 
         MemberEntity mockMember = makeTestMember("test", "test", "test");
         ReflectionTestUtils.setField(mockMember, "sequence", 5L);
-        BDDMockito.given(memberService.getMember(ArgumentMatchers.anyLong()))
+        BDDMockito.given(memberService.getMember(anyLong()))
                 .willReturn(mockMember);
 
-        CategoryEntity mockCategory = new CategoryEntity("backend", 0L);
+        CategoryEntity mockCategory = new CategoryEntity(CATEGORY_KEY, CATEGORY_VALUE, 0L);
         ReflectionTestUtils.setField(mockCategory, "sequence", 7L);
-        BDDMockito.given(categoryService.getCategory("backend"))
+        BDDMockito.given(categoryService.getCategoryEntityByKey("backend"))
                 .willReturn(mockCategory);
 
         CommunityCreate request = CommunityCreate.builder()
-                .category(CATEGORY_BACKEND)
+                .category(CATEGORY_KEY)
                 .title(TITLE)
                 .content(CONTENT)
                 .isHighlighted(false)
@@ -103,6 +125,8 @@ class CommunityControllerTest {
                 .andExpect(jsonPath("$.sequence").value(10L))
                 .andExpect(jsonPath("$.title").value(TITLE))
                 .andExpect(jsonPath("$.content").value(CONTENT))
+                .andExpect(jsonPath("$.category.key").value(CATEGORY_KEY))
+                .andExpect(jsonPath("$.category.value").value(CATEGORY_VALUE))
                 .andDo(print());
 
         BDDMockito.then(communityService).should().createCommunity(request, mockMember, mockCategory);
@@ -125,6 +149,60 @@ class CommunityControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .session(session))
                 .andExpect(status().isNoContent());
+        BDDMockito.then(communityService)
+                .should(times(1))
+                .deleteCommunity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+    }
+
+    @Test
+    @DisplayName("게시글 업데이트 [PUT] /board/{id}")
+    void updateCommunity() throws Exception {
+        //given
+        final Long LOGIN_SEQUENCE = 15L;
+        final Long COMMUNITY_SEQUENCE = 100L;
+
+        final String NEW_TITLE = "수정제목";
+        final String NEW_CONTENT = "수정내용";
+        final String NEW_CATEGORY = "algorithm";
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(SessionConst.LOGIN_USER, LOGIN_SEQUENCE);
+
+        CommunityEdit request = new CommunityEdit(NEW_TITLE, NEW_CONTENT, NEW_CATEGORY);
+        String json = objectMapper.writeValueAsString(request);
+
+        CategoryResponse categoryResponse = new CategoryResponse(NEW_CATEGORY, "Algorithm");
+        CommunityResponse response = makeEditResponse(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, NEW_TITLE, NEW_CONTENT, categoryResponse);
+        BDDMockito.given(communityService.updateCommunity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, request))
+                .willReturn(response);
+
+        //expected
+        mockMvc.perform(put(COMMON_URL + "/board/{id}", COMMUNITY_SEQUENCE)
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(jsonPath("$.title").value(NEW_TITLE))
+                .andExpect(jsonPath("$.content").value(NEW_CONTENT))
+                .andExpect(jsonPath("$.category.key").value(NEW_CATEGORY))
+                .andExpect(jsonPath("$.category.value").value("Algorithm"))
+                .andDo(print());
+    }
+
+
+    private CommunityResponse makeEditResponse(Long loginSequence,
+                                               Long communitySequence,
+                                               String title,
+                                               String content,
+                                               CategoryResponse categoryResponse) {
+        return CommunityResponse.builder()
+                .sequence(communitySequence)
+                .memberSequence(loginSequence)
+                .nickname("nickname")
+                .category(categoryResponse)
+                .title(title)
+                .content(content)
+                .viewCount(15)
+                .build();
     }
 
     private CommunityResponse makeCommunityResponse(MemberEntity mockMember, CategoryEntity mockCategory) {
@@ -132,7 +210,7 @@ class CommunityControllerTest {
                 .sequence(10L)
                 .memberSequence(mockMember.getSequence())
                 .nickname(mockMember.getNickname())
-                .category(mockCategory.getName())
+                .category(new CategoryResponse(mockCategory))
                 .title(TITLE)
                 .content(CONTENT)
                 .viewCount(0)

@@ -1,7 +1,6 @@
 package com.justudy.backend.community.repository;
 
 import com.justudy.backend.community.domain.*;
-import com.justudy.backend.community.dto.response.CommunityResponse;
 import com.justudy.backend.util.PagingUtil;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
@@ -13,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class CommunityRepositoryImpl implements CommunityRepositorySupport {
+public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
 
     private final PagingUtil pagingUtil;
     private final JPAQueryFactory queryFactory;

@@ -32,4 +32,11 @@ public class StudyFrequencyEntity {
     private LocalDateTime createdTime;
     @Column(name = "study_frequency_modified_time")
     private LocalDateTime modifiedTime;
+
+    public void update(StudyEntity study, String week, Date startTime, Date endTime) {
+        this.study = study;
+        this.week = week;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }
