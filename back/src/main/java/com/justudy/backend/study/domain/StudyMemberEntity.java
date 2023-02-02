@@ -1,7 +1,6 @@
-package com.justudy.backend.studyMember.domain;
+package com.justudy.backend.study.domain;
 
 import com.justudy.backend.member.domain.MemberEntity;
-import com.justudy.backend.study.domain.StudyEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,11 +26,13 @@ public class StudyMemberEntity {
     @Column(name = "study_member_alarm", columnDefinition = "TINYINT(1)")
     private Boolean alarm;
     @Column(name = "study_member_king")
-    private Integer king;
+    private Integer badge;
     @Column(name = "study_member_created_time")
     private LocalDateTime createdTime;
+    @Column(name = "study_member_modified_time")
+    private LocalDateTime modifiedTime;
 
-    public void changeKing(Integer king) {
-        this.king = king;
+    public void changeBadge(Integer badge) {
+        this.badge = badge;
     }
 }

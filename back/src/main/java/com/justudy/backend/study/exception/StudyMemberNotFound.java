@@ -1,4 +1,4 @@
-package com.justudy.backend.studyMember.exception;
+package com.justudy.backend.study.exception;
 
 import com.justudy.backend.exception.CustomException;
 
@@ -7,7 +7,7 @@ import com.justudy.backend.exception.CustomException;
  */
 public class StudyMemberNotFound extends CustomException {
 
-    private static final String MESSAGE = "존재하지 않는 스터디 입니다.";
+    private static final String MESSAGE = "존재하지 않는 스터디원 입니다.";
 
     public StudyMemberNotFound() {
         super(MESSAGE);
