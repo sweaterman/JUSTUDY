@@ -1,6 +1,6 @@
 package com.justudy.backend;
 
-import com.justudy.backend.GroupCall.service.StudyRoomService;z
+import com.justudy.backend.GroupCall.service.StudyRoomService;
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.community.dto.request.CommunityCreate;
@@ -240,7 +240,6 @@ public class InitDb {
             categoryRepository.save(createSubCategory("silver", "Silver", 1L, algorithm));
             categoryRepository.save(createSubCategory("gold", "Gold", 1L, algorithm));
             categoryRepository.save(createSubCategory("platinum", "Platinum", 1L, algorithm));
-            categoryRepository.save(createSubCategory("diamond", "Diamond", 1L, algorithm));
         }
 
         private void makeMobileSubCategory(CategoryEntity mobile) {
