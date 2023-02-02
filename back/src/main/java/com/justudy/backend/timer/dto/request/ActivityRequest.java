@@ -6,7 +6,7 @@ import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
-public class MemberActivityRequest {
+public class ActivityRequest {
 
   private Long second;
   private String category;
