@@ -56,14 +56,16 @@ class StudyResumeServiceTest {
     @Autowired
     private StudyResumeRepository studyResumeRepository;
     @Autowired
+    private StudyMemberRepository studyMemberRepository;
+    @Autowired
+    private StudyMemberService studyMemberService;
+    @Autowired
     private UploadFileRepository uploadFileRepository;
     private Pageable pageable;
     private MemberEntity findMember;
     private MemberEntity findMember2;
-    private CategoryEntity categoryEntity;
     UploadFileEntity basicImage;
     Long id;
-    CategoryEntity java;
 
     @Transactional
     @BeforeEach
@@ -173,10 +175,10 @@ class StudyResumeServiceTest {
 //        StudyResumeEntity entity = studyResumeRepository.findById(resumeId).get();
 //        StudyResumeEntity entity2 = studyResumeRepository.findById(resumeId2).get();
 
-        log.info("정보3 : start->{}" );
+        log.info("정보3 : start->{}");
         List<StudyResumeResponse> entity = studyResumeService.readAllStudyResumeByStudy(id);
 
-        log.info("정보3 : end->{}" );
+        log.info("정보3 : end->{}");
         // Then
         org.assertj.core.api.Assertions.assertThat(entity.size()).isEqualTo(2);
     }
@@ -194,15 +196,20 @@ class StudyResumeServiceTest {
         Long resumeId = studyResumeService.createStudyResume(id, create);
         Long resumeId2 = studyResumeService.createStudyResume(id, create2);
         StudyEntity studyEntity = repository.findById(id).get();
-//        studyEntity.addResume(studyResumeRepository.findById(resumeId).get());
-//        studyEntity.addResume(studyResumeRepository.findById(resumeId2).get());
-//        StudyResumeEntity entity = studyResumeRepository.findById(resumeId).get();
-//        StudyResumeEntity entity2 = studyResumeRepository.findById(resumeId2).get();
-//todo studymember만들어야함
-        log.info("정보3 : start->{}" );
+        studyEntity.addStudyResume(studyResumeRepository.findById(resumeId).get());
+        studyEntity.addStudyResume(studyResumeRepository.findById(resumeId2).get());
+        StudyResumeEntity entity3 = studyResumeRepository.findById(resumeId).get();
+        StudyResumeEntity entity2 = studyResumeRepository.findById(resumeId2).get();
+        Long memberid = studyMemberService.createStudyMember(StudyMemberCreate
+                .builder()
+                .studySeq(id)
+                .memberSeq(findMember.getSequence())
+                .build());
+        StudyMemberEntity studyMemberEntity = studyMemberRepository.findById(memberid).get();
+        studyEntity.addStudyMember(studyMemberEntity);
+
         List<StudyResponse> entity = studyResumeService.readAllApplyStudy(findMember.getSequence());
 
-        log.info("정보3 : end->{}" );
         // Then
         org.assertj.core.api.Assertions.assertThat(entity.size()).isEqualTo(2);
     }
@@ -232,22 +239,6 @@ class StudyResumeServiceTest {
                 .github("git")
                 .notion("notiono")
                 .startTime("230202")
-                .build();
-    }
-
-    private CategoryEntity createSubCategory(String name, Long level, CategoryEntity parent) {
-        CategoryEntity subCategory = CategoryEntity.builder()
-                .key(name)
-                .categoryLevel(level)
-                .build();
-        subCategory.addParentCategory(parent);
-        return subCategory;
-    }
-
-    private CategoryEntity createMainCategory(String name, Long level) {
-        return CategoryEntity.builder()
-                .key(name)
-                .categoryLevel(level)
                 .build();
     }
 

@@ -145,6 +145,7 @@ public class StudyController {
      * @param id      스터디 sequence (PK)
      * @param request 수정정보
      * @return ResponseEntity<StudyDetailResponse> 200 OK, 수정된 스터디 정보
+     * 스터디 맴버나 지원서는 수정하지 않음
      */
     @PutMapping("/{id}")
     public ResponseEntity<StudyDetailResponse> updateStudy(@PathVariable("id") Long id, @RequestBody StudyEdit request) {
@@ -152,7 +153,11 @@ public class StudyController {
 
         //todo 이미지 수정
 
-        //활동주기, 스터디 수정
+        //활동주기 수정
+        studyFrequencyService.deleteStudyFrequencyByStudy(id);
+        studyFrequencyService.createStudyFrequencies(id,request.getFrequency());
+        
+        //스터디 수정
         Long studySeq = studyService.updateStudy(id, request);
 
         //스터디 맴버 수정 이건 acceptStudyResume API에서 추가

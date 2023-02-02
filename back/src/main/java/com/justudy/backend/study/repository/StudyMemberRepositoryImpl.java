@@ -4,7 +4,6 @@ import com.justudy.backend.member.domain.QMemberEntity;
 import com.justudy.backend.study.domain.QStudyEntity;
 import com.justudy.backend.study.domain.QStudyMemberEntity;
 import com.justudy.backend.study.domain.StudyMemberEntity;
-import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -27,22 +26,12 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositorySupport {
     }
 
     @Override
-    public void deleteStudyMember(Long id) {
-        queryFactory
-            .delete(qStudyMemberEntity)
-            .where(qStudyMemberEntity.sequence.eq(id))
-            .execute();
-
-    }
-
-
-    @Override
     public List<StudyMemberEntity> readAllRegisterStudy(Long id) {
         return queryFactory
                 .selectFrom(qStudyMemberEntity)
-                .join(qStudyMemberEntity.study,qStudyEntity)
+                .join(qStudyMemberEntity.study, qStudyEntity)
                 .fetchJoin()
-                .join(qStudyMemberEntity.member,qMemberEntity)
+                .join(qStudyMemberEntity.member, qMemberEntity)
                 .fetchJoin()
                 .where(qStudyMemberEntity.member.sequence.eq(id))
                 .fetch();

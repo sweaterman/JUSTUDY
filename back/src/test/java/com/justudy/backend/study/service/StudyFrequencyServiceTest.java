@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 class StudyFrequencyServiceTest {
@@ -82,7 +83,7 @@ class StudyFrequencyServiceTest {
 //        UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
 //                .orElseThrow(UploadFileNotFound::new);
         //member
-        MemberCreate memberRequest = makeMemberCreate(10000);
+        MemberCreate memberRequest = makeMemberCreate(999);
         Long savedMemberId = memberService.saveMember(memberRequest, basicImage);
         findMember = memberRepository.findById(savedMemberId).get();
 
@@ -120,6 +121,7 @@ class StudyFrequencyServiceTest {
         Assertions.assertThat(entity.getEndTime()).isEqualTo(date);
     }
 
+    @Transactional
     @Test
     @Order(2)
     void readAllStudyFrequency() throws ParseException {
@@ -183,7 +185,6 @@ class StudyFrequencyServiceTest {
         // When
         Long frequencyId = studyFrequencyService.createStudyFrequency(id, create);
         studyFrequencyService.deleteStudyFrequency(id, frequencyId);
-        StudyFrequencyEntity entity = studyFrequencyRepository.findById(frequencyId).get();
 
         // Then
         Assertions.assertThat(studyFrequencyService.readAllStudyFrequency(id).size()).isEqualTo(0);
@@ -204,14 +205,17 @@ class StudyFrequencyServiceTest {
         }
 
         // When
+        StudyEntity studyEntity = repository.findById(id).get();
         for (int i = 0; i < 3; i++) {
             freId[i] = studyFrequencyService.createStudyFrequency(id, create[i]);
+            studyEntity.addStudyFrequency(studyFrequencyRepository.findById(freId[i]).get());
         }
-
+        Assertions.assertThat(studyFrequencyService.readAllStudyFrequency(id).size()).isEqualTo(3);
         studyFrequencyService.deleteStudyFrequencyByStudy(id);
 
         // Then
         Assertions.assertThat(studyFrequencyService.readAllStudyFrequency(id).size()).isEqualTo(0);
+        Assertions.assertThat(studyEntity.getFrequency().size()).isEqualTo(0);
     }
 
 //    @Test

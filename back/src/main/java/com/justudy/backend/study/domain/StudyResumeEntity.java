@@ -5,7 +5,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
@@ -35,5 +34,11 @@ public class StudyResumeEntity {
     @Column(name = "respond")
     @Enumerated(EnumType.STRING)
     private StudyResumeRespond respond;
+
+    public void changeStudy(StudyEntity studyEntity) {
+        this.study = studyEntity;
+//        if (!studyEntity.getResumes().contains(this))
+//            studyEntity.getResumes().add(this);
+    }
 
 }

@@ -35,4 +35,10 @@ public class StudyMemberEntity {
     public void changeBadge(Integer badge) {
         this.badge = badge;
     }
+
+    public void changeStudy(StudyEntity studyEntity) {
+        this.study = studyEntity;
+//        if (!studyEntity.getStudyMembers().contains(this))
+//            studyEntity.getStudyMembers().add(this);
+    }
 }

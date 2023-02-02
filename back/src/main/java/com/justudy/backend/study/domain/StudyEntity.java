@@ -40,9 +40,6 @@ public class StudyEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_category_seq")
     private CategoryEntity category;
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "study_room_seq")
-//    private StudyRoomEntity room;
 
     @Column(name = "study_name")
     private String name;
@@ -80,12 +77,40 @@ public class StudyEntity {
         this.leaderSeq = leaderSeq;
     }
 
-    public void addResume(StudyResumeEntity entity) {
+    public void addStudyFrequency(StudyFrequencyEntity entity) {
+        this.frequency.add(entity);
+        if (entity.getStudy() != this) {
+            entity.changeStudy(this);
+        }
+    }
+
+    public void removeStudyFrequency(StudyFrequencyEntity entity) {
+        this.frequency.remove(entity);
+        entity.changeStudy(null);
+    }
+
+    public void addStudyResume(StudyResumeEntity entity) {
         this.resumes.add(entity);
+        if (entity.getStudy() != this) {
+            entity.changeStudy(this);
+        }
+    }
+
+    public void removeStudyResume(StudyResumeEntity entity) {
+        this.resumes.remove(entity);
+        entity.changeStudy(null);
     }
 
     public void addStudyMember(StudyMemberEntity entity) {
         this.studyMembers.add(entity);
+        if (entity.getStudy() != this) {
+            entity.changeStudy(this);
+        }
+    }
+
+    public void removeStudyMember(StudyMemberEntity entity) {
+        this.studyMembers.remove(entity);
+        entity.changeStudy(null);
     }
 
     public void update(String name, String introduction, Integer population, String level, String onlineOffline,

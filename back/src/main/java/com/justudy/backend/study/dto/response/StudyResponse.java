@@ -3,14 +3,11 @@ package com.justudy.backend.study.dto.response;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.domain.StudyMemberEntity;
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,17 +31,11 @@ public class StudyResponse {
 
 
     public static StudyResponse makeBuilder(StudyEntity entity) {
-        //todo work?
+//        log.info("슬라이드5 {}",entity.getStudyMembers().size());
+        ;
+//        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info : {}", studyMember.getMember().getSequence()));
+        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info : {}", studyMember.getMember().getNickname()));
 
-        log.info("로그1 {}", entity.getSequence());
-        log.info("로그1 {}", entity.getStudyMembers().size());
-        for (StudyMemberEntity studyMemberEntity : entity.getStudyMembers()
-        ) {
-            log.info("로그 {}", entity.getLeaderSeq().longValue());
-            if (entity.getLeaderSeq().longValue() == studyMemberEntity.getMember().getSequence().longValue()) {
-                log.info("로그s {}");
-            }
-        }
         String leader = entity.getStudyMembers()
                 .stream()
                 .filter(studyMemberEntity -> entity.getLeaderSeq().longValue() == studyMemberEntity.getMember().getSequence().longValue())

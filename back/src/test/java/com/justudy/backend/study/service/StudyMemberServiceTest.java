@@ -159,9 +159,9 @@ class StudyMemberServiceTest {
         StudyMemberEntity entity = studyMemberRepository.findById(memberId).get();
         StudyMemberEntity entity2 = studyMemberRepository.findById(memberId2).get();
 
+        StudyEntity studyEntity = repository.findById(studyId).get();
         studyMemberService.deleteStudyMemberByStudy(studyId);
 
-        StudyEntity studyEntity = repository.findById(studyId).get();
 
         // Then
         Assertions.assertThat(studyEntity.getStudyMembers().size()).isEqualTo(0);
@@ -183,8 +183,6 @@ class StudyMemberServiceTest {
 
         log.info("정보6 {},{}", studyId,findMember2.getSequence());
         StudyEntity studyEntity = repository.findById(studyId).get();
-        studyEntity.addStudyMember(entity);
-        studyEntity.addStudyMember(entity2);
 
         studyMemberService.exileStudyMember(studyId, findMember2.getSequence());
 
@@ -211,9 +209,7 @@ class StudyMemberServiceTest {
         StudyMemberEntity entity2 = studyMemberRepository.findById(memberId2).get();
 
         StudyEntity studyEntity = repository.findById(studyId).get();
-        studyEntity.addStudyMember(entity);
-        studyEntity.addStudyMember(entity2);
-        studyMemberService.withdrawStudyMember(studyId, findMember2.getSequence());
+        studyMemberService.withdrawStudyMember(studyId,findMember2.getSequence());
 
 
         // Then
