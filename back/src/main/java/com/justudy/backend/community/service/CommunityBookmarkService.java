@@ -33,6 +33,11 @@ public class CommunityBookmarkService {
         bookmarkRepository.delete(findBookmark);
     }
 
+    @Transactional
+    public void deleteBookmarkByCommunity(Long communitySequence) {
+        bookmarkRepository.deleteAllByCommunity(communitySequence);
+    }
+
     private CommunityBookmarkEntity makeNewBookmark(Long loginSequence, Long communitySequence) {
         return new CommunityBookmarkEntity(loginSequence, communitySequence);
     }

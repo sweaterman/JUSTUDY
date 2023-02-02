@@ -5,10 +5,13 @@ import com.justudy.backend.community.domain.QCommunityBookmarkEntity;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
+import javax.persistence.EntityManager;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class CommunityBookmarkRepositoryImpl implements CommunityBookmarkRepositorySupport {
+public class CommunityBookmarkRepositoryImpl implements CommunityBookmarkRepositoryCustom {
+
+    private final EntityManager entityManager;
     private final JPAQueryFactory queryFactory;
     private final QCommunityBookmarkEntity qBookmark = QCommunityBookmarkEntity.communityBookmarkEntity;
 
@@ -18,5 +21,15 @@ public class CommunityBookmarkRepositoryImpl implements CommunityBookmarkReposit
                 .selectFrom(qBookmark)
                 .where(qBookmark.memberSequence.eq(loginSequence), qBookmark.communitySequence.eq(communitySequence))
                 .fetchFirst());
+    }
+
+    @Override
+    public void deleteAllByCommunity(Long communitySequence) {
+        queryFactory
+                .delete(qBookmark)
+                .where(qBookmark.communitySequence.eq(communitySequence))
+                .execute();
+        entityManager.flush();
+        entityManager.clear();
     }
 }
