@@ -1,12 +1,13 @@
 package com.justudy.backend.timer.controller;
 
 import com.justudy.backend.login.infra.SessionConst;
-import com.justudy.backend.timer.dto.request.MemberActivityRequest;
-import com.justudy.backend.timer.dto.request.MemberCalendarRequest;
+import com.justudy.backend.timer.dto.request.ActivityRequest;
+import com.justudy.backend.timer.dto.request.CalendarRequest;
 import com.justudy.backend.timer.dto.response.ActivityCalendarResponse;
 import com.justudy.backend.timer.dto.response.ActivitySubjectResponse;
 import com.justudy.backend.timer.dto.response.MemberActivityYesterdayResponse;
 import com.justudy.backend.timer.service.MemberActivityService;
+import com.justudy.backend.timer.service.RoomActivityService;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -30,10 +31,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ActivityController {
 
   private final MemberActivityService memberActivityService;
+  private final RoomActivityService roomActivityService;
 
   @PostMapping("/member")
   public ResponseEntity<Void> registerPersonalTime(HttpSession session,
-      @RequestBody MemberActivityRequest memberActivityRequest) {
+      @RequestBody ActivityRequest memberActivityRequest) {
 
     log.info("registerPersonalTime {} ", memberActivityRequest);
     Long seq = (Long) session.getAttribute(SessionConst.LOGIN_USER);
@@ -103,14 +105,28 @@ public class ActivityController {
 
   @PostMapping("/member-calendar")
   public ResponseEntity<List<ActivityCalendarResponse>> readCalendarTimeBySeq(
-      @RequestBody  MemberCalendarRequest memberCalendarRequest) {
-    LocalDate wantedMonth = LocalDate.of(memberCalendarRequest.getYear(),memberCalendarRequest.getMonth(),1);
+      @RequestBody CalendarRequest memberCalendarRequest) {
+    LocalDate wantedMonth = LocalDate.of(memberCalendarRequest.getYear(),
+        memberCalendarRequest.getMonth(), 1);
     Date firstDay = Date.valueOf(wantedMonth.withDayOfMonth(1));
     Date lastDay = Date.valueOf(wantedMonth.withDayOfMonth(wantedMonth.lengthOfMonth()));
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(memberActivityService.getCalendarTimeById(firstDay, lastDay, memberCalendarRequest.getSeq()));
+        .body(memberActivityService.getCalendarTimeById(firstDay, lastDay,
+            memberCalendarRequest.getSeq()));
   }
 
+  @PostMapping("/study-calendar")
+  public ResponseEntity<List<ActivityCalendarResponse>> readStudyCalendarTimeBySeq(
+      @RequestBody CalendarRequest roomCalendarRequest) {
+    LocalDate wantedMonth = LocalDate.of(roomCalendarRequest.getYear(),
+        roomCalendarRequest.getMonth(), 1);
+    Date firstDay = Date.valueOf(wantedMonth.withDayOfMonth(1));
+    Date lastDay = Date.valueOf(wantedMonth.withDayOfMonth(wantedMonth.lengthOfMonth()));
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(roomActivityService.getCalendarTimeById(firstDay, lastDay,
+            roomCalendarRequest.getSeq()));
+  }
 
 }
