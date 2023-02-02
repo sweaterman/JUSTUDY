@@ -17,11 +17,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@EnableScheduling
-@EnableAsync
 @RequiredArgsConstructor
 @Component
-public class RankSchedule {
+public class RankDummy {
 
   private final RankService rankService;
   private final MemberActivityService memberActivityService;
@@ -29,7 +27,7 @@ public class RankSchedule {
 
 
   //  @Scheduled(cron = "30 * * * * *")//초 분 시 일 월 요일
-  @Scheduled(cron = "0 0 1 * * ?")
+
   public void renewalPersonYesterdayRank() {
     Date agoDay = Date.valueOf(LocalDate.now().minusDays(1));
     Date curDay = Date.valueOf(LocalDate.now());
@@ -41,7 +39,6 @@ public class RankSchedule {
     }
   }
 
-  @Scheduled(cron = "0 10 1 * * ?")
   public void renewalPersonWeekRank() {
     Date agoDay = Date.valueOf(LocalDate.now().minusWeeks(1));
     Date curDay = Date.valueOf(LocalDate.now());
@@ -54,7 +51,6 @@ public class RankSchedule {
 
   }
 
-  @Scheduled(cron = "0 20 1 * * ?")
   public void renewalPersonMonthRank() {
     Date agoDay = Date.valueOf(LocalDate.now().minusMonths(1));
     Date curDay = Date.valueOf(LocalDate.now());
@@ -67,7 +63,6 @@ public class RankSchedule {
 
   }
 
-  @Scheduled(cron = "0 30 1 * * ?")
   public void renewalStudyYesterdayRank() {
     Date agoDay = Date.valueOf(LocalDate.now().minusDays(1));
     Date curDay = Date.valueOf(LocalDate.now());
@@ -80,7 +75,6 @@ public class RankSchedule {
 
   }
 
-  @Scheduled(cron = "0 40 1 * * ?")
   public void renewalStudyWeekRank() {
     Date agoDay = Date.valueOf(LocalDate.now().minusWeeks(1));
     Date curDay = Date.valueOf(LocalDate.now());
@@ -93,7 +87,6 @@ public class RankSchedule {
 
   }
 
-  @Scheduled(cron = "0 50 1 * * ?")
   public void renewalStudyMonthRank() {
     Date agoDay = Date.valueOf(LocalDate.now().minusMonths(1));
     Date curDay = Date.valueOf(LocalDate.now());
