@@ -8,7 +8,6 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
@@ -19,7 +18,7 @@ public class StudyCreate {
     private String topCategory;
     private String bottomCategory;
     private String name;
-    private String leader;
+    private Long leaderSeq;
     private String introduction;
     private Integer population;
     private String level;
