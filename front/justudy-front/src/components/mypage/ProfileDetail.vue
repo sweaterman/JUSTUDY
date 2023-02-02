@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <OneLineInfo :category="`닉네임`" :detail="user.nickname" />
-        <OneLineInfo :category="`희망 스택`" :detail="user.category.join(',')" />
+        <OneLineInfo :category="`희망 스택`" :detail="user?.category?.join(',')" />
         <OneLineInfo :category="`희망 진로`" :detail="user.dream ? user.dream : '없음'" />
 
         <v-row justify="center" align="center">

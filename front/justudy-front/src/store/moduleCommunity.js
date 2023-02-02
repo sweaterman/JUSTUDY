@@ -6,7 +6,8 @@ export default {
     state: {
         CommunityBoard: [],
         topCategory: [],
-        CommunityContent: {}
+        CommunityContent: {},
+        bookMarkList: []
     },
     getters: {},
     mutations: {
@@ -24,6 +25,9 @@ export default {
         },
         GET_TOPCATEGORY(state, payload) {
             state.topCategory = payload;
+        },
+        getBookMarkList(state, payload) {
+            state.bookMarkList = payload;
         }
     },
     actions: {
@@ -97,6 +101,12 @@ export default {
                     withCredentials: true
                 }
             );
+        },
+        async getBookMarkList({commit}, {id}) {
+            const API_URL = `${port}community/board/bookmark/${id}`;
+            await axios.get(API_URL).then(res => {
+                commit('getBookMarkList', res.data);
+            });
         },
         getTopCategory() {}
     }
