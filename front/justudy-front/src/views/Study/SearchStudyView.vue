@@ -25,9 +25,9 @@
                         <v-col cols="12">
                             <v-tabs color="black" v-model="tab">
                                 <v-tabs-slider color="yellow"></v-tabs-slider>
-                                <v-tab><h1>전체</h1></v-tab>
-                                <v-tab v-for="top in topCategories" :key="top" @click="changeBottom(top)">
-                                    <h1>{{ top }}</h1>
+                                <v-tab @click="changeBottom('전체')"><h1>전체</h1></v-tab>
+                                <v-tab v-for="top in topCategories" :key="top.value" @click="changeBottom(top.key)">
+                                    <h1>{{ top.value }}</h1>
                                 </v-tab>
                             </v-tabs>
                         </v-col>
@@ -38,11 +38,11 @@
                     <!-- 하위 카테고리 buttons -->
                     <v-row>
                         <v-col cols="12">
-                            <div class="btnGroup" v-for="bot in bottomCategories" :key="bot">
-                                <v-btn outlined class="btnBot" rounded x-large @click="doSearch('category', bot)">
+                            <div class="btnGroup" v-for="bot in bottomCategories" :key="bot.value">
+                                <v-btn outlined class="btnBot" rounded x-large @click="doSearch('category', bot.key)">
                                     <!-- 추후 SVG 아이콘으로 수정예정 -->
                                     <v-avatar size="50"><img src="@/assets/icon_70x70.png" alt="stackIcon" /></v-avatar>
-                                    {{ bot }}
+                                    {{ bot.value }}
                                 </v-btn>
                             </div>
                         </v-col>
@@ -58,7 +58,7 @@
                     </v-row>
 
                     <!-- 스터디 리스트 -->
-                    <StudyList :studies="promotionStudies" :type="promotion"></StudyList>
+                    <StudyList :studies="promotionStudies.studyResponse" :type="promotion"></StudyList>
 
                     <!-- 더보기 버튼 -->
                     <v-row v-if="checkMore">
@@ -103,20 +103,19 @@ export default {
     components: {StudyList},
     created() {
         //초기에 전체 데이터 받아오기
-        this.$store.dispatch('getPromotionStudies', 0, null, null);
-        if (this.promotionStudies.check == false) {
+        this.$store.dispatch('moduleStudy/getPromotionStudies', 1, null, null);
+        if (this.promotionStudies.checkMore == false) {
             this.checkMore = false;
         }
-
         //카테고리 받아오기
-        this.$store.dispatch('getTopCategories');
+        this.$store.dispatch('moduleStudy/getTopCategories');
+        this.$store.dispatch('moduleStudy/getBottomCategories', '전체');
     },
     computed: {
-        ...mapState['promotionStudies'],
-        ...mapState['morePromotionStudies'],
-        ...mapState['topCategories'],
-        ...mapState['bottomCategories'],
-        ...mapState['checkMore']
+        ...mapState('moduleStudy', ['promotionStudies']),
+        ...mapState('moduleStudy', ['topCategories']),
+        ...mapState('moduleStudy', ['morePromotionStudies']),
+        ...mapState('moduleStudy', ['bottomCategories'])
     },
     data() {
         return {
@@ -130,9 +129,9 @@ export default {
             searchSelect: null,
             searchContent: null,
 
-            pageNum: 0,
+            pageNum: 1,
             promotion: 'promotion',
-            items: ['이름', '스터디장'],
+            items: ['스터디명', '스터디장'],
             checkMore: true
         };
     },
@@ -146,7 +145,7 @@ export default {
 
                     //데이터 검색하고 받아오기.
                     this.pageNum = 0;
-                    this.$store.dispatch('getPromotionStudies', 0, this.searchSelect, this.searchContent);
+                    this.$store.dispatch('moduleStudy/getPromotionStudies', 0, this.searchSelect, this.searchContent);
                 }
             } else if (type == 'category') {
                 //카테고리를 클릭했기때문에 검색기능은 값이 있을 경우에 null로 만듦
@@ -161,23 +160,24 @@ export default {
 
                 //데이터 검색하고 받아오기.
                 this.pageNum = 0;
-                this.$store.dispatch('getPromotionStudies', 0, 'category', this.choice);
+                this.$store.dispatch('moduleStudy/getPromotionStudies', 0, 'category', this.choice);
             }
         },
         remove(i) {
             this.choice = this.choice.filter(element => element !== i);
+            this.doSearch('category');
         },
         getMore() {
             this.pageNum = this.pageNum + 1;
             if (this.searchSelect == null && this.choice == []) {
                 //전체 스터디에서 더보기
-                this.$store.dispatch('getMorePromotionStudies', this.pageNum, null, null);
+                this.$store.dispatch('moduleStudy/getMorePromotionStudies', this.pageNum, null, null);
             } else if (this.searchSelect != null) {
                 //검색 버튼을 누른 상태
-                this.$store.dispatch('getMorePromotionStudies', this.pageNum, this.searchSelect, this.searchContent);
+                this.$store.dispatch('moduleStudy/getMorePromotionStudies', this.pageNum, this.searchSelect, this.searchContent);
             } else {
                 //하부 카테고리를 선택한 상태
-                this.$store.dispatch('getMorePromotionStudies', this.pageNum, 'category', this.choice);
+                this.$store.dispatch('moduleStudy/getMorePromotionStudies', this.pageNum, 'category', this.choice);
             }
 
             //기존에있는 스터디와 추가된 스터디 내용 합쳐주기
@@ -195,7 +195,12 @@ export default {
         },
         //top에 해당하는 bottom 카테고리 가져오기
         changeBottom(top) {
-            this.$store.dispatch('getBottomCategories', top);
+            if (top == '전체') {
+                this.choice = [];
+                this.$store.dispatch('moduleStudy/getBottomCategories', '전체');
+            } else {
+                this.$store.dispatch('moduleStudy/getBottomCategories', top);
+            }
         }
     }
 };
