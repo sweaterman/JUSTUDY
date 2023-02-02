@@ -103,7 +103,7 @@ export default {
             //내가 가입한 스터디이면?
             else {
                 console.log(this.type);
-                this.$router.push({path: `/study/detail/${seq}`});
+                this.$router.push({path: `/study/${seq}/info`});
             }
         },
         deleteApply(click, seq) {
