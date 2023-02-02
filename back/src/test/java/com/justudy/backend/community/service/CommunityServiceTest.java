@@ -49,7 +49,6 @@ class CommunityServiceTest {
     @BeforeEach
     void setUp() {
         communityService = new CommunityService(communityRepository,
-                loveRepository,
                 categoryService,
                 bookmarkService,
                 loveService
