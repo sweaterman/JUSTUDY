@@ -1,6 +1,7 @@
 import TimerStart from '@/views/Timer/TimerStart.vue';
 import TimerMyStatistic from '@/views/Timer/TimerMyStatistic.vue';
-import FriendStatisticsView from '@/views/Timer/FriendStatistics.vue';
+import TimerFriendStatistic from '@/views/Timer/TimerFriendStatistic.vue';
+
 import RankingAllView from '@/views/Timer/RankingAll.vue';
 export default [
     {
@@ -17,7 +18,7 @@ export default [
     {
         path: '/timer/friend-statistics',
         name: 'TimerFriendStatistic',
-        component: FriendStatisticsView
+        component: TimerFriendStatistic
     },
     {
         path: '/timer/ranking',
