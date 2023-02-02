@@ -2,15 +2,16 @@ package com.justudy.backend.community.controller;
 
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.service.CategoryService;
-import com.justudy.backend.community.domain.CommunityBookmarkEntity;
-import com.justudy.backend.community.domain.CommunityLoveEntity;
-import com.justudy.backend.community.dto.request.*;
+import com.justudy.backend.community.dto.request.CommunityCommentCreate;
+import com.justudy.backend.community.dto.request.CommunityCommentEdit;
+import com.justudy.backend.community.dto.request.CommunityCreate;
+import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.community.dto.response.CommunityCommentResponse;
 import com.justudy.backend.community.dto.response.CommunityResponse;
 import com.justudy.backend.community.service.CommunityBookmarkService;
 import com.justudy.backend.community.service.CommunityCommentService;
-import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.community.service.CommunityLoveService;
+import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.service.MemberService;
@@ -31,9 +32,9 @@ public class CommunityController {
 
     private final MemberService memberService;
     private final CommunityService communityService;
-    private final CommunityCommentService communityCommentService;
     private final CommunityLoveService communityLoveService;
     private final CommunityBookmarkService communityBookmarkService;
+    private final CommunityCommentService communityCommentService;
     private final CategoryService categoryService;
     // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
@@ -85,12 +86,12 @@ public class CommunityController {
     /**
      * 커뮤니티 상세 정보를 가져오는 API
      *
-     * @param id 커뮤니티 sequence (PK)
+     * @param communitySequence PK
      * @return ResponseEntity<CommunityResponse> 200 OK, 커뮤니티 상세 정보
      */
     @GetMapping("/board/{id}")
-    public ResponseEntity<CommunityResponse> readCommunityById(@PathVariable("id") Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunity(id));
+    public ResponseEntity<CommunityResponse> readCommunityById(@PathVariable("id") Long communitySequence) {
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunity(communitySequence));
     }
 
     /**
@@ -103,7 +104,7 @@ public class CommunityController {
     public ResponseEntity<CommunityResponse> createCommunity(@RequestBody CommunityCreate request, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         MemberEntity findMember = memberService.getMember(loginSequence);
-        CategoryEntity category = categoryService.getCategory(request.getCategory());
+        CategoryEntity category = categoryService.getCategoryEntityByKey(request.getCategory());
 
         CommunityResponse response = communityService.createCommunity(request, findMember, category);
 
@@ -122,7 +123,6 @@ public class CommunityController {
                                                              @RequestBody CommunityEdit request,
                                                              HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-
         CommunityResponse response = communityService.updateCommunity(loginSequence, communitySequence, request);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -156,28 +156,33 @@ public class CommunityController {
     // ---------------------------------------------------------------북마크---------------------------------------------------------------
 
     /**
-     * 북마크 생성 API
-     *
-     * @param id 커뮤니티 sequence (PK)
-     * @return ResponseEntity<Void>> 201 CREATED
+     * 북마크 생성 API - DONE
+     * @param communitySequence
+     * @param session
      */
     @PostMapping("/board/{id}/bookmark")
-    public ResponseEntity<Void> createBookmark(@PathVariable("id") long id, @RequestBody CommunityBookmarkCreate request) {
-        communityBookmarkService.createBookmark(request);
+    public ResponseEntity<Void> createBookmark(@PathVariable("id") Long communitySequence,
+                                               HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        communityBookmarkService.createBookmark(loginSequence, communitySequence);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
     /**
      * 북마크 삭제 API
      *
-     * @param id 커뮤니티 sequence (PK)
+     * @param communitySequence 커뮤니티 sequence (PK)
      * @return ResponseEntity<List < CommunityResponse>> 204 NO_CONTENT'
      * 북마크는 유저기능아닌가? 매핑 바꿔야할듯
      * 복합키로 delete 어캐구현하지
      */
-    @DeleteMapping("/board/{id}/bookmark/{userId}")
-    public ResponseEntity<List<CommunityResponse>> deleteBookmark(@PathVariable("id") Long id,@PathVariable("userId") Long userId) {
-        communityBookmarkService.deleteBookmark(id,userId);
+    @DeleteMapping("/board/{id}/bookmark")
+    public ResponseEntity<Void> deleteBookmark(@PathVariable("id") Long communitySequence,
+                                               HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        communityBookmarkService.deleteBookmark(loginSequence, communitySequence);
+
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
@@ -186,53 +191,34 @@ public class CommunityController {
      *
      * @return ResponseEntity<List < CommunityResponse>> 200 OK, 유저별 북마크 목록
      */
-    @GetMapping("/board/bookmark/{userId}")
-    public ResponseEntity<List<CommunityBookmarkEntity>> readAllBookmarkByMember(@PathVariable("userId") Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityBookmarkService.readAllBookmarkByMember(userId));
-    }
+//    @GetMapping("/board/bookmark/{userId}")
+//    public ResponseEntity<List<CommunityBookmarkEntity>> readAllBookmarkByMember(@PathVariable("userId") Long userId) {
+//        return ResponseEntity.status(HttpStatus.OK).body(communityBookmarkService.readAllBookmarkByMember(userId));
+//    }
     // ---------------------------------------------------------------좋아요---------------------------------------------------------------
 
     /**
      * 좋아요 생성 API
-     *
-     * @param id 커뮤니티 sequence
-     * @return ResponseEntity<Void> 좋아요 처음누를시 201 CREATED 이미 눌렀을 시 409 CONFLICT
      */
     @PostMapping("/board/{id}/love")
-    public ResponseEntity<Void> createLove(@PathVariable("id") long id, CommunityLoveCreate request) {
-        if (communityLoveService.createLove(request) == 1) return ResponseEntity.status(HttpStatus.CREATED).body(null);
-        else//create 실패
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
-    }
+    public ResponseEntity<Void> createLove(@PathVariable("id") Long communitySequence,
+                                           HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        communityLoveService.createLove(loginSequence, communitySequence);
 
-    /**
-     * 좋아요 수정 API
-     *
-     * @param id 커뮤니티 sequence
-     * @return ResponseEntity<Void> 200 OK
-     * 일반 유저가 사용 x
-     */
-    @PutMapping("/board/{id}/love")
-    public ResponseEntity<List<CommunityResponse>> updateBookmark(@PathVariable("id") long id, CommunityLoveCreate request) {
-        if (communityLoveService.updateLove(request) == 1) return ResponseEntity.status(HttpStatus.OK).body(null);
-        else//update 실패
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
     /**
      * 좋아요 삭제 API
-     *
-     * @param id     커뮤니티 sequence
-     * @param loveId 좋아요 sequence
-     * @return ResponseEntity<Void> 204 NO_CONTENT
-     * 게시글 삭제시 모든 좋아요 삭제
      */
-    @DeleteMapping("/board/{id}/love/{loveId}")
-    public ResponseEntity<Void> deleteLove(@PathVariable("id") Long id, @PathVariable("loveId") Long loveId) {
-        if (communityLoveService.deleteAllLoveByCommunity(loveId) == 1)
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        else//update 실패
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+    @DeleteMapping("/board/{id}/love")
+    public ResponseEntity<Void> deleteLove(@PathVariable("id") Long communitySequence,
+                                           HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        communityLoveService.deleteLove(loginSequence, communitySequence);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
     /**
@@ -243,10 +229,10 @@ public class CommunityController {
      * @return ResponseEntity<List < CommunityLove>> 200 OK, 좋아요 정보 목록
      * 관리전용
      */
-    @GetMapping("/board/love/{id}")
-    public ResponseEntity<List<CommunityLoveEntity>> readLove(@PathVariable("id") Long id, @PathVariable("id") Long loveId) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityLoveService.readAllLoveByCommunity(loveId));
-    }
+//    @GetMapping("/board/love/{id}")
+//    public ResponseEntity<List<CommunityLoveEntity>> readLove(@PathVariable("id") Long id, @PathVariable("id") Long loveId) {
+//        return ResponseEntity.status(HttpStatus.OK).body(communityLoveService.readAllLoveByCommunity(loveId));
+//    }
 
 
 // ---------------------------------------------------------------댓글---------------------------------------------------------------

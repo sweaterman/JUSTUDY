@@ -10,7 +10,7 @@ import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.community.repository.CommunityLoveRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.member.domain.MemberEntity;
-import com.justudy.backend.member.exception.ForbiddenRequest;
+import com.justudy.backend.exception.ForbiddenRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +30,8 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
     private final CommunityLoveRepository communityLoveRepository;
     private final CategoryService categoryService;
+    private final CommunityBookmarkService bookmarkService;
+    private final CommunityLoveService loveService;
 
     private final int MAX_PAGE_SIZE = 10;
     private final int MAX_NOTICE_SIZE = 3;
@@ -52,6 +54,8 @@ public class CommunityService {
                 .orElseThrow(CommunityNotFound::new);
         validateWriter(loginSequence, community.getMember().getSequence());
         community.deleteCommunity();
+        bookmarkService.deleteBookmarkByCommunity(communitySequence);
+        loveService.deleteAllByCommunity(communitySequence);
         return community.getSequence();
     }
 
@@ -61,7 +65,8 @@ public class CommunityService {
                 .orElseThrow(CommunityNotFound::new);
         community.addViewCount();
 
-        Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
+//        Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
+        Integer loveCount = 0;
 
         return CommunityResponse.makeBuilder(community, loveCount);
     }
@@ -74,9 +79,10 @@ public class CommunityService {
 
         community.update(request.getTitle(),
                 request.getContent(),
-                categoryService.getCategory(request.getCategory()));
+                categoryService.getCategoryEntityByKey(request.getCategory()));
 
-        Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
+//        Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
+        Integer loveCount = 0;
         return CommunityResponse.makeBuilder(community, loveCount);
     }
 

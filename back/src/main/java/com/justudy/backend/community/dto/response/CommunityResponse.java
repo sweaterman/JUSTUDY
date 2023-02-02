@@ -1,5 +1,6 @@
 package com.justudy.backend.community.dto.response;
 
+import com.justudy.backend.category.dto.request.CategoryResponse;
 import com.justudy.backend.community.domain.CommunityEntity;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ public class CommunityResponse {
     private Long sequence;
     private Long memberSequence;
     private String nickname;
-    private String category;
+    private CategoryResponse category;
     private String title;
     private String content;
     private Integer viewCount;
@@ -23,7 +24,7 @@ public class CommunityResponse {
 
     @Builder
     public CommunityResponse(Long sequence, Long memberSequence,String nickname,
-                             String category, String title, String content, Integer viewCount,
+                             CategoryResponse category, String title, String content, Integer viewCount,
                              LocalDateTime createdTime, LocalDateTime modifiedTime, Integer loveCount) {
         this.sequence = sequence;
         this.memberSequence = memberSequence;
@@ -44,7 +45,7 @@ public class CommunityResponse {
                 .sequence(entity.getSequence())
                 .memberSequence(entity.getMember().getSequence())
                 .nickname(entity.getMember().getNickname())
-                .category(entity.getCategory().getName())
+                .category(new CategoryResponse(entity.getCategory()))
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .viewCount(entity.getViewCount())
