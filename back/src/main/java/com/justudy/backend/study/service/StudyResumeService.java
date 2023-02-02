@@ -30,6 +30,7 @@ public class StudyResumeService {
     private final MemberRepository memberRepository;
     private final StudyResumeRepository studyResumeRepository;
 
+    @Transactional
     public Long createStudyResume(Long studySequence, StudyResumeCreate request) {
         StudyEntity studyEntity = studyRepository.findById(studySequence)
                 .orElseThrow(StudyNotFound::new);
@@ -44,6 +45,7 @@ public class StudyResumeService {
         return StudyResumeResponse.makeBuilder(entity);
     }
 
+    @Transactional
     public void deleteStudyResume(Long id) {
         studyResumeRepository.deleteById(id);
     }

@@ -1,6 +1,6 @@
 package com.justudy.backend;
 
-import com.justudy.backend.GroupCall.service.StudyRoomService;
+import com.justudy.backend.GroupCall.service.StudyRoomService;z
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.community.dto.request.CommunityCreate;
@@ -149,15 +149,16 @@ public class InitDb {
                 long memberSequence = 50 + (3*i);
                 MemberEntity findmember = memberService.getMember(memberSequence);
                 for(int count = 1; count <= 5; count++){
-                    if(count%2 == 0) studyService.createStudy(StudyCreate.builder().name("스터디"+memberSequence)
-                                    .leader("50L").introduction("아주 좋은 스터디1").population(32).level("초보")
-                                    .meeting("온라인").github("https://github.com").notion("https://notion.com")
-                            .build(),basicImage);
-                    else studyService.createStudy(StudyCreate.builder().name("스터디"+memberSequence)
-                            .leader("50L").introduction("아주 좋은 스터디2").population(32).level("초보")
+                    if (count % 2 == 0) studyService.createStudy(StudyCreate.builder().name("스터디" + memberSequence)
+                            .leaderSeq(50L).introduction("아주 좋은 스터디1").population(32).level("초보")
                             .meeting("온라인").github("https://github.com").notion("https://notion.com")
-                            .build(),basicImage);
-
+                            .topCategory("backend").bottomCategory("java")
+                            .build(), basicImage);
+                    else studyService.createStudy(StudyCreate.builder().name("스터디" + memberSequence)
+                            .leaderSeq(50L).introduction("아주 좋은 스터디2").population(32).level("초보")
+                            .meeting("온라인").github("https://github.com").notion("https://notion.com")
+                            .topCategory("backend").bottomCategory("java")
+                            .build(), basicImage);
                 }
             }
         }
@@ -239,6 +240,7 @@ public class InitDb {
             categoryRepository.save(createSubCategory("silver", "Silver", 1L, algorithm));
             categoryRepository.save(createSubCategory("gold", "Gold", 1L, algorithm));
             categoryRepository.save(createSubCategory("platinum", "Platinum", 1L, algorithm));
+            categoryRepository.save(createSubCategory("diamond", "Diamond", 1L, algorithm));
         }
 
         private void makeMobileSubCategory(CategoryEntity mobile) {

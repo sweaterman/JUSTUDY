@@ -61,7 +61,7 @@ public class StudyMemberService {
         studyMemberRepository.deleteStudyMember(id, memberId);
     }
 
-
+    @Transactional
     public void withdrawStudyMember(Long id, Long memberId) {
         StudyEntity studyEntity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
@@ -73,6 +73,20 @@ public class StudyMemberService {
         if (checkLeader(leaderSeq, memberId)) throw new InvalidRequest("memberId", "리더는 탈퇴할 수 없습니다");
         //스터디 탈퇴
         studyMemberRepository.deleteStudyMember(id, memberId);
+    }
+
+    @Transactional
+    public Long createStudyMember(StudyMemberCreate request) {
+        MemberEntity memberEntity = memberRepository.findById(request.getMemberSeq()).orElseThrow(MemberNotFound::new);
+        StudyEntity studyEntity = studyRepository.findById(request.getStudySeq()).orElseThrow(StudyNotFound::new);
+
+        return studyMemberRepository.save(request.toEntity(memberEntity, studyEntity)).getSequence();
+    }
+
+    @Transactional
+    public void deleteStudyMemberByStudy(Long studySequence) {
+        studyMemberRepository.deleteStudyMemberByStudy(studySequence);
+
     }
 
     private boolean checkLeader(Long leaderSeq, Long memberId) {
@@ -88,15 +102,4 @@ public class StudyMemberService {
                 .orElseThrow(StudyMemberNotFound::new);
     }
 
-    public Long createStudyMember(StudyMemberCreate request) {
-        MemberEntity memberEntity = memberRepository.findById(request.getMemberSeq()).orElseThrow(MemberNotFound::new);
-        StudyEntity studyEntity = studyRepository.findById(request.getStudySeq()).orElseThrow(StudyNotFound::new);
-
-        return studyMemberRepository.save(request.toEntity(memberEntity, studyEntity)).getSequence();
-    }
-
-    public void deleteStudyMemberByStudy(Long studySequence) {
-        studyMemberRepository.deleteStudyMemberByStudy(studySequence);
-
-    }
 }
