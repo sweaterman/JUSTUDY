@@ -35,6 +35,14 @@ public class StudyRepositoryImpl implements StudyRepositorySupport {
         return pagingUtil.getSliceImpl(pageable, query, qStudyEntity.getClass());
     }
 
+    @Override
+    public StudyEntity findByLeaderSeq(Long leaderSeq) {
+        return queryFactory
+                .selectFrom(qStudyEntity)
+                .where(qStudyEntity.leaderSeq.eq(leaderSeq))
+                .fetchFirst();
+    }
+
     private BooleanExpression inCategories(List<String> subCategories) {
         QStudyEntity entity = QStudyEntity.studyEntity;
         if (subCategories == null || subCategories.isEmpty()) {

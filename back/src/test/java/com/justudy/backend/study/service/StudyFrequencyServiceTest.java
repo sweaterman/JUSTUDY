@@ -82,7 +82,7 @@ class StudyFrequencyServiceTest {
 //        UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
 //                .orElseThrow(UploadFileNotFound::new);
         //member
-        MemberCreate memberRequest = makeMemberCreate(100);
+        MemberCreate memberRequest = makeMemberCreate(10000);
         Long savedMemberId = memberService.saveMember(memberRequest, basicImage);
         findMember = memberRepository.findById(savedMemberId).get();
 
@@ -107,7 +107,7 @@ class StudyFrequencyServiceTest {
         StudyFrequencyCreate create = makeFrequencyRequest(id);
 
         SimpleDateFormat formatter = new SimpleDateFormat("HH시 mm분");
-        Date date = formatter.parse("18:00");
+        Date date = formatter.parse("18시 00분");
 
         // When
         Long frequencyId = studyFrequencyService.createStudyFrequency(id, create);
@@ -125,7 +125,7 @@ class StudyFrequencyServiceTest {
     void readAllStudyFrequency() throws ParseException {
         // Given
         SimpleDateFormat formatter = new SimpleDateFormat("HH시 mm분");
-        Date date = formatter.parse("18:00");
+        Date date = formatter.parse("18시 00분");
 
         StudyFrequencyCreate[] create = new StudyFrequencyCreate[3];
         Long[] freId = new Long[3];
@@ -148,27 +148,27 @@ class StudyFrequencyServiceTest {
         }
     }
 
-    @Transactional
-    @Test
-    @Order(3)
-    void updateStudyFrequency() throws ParseException {
-//        SimpleDateFormat formatter = new SimpleDateFormat("HH시 mm분");
-//        Date date = formatter.parse("18:00");
-//
-//        StudyFrequencyCreate create = makeFrequencyRequest(id);
-//        Long frequencyId = studyFrequencyService.createStudyFrequency(id, create);
-//
-//        StudyFrequencyEdit edit = makeFrequencyEditRequest(id);
-//
-//        // When
-//        studyFrequencyService.updateStudyFrequency(id,edit);
-//
-//        // Then
-//        Assertions.assertThat(entity.getSequence()).isEqualTo(frequencyId);
-//        Assertions.assertThat(entity.getWeek()).isEqualTo("월");
-//        Assertions.assertThat(entity.getStartTime()).isEqualTo(date);
-//        Assertions.assertThat(entity.getEndTime()).isEqualTo(date);
-    }
+//    @Transactional
+//    @Test
+//    @Order(3)
+//    void updateStudyFrequency() throws ParseException {
+////        SimpleDateFormat formatter = new SimpleDateFormat("HH시 mm분");
+////        Date date = formatter.parse("18:00");
+////
+////        StudyFrequencyCreate create = makeFrequencyRequest(id);
+////        Long frequencyId = studyFrequencyService.createStudyFrequency(id, create);
+////
+////        StudyFrequencyEdit edit = makeFrequencyEditRequest(id);
+////
+////        // When
+////        studyFrequencyService.updateStudyFrequency(id,edit);
+////
+////        // Then
+////        Assertions.assertThat(entity.getSequence()).isEqualTo(frequencyId);
+////        Assertions.assertThat(entity.getWeek()).isEqualTo("월");
+////        Assertions.assertThat(entity.getStartTime()).isEqualTo(date);
+////        Assertions.assertThat(entity.getEndTime()).isEqualTo(date);
+//    }
 
     @Transactional
     @Test
@@ -178,7 +178,7 @@ class StudyFrequencyServiceTest {
         StudyFrequencyCreate create = makeFrequencyRequest(id);
 
         SimpleDateFormat formatter = new SimpleDateFormat("HH시 mm분");
-        Date date = formatter.parse("18:00");
+        Date date = formatter.parse("18시 00분");
 
         // When
         Long frequencyId = studyFrequencyService.createStudyFrequency(id, create);
@@ -195,7 +195,7 @@ class StudyFrequencyServiceTest {
     void deleteStudyFrequencyByStudy() throws ParseException {
         // Given
         SimpleDateFormat formatter = new SimpleDateFormat("HH시 mm분");
-        Date date = formatter.parse("18:00");
+        Date date = formatter.parse("18시 00분");
 
         StudyFrequencyCreate[] create = new StudyFrequencyCreate[3];
         Long[] freId = new Long[3];
@@ -214,14 +214,14 @@ class StudyFrequencyServiceTest {
         Assertions.assertThat(studyFrequencyService.readAllStudyFrequency(id).size()).isEqualTo(0);
     }
 
-    @Test
-    @Order(6)
-    void readStudyFrequency() {
-    }
+//    @Test
+//    @Order(6)
+//    void readStudyFrequency() {
+//    }
 
     private StudyFrequencyCreate makeFrequencyRequest(Long study) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("HH시 mm분");
-        Date date = formatter.parse("18:00");
+        Date date = formatter.parse("18시 00분");
         return StudyFrequencyCreate
                 .builder()
                 .studySeq(study)

@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
@@ -21,18 +22,21 @@ public class StudyEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "study_seq")
     private Long sequence;
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudyMemberEntity> studyMembers = new ArrayList<>();
+    @Builder.Default
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
+    private List<StudyResumeEntity> resumes = new ArrayList<>();
+    @Builder.Default
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_member_seq")
-    private List<StudyMemberEntity> studyMembers;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_resume_seq")
-    private List<StudyResumeEntity> resumes;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_community_seq")
-    private List<StudyCommunityEntity> communities;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_frequency_seq")
-    private List<StudyFrequencyEntity> frequency;
+    private List<StudyCommunityEntity> communities = new ArrayList<>();
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudyFrequencyEntity> frequency = new ArrayList<>();
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_category_seq")
     private CategoryEntity category;
@@ -51,7 +55,7 @@ public class StudyEntity {
     @Column(name = "study_level")
     private String level;
     @Column(name = "study_online_offline")
-    private String onlineOffline;
+    private String meeting;
     @Column(name = "study_is_open", columnDefinition = "TINYINT(1)")
     private Boolean isOpen;
     @Column(name = "study_github")
@@ -76,13 +80,21 @@ public class StudyEntity {
         this.leaderSeq = leaderSeq;
     }
 
+    public void addResume(StudyResumeEntity entity) {
+        this.resumes.add(entity);
+    }
+
+    public void addStudyMember(StudyMemberEntity entity) {
+        this.studyMembers.add(entity);
+    }
+
     public void update(String name, String introduction, Integer population, String level, String onlineOffline,
                        Boolean isOpen, String github, String notion, String startTime) {
         this.name = name;
         this.introduction = introduction;
         this.population = population;
         this.level = level;
-        this.onlineOffline = onlineOffline;
+        this.meeting = onlineOffline;
         this.isOpen = isOpen;
         this.github = github;
         this.notion = notion;

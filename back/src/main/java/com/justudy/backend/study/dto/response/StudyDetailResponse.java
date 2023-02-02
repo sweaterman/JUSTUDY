@@ -1,15 +1,12 @@
 package com.justudy.backend.study.dto.response;
 
-import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.study.domain.StudyEntity;
-import com.justudy.backend.study.domain.StudyMemberEntity;
 import com.justudy.backend.study.domain.StudyResumeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,25 +16,26 @@ import java.util.stream.Collectors;
 @Builder
 public class StudyDetailResponse {
     private Long sequence;
-    private List<StudyMemberResponse> member;
-    private List<Long> resumeSeq;
-    private List<StudyFrequencyResponse> frequency;
+    private String name;
+    private String leader;
+    private Integer population;
     private String topCategory;
     private String bottomCategory;
-    private String name;
-    private Long leaderSeq;
     private String introduction;
-    private Integer population;
+    private List<StudyMemberResponse> member;
+    private List<StudyFrequencyResponse> frequency;
     private String level;
-    private String onlineOffline;
+    private String meeting;
     private Boolean isOpen;
     private String github;
     private String notion;
-    private Long imageSequence;
-    private LocalDateTime createdTime;
     private String startTime;
+    private List<Long> resumeSeq;
+    private Long leaderSeq;
+    private Long imageSequence;
 
     public static StudyDetailResponse makeBuilder(StudyEntity entity) {
+        //todo imagefile
         return StudyDetailResponse.builder()
                 .sequence(entity.getSequence())
                 .member(entity.getStudyMembers()
@@ -53,19 +51,18 @@ public class StudyDetailResponse {
                         .stream()
                         .map(StudyFrequencyResponse::makeBuilder)
                         .collect(Collectors.toList()))
-                .topCategory(entity.getCategory().getParentCategory().getKey())
-                .bottomCategory(entity.getCategory().getKey())
+                .topCategory(entity.getCategory().getParentCategory().getValue())
+                .bottomCategory(entity.getCategory().getValue())
                 .name(entity.getName())
                 .leaderSeq(entity.getLeaderSeq())
                 .introduction(entity.getIntroduction())
                 .population(entity.getPopulation())
                 .level(entity.getLevel())
-                .onlineOffline(entity.getOnlineOffline())
+                .meeting(entity.getMeeting())
                 .isOpen(entity.getIsOpen())
                 .github(entity.getGithub())
                 .notion(entity.getNotion())
-                .imageSequence(entity.getImageFile().getSequence())
-                .createdTime(entity.getCreatedTime())
+//                .imageSequence(entity.getImageFile().getSequence())
                 .startTime(entity.getStartTime())
                 .build();
     }

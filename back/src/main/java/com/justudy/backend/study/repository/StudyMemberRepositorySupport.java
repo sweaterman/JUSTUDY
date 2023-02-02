@@ -9,6 +9,7 @@ import java.util.List;
 public interface StudyMemberRepositorySupport {
 
     void deleteStudyMember(Long id, Long memberId);
+    void deleteStudyMember(Long id);
 
     List<StudyMemberEntity> readAllRegisterStudy(Long id);
 

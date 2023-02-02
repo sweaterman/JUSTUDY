@@ -43,8 +43,7 @@ public class StudyFrequencyService {
     public Long createStudyFrequency(Long studySequence, StudyFrequencyCreate request) {
         StudyEntity studyEntity = studyRepository.findById(studySequence)
                 .orElseThrow(StudyNotFound::new);
-        Long studyFrequencySeq = studyFrequencyRepository.save(request.toEntity(studyEntity)).getSequence();
-        return studyFrequencySeq;
+        return studyFrequencyRepository.save(request.toEntity(studyEntity)).getSequence();
 
     }
 

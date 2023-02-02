@@ -6,6 +6,7 @@ import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.study.domain.StudyEntity;
+import com.justudy.backend.study.domain.StudyMemberEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.dto.request.StudyEdit;
 import com.justudy.backend.study.dto.response.StudyDetailResponse;
@@ -35,7 +36,7 @@ public class StudyService {
     private final CategoryRepository categoryRepository;
     private final StudyResumeRepository studyResumeRepository;
     private final StudyFrequencyRepository studyFrequencyRepository;
-    private final int MAX_STUDY_PAGE_SIZE = 1;
+    private final int MAX_STUDY_PAGE_SIZE = 9;
 
     //crud readall search readopen readopencategory readsubcategory myapplystudy myapplyCRUD mystudyall
     // studycommunityCRUD studycommunitycommentCRUD studyfrequencyCRUD
@@ -48,16 +49,17 @@ public class StudyService {
         CategoryEntity categoryEntity = categoryRepository.findByKey(request.getBottomCategory()).orElseThrow(InvalidRequest::new);
 //        memberRepository.find
         //todo leaderSeq 멤버에서 검색해야함
-        Long leaderSeq=1L;
-        StudyEntity study = request.toEntity(categoryEntity, leaderSeq);
+        Long leaderSeq = 1L;
+//        StudyEntity study = request.toEntity(categoryEntity, leaderSeq);
+        StudyEntity study = request.toEntity(categoryEntity);
         study.changeImage(basicImage);
         return studyRepository.save(study).getSequence();
     }
 
-    public StudyResponse readStudy(Long studySequence) {
+    public StudyDetailResponse readStudy(Long studySequence) {
         StudyEntity entity = studyRepository.findById(studySequence)
                 .orElseThrow(StudyNotFound::new);
-        return StudyResponse.makeBuilder(entity);
+        return StudyDetailResponse.makeBuilder(entity);
     }
 
     public StudyDetailResponse readDetailStudy(Long studySequence) {
@@ -99,15 +101,21 @@ public class StudyService {
         String studyName = null;
 
         //todo 스터디장 스터디명 검색
-        if (type!=null &&type.compareTo("leader") == 0) {
+        if (type != null && type.compareTo("leader") == 0) {
             studyLeader = search;
-        } else if (type!=null &&type.compareTo("name") == 0) {
+        } else if (type != null && type.compareTo("name") == 0) {
             studyName = search;
         }
+        Slice<StudyEntity> studyEntities = studyRepository.findAllBySearchOption(pageable, sub, studyLeader, studyName);
         Slice<StudyResponse> studyResponses = studyRepository.findAllBySearchOption(pageable, sub, studyLeader, studyName)
                 .map(StudyResponse::makeBuilder);
+
+
         return StudySearchResponse.makeBuilder(studyResponses.stream().collect(Collectors.toList()), studyResponses.isLast());
     }
 
 
+    public StudyEntity getStudyByLeader(Long leaderSeq) {
+        return studyRepository.findByLeaderSeq(leaderSeq);
+    }
 }

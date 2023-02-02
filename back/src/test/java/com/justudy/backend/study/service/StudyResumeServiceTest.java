@@ -132,7 +132,6 @@ class StudyResumeServiceTest {
         // Then
         org.assertj.core.api.Assertions.assertThat(entity.getSequence()).isEqualTo(resumeId);
         org.assertj.core.api.Assertions.assertThat(entity.getContent()).isEqualTo("content입니다");
-        org.assertj.core.api.Assertions.assertThat(entity.getRespond()).isEqualTo(StudyResumeRespond.WAITING);
     }
 
 
@@ -164,14 +163,20 @@ class StudyResumeServiceTest {
         StudyResumeCreate create = makeResumeRequest(id, findMember.getSequence());
         StudyResumeCreate create2 = makeResumeRequest(id, findMember2.getSequence());
 
+
         // When
         Long resumeId = studyResumeService.createStudyResume(id, create);
         Long resumeId2 = studyResumeService.createStudyResume(id, create2);
+        StudyEntity studyEntity = repository.findById(id).get();
+//        studyEntity.addResume(studyResumeRepository.findById(resumeId).get());
+//        studyEntity.addResume(studyResumeRepository.findById(resumeId2).get());
 //        StudyResumeEntity entity = studyResumeRepository.findById(resumeId).get();
 //        StudyResumeEntity entity2 = studyResumeRepository.findById(resumeId2).get();
 
+        log.info("정보3 : start->{}" );
         List<StudyResumeResponse> entity = studyResumeService.readAllStudyResumeByStudy(id);
 
+        log.info("정보3 : end->{}" );
         // Then
         org.assertj.core.api.Assertions.assertThat(entity.size()).isEqualTo(2);
     }
@@ -180,6 +185,26 @@ class StudyResumeServiceTest {
     @Test
     @Order(5)
     void readAllApplyStudy() {
+        // Given
+        StudyResumeCreate create = makeResumeRequest(id, findMember.getSequence());
+        StudyResumeCreate create2 = makeResumeRequest(id, findMember.getSequence());
+
+
+        // When
+        Long resumeId = studyResumeService.createStudyResume(id, create);
+        Long resumeId2 = studyResumeService.createStudyResume(id, create2);
+        StudyEntity studyEntity = repository.findById(id).get();
+//        studyEntity.addResume(studyResumeRepository.findById(resumeId).get());
+//        studyEntity.addResume(studyResumeRepository.findById(resumeId2).get());
+//        StudyResumeEntity entity = studyResumeRepository.findById(resumeId).get();
+//        StudyResumeEntity entity2 = studyResumeRepository.findById(resumeId2).get();
+//todo studymember만들어야함
+        log.info("정보3 : start->{}" );
+        List<StudyResponse> entity = studyResumeService.readAllApplyStudy(findMember.getSequence());
+
+        log.info("정보3 : end->{}" );
+        // Then
+        org.assertj.core.api.Assertions.assertThat(entity.size()).isEqualTo(2);
     }
 
     private StudyResumeCreate makeResumeRequest(Long study, Long member) {

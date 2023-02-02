@@ -13,6 +13,7 @@ import com.justudy.backend.study.exception.StudyNotFound;
 import com.justudy.backend.study.repository.StudyMemberRepository;
 import com.justudy.backend.study.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StudyMemberService {
@@ -43,7 +45,7 @@ public class StudyMemberService {
         //가입한 번호의 스터디 리스트 출력
         return studyMemberEntities
                 .stream()
-                .map(studyMemberEntity -> studyMemberEntity.getStudy())
+                .map(StudyMemberEntity::getStudy)
                 .map(StudyResponse::makeBuilder)
                 .collect(Collectors.toList());
     }
@@ -53,12 +55,17 @@ public class StudyMemberService {
         StudyEntity studyEntity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
         //todo session 아이디와 리더 비교해서 아닐시 오류 권한이 없습니다
-        //스터디원인지 확인
-        StudyMemberEntity MemberEntity = checkStudyMember(studyEntity.getStudyMembers(), memberId);
+        //todo 스터디원인지 확인
+        StudyMemberEntity memberEntity = checkStudyMember(studyEntity.getStudyMembers(), memberId);
+        log.info("정보5 {},{},{}",memberEntity.getStudy().getSequence(),memberEntity.getMember().getSequence(),memberEntity.getSequence());
         studyEntity.getLeaderSeq();
 
         //스터디원 추방
         studyMemberRepository.deleteStudyMember(id, memberId);
+//        studyMemberRepository.deleteById(memberEntity.getSequence());
+//        studyMemberRepository.delete(memberEntity);
+        log.info("정보8 {},{},{}",memberEntity.getStudy().getSequence(),memberEntity.getMember().getSequence(),memberEntity.getSequence());
+
     }
 
     @Transactional
@@ -95,9 +102,10 @@ public class StudyMemberService {
     }
 
     private StudyMemberEntity checkStudyMember(List<StudyMemberEntity> studyMembers, Long memberId) {
+        log.info("정보4 : {}",studyMembers.size());
         return studyMembers
                 .stream()
-                .filter(studyMemberEntity -> studyMemberEntity.getSequence().equals(memberId))
+                .filter(studyMemberEntity -> studyMemberEntity.getMember().getSequence().equals(memberId))
                 .findFirst()
                 .orElseThrow(StudyMemberNotFound::new);
     }

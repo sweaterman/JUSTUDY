@@ -1,5 +1,7 @@
 package com.justudy.backend.study.repository;
 
+import com.justudy.backend.member.domain.QMemberEntity;
+import com.justudy.backend.study.domain.QStudyEntity;
 import com.justudy.backend.study.domain.QStudyMemberEntity;
 import com.justudy.backend.study.domain.StudyMemberEntity;
 import com.querydsl.core.Tuple;
@@ -13,6 +15,8 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositorySupport {
 
     private final JPAQueryFactory queryFactory;
     private final QStudyMemberEntity qStudyMemberEntity = QStudyMemberEntity.studyMemberEntity;
+    private final QStudyEntity qStudyEntity = QStudyEntity.studyEntity;
+    private final QMemberEntity qMemberEntity = QMemberEntity.memberEntity;
 
     @Override
     public void deleteStudyMember(Long id, Long memberId) {
@@ -22,11 +26,24 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositorySupport {
                 .execute();
     }
 
+    @Override
+    public void deleteStudyMember(Long id) {
+        queryFactory
+            .delete(qStudyMemberEntity)
+            .where(qStudyMemberEntity.sequence.eq(id))
+            .execute();
+
+    }
+
 
     @Override
     public List<StudyMemberEntity> readAllRegisterStudy(Long id) {
         return queryFactory
                 .selectFrom(qStudyMemberEntity)
+                .join(qStudyMemberEntity.study,qStudyEntity)
+                .fetchJoin()
+                .join(qStudyMemberEntity.member,qMemberEntity)
+                .fetchJoin()
                 .where(qStudyMemberEntity.member.sequence.eq(id))
                 .fetch();
     }

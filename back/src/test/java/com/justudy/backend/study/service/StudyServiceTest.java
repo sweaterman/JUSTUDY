@@ -4,8 +4,6 @@ import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.file.domain.UploadFileEntity;
-import com.justudy.backend.file.exception.UploadFileNotFound;
-import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.repository.UploadFileRepository;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.member.domain.MemberEntity;
@@ -51,6 +49,7 @@ class StudyServiceTest {
     UploadFileService uploadFileService;
     Long id;
     CategoryEntity java;
+    UploadFileEntity basicImage;
     @Autowired
     private StudyRepository repository;
     @Autowired
@@ -60,9 +59,26 @@ class StudyServiceTest {
     private Pageable pageable;
     private MemberEntity findMember;
     private CategoryEntity categoryEntity;
-    UploadFileEntity basicImage;
 
     StudyServiceTest() {
+    }
+
+    private static MemberCreate makeMemberCreate(int number) {
+        MemberCreate request = MemberCreate.builder()
+                .userId("test" + number)
+                .password("1234")
+                .passwordCheck("1234")
+                .username("테스트" + number)
+                .nickname("테스트 봇" + number)
+                .ssafyId("08" + number)
+                .phone(String.valueOf(number))
+                .email("testEmail" + number + "@ssafy.com")
+                .mmId(number + "test")
+                .region("SEOUL")
+                .category(new String[]{"java", "Spring"})
+                .introduction("테스트 봇" + number + " 입니다.")
+                .build();
+        return request;
     }
 
     @Transactional
@@ -75,18 +91,11 @@ class StudyServiceTest {
         log.info("정보1 : start set up->{}", findMember);
         UploadFileEntity basicMemberImage = new UploadFileEntity("basic_member.png", "basic_member.png");
         uploadFileRepository.save(basicMemberImage);
-//        basicImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//
-//        UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
-//                .orElseThrow(UploadFileNotFound::new);
+
 
         MemberCreate memberRequest = makeMemberCreate(100);
         Long savedMemberId = memberService.saveMember(memberRequest, basicImage);
         findMember = memberRepository.findById(savedMemberId).get();
-
-//        CategoryEntity backend = createMainCategory("backend", 0L);
-//        categoryRepository.save(backend);
-//        java = createSubCategory("Java", 1L, backend);
-//        categoryRepository.save(java);
 
 
         log.info("정보2 : end set up->{}", findMember.getSequence());
@@ -100,15 +109,14 @@ class StudyServiceTest {
         StudyCreate create = makeRequest(findMember);
         // When
         Long studyId = service.createStudy(create, basicImage);
-        id = studyId;
         StudyEntity study = repository.findById(studyId).get();
 
         // Then
 
-        Assertions.assertThat(study.getLeaderSeq()).isEqualTo(findMember.getSequence());
         Assertions.assertThat(study.getName()).isEqualTo("test study");
         Assertions.assertThat(study.getIntroduction()).isEqualTo("소개입니당");
         Assertions.assertThat(study.getStartTime()).isEqualTo("230202");
+        Assertions.assertThat(study.getLeaderSeq()).isEqualTo(findMember.getSequence());
     }
 
     @Test
@@ -120,7 +128,7 @@ class StudyServiceTest {
 
         // When
         Long id = service.createStudy(create, basicImage);
-        StudyResponse study = service.readStudy(id);
+        StudyDetailResponse study = service.readStudy(id);
 
         // Then
 
@@ -179,7 +187,6 @@ class StudyServiceTest {
         Assertions.assertThat(repository.findAll().size()).isEqualTo(2);
     }
 
-
     @Transactional
     @Test
     @Order(5)
@@ -217,7 +224,6 @@ class StudyServiceTest {
         Assertions.assertThat(study.getIntroduction()).isEqualTo("소개입니당");
         Assertions.assertThat(study.getMember().size()).isEqualTo(1);
     }
-
 
     private StudyCreate makeRequest(MemberEntity findMember) {
         return StudyCreate
@@ -258,7 +264,6 @@ class StudyServiceTest {
                 .build();
     }
 
-
     private CategoryEntity createSubCategory(String name, Long level, CategoryEntity parent) {
         CategoryEntity subCategory = CategoryEntity.builder()
                 .key(name)
@@ -273,23 +278,5 @@ class StudyServiceTest {
                 .key(name)
                 .categoryLevel(level)
                 .build();
-    }
-
-    private static MemberCreate makeMemberCreate(int number) {
-        MemberCreate request = MemberCreate.builder()
-                .userId("test" + number)
-                .password("1234")
-                .passwordCheck("1234")
-                .username("테스트" + number)
-                .nickname("테스트 봇" + number)
-                .ssafyId("08" + number)
-                .phone(String.valueOf(number))
-                .email("testEmail" + number + "@ssafy.com")
-                .mmId(number + "test")
-                .region("SEOUL")
-                .category(new String[]{"java", "Spring"})
-                .introduction("테스트 봇" + number + " 입니다.")
-                .build();
-        return request;
     }
 }
