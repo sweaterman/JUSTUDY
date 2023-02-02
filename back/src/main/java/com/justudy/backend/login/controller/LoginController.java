@@ -16,15 +16,22 @@ import javax.servlet.http.HttpSession;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/login")
+@RequestMapping("/api")
 public class LoginController {
 
     private final LoginService loginService;
 
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody @Validated LoginRequest request, HttpSession session) {
         Long loginSequence = loginService.loginProcess(request);
         session.setAttribute(SessionConst.LOGIN_USER, loginSequence);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpSession session) {
+        session.invalidate();
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
