@@ -21,6 +21,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.kurento.client.Continuation;
 import org.kurento.client.MediaPipeline;
 import org.slf4j.Logger;
@@ -50,6 +52,7 @@ public class Room implements Closeable {
   private final ConcurrentMap<String, UserSession> participants = new ConcurrentHashMap<>();
   private final MediaPipeline pipeline;
   private final String name;
+  private LocalDateTime startTime;
 
   public String getName() {
     return name;
@@ -61,6 +64,11 @@ public class Room implements Closeable {
     this.name = roomName;
     this.pipeline = pipeline;
     log.info("ROOM {} has been created", roomName);
+    startTime = LocalDateTime.now();
+  }
+
+  public LocalDateTime getStartTime(){
+    return startTime;
   }
 
   //컨테이너에서 해당 객체가 삭제되기전에 동작한다. 해당 기능으로 인해 close함수를 자동으로 들어가서 auto close까지 가능해진다.
