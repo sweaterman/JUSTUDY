@@ -49,6 +49,15 @@ public class CommunityController {
         return ResponseEntity.status(HttpStatus.OK).body(communityService.search(page, type, search));
     }
 
+    @GetMapping("/board/test")
+    public List<CommunityListResponse> getList(@ModelAttribute CommunitySearchRequest request) {
+
+        log.info("request = {}", request);
+        CommunitySearch condition = new CommunitySearch(request);
+        log.info("condition = {}", condition);
+        return communityService.getCommunities(condition);
+    }
+
     /**
      * 일주일간 좋아요 많은 커뮤니티 정보를 가져오는 API
      *

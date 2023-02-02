@@ -23,6 +23,27 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
     private final QCommunityEntity qCommunity = communityEntity;
     private final long MAX_POPULAR_SIZE = 20;
 
+
+    @Override
+    public List<CommunityEntity> getAllList(CommunitySearch communitySearch) {
+        List<CommunityEntity> list = queryFactory.selectFrom(communityEntity)
+                .where(communityEntity.isHighlighted.eq(true))
+                .limit(communitySearch.getNoticeBoardSize())
+                .orderBy(communityEntity.sequence.desc())
+                .fetch();
+
+        List<CommunityEntity> commonList = queryFactory.selectFrom(communityEntity)
+                .where(communityEntity.isHighlighted.eq(false))
+                .limit(communitySearch.getSize() - list.size())
+                .offset(communitySearch.getOffsetWithNotice(list.size()))
+                .orderBy(communityEntity.sequence.desc())
+                .fetch();
+        if (!list.addAll(commonList)) {
+            throw new ImportBoardFail("community", "게시글 리스트 가져오기 실패");
+        }
+        return list;
+    }
+
     @Override
     public Page<CommunityEntity> findAllByNotice(Pageable pageable) {
         JPQLQuery<CommunityEntity> query = queryFactory

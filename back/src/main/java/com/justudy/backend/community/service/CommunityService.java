@@ -83,6 +83,15 @@ public class CommunityService {
         return CommunityDetailResponse.makeBuilder(community, countOfLove);
     }
 
+    public List<CommunityListResponse> getCommunities(CommunitySearch condition) {
+        return communityRepository.getAllList(condition).stream()
+                .map(community -> {
+                    CommunityListResponse response = new CommunityListResponse(community);
+                    Integer countOfLove = loveService.getCountOfLove(response.getSequence());
+                    return response.ChangeCountOfLove(countOfLove);
+                }).collect(Collectors.toList());
+    }
+
     @Transactional
     public List<CommunityDetailResponse> readAllCommunity(int page, String category) {
         Pageable pageable = PageRequest.of(page, MAX_PAGE_SIZE);

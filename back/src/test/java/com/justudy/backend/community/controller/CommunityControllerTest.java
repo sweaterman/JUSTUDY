@@ -63,8 +63,16 @@ class CommunityControllerTest {
     private final String CONTENT = "테스트내용";
 
     @Test
-    @DisplayName("게시글 조회 [GET] /board/{id}")
-    void getCommunity() throws Exception {
+    @DisplayName("게시글 조회 ")
+    void getList() throws Exception {
+
+        mockMvc.perform(get(COMMON_URL + "/board/test?category=backend&type=name&search=하이"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("게시글 상세 조회 [GET] /board/{id}")
+    void getCommunityDetail() throws Exception {
         //given
         final Long COMMUNITY_SEQUENCE = 15L;
         CommunityDetailResponse response = CommunityDetailResponse.builder()
