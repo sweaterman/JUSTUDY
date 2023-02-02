@@ -87,10 +87,10 @@ class StudyFrequencyServiceTest {
         findMember = memberRepository.findById(savedMemberId).get();
 
         //category
-        CategoryEntity backend = createMainCategory("backend", 0L);
-        categoryRepository.save(backend);
-        java = createSubCategory("Java", 1L, backend);
-        categoryRepository.save(java);
+//        CategoryEntity backend = createMainCategory("backend", 0L);
+//        categoryRepository.save(backend);
+//        java = createSubCategory("Java", 1L, backend);
+//        categoryRepository.save(java);
 
         //study
         StudyCreate create = makeRequest(findMember);

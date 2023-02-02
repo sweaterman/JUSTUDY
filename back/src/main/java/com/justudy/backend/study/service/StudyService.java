@@ -99,9 +99,9 @@ public class StudyService {
         String studyName = null;
 
         //todo 스터디장 스터디명 검색
-        if (type.compareTo("스터디장") == 0) {
+        if (type!=null &&type.compareTo("leader") == 0) {
             studyLeader = search;
-        } else if (type.compareTo("스터디명") == 0) {
+        } else if (type!=null &&type.compareTo("name") == 0) {
             studyName = search;
         }
         Slice<StudyResponse> studyResponses = studyRepository.findAllBySearchOption(pageable, sub, studyLeader, studyName)

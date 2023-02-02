@@ -83,10 +83,10 @@ class StudyServiceTest {
         Long savedMemberId = memberService.saveMember(memberRequest, basicImage);
         findMember = memberRepository.findById(savedMemberId).get();
 
-        CategoryEntity backend = createMainCategory("backend", 0L);
-        categoryRepository.save(backend);
-        java = createSubCategory("Java", 1L, backend);
-        categoryRepository.save(java);
+//        CategoryEntity backend = createMainCategory("backend", 0L);
+//        categoryRepository.save(backend);
+//        java = createSubCategory("Java", 1L, backend);
+//        categoryRepository.save(java);
 
 
         log.info("정보2 : end set up->{}", findMember.getSequence());
