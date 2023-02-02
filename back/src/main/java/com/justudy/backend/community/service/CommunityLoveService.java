@@ -37,6 +37,10 @@ public class CommunityLoveService {
         loveRepository.deleteAllByCommunity(communitySequence);
     }
 
+    public Integer getCountOfLove(Long communitySequence) {
+        return loveRepository.countOfLove(communitySequence);
+    }
+
     private CommunityLoveEntity makeNewLove(Long loginSequence, Long communitySequence) {
         return new CommunityLoveEntity(loginSequence, communitySequence);
     }

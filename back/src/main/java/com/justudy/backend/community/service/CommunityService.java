@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 public class CommunityService {
 
     private final CommunityRepository communityRepository;
-    private final CommunityLoveRepository communityLoveRepository;
     private final CategoryService categoryService;
     private final CommunityBookmarkService bookmarkService;
     private final CommunityLoveService loveService;
@@ -65,10 +64,8 @@ public class CommunityService {
                 .orElseThrow(CommunityNotFound::new);
         community.addViewCount();
 
-//        Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
-        Integer loveCount = 0;
-
-        return CommunityResponse.makeBuilder(community, loveCount);
+        Integer countOfLove = loveService.getCountOfLove(communitySequence);
+        return CommunityResponse.makeBuilder(community, countOfLove);
     }
 
     @Transactional
@@ -81,9 +78,8 @@ public class CommunityService {
                 request.getContent(),
                 categoryService.getCategoryEntityByKey(request.getCategory()));
 
-//        Integer loveCount = communityLoveRepository.readLoveCountByCommunity(communitySequence);
-        Integer loveCount = 0;
-        return CommunityResponse.makeBuilder(community, loveCount);
+        Integer countOfLove = loveService.getCountOfLove(communitySequence);
+        return CommunityResponse.makeBuilder(community, countOfLove);
     }
 
     @Transactional
