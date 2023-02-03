@@ -14,15 +14,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class StudyResumeCreate {
-    private StudyEntity study;
-    private MemberEntity member;
+    private Long studySeq;
+    private Long memberSeq;
     private String content;
 
-    public StudyResumeEntity toEntity() {
+    public StudyResumeEntity toEntity(StudyEntity studyEntity, MemberEntity memberEntity) {
         return StudyResumeEntity
                 .builder()
-                .study(study)
-                .member(member)
+                .study(studyEntity)
+                .member(memberEntity)
                 .content(content)
                 .createdTime(LocalDateTime.now())
                 .respond(StudyResumeRespond.WAITING)

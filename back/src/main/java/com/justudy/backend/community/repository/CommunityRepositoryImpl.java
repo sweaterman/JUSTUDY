@@ -1,7 +1,9 @@
 package com.justudy.backend.community.repository;
 
-import com.justudy.backend.community.domain.*;
-import com.justudy.backend.community.dto.response.CommunityResponse;
+import com.justudy.backend.community.domain.CommunityEntity;
+import com.justudy.backend.community.domain.QCommunityEntity;
+import com.justudy.backend.community.dto.request.CommunitySearch;
+import com.justudy.backend.community.exception.ImportBoardFail;
 import com.justudy.backend.util.PagingUtil;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
@@ -12,13 +14,42 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
+import static com.justudy.backend.category.domain.QCategoryEntity.categoryEntity;
+import static com.justudy.backend.community.domain.QCommunityEntity.communityEntity;
+import static com.justudy.backend.member.domain.QMemberEntity.memberEntity;
+
 @RequiredArgsConstructor
-public class CommunityRepositoryImpl implements CommunityRepositorySupport {
+public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
 
     private final PagingUtil pagingUtil;
     private final JPAQueryFactory queryFactory;
-    private final QCommunityEntity qCommunity = QCommunityEntity.communityEntity;
+    private final QCommunityEntity qCommunity = communityEntity;
     private final long MAX_POPULAR_SIZE = 20;
+
+
+    @Override
+    public List<CommunityEntity> getAllList(CommunitySearch communitySearch) {
+        List<CommunityEntity> list = queryFactory.selectFrom(communityEntity)
+                .join(communityEntity.member, memberEntity).fetchJoin()
+                .where(communityEntity.isHighlighted.eq(true))
+                .limit(communitySearch.getNoticeBoardSize())
+                .orderBy(communityEntity.sequence.desc())
+                .fetch();
+
+        List<CommunityEntity> commonList = queryFactory.selectFrom(communityEntity)
+                .join(communityEntity.member, memberEntity).fetchJoin()
+                .join(communityEntity.category, categoryEntity).fetchJoin()
+                .where(communityEntity.isHighlighted.eq(false),
+                        eqCategory(communitySearch.getCategory()))
+                .limit(communitySearch.getSize() - list.size())
+                .offset(communitySearch.getOffsetWithNotice(list.size()))
+                .orderBy(communityEntity.sequence.desc())
+                .fetch();
+        if (!list.addAll(commonList)) {
+            throw new ImportBoardFail("community", "게시글 리스트 가져오기 실패");
+        }
+        return list;
+    }
 
     @Override
     public Page<CommunityEntity> findAllByNotice(Pageable pageable) {
@@ -74,9 +105,16 @@ public class CommunityRepositoryImpl implements CommunityRepositorySupport {
                 .fetch();
     }
 
+    private BooleanExpression eqCategory(String category) {
+        if (category == null || category.isEmpty()) {
+            return null;
+        }
+        return communityEntity.category.key.eq(category);
+    }
+
 
     private BooleanExpression eqNickname(String name) {
-        QCommunityEntity entity = QCommunityEntity.communityEntity;
+        QCommunityEntity entity = communityEntity;
         if (name == null || name.isEmpty()) {
             return null;
         }
@@ -84,7 +122,7 @@ public class CommunityRepositoryImpl implements CommunityRepositorySupport {
     }
 
     private BooleanExpression eqTitle(String title) {
-        QCommunityEntity entity = QCommunityEntity.communityEntity;
+        QCommunityEntity entity = communityEntity;
         if (title == null || title.isEmpty()) {
             return null;
         }
@@ -92,7 +130,7 @@ public class CommunityRepositoryImpl implements CommunityRepositorySupport {
     }
 
     private BooleanExpression eqContent(String content) {
-        QCommunityEntity entity = QCommunityEntity.communityEntity;
+        QCommunityEntity entity = communityEntity;
         if (content == null || content.isEmpty()) {
             return null;
         }

@@ -10,5 +10,7 @@ import java.util.List;
 
 public interface StudyRepositorySupport {
 
-    Slice<StudyEntity> findAllBySearchOption(Pageable pageable, List<String> sub, Long leaderSeq, String studyName);
+    Slice<StudyEntity> findAllBySearchOption(Pageable pageable, List<String> sub, String studyLeader, String studyName);
+
+    StudyEntity findByLeaderSeq(Long leaderSeq);
 }

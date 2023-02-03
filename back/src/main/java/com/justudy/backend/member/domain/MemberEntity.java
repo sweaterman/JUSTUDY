@@ -4,7 +4,7 @@ package com.justudy.backend.member.domain;
 import com.justudy.backend.common.enum_util.Level;
 import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.file.domain.UploadFileEntity;
-import com.justudy.backend.member.exception.ForbiddenRequest;
+import com.justudy.backend.exception.ForbiddenRequest;
 import lombok.*;
 
 import javax.persistence.*;
@@ -97,7 +97,7 @@ public class MemberEntity {
     private LocalDateTime createdTime;
 
     @Column(name = "member_modified_time")
-    private LocalDateTime localDateTime;
+    private LocalDateTime modifiedTime;
 
     @Builder
     public MemberEntity(String userId, String password,
@@ -131,7 +131,7 @@ public class MemberEntity {
         this.isBanned = false;
 
         this.createdTime = LocalDateTime.now();
-        this.localDateTime = createdTime;
+        this.modifiedTime = createdTime;
     }
 
     public MemberEditor.MemberEditorBuilder toEditor() {
@@ -157,6 +157,7 @@ public class MemberEntity {
         dream = memberEditor.getDream();
         introduction = memberEditor.getIntroduction();
         imageFile = memberEditor.getImageFile();
+        modifiedTime = LocalDateTime.now();
     }
 
     public void banMember() {

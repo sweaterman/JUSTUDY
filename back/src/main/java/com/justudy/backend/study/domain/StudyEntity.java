@@ -2,11 +2,11 @@ package com.justudy.backend.study.domain;
 
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.file.domain.UploadFileEntity;
-import com.justudy.backend.studyMember.domain.StudyMemberEntity;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
@@ -22,33 +22,37 @@ public class StudyEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "study_seq")
     private Long sequence;
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudyMemberEntity> studyMembers = new ArrayList<>();
+    @Builder.Default
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
+    private List<StudyResumeEntity> resumes = new ArrayList<>();
+    @Builder.Default
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_member_seq")
-    private List<StudyMemberEntity> studyMembers;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_resume_seq")
-    private List<StudyResumeEntity> resumes;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_community_seq")
-    private List<StudyCommunityEntity> communities;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_frequency_seq")
-    private List<StudyFrequencyEntity> frequencies;
+    private List<StudyCommunityEntity> communities = new ArrayList<>();
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudyFrequencyEntity> frequency = new ArrayList<>();
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_category_seq")
     private CategoryEntity category;
+
     @Column(name = "study_name")
     private String name;
     @Column(name = "study_leader_seq")
     private Long leaderSeq;
     @Column(name = "study_introduction")
     private String introduction;
-    @Column(name = "study_personnel")
-    private Integer personnel;
+    @Column(name = "study_population")
+    private Integer population;
     @Column(name = "study_level")
     private String level;
     @Column(name = "study_online_offline")
-    private String onlineOffline;
+    private String meeting;
     @Column(name = "study_is_open", columnDefinition = "TINYINT(1)")
     private Boolean isOpen;
     @Column(name = "study_github")
@@ -64,24 +68,63 @@ public class StudyEntity {
     private LocalDateTime modifiedTime;
     @Column(name = "study_start_time")
     private String startTime;
-    //스터디방
 
     public void changeImage(UploadFileEntity imageFile) {
         this.imageFile = imageFile;
     }
 
-    public void update(String name, Long leaderSeq, String introduction, Integer personnel, String level, String onlineOffline,
+    public void changeLeader(Long leaderSeq) {
+        this.leaderSeq = leaderSeq;
+    }
+
+    public void addStudyFrequency(StudyFrequencyEntity entity) {
+        this.frequency.add(entity);
+        if (entity.getStudy() != this) {
+            entity.changeStudy(this);
+        }
+    }
+
+    public void removeStudyFrequency(StudyFrequencyEntity entity) {
+        this.frequency.remove(entity);
+        entity.changeStudy(null);
+    }
+
+    public void addStudyResume(StudyResumeEntity entity) {
+        this.resumes.add(entity);
+        if (entity.getStudy() != this) {
+            entity.changeStudy(this);
+        }
+    }
+
+    public void removeStudyResume(StudyResumeEntity entity) {
+        this.resumes.remove(entity);
+        entity.changeStudy(null);
+    }
+
+    public void addStudyMember(StudyMemberEntity entity) {
+        this.studyMembers.add(entity);
+        if (entity.getStudy() != this) {
+            entity.changeStudy(this);
+        }
+    }
+
+    public void removeStudyMember(StudyMemberEntity entity) {
+        this.studyMembers.remove(entity);
+        entity.changeStudy(null);
+    }
+
+    public void update(String name, String introduction, Integer population, String level, String onlineOffline,
                        Boolean isOpen, String github, String notion, String startTime) {
         this.name = name;
-        this.leaderSeq = leaderSeq;
         this.introduction = introduction;
-        this.personnel = personnel;
+        this.population = population;
         this.level = level;
-        this.onlineOffline = onlineOffline;
+        this.meeting = onlineOffline;
         this.isOpen = isOpen;
         this.github = github;
         this.notion = notion;
         this.startTime = startTime;
         this.modifiedTime = LocalDateTime.now();
     }
+
 }
