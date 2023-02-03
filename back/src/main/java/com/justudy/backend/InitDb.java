@@ -13,6 +13,7 @@ import com.justudy.backend.file.repository.UploadFileRepository;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.service.MemberService;
+import com.justudy.backend.rank.controller.RankDummy;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.dto.request.StudyFrequencyCreate;
@@ -22,8 +23,12 @@ import com.justudy.backend.study.service.StudyFrequencyService;
 import com.justudy.backend.study.service.StudyMemberService;
 import com.justudy.backend.study.service.StudyResumeService;
 import com.justudy.backend.study.service.StudyService;
-import com.justudy.backend.timer.dto.request.MemberActivityRequest;
+import com.justudy.backend.timer.dto.request.ActivityRequest;
+import com.justudy.backend.timer.dto.request.ActivityRequest;
 import com.justudy.backend.timer.service.MemberActivityService;
+import com.justudy.backend.timer.service.RoomActivityService;
+import java.sql.Date;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,24 +69,9 @@ public class InitDb {
 
         private final MemberActivityService memberActivityService;
         private final StudyRoomService studyRoomService;
+        private final RoomActivityService roomActivityService;
+        private final RankDummy rankDummy;
 
-        private static MemberCreate makeMemberCreate(int number) {
-            MemberCreate request = MemberCreate.builder()
-                    .userId("test" + number)
-                    .password("1234")
-                    .passwordCheck("1234")
-                    .username("테스트" + number)
-                    .nickname("테스트 봇" + number)
-                    .ssafyId("08" + number)
-                    .phone(String.valueOf(number))
-                    .email("testEmail" + number + "@ssafy.com")
-                    .mmId(number + "test")
-                    .region("SEOUL")
-                    .category(new String[]{"Java", "Spring"})
-                    .introduction("테스트 봇" + number + " 입니다.")
-                    .build();
-            return request;
-        }
 
         public void init() throws ParseException {
             saveCategory();
@@ -93,6 +83,7 @@ public class InitDb {
             saveStudyMember();
             saveStudyRoom();
             saveTimer();
+            saveRank();
             saveTest1();
         }
 
@@ -146,20 +137,44 @@ public class InitDb {
             }
         }
 
+        private void saveRank(){
+            rankDummy.renewalStudyYesterdayRank();
+            rankDummy.renewalStudyWeekRank();
+            rankDummy.renewalStudyMonthRank();
+            rankDummy.renewalPersonYesterdayRank();
+            rankDummy.renewalPersonWeekRank();
+            rankDummy.renewalPersonMonthRank();
+
+        }
         private void saveTimer() {
             for (int i = 0; i < 10; i++) {
                 long memberSequence = 50 + (3 * i);
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
-                            new MemberActivityRequest((long) (Math.random() * 50), "frontend"), memberSequence,
-                            day);
+                        new ActivityRequest((long) (Math.random() * 50), "frontend"), memberSequence,
+                        day);
                 }
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
-                            new MemberActivityRequest((long) (Math.random() * 50), "backend"), memberSequence,
-                            day);
+                        new ActivityRequest((long) (Math.random() * 50), "backend"), memberSequence,
+                        day);
+                }
+
+            }
+            for (long i = 180; i < 230; i++) {
+                for (int count = 1; count <= 30; count++) {
+                    Date day = Date.valueOf(LocalDate.now().minusDays(count));
+                    roomActivityService.saveRoomAcitivity(
+                        new ActivityRequest((long) (Math.random() * 50), "frontend"), i,
+                        day);
+                }
+                for (int count = 1; count <= 30; count++) {
+                    Date day = Date.valueOf(LocalDate.now().minusDays(count));
+                    roomActivityService.saveRoomAcitivity(
+                        new ActivityRequest((long) (Math.random() * 50), "backend"), i,
+                        day);
                 }
 
             }
@@ -287,8 +302,8 @@ public class InitDb {
         private void makeMobileSubCategory(CategoryEntity mobile) {
             categoryRepository.save(createSubCategory("flutter", "Flutter", 1L, mobile));
             categoryRepository.save(createSubCategory("swift", "Swift", 1L, mobile));
-            categoryRepository.save(createSubCategory("kotlin", "Kotlin", 1L, mobile));
-            categoryRepository.save(createSubCategory("react-native", "ReactNative", 1L, mobile));
+            categoryRepository.save(createSubCategory( "kotlinMobile", "Kotlin", 1L, mobile));
+            categoryRepository.save(createSubCategory("react-native","ReactNative", 1L, mobile));
             categoryRepository.save(createSubCategory("unity", "Unity", 1L, mobile));
         }
 
@@ -298,7 +313,7 @@ public class InitDb {
             categoryRepository.save(createSubCategory("nodejs", "NodeJs", 1L, backend));
             categoryRepository.save(createSubCategory("nestjs", "NestJs", 1L, backend));
             categoryRepository.save(createSubCategory("go", "Go", 1L, backend));
-            categoryRepository.save(createSubCategory("kotlin", "Kotlin", 1L, backend));
+            categoryRepository.save(createSubCategory("kotlinBackend", "Kotlin", 1L, backend));
             categoryRepository.save(createSubCategory("express", "Express", 1L, backend));
             categoryRepository.save(createSubCategory("python", "Python", 1L, backend));
             categoryRepository.save(createSubCategory("django", "Django", 1L, backend));
@@ -341,4 +356,18 @@ public class InitDb {
                     .build();
         }
     }
+    private static MemberCreate makeMemberCreate(int number) {
+        MemberCreate request = MemberCreate.builder()
+                .userId("test" + number)
+                .password("1234")
+                .passwordCheck("1234")
+                .username("테스트" + number)
+                .nickname("테스트 봇" + number)
+                .nickname("테테" + number)
+                .ssafyId("08" + number)
+                .phone(String.valueOf(number))
+                .email("testEmail" + number + "@ssafy.com")
+                .build();
+        return request;
+        }
 }
