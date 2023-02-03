@@ -245,7 +245,7 @@ public class InitDb {
         private void makeMobileSubCategory(CategoryEntity mobile) {
             categoryRepository.save(createSubCategory("flutter", "Flutter", 1L, mobile));
             categoryRepository.save(createSubCategory("swift", "Swift", 1L, mobile));
-            categoryRepository.save(createSubCategory( "kotlin", "Kotlin", 1L, mobile));
+            categoryRepository.save(createSubCategory( "kotlinMobile", "Kotlin", 1L, mobile));
             categoryRepository.save(createSubCategory("react-native","ReactNative", 1L, mobile));
             categoryRepository.save(createSubCategory("unity", "Unity", 1L, mobile));
         }
@@ -256,7 +256,7 @@ public class InitDb {
             categoryRepository.save(createSubCategory("nodejs", "NodeJs", 1L, backend));
             categoryRepository.save(createSubCategory("nestjs", "NestJs", 1L, backend));
             categoryRepository.save(createSubCategory("go", "Go", 1L, backend));
-            categoryRepository.save(createSubCategory("kotlin", "Kotlin", 1L, backend));
+            categoryRepository.save(createSubCategory("kotlinBackend", "Kotlin", 1L, backend));
             categoryRepository.save(createSubCategory("express", "Express", 1L, backend));
             categoryRepository.save(createSubCategory("python", "Python", 1L, backend));
             categoryRepository.save(createSubCategory("django", "Django", 1L, backend));
