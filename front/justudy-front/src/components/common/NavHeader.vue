@@ -16,7 +16,7 @@
             </v-col>
 
             <!-- 우측 Nav (login X) -->
-            <v-col class="nav" cols="12" md="6" v-if="!isLogin">
+            <v-col class="nav" cols="12" md="6" v-if="!isLoginCheck">
                 <v-row>
                     <v-col cols="0" md="8"></v-col>
                     <v-col class="nav" @click="moveTo('/login')" cols="6" md="2"><div class="hover">로그인</div></v-col>
@@ -25,7 +25,7 @@
             </v-col>
 
             <!-- 우측 Nav (login O) -->
-            <v-col class="nav" cols="12" md="6" v-if="isLogin">
+            <v-col class="nav" cols="12" md="6" v-if="isLoginCheck">
                 <v-row>
                     <v-col cols="0" md="5"> </v-col>
                     <v-col cols="12" md="7">
@@ -50,16 +50,23 @@ export default {
     computed: {
         ...mapState('moduleLogin', ['isLogin'])
     },
-    // data() {
-    //     return {
-    //         isLogin: false
-    //     };
-    // },
+    created() {
+        if (this.isLogin) {
+            this.isLoginCheck = true;
+        } else {
+            this.isLoginCheck = false;
+        }
+    },
+    data() {
+        return {
+            isLoginCheck: false
+        };
+    },
     methods: {
         moveTo(link) {
             //로그아웃을 한다.
             if (link == '/') {
-                // this.$store.dispatch('moduleLogin/logout');
+                this.$store.dispatch('moduleLogin/logout');
             }
             window.location.href = link;
         }

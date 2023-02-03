@@ -48,7 +48,7 @@
                                     </v-col>
                                 </v-row>
                                 <v-row dense>
-                                    <v-chip class="chip" color="yellow lighten-4">{{ study.frequencies.frequency_week }}</v-chip>
+                                    <v-chip class="chip" color="yellow lighten-4">{{ study.frequency.week }}</v-chip>
                                     <v-chip class="chip" color="yellow lighten-4">{{ study.meeting }}</v-chip>
                                     <v-chip class="chip" color="yellow lighten-4">{{ study.level }}</v-chip>
                                 </v-row>

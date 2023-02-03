@@ -91,9 +91,7 @@
                             <v-col cols="5">
                                 <v-subheader>활동 주기</v-subheader>
                             </v-col>
-                            <v-col cols="7" align-self="center">
-                                {{ applyStudyInfo.frequencies.frequency_week }} / {{ applyStudyInfo.frequencies.frequency_start }} ~ {{ applyStudyInfo.frequencies.frequency_end }}
-                            </v-col>
+                            <v-col cols="7" align-self="center"> {{ applyStudyInfo.frequency.week }} / {{ applyStudyInfo.frequency.startTime }} ~ {{ applyStudyInfo.frequency.endTime }} </v-col>
                         </v-row>
 
                         <!-- 모임 -->
@@ -158,19 +156,21 @@ import {mapState} from 'vuex';
 export default {
     name: 'ApplyStudyView',
     computed: {
-        ...mapState('moduleStudy', ['applyStudyInfo'])
+        ...mapState('moduleStudy', ['applyStudyInfo']),
+        ...mapState('moduleLogin', ['isLogin'])
     },
     created() {
         const pathName = new URL(document.location).pathname.split('/');
         const studySeq = pathName[pathName.length - 1];
         this.$store.dispatch('moduleStudy/getApplyStudyInfo', studySeq);
+        this.sendData.studySeq = studySeq;
         //스터디 멤버에 내가 포함되어있거나 지원을 완료한 상태라면? applyDisplay 바꿔야함
     },
     data() {
         return {
             message_rules: [value => !!value || '보낼 메시지를 입력해주세요.'],
             sendData: {
-                studySeq: this.applyStudyInfo.sequence,
+                studySeq: null,
                 memberSeq: 0,
                 content: null
             },
@@ -182,7 +182,11 @@ export default {
     methods: {
         applyDialog(check) {
             if (check == 'open') {
-                this.applyData = true;
+                if (this.isLogin == false) {
+                    alert('로그인 먼저 해주세요!');
+                } else {
+                    this.applyData = true;
+                }
             } else if (check == 'T') {
                 //지원을한다. -> 마이스터디페이지로 이동함.
                 this.$store.dispatch('moduleStudy/applyStudy', this.applyStudyInfo.sequence, this.sendData);
