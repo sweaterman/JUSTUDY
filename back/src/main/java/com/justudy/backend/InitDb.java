@@ -163,7 +163,7 @@ public class InitDb {
                 }
 
             }
-            for (long i = 180; i < 230; i++) {
+            for (long i = 200; i < 250; i++) {
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     roomActivityService.saveRoomAcitivity(
@@ -363,7 +363,8 @@ public class InitDb {
                 .passwordCheck("1234")
                 .username("테스트" + number)
                 .nickname("테스트 봇" + number)
-                .nickname("테테" + number)
+                .region("SEOUL")
+                .category(new String[]{"Java", "Spring"})
                 .ssafyId("08" + number)
                 .phone(String.valueOf(number))
                 .email("testEmail" + number + "@ssafy.com")
