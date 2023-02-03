@@ -5,7 +5,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
@@ -19,21 +18,27 @@ public class StudyResumeEntity {
     @Column(name = "study_resume_seq")
     private Long sequence;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_resume_study_seq")
+    @JoinColumn(name = "study_seq")
     private StudyEntity study;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_resume_member_seq")
+    @JoinColumn(name = "member_seq")
     private MemberEntity member;
-    @Column(name = "study_resume_content")
+    @Column(name = "content")
     private String content;
-    @Column(name = "study_resume_created_time")
+    @Column(name = "created_time")
     private LocalDateTime createdTime;
-    @Column(name = "study_resume_modified_time")
+    @Column(name = "modified_time")
     private LocalDateTime modifiedTime;
-    @Column(name = "study_resume_responded_time")
+    @Column(name = "responded_time")
     private LocalDateTime respondedTime;
-    @Column(name = "study_resume_respond")
+    @Column(name = "respond")
     @Enumerated(EnumType.STRING)
     private StudyResumeRespond respond;
+
+    public void changeStudy(StudyEntity studyEntity) {
+        this.study = studyEntity;
+//        if (!studyEntity.getResumes().contains(this))
+//            studyEntity.getResumes().add(this);
+    }
 
 }

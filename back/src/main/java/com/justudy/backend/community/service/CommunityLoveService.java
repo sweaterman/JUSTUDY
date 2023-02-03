@@ -1,65 +1,49 @@
 package com.justudy.backend.community.service;
 
-import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.domain.CommunityLoveEntity;
-import com.justudy.backend.community.dto.request.CommunityLoveCreate;
-import com.justudy.backend.community.exception.CommunityLoveAlreadyCreated;
-import com.justudy.backend.community.exception.CommunityLoveNotFound;
-import com.justudy.backend.community.exception.CommunityNotFound;
+import com.justudy.backend.community.exception.LoveNotFound;
 import com.justudy.backend.community.repository.CommunityLoveRepository;
-import com.justudy.backend.community.repository.CommunityRepository;
+import com.justudy.backend.exception.InvalidRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-
-@Service
+@Slf4j
 @RequiredArgsConstructor
+@Service
 @Transactional(readOnly = true)
 public class CommunityLoveService {
-    private final CommunityLoveRepository repository;
-    private final CommunityRepository communityRepository;
+    private final CommunityLoveRepository loveRepository;
 
-    // ---------------------------------------------------------------좋아요---------------------------------------------------------------
     @Transactional
-    public long createLove(CommunityLoveCreate request) {
-        Optional<CommunityLoveEntity> love = repository.readLove(request);
-        if (love.isEmpty()) {
-            CommunityLoveEntity entity = request.toEntity();
-            repository.save(entity);
-            Optional<CommunityEntity> community = communityRepository.findById(request.getCommunity().getSequence());
-            if (community.isEmpty())
-                throw new CommunityNotFound();
+    public Long createLove(Long loginSequence, Long communitySequence) {
+        CommunityLoveEntity savedLove = loveRepository.findLove(loginSequence, communitySequence)
+                .orElseGet(() ->
+                        loveRepository.save(makeNewLove(loginSequence, communitySequence))
+                );
 
-            addWeekLoveCount(community.get());
-            return 1;
-        }
-        throw new CommunityLoveAlreadyCreated();
-    }
-
-    public List<CommunityLoveEntity> readAllLoveByCommunity(Long id) {
-        return repository.readAllLoveByCommunity(id);
+        return savedLove.getSequence();
     }
 
     @Transactional
-    public Long deleteAllLoveByCommunity(Long id) {
-        return repository.deleteAllLoveByCommunity(id);
+    public void deleteLove(Long loginSequence, Long communitySequence) {
+        CommunityLoveEntity findLove = loveRepository.findLove(loginSequence, communitySequence)
+                .orElseThrow(LoveNotFound::new);
+
+        loveRepository.delete(findLove);
     }
 
     @Transactional
-    public Long updateLove(CommunityLoveCreate request) {
-        Optional<CommunityLoveEntity> entity = repository.readLove(request);
-        if (entity.isEmpty())
-            throw new CommunityLoveNotFound();
-        return repository.updateLove(request, entity.get().getIsChecked());
+    public void deleteAllByCommunity(Long communitySequence) {
+        loveRepository.deleteAllByCommunity(communitySequence);
     }
 
-    @Transactional
-    //조회수 증가
-    public void addWeekLoveCount(CommunityEntity entity) {
-        int temp = entity.getWeekLoveCount();
-        entity.changeWeekLoveCount(temp + 1);
+    public Integer getCountOfLove(Long communitySequence) {
+        return loveRepository.countOfLove(communitySequence);
+    }
+
+    private CommunityLoveEntity makeNewLove(Long loginSequence, Long communitySequence) {
+        return new CommunityLoveEntity(loginSequence, communitySequence);
     }
 }

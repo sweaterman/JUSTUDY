@@ -6,12 +6,13 @@ import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.dto.request.CommunityCreate;
 import com.justudy.backend.community.dto.request.CommunityEdit;
-import com.justudy.backend.community.dto.response.CommunityResponse;
+import com.justudy.backend.community.dto.request.CommunitySearch;
+import com.justudy.backend.community.dto.response.CommunityDetailResponse;
+import com.justudy.backend.community.dto.response.CommunityListResponse;
 import com.justudy.backend.community.exception.CommunityNotFound;
-import com.justudy.backend.community.repository.CommunityLoveRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
+import com.justudy.backend.exception.ForbiddenRequest;
 import com.justudy.backend.member.domain.MemberEntity;
-import com.justudy.backend.member.exception.ForbiddenRequest;
 import com.justudy.backend.member.service.MemberService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,8 @@ import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,23 +36,102 @@ import static org.mockito.ArgumentMatchers.anyLong;
 class CommunityServiceTest {
 
     private CommunityRepository communityRepository = Mockito.mock(CommunityRepository.class);
-
-    private CommunityLoveRepository loveRepository = Mockito.mock(CommunityLoveRepository.class);
-
+    private CommunityBookmarkService bookmarkService = Mockito.mock(CommunityBookmarkService.class);
+    private CommunityLoveService loveService = Mockito.mock(CommunityLoveService.class);
     private MemberService memberService = Mockito.mock(MemberService.class);
-
     private CategoryService categoryService = Mockito.mock(CategoryService.class);
-
     private CommunityService communityService;
 
-    private final String CATEGORY_BACKEND = "backend";
+    private final String CATEGORY_KEY = "backend";
+    private final String CATEGORY_VALUE = "백엔드";
     private final String TITLE = "테스트제목";
     private final String CONTENT = "테스트내용";
 
 
     @BeforeEach
     void setUp() {
-        communityService = new CommunityService(communityRepository, loveRepository, categoryService);
+        communityService = new CommunityService(communityRepository,
+                categoryService,
+                bookmarkService,
+                loveService
+                );
+    }
+
+    @Test
+    @DisplayName("게시글 라스트 조회 - 공지글 있을 시")
+    void getCommunities() {
+        //given
+        final Long PAGE = 1L;
+        final Long SIZE = 20L;
+        CommunitySearch condition = CommunitySearch.builder()
+                .page(PAGE)
+                .size(SIZE)
+                .build();
+        List<CommunityEntity> list = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            CommunityEntity community = new CommunityEntity("공지제목" + i, "공지내용" + i, true);
+            ReflectionTestUtils.setField(community, "member", makeTestMember(i + "", i + "", i + ""));
+            list.add(community);
+        }
+        for (int i = 0; i < 40; i++) {
+            CommunityEntity community = new CommunityEntity("공지제목" + i, "공지내용" + i, false);
+            ReflectionTestUtils.setField(community, "member", makeTestMember(i + "", i + "", i + ""));
+            list.add(community);
+        }
+
+        long size = SIZE;
+        BDDMockito.given(communityRepository.getAllList(condition))
+                .willReturn(list.subList(0, (int) size));
+        for (long i = 0; i < 20; i++) {
+            BDDMockito.given(loveService.getCountOfLove(i))
+                    .willReturn((int) i);
+        }
+
+        //when
+        List<CommunityListResponse> communities = communityService.getCommunities(condition);
+
+        //then
+        assertThat(communities.size()).isEqualTo(size);
+        for (int i = 0; i < 3; i++) {
+            assertThat(communities.get(i).isHighlighted()).isTrue();
+        }
+        for (int i = 3; i < communities.size(); i++) {
+            assertThat(communities.get(i).isHighlighted()).isFalse();
+        }
+    }
+
+    @Test
+    @DisplayName("게시글 라스트 조회 - 공지글 없을 시")
+    void getCommunitiesWithoutNotice() {
+        //given
+        final Long PAGE = 1L;
+        final Long SIZE = 20L;
+        CommunitySearch condition = CommunitySearch.builder()
+                .page(PAGE)
+                .size(SIZE)
+                .build();
+        List<CommunityEntity> list = new ArrayList<>();
+        for (int i = 0; i < 40; i++) {
+            CommunityEntity community = new CommunityEntity("공지제목" + i, "공지내용" + i, false);
+            ReflectionTestUtils.setField(community, "member", makeTestMember(i + "", i + "", i + ""));
+            list.add(community);
+        }
+        long size = SIZE;
+        BDDMockito.given(communityRepository.getAllList(condition))
+                .willReturn(list.subList(0, (int) size));
+        for (long i = 0; i < 20; i++) {
+            BDDMockito.given(loveService.getCountOfLove(i))
+                    .willReturn((int) i);
+        }
+
+        //when
+        List<CommunityListResponse> communities = communityService.getCommunities(condition);
+
+        //then
+        assertThat(communities.size()).isEqualTo(size);
+        for (int i = 0; i < communities.size(); i++) {
+            assertThat(communities.get(i).isHighlighted()).isFalse();
+        }
     }
 
     @Test
@@ -58,14 +140,14 @@ class CommunityServiceTest {
     void createCommunity() {
         //given
         CommunityCreate request = CommunityCreate.builder()
-                .category(CATEGORY_BACKEND)
+                .category(CATEGORY_KEY)
                 .title(TITLE)
                 .content(CONTENT)
                 .isHighlighted(false)
                 .build();
 
         MemberEntity mockMember = makeTestMember("test", "test", "test");
-        CategoryEntity mockCategory = new CategoryEntity("backend", 0L);
+        CategoryEntity mockCategory = new CategoryEntity(CATEGORY_KEY, CATEGORY_VALUE, 0L);
 
 
         CommunityEntity community = request.toEntity();
@@ -75,7 +157,7 @@ class CommunityServiceTest {
 
         BDDMockito.given(memberService.getMember(1L))
                 .willReturn(mockMember);
-        BDDMockito.given(categoryService.getCategory(CATEGORY_BACKEND))
+        BDDMockito.given(categoryService.getCategoryEntityByKey(CATEGORY_KEY))
                 .willReturn(mockCategory);
         BDDMockito.given(communityRepository.save(any(CommunityEntity.class)))
                 .willReturn(community);
@@ -84,14 +166,15 @@ class CommunityServiceTest {
 
 
         //when
-        CommunityResponse response = communityService.createCommunity(request,
+        CommunityDetailResponse response = communityService.createCommunity(request,
                 memberService.getMember(1L),
-                categoryService.getCategory(CATEGORY_BACKEND));
+                categoryService.getCategoryEntityByKey(CATEGORY_KEY));
 
         //then
         assertThat(response.getTitle()).isEqualTo(TITLE);
         assertThat(response.getContent()).isEqualTo(CONTENT);
-        assertThat(response.getCategory()).isEqualTo(mockCategory.getName());
+        assertThat(response.getCategory().getKey()).isEqualTo(mockCategory.getKey());
+        assertThat(response.getCategory().getValue()).isEqualTo(mockCategory.getValue());
         assertThat(response.getNickname()).isEqualTo(mockMember.getNickname());
         assertThat(response.getViewCount()).isEqualTo(0);
     }
@@ -173,7 +256,8 @@ class CommunityServiceTest {
         final Long COMMUNITY_SEQUENCE = 100L;
         final String NEW_TITLE = "테스트제목";
         final String NEW_CONTENT = "테스트내용";
-        final String NEW_CATEGORY = "frontend";
+        final String NEW_CATEGORY_KEY = "frontend";
+        final String NEW_CATEGORY_VALUE = "프론트엔드";
 
         MemberEntity mockMember = makeTestMember("testId", "testNickname", "testSsafyId");
         ReflectionTestUtils.setField(mockMember, "sequence", LOGIN_SEQUENCE);
@@ -184,18 +268,19 @@ class CommunityServiceTest {
                 .willReturn(mockMember);
         BDDMockito.given(communityRepository.findById(ArgumentMatchers.anyLong()))
                 .willReturn(Optional.of(community));
-        BDDMockito.given(categoryService.getCategory(NEW_CATEGORY))
-                .willReturn(new CategoryEntity(NEW_CATEGORY, 0L));
-        BDDMockito.given(loveRepository.readLoveCountByCommunity(ArgumentMatchers.anyLong()))
-                .willReturn(10);
+        BDDMockito.given(categoryService.getCategoryEntityByKey(NEW_CATEGORY_KEY))
+                .willReturn(new CategoryEntity(NEW_CATEGORY_KEY, NEW_CATEGORY_VALUE, 0L));
+//        BDDMockito.given(loveRepository.readLoveCountByCommunity(ArgumentMatchers.anyLong()))
+//                .willReturn(10);
 
         //when
-        CommunityResponse response = communityService.updateCommunity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, new CommunityEdit(NEW_TITLE, NEW_CONTENT, NEW_CATEGORY));
+        CommunityDetailResponse response = communityService.updateCommunity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, new CommunityEdit(NEW_TITLE, NEW_CONTENT, NEW_CATEGORY_KEY));
 
         //then
         assertThat(response.getTitle()).isEqualTo(NEW_TITLE);
         assertThat(response.getContent()).isEqualTo(NEW_CONTENT);
-        assertThat(response.getCategory()).isEqualTo(NEW_CATEGORY);
+        assertThat(response.getCategory().getKey()).isEqualTo(NEW_CATEGORY_KEY);
+        assertThat(response.getCategory().getValue()).isEqualTo(NEW_CATEGORY_VALUE);
     }
 
     @Test
@@ -207,7 +292,8 @@ class CommunityServiceTest {
         final Long COMMUNITY_SEQUENCE = 100L;
         final String NEW_TITLE = "테스트제목";
         final String NEW_CONTENT = "테스트내용";
-        final String NEW_CATEGORY = "frontend";
+        final String NEW_CATEGORY_KEY = "frontend";
+        final String NEW_CATEGORY_VALUE = "프론트엔드";
 
         MemberEntity mockMember = makeTestMember("testId", "testNickname", "testSsafyId");
         ReflectionTestUtils.setField(mockMember, "sequence", OTHER_SEQUENCE);
@@ -218,15 +304,15 @@ class CommunityServiceTest {
                 .willReturn(mockMember);
         BDDMockito.given(communityRepository.findById(ArgumentMatchers.anyLong()))
                 .willReturn(Optional.of(community));
-        BDDMockito.given(categoryService.getCategory(NEW_CATEGORY))
-                .willReturn(new CategoryEntity(NEW_CATEGORY, 0L));
-        BDDMockito.given(loveRepository.readLoveCountByCommunity(ArgumentMatchers.anyLong()))
-                .willReturn(10);
+        BDDMockito.given(categoryService.getCategoryEntityByKey(NEW_CATEGORY_KEY))
+                .willReturn(new CategoryEntity(NEW_CATEGORY_KEY, NEW_CATEGORY_VALUE, 0L));
+//        BDDMockito.given(loveRepository.readLoveCountByCommunity(ArgumentMatchers.anyLong()))
+//                .willReturn(10);
 
         //expected
         assertThatThrownBy(() -> communityService.updateCommunity(LOGIN_SEQUENCE,
                 COMMUNITY_SEQUENCE,
-                new CommunityEdit(NEW_TITLE, NEW_CONTENT, NEW_CATEGORY)))
+                new CommunityEdit(NEW_TITLE, NEW_CONTENT, NEW_CATEGORY_KEY)))
                 .isInstanceOf(ForbiddenRequest.class);
     }
 

@@ -32,11 +32,13 @@ public class PagingUtil {
     }
 
     public <T> SliceImpl<T> getSliceImpl(Pageable pageable, JPQLQuery<T> query, Class clazz) {    // 2)
-        Boolean hasNext = false;
+        boolean hasNext = false;
         List<T> results = getQuerydsl(clazz).applyPagination(pageable, query).fetch();
         //todo work?
-        if (results.size() > pageable.getPageSize())
+        if (results.size() > pageable.getPageSize()) {
             hasNext = true;
+            results.remove(pageable.getPageSize());
+        }
         return new SliceImpl(results, pageable, hasNext);
     }
 }

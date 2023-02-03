@@ -1,9 +1,10 @@
 package com.justudy.backend.study.repository;
 
+import com.justudy.backend.member.domain.QMemberEntity;
 import com.justudy.backend.study.domain.QStudyEntity;
+import com.justudy.backend.study.domain.QStudyMemberEntity;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.util.PagingUtil;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,14 +19,30 @@ public class StudyRepositoryImpl implements StudyRepositorySupport {
 
     private final PagingUtil pagingUtil;
     private final JPAQueryFactory queryFactory;
-    private final QStudyEntity qStudy = QStudyEntity.studyEntity;
+    private final QStudyEntity qStudyEntity = QStudyEntity.studyEntity;
+    private final QStudyMemberEntity qStudyMemberEntity = QStudyMemberEntity.studyMemberEntity;
+    private final QMemberEntity qMemberEntity = QMemberEntity.memberEntity;
 
     @Override
-    public Slice<StudyEntity> findAllBySearchOption(Pageable pageable, List<String> sub, Long leaderSeq, String studyName) {
+    public Slice<StudyEntity> findAllBySearchOption(Pageable pageable, List<String> sub, String studyLeader, String studyName) {
         JPQLQuery<StudyEntity> query = queryFactory
-                .selectFrom(qStudy)
-                .where(inCategories(sub), eqLeader(leaderSeq), eqStudyName(studyName));
-        return pagingUtil.getSliceImpl(pageable, query, qStudy.getClass());
+                .selectFrom(qStudyEntity)
+                .leftJoin(qStudyEntity.studyMembers, qStudyMemberEntity)
+                .fetchJoin()
+                .leftJoin(qStudyMemberEntity.member, qMemberEntity)
+                .fetchJoin()
+                .where(inCategories(sub), eqLeader(studyLeader), eqStudyName(studyName))
+                .limit(pageable.getPageSize()+1);
+
+        return pagingUtil.getSliceImpl(pageable, query, qStudyEntity.getClass());
+    }
+
+    @Override
+    public StudyEntity findByLeaderSeq(Long leaderSeq) {
+        return queryFactory
+                .selectFrom(qStudyEntity)
+                .where(qStudyEntity.leaderSeq.eq(leaderSeq))
+                .fetchFirst();
     }
 
     private BooleanExpression inCategories(List<String> subCategories) {
@@ -33,23 +50,17 @@ public class StudyRepositoryImpl implements StudyRepositorySupport {
         if (subCategories == null || subCategories.isEmpty()) {
             return null;
         }
-        //todo ??
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
-        for (String sub : subCategories) {
-
-//            if (entity.category.name.containsIgnoreCase(sub)= )
-                return entity.category.name.containsIgnoreCase(sub);
-        }
-        return null;
+        //todo 여러 카테고리일시 모두 검색
+        return entity.category.key.in(subCategories);
     }
 
 
-    private BooleanExpression eqLeader(Long leaderSeq) {
-        QStudyEntity entity = QStudyEntity.studyEntity;
-        if (leaderSeq == null || leaderSeq == 0) {
+    private BooleanExpression eqLeader(String studyLeader) {
+        QMemberEntity entity = QMemberEntity.memberEntity;
+        if (studyLeader == null || studyLeader.isEmpty()) {
             return null;
         }
-        return entity.leaderSeq.eq(leaderSeq);
+        return entity.username.containsIgnoreCase(studyLeader);
     }
 
     private BooleanExpression eqStudyName(String studyName) {
