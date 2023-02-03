@@ -9,7 +9,7 @@ import moduleMyPage from './moduleMyPage';
 import moduleSelfTest from './moduleSelfTest';
 import moduleStudy from './moduleStudy';
 import moduleTimer from './moduleTimer';
-
+import moduleRanking from './moduleRanking';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -30,6 +30,7 @@ export default new Vuex.Store({
         moduleMyPage: moduleMyPage,
         moduleSelfTest: moduleSelfTest,
         moduleStudy: moduleStudy,
-        moduleTimer: moduleTimer
+        moduleTimer: moduleTimer,
+        moduleRanking: moduleRanking
     }
 });
