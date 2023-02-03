@@ -31,8 +31,18 @@ public class StudyRepositoryImpl implements StudyRepositorySupport {
                 .fetchJoin()
                 .leftJoin(qStudyMemberEntity.member, qMemberEntity)
                 .fetchJoin()
-                .where(inCategories(sub), eqLeader(studyLeader), eqStudyName(studyName));
+                .where(inCategories(sub), eqLeader(studyLeader), eqStudyName(studyName))
+                .limit(pageable.getPageSize()+1);
+
         return pagingUtil.getSliceImpl(pageable, query, qStudyEntity.getClass());
+    }
+
+    @Override
+    public StudyEntity findByLeaderSeq(Long leaderSeq) {
+        return queryFactory
+                .selectFrom(qStudyEntity)
+                .where(qStudyEntity.leaderSeq.eq(leaderSeq))
+                .fetchFirst();
     }
 
     private BooleanExpression inCategories(List<String> subCategories) {

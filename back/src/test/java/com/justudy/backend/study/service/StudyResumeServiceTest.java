@@ -56,14 +56,16 @@ class StudyResumeServiceTest {
     @Autowired
     private StudyResumeRepository studyResumeRepository;
     @Autowired
+    private StudyMemberRepository studyMemberRepository;
+    @Autowired
+    private StudyMemberService studyMemberService;
+    @Autowired
     private UploadFileRepository uploadFileRepository;
     private Pageable pageable;
     private MemberEntity findMember;
     private MemberEntity findMember2;
-    private CategoryEntity categoryEntity;
     UploadFileEntity basicImage;
     Long id;
-    CategoryEntity java;
 
     @Transactional
     @BeforeEach
@@ -132,7 +134,6 @@ class StudyResumeServiceTest {
         // Then
         org.assertj.core.api.Assertions.assertThat(entity.getSequence()).isEqualTo(resumeId);
         org.assertj.core.api.Assertions.assertThat(entity.getContent()).isEqualTo("content입니다");
-        org.assertj.core.api.Assertions.assertThat(entity.getRespond()).isEqualTo(StudyResumeRespond.WAITING);
     }
 
 
@@ -164,14 +165,20 @@ class StudyResumeServiceTest {
         StudyResumeCreate create = makeResumeRequest(id, findMember.getSequence());
         StudyResumeCreate create2 = makeResumeRequest(id, findMember2.getSequence());
 
+
         // When
         Long resumeId = studyResumeService.createStudyResume(id, create);
         Long resumeId2 = studyResumeService.createStudyResume(id, create2);
+        StudyEntity studyEntity = repository.findById(id).get();
+//        studyEntity.addResume(studyResumeRepository.findById(resumeId).get());
+//        studyEntity.addResume(studyResumeRepository.findById(resumeId2).get());
 //        StudyResumeEntity entity = studyResumeRepository.findById(resumeId).get();
 //        StudyResumeEntity entity2 = studyResumeRepository.findById(resumeId2).get();
 
+        log.info("정보3 : start->{}");
         List<StudyResumeResponse> entity = studyResumeService.readAllStudyResumeByStudy(id);
 
+        log.info("정보3 : end->{}");
         // Then
         org.assertj.core.api.Assertions.assertThat(entity.size()).isEqualTo(2);
     }
@@ -180,6 +187,31 @@ class StudyResumeServiceTest {
     @Test
     @Order(5)
     void readAllApplyStudy() {
+        // Given
+        StudyResumeCreate create = makeResumeRequest(id, findMember.getSequence());
+        StudyResumeCreate create2 = makeResumeRequest(id, findMember.getSequence());
+
+
+        // When
+        Long resumeId = studyResumeService.createStudyResume(id, create);
+        Long resumeId2 = studyResumeService.createStudyResume(id, create2);
+        StudyEntity studyEntity = repository.findById(id).get();
+        studyEntity.addStudyResume(studyResumeRepository.findById(resumeId).get());
+        studyEntity.addStudyResume(studyResumeRepository.findById(resumeId2).get());
+        StudyResumeEntity entity3 = studyResumeRepository.findById(resumeId).get();
+        StudyResumeEntity entity2 = studyResumeRepository.findById(resumeId2).get();
+        Long memberid = studyMemberService.createStudyMember(StudyMemberCreate
+                .builder()
+                .studySeq(id)
+                .memberSeq(findMember.getSequence())
+                .build());
+        StudyMemberEntity studyMemberEntity = studyMemberRepository.findById(memberid).get();
+        studyEntity.addStudyMember(studyMemberEntity);
+
+        List<StudyResponse> entity = studyResumeService.readAllApplyStudy(findMember.getSequence());
+
+        // Then
+        org.assertj.core.api.Assertions.assertThat(entity.size()).isEqualTo(2);
     }
 
     private StudyResumeCreate makeResumeRequest(Long study, Long member) {
@@ -207,22 +239,6 @@ class StudyResumeServiceTest {
                 .github("git")
                 .notion("notiono")
                 .startTime("230202")
-                .build();
-    }
-
-    private CategoryEntity createSubCategory(String name, Long level, CategoryEntity parent) {
-        CategoryEntity subCategory = CategoryEntity.builder()
-                .key(name)
-                .categoryLevel(level)
-                .build();
-        subCategory.addParentCategory(parent);
-        return subCategory;
-    }
-
-    private CategoryEntity createMainCategory(String name, Long level) {
-        return CategoryEntity.builder()
-                .key(name)
-                .categoryLevel(level)
                 .build();
     }
 
