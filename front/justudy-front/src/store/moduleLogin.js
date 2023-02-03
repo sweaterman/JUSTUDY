@@ -3,7 +3,7 @@ import port from './port';
 export default {
     namespaced: true,
     state: {
-        isLogin: {}
+        isLogin: false
     },
     getters: {},
     mutations: {

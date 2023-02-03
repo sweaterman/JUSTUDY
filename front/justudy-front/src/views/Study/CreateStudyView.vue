@@ -71,7 +71,14 @@
                                     <v-subheader>상위 카테고리</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    <v-combobox v-model="study.topCategory" :items="topCategories.value" label="상위 카테고리 선택" @change="checkTopCategory()"></v-combobox>
+                                    <v-combobox
+                                        v-model="study.topCategory"
+                                        :items="topCategories"
+                                        item-text="value"
+                                        item-value="key"
+                                        label="상위 카테고리 선택"
+                                        @change="checkTopCategory()"
+                                    ></v-combobox>
                                 </v-col>
                             </v-row>
 
@@ -81,7 +88,7 @@
                                     <v-subheader>하위 카테고리</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    <v-combobox v-model="study.bottomCategory" :items="bottomCategories.value" label="하위 카테고리 선택"></v-combobox>
+                                    <v-combobox v-model="study.bottomCategory" :items="bottomCategories" item-text="value" item-value="key" label="하위 카테고리 선택"></v-combobox>
                                 </v-col>
                             </v-row>
 
@@ -113,7 +120,7 @@
                                 <v-col cols="8">
                                     <v-row>
                                         <v-col cols="12">
-                                            <v-btn-toggle v-model="study.frequency.frequency_week" multiple>
+                                            <v-btn-toggle v-model="study.frequency.week" multiple>
                                                 <v-btn rounded color="primary"> 월 </v-btn>
                                                 <v-btn rounded color="primary"> 화 </v-btn>
                                                 <v-btn rounded color="primary"> 수 </v-btn>
@@ -127,10 +134,10 @@
 
                                     <v-row>
                                         <v-col cols="6">
-                                            <v-dialog ref="dialog" v-model="startModal" :return-value.sync="study.frequency.frequency_start" persistent width="290px">
+                                            <v-dialog ref="dialog" v-model="startModal" :return-value.sync="study.frequency.startTime" persistent width="290px">
                                                 <template v-slot:activator="{on, attrs}">
                                                     <v-text-field
-                                                        v-model="study.frequency.frequency_start"
+                                                        v-model="study.frequency.startTime"
                                                         label="시작 시간"
                                                         prepend-icon="mdi-clock-time-four-outline"
                                                         readonly
@@ -138,18 +145,18 @@
                                                         v-on="on"
                                                     ></v-text-field>
                                                 </template>
-                                                <v-time-picker v-if="startModal" v-model="study.frequency.frequency_start" full-width>
+                                                <v-time-picker v-if="startModal" v-model="study.frequency.startTime" full-width>
                                                     <v-spacer></v-spacer>
                                                     <v-btn text color="primary" @click="startModal = false"> 취소 </v-btn>
-                                                    <v-btn text color="primary" @click="$refs.dialog.save(study.frequency.frequency_start)"> 확인 </v-btn>
+                                                    <v-btn text color="primary" @click="$refs.dialog.save(study.frequency.startTime)"> 확인 </v-btn>
                                                 </v-time-picker>
                                             </v-dialog>
                                         </v-col>
                                         <v-col cols="6">
-                                            <v-dialog ref="dialog2" v-model="endModal" :return-value.sync="study.frequency.frequency_end" persistent width="290px">
+                                            <v-dialog ref="dialog2" v-model="endModal" :return-value.sync="study.frequency.endTime" persistent width="290px">
                                                 <template v-slot:activator="{on, attrs}">
                                                     <v-text-field
-                                                        v-model="study.frequency.frequency_end"
+                                                        v-model="study.frequency.endTime"
                                                         label="끝나는 시간"
                                                         prepend-icon="mdi-clock-time-four-outline"
                                                         readonly
@@ -157,10 +164,10 @@
                                                         v-on="on"
                                                     ></v-text-field>
                                                 </template>
-                                                <v-time-picker v-if="endModal" v-model="study.frequency.frequency_end" full-width>
+                                                <v-time-picker v-if="endModal" v-model="study.frequency.endTime" full-width>
                                                     <v-spacer></v-spacer>
                                                     <v-btn text color="primary" @click="endModal = false"> 취소 </v-btn>
-                                                    <v-btn text color="primary" @click="$refs.dialog2.save(study.frequency.frequency_end)"> 확인 </v-btn>
+                                                    <v-btn text color="primary" @click="$refs.dialog2.save(study.frequency.endTime)"> 확인 </v-btn>
                                                 </v-time-picker>
                                             </v-dialog>
                                         </v-col>
@@ -250,9 +257,9 @@ export default {
                 topCategory: '',
                 bottomCategory: '',
                 frequency: {
-                    frequency_week: '',
-                    frequency_start: '',
-                    frequency_end: ''
+                    week: '',
+                    startTime: '',
+                    endTime: ''
                 },
                 meeting: '',
                 github: '',
@@ -273,8 +280,8 @@ export default {
     },
     methods: {
         //상위 카테고리에 맞게 하위 카테고리 변환
-        checkTopCategory() {
-            this.$store.dispatch('moduleStudy/getBottomCategories');
+        async checkTopCategory() {
+            await this.$store.dispatch('moduleStudy/getBottomCategories', this.study.topCategory.key);
         },
         nameCheckBtn(name) {
             this.$store.dispatch('moduleStudy/nameCheck', name);
@@ -303,11 +310,7 @@ export default {
                 //등록 요청 보내기.
                 //비동기방식 처리해야할거 같기도.. 일단 go
 
-                //top 카테고리 key로 바꾸기
-
-                //bottom 카테고리 key로 바꾸기
-
-                this.$store.dispatch('createStudy', this.study);
+                this.$store.dispatch('moduleStudy/createStudy', this.study);
             }
         }
     }
