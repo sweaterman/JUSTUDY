@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex flex-column align-center">
         <h2>{{ content }}</h2>
-        <DigitalClock :allTime="3000" :fontSize="150" />
+        <DigitalClock :allTime="allTime" :fontSize="150" />
     </div>
 </template>
 <script>
@@ -15,6 +15,9 @@ export default {
         content: {
             type: String,
             default: ''
+        },
+        allTime: {
+            type: Number
         }
     }
 };

@@ -71,12 +71,12 @@ export default {
                 var reader = new FileReader();
                 reader.onload = e => {
                     this.uploadImageFile = e.target.result;
-                    console.log(input.files[0]);
+                    // console.log(input.files[0]);
                 };
                 reader.readAsDataURL(input.files[0]);
                 this.file = input.files[0];
+                this.$emit('sendData', input.files[0]);
             }
-            console.log(this.uploadImageFile);
         }
     }
 };

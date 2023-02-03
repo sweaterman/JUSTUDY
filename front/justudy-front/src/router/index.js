@@ -8,13 +8,14 @@ import loginRouter from './loginRouter';
 import mainRouter from './mainRouter';
 import timerRouter from './timerRouter';
 import AdminRouter from './AdminRouter';
+import rankingRouter from './rankingRouter';
 
 Vue.use(VueRouter);
 
 const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
-    routes: [...studyRouter, ...userRouter, ...CommunityRouter, ...selfTestRouter, ...loginRouter, ...mainRouter, ...timerRouter, ...AdminRouter]
+    routes: [...studyRouter, ...userRouter, ...CommunityRouter, ...selfTestRouter, ...loginRouter, ...mainRouter, ...timerRouter, ...AdminRouter, ...rankingRouter]
 });
 
 export default router;

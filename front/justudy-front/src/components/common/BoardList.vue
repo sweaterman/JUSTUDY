@@ -10,7 +10,8 @@
                 </v-col>
                 <v-col cols="12" md="4" />
                 <v-col cols="12" md="4" align="right">
-                    <v-text>더보기</v-text>
+                    <!-- <v-text>더보기</v-text> -->
+                    더보기
                 </v-col>
             </v-row>
             <v-row :style="{marginTop: '1%'}">
@@ -25,7 +26,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="item in contentlist" :key="item.id" @click="movetocontent(item.id)">
+                        <tr v-for="item in bookMarkList" :key="item.id" @click="movetocontent(item?.id)">
                             <td>{{ item.writer }}</td>
                             <td>{{ item.title }}</td>
                             <td>{{ item.createdAt.split('T')[0] }}</td>
@@ -43,6 +44,7 @@
 export default {
     name: 'BoardList',
     props: {
+        bookMarkList: {},
         boardtitle: {
             type: String
         }

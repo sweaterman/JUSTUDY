@@ -13,6 +13,7 @@ router.beforeEach((to, from, next) => {
 
     if (authorization?.[0] == 'login') {
         // 여기서 로그인 체크 할것임
+
         console.log(authorization);
         return next({path: '/login'});
     }
