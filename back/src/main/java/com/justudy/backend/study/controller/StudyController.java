@@ -17,13 +17,14 @@ import com.justudy.backend.study.service.StudyMemberService;
 import com.justudy.backend.study.service.StudyResumeService;
 import com.justudy.backend.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
-
+@Log4j2
 @RestController
 @RequestMapping("/api/study")
 @RequiredArgsConstructor
@@ -67,25 +68,34 @@ public class StudyController {
         //todo session 과 id 체크
 //        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
-        List<String> subCategories = null;
+        List<String> Categories = null;
         //타입이 카테고리 검색이면
         if (type != null && type.compareTo("category") == 0) {
-            subCategories = Arrays.asList(search.split(","));
+            Categories = Arrays.asList(search.split(","));
+            int flg = 0;
             List<CategoryResponse> response = categoryService.getSubCategories();
             for (CategoryResponse categoryResponse : response) {
-                int flg = 0;
-                for (String subCategory : subCategories) {
-                    if (subCategory.compareTo(categoryResponse.getValue()) == 0) {
+                for (String subCategory : Categories) {
+                    if (subCategory.compareTo(categoryResponse.getKey()) == 0) {
                         flg = 1;
                         break;
                     }
                 }
-                if (flg == 0) throw new InvalidRequest();
             }
+            response = categoryService.getSubCategories();
+            for (CategoryResponse categoryResponse : response) {
+                for (String mainCategory : Categories) {
+                    if (mainCategory.compareTo(categoryResponse.getKey()) == 0) {
+                        flg = 1;
+                        break;
+                    }
+                }
+            }
+            if (flg == 0) throw new InvalidRequest();
             search = null;
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(studyService.search(page, subCategories, type, search));
+        return ResponseEntity.status(HttpStatus.OK).body(studyService.search(page, Categories, type, search));
     }
 
 
