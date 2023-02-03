@@ -26,7 +26,7 @@
                             <v-tabs color="black" v-model="tab">
                                 <v-tabs-slider color="yellow"></v-tabs-slider>
                                 <v-tab @click="changeBottom('전체')"><h1>전체</h1></v-tab>
-                                <v-tab v-for="top in topCategories" :key="top.value" @click="changeBottom(top.key)">
+                                <v-tab v-for="top in topCategories" :key="top.key" @click="changeBottom(top.key)">
                                     <h1>{{ top.value }}</h1>
                                 </v-tab>
                             </v-tabs>
