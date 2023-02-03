@@ -1,6 +1,5 @@
 package com.justudy.backend.study.dto.response;
 
-import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.domain.StudyMemberEntity;
 import lombok.AllArgsConstructor;
@@ -19,6 +18,7 @@ public class StudyResponse {
     private Long sequence;
     private String name;
     private String leader;
+    private List<StudyFrequencyResponse> frequency;
     private Integer population;
     private String topCategory;
     private String bottomCategory;
@@ -32,17 +32,16 @@ public class StudyResponse {
 
     public static StudyResponse makeBuilder(StudyEntity entity) {
 //        log.info("슬라이드5 {}",entity.getStudyMembers().size());
-        ;
 //        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info : {}", studyMember.getMember().getSequence()));
-        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info : {}", studyMember.getMember().getNickname()));
-
-        String leader = entity.getStudyMembers()
-                .stream()
-                .filter(studyMemberEntity -> entity.getLeaderSeq().longValue() == studyMemberEntity.getMember().getSequence().longValue())
-
-                .findFirst()
-                .orElseThrow(InvalidRequest::new)
-                .getMember().getNickname();
+//        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info : {}", studyMember.getMember().getNickname()));
+//
+//        String leader = entity.getStudyMembers()
+//                .stream()
+//                .filter(studyMemberEntity -> entity.getLeaderSeq().longValue() == studyMemberEntity.getMember().getSequence().longValue())
+//
+//                .findFirst()
+//                .orElseThrow(InvalidRequest::new)
+//                .getMember().getNickname();
 
         //todo image 추가
         return StudyResponse.builder()
@@ -50,6 +49,10 @@ public class StudyResponse {
                 .member(entity.getStudyMembers()
                         .stream()
                         .map(StudyMemberEntity::getSequence)
+                        .collect(Collectors.toList()))
+                .frequency(entity.getFrequency()
+                        .stream()
+                        .map(StudyFrequencyResponse::makeBuilder)
                         .collect(Collectors.toList()))
                 .topCategory(entity.getCategory().getParentCategory().getValue())
                 .bottomCategory(entity.getCategory().getValue())
@@ -60,7 +63,7 @@ public class StudyResponse {
                 .isOpen(entity.getIsOpen())
 //                .imageSequence(entity.getImageFile().getSequence())
                 .startTime(entity.getStartTime())
-                .leader(leader)
+                .leader(null)
                 .build();
     }
 
