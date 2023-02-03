@@ -114,8 +114,10 @@
         </v-row>
 
         <!-- 달력 파트 -->
-        <v-row :style="{marginTop: '1%'}">
-            <Calendar />
+        <v-row style="padding: 10%">
+            <v-col>
+                <MyPageCalendar :studyCalendar="studyCalendar" />
+            </v-col>
         </v-row>
     </v-app>
 </template>
@@ -124,7 +126,8 @@ import StudyAnalyze from '@/components/mypage/StudyAnalyze.vue';
 import ProfileDetail from '@/components/mypage/ProfileDetail.vue';
 // import Follow from '@/components/common/Follow.vue';
 import ProfilePicture from '@/components/mypage/ProfilePicture.vue';
-import Calendar from '@/components/common/Calendar.vue';
+// import Calendar from '@/components/common/Calendar.vue';
+import MyPageCalendar from '@/components/mypage/MyPageCalendar.vue';
 import RadarChart from '@/components/common/RadarChart.vue';
 import ModalComponent from '@/components/mypage/ModalComponent.vue';
 import BoardList from '@/components/common/BoardList.vue';
@@ -161,7 +164,7 @@ export default {
         ProfileDetail,
         // Follow,
         ProfilePicture,
-        Calendar,
+        MyPageCalendar,
         RadarChart,
         ModalComponent
         // TextButton
@@ -180,6 +183,9 @@ export default {
         // 로그인한 유저 사진과 유저 정보 (닉네임,희망상태,희망진로)
         await this.$store.dispatch('moduleMyPage/getMyPageUser');
         this.user = this.$store.state.moduleMyPage.user;
+        let studyCalendar = new Array(32).fill('🟡18:00');
+        this.studyCalendar = studyCalendar;
+        console.log(studyCalendar);
         await this.$store.dispatch('moduleCommunity/getBookMarkList', {id: 50});
         this.bookMarkList = this.$store.state.moduleCommunity.bookMarkList;
         // 팔로잉
