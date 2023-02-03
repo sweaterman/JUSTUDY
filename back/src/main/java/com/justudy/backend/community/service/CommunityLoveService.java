@@ -1,6 +1,7 @@
 package com.justudy.backend.community.service;
 
 import com.justudy.backend.community.domain.CommunityLoveEntity;
+import com.justudy.backend.community.exception.LoveNotFound;
 import com.justudy.backend.community.repository.CommunityLoveRepository;
 import com.justudy.backend.exception.InvalidRequest;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +22,14 @@ public class CommunityLoveService {
                 .orElseGet(() ->
                         loveRepository.save(makeNewLove(loginSequence, communitySequence))
                 );
+
         return savedLove.getSequence();
     }
 
     @Transactional
     public void deleteLove(Long loginSequence, Long communitySequence) {
         CommunityLoveEntity findLove = loveRepository.findLove(loginSequence, communitySequence)
-                .orElseThrow(() -> new InvalidRequest());
+                .orElseThrow(LoveNotFound::new);
 
         loveRepository.delete(findLove);
     }
@@ -35,6 +37,10 @@ public class CommunityLoveService {
     @Transactional
     public void deleteAllByCommunity(Long communitySequence) {
         loveRepository.deleteAllByCommunity(communitySequence);
+    }
+
+    public Integer getCountOfLove(Long communitySequence) {
+        return loveRepository.countOfLove(communitySequence);
     }
 
     private CommunityLoveEntity makeNewLove(Long loginSequence, Long communitySequence) {

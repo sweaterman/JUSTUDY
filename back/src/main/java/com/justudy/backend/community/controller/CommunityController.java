@@ -2,12 +2,10 @@ package com.justudy.backend.community.controller;
 
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.service.CategoryService;
-import com.justudy.backend.community.dto.request.CommunityCommentCreate;
-import com.justudy.backend.community.dto.request.CommunityCommentEdit;
-import com.justudy.backend.community.dto.request.CommunityCreate;
-import com.justudy.backend.community.dto.request.CommunityEdit;
+import com.justudy.backend.community.dto.request.*;
 import com.justudy.backend.community.dto.response.CommunityCommentResponse;
-import com.justudy.backend.community.dto.response.CommunityResponse;
+import com.justudy.backend.community.dto.response.CommunityDetailResponse;
+import com.justudy.backend.community.dto.response.CommunityListResponse;
 import com.justudy.backend.community.service.CommunityBookmarkService;
 import com.justudy.backend.community.service.CommunityCommentService;
 import com.justudy.backend.community.service.CommunityLoveService;
@@ -47,8 +45,18 @@ public class CommunityController {
      * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
      */
     @GetMapping("/board/search")
-    public ResponseEntity<List<CommunityResponse>> readAllCommunityBySearch(@RequestParam("page") int page, @RequestParam("type") String type, @RequestParam("saerch") String search) {
+    public ResponseEntity<List<CommunityDetailResponse>> readAllCommunityBySearch(@RequestParam("page") int page, @RequestParam("type") String type, @RequestParam("saerch") String search) {
         return ResponseEntity.status(HttpStatus.OK).body(communityService.search(page, type, search));
+    }
+
+    @GetMapping("/board/test")
+    public List<CommunityListResponse> getList(@ModelAttribute CommunitySearch condition) {
+        log.info("before = {}", condition);
+        log.info("method call = {}", condition.validateNull());
+        log.info("after = {}", condition);
+
+
+        return communityService.getCommunities(condition);
     }
 
     /**
@@ -57,7 +65,7 @@ public class CommunityController {
      * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
      */
     @GetMapping("/board/love")
-    public ResponseEntity<List<CommunityResponse>> readPopularCommunity() {
+    public ResponseEntity<List<CommunityDetailResponse>> readPopularCommunity() {
         return ResponseEntity.status(HttpStatus.OK).body(communityService.readPopularCommunity());
     }
 
@@ -68,7 +76,7 @@ public class CommunityController {
      * @return ResponseEntity<List < CommunityResponse>> 200 OK, 1페이지는 맨위 N개 공지 정보 + 커뮤니티 정보 목록
      */
     @GetMapping("/board")
-    public ResponseEntity<List<CommunityResponse>> readAllCommunity(@RequestParam("page") int page,@RequestParam("category") String category) {
+    public ResponseEntity<List<CommunityDetailResponse>> readAllCommunity(@RequestParam("page") int page, @RequestParam("category") String category) {
         return ResponseEntity.status(HttpStatus.OK).body(communityService.readAllCommunity(page,category));
     }
 
@@ -79,7 +87,7 @@ public class CommunityController {
      * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 공지 정보 목록
      */
     @GetMapping("/board/notice")
-    public ResponseEntity<List<CommunityResponse>> readAllNoticeCommunity(@RequestParam("page") int page) {
+    public ResponseEntity<List<CommunityDetailResponse>> readAllNoticeCommunity(@RequestParam("page") int page) {
         return ResponseEntity.status(HttpStatus.OK).body(communityService.readAllNoticeCommunity(page));
     }
 
@@ -90,7 +98,7 @@ public class CommunityController {
      * @return ResponseEntity<CommunityResponse> 200 OK, 커뮤니티 상세 정보
      */
     @GetMapping("/board/{id}")
-    public ResponseEntity<CommunityResponse> readCommunityById(@PathVariable("id") Long communitySequence) {
+    public ResponseEntity<CommunityDetailResponse> readCommunityById(@PathVariable("id") Long communitySequence) {
         return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunity(communitySequence));
     }
 
@@ -101,12 +109,12 @@ public class CommunityController {
      * @return ResponseEntity<CommunityResponse> 201 Created, 생성된 커뮤니티 정보
      */
     @PostMapping("/board")
-    public ResponseEntity<CommunityResponse> createCommunity(@RequestBody CommunityCreate request, HttpSession session) {
+    public ResponseEntity<CommunityDetailResponse> createCommunity(@RequestBody CommunityCreate request, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         MemberEntity findMember = memberService.getMember(loginSequence);
         CategoryEntity category = categoryService.getCategoryEntityByKey(request.getCategory());
 
-        CommunityResponse response = communityService.createCommunity(request, findMember, category);
+        CommunityDetailResponse response = communityService.createCommunity(request, findMember, category);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -119,11 +127,11 @@ public class CommunityController {
      * @return ResponseEntity<UserResponse> 200 OK, 수정된 커뮤니티글 정보
      */
     @PutMapping("/board/{id}")
-    public ResponseEntity<CommunityResponse> updateCommunity(@PathVariable("id") Long communitySequence,
-                                                             @RequestBody CommunityEdit request,
-                                                             HttpSession session) {
+    public ResponseEntity<CommunityDetailResponse> updateCommunity(@PathVariable("id") Long communitySequence,
+                                                                   @RequestBody CommunityEdit request,
+                                                                   HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        CommunityResponse response = communityService.updateCommunity(loginSequence, communitySequence, request);
+        CommunityDetailResponse response = communityService.updateCommunity(loginSequence, communitySequence, request);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

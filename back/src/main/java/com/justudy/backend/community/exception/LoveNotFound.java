@@ -5,15 +5,15 @@ import com.justudy.backend.exception.CustomException;
 /**
  * status -> 404
  */
-public class CommunityLoveNotFound extends CustomException {
+public class LoveNotFound extends CustomException {
 
-    private static final String MESSAGE = "잘못된 요청입니다.";
+    private static final String MESSAGE = "요청한 '좋아요'가 없습니다.";
 
-    public CommunityLoveNotFound() {
+    public LoveNotFound() {
         super(MESSAGE);
     }
 
-    public CommunityLoveNotFound(String message, Throwable cause) {
+    public LoveNotFound(String message, Throwable cause) {
         super(message, cause);
     }
 
