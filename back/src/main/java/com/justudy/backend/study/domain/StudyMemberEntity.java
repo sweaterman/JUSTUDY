@@ -21,11 +21,11 @@ public class StudyMemberEntity {
     @JoinColumn(name = "member_seq")
     private MemberEntity member;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_seq")
+    @JoinColumn(name = "study_member_study_seq")
     private StudyEntity study;
     @Column(name = "study_member_alarm", columnDefinition = "TINYINT(1)")
     private Boolean alarm;
-    @Column(name = "study_member_king")
+    @Column(name = "study_member_badge")
     private Integer badge;
     @Column(name = "study_member_created_time")
     private LocalDateTime createdTime;
@@ -34,5 +34,11 @@ public class StudyMemberEntity {
 
     public void changeBadge(Integer badge) {
         this.badge = badge;
+    }
+
+    public void changeStudy(StudyEntity studyEntity) {
+        this.study = studyEntity;
+//        if (!studyEntity.getStudyMembers().contains(this))
+//            studyEntity.getStudyMembers().add(this);
     }
 }

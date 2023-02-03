@@ -65,9 +65,9 @@ public class StudyController {
      * 페이징, 검색,
      */
     @GetMapping("/")
-    public ResponseEntity<StudySearchResponse> readAllStudy(HttpSession session,@RequestParam("page") int page, @RequestParam(value = "type", required = false) String type, @RequestParam(value = "search", required = false) String search) {
+    public ResponseEntity<StudySearchResponse> readAllStudy(@RequestParam("page") int page, @RequestParam(value = "type", required = false) String type, @RequestParam(value = "search", required = false) String search) {
         //todo session 과 id 체크
-        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+//        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
         List<String> subCategories = null;
         //타입이 카테고리 검색이면
@@ -109,10 +109,10 @@ public class StudyController {
      * 스터디를 생성하는 API
      *
      * @param request 생성정보
-     * @return ResponseEntity<StudyResponse> 201 CREATE, 생성된 스터디 정보
+     * @return ResponseEntity<StudyDetailResponse> 201 CREATE, 생성된 스터디 정보
      */
     @PostMapping("/")
-    public ResponseEntity<StudyResponse> createStudy(@RequestBody StudyCreate request) {
+    public ResponseEntity<StudyDetailResponse> createStudy(@RequestBody StudyCreate request) {
         //todo session 과 id 체크
 
         //todo 이미지 생성
@@ -144,15 +144,20 @@ public class StudyController {
      *
      * @param id      스터디 sequence (PK)
      * @param request 수정정보
-     * @return ResponseEntity<StudyResponse> 200 OK, 수정된 스터디 정보
+     * @return ResponseEntity<StudyDetailResponse> 200 OK, 수정된 스터디 정보
+     * 스터디 맴버나 지원서는 수정하지 않음
      */
     @PutMapping("/{id}")
-    public ResponseEntity<StudyResponse> updateStudy(@PathVariable("id") Long id, @RequestBody StudyEdit request) {
+    public ResponseEntity<StudyDetailResponse> updateStudy(@PathVariable("id") Long id, @RequestBody StudyEdit request) {
         //todo session 과 id 체크
 
         //todo 이미지 수정
 
-        //활동주기, 스터디 수정
+        //활동주기 수정
+        studyFrequencyService.deleteStudyFrequencyByStudy(id);
+        studyFrequencyService.createStudyFrequencies(id,request.getFrequency());
+        
+        //스터디 수정
         Long studySeq = studyService.updateStudy(id, request);
 
         //스터디 맴버 수정 이건 acceptStudyResume API에서 추가
@@ -365,7 +370,7 @@ public class StudyController {
     public ResponseEntity<Void> acceptStudyResume(@PathVariable("id") Long id, @PathVariable("applyid") Long applyId, @RequestBody StudyResumeApply request) {
         //todo session 과 leader id 체크
 
-        StudyResponse studyEntity = studyService.readStudy(id);
+        StudyDetailResponse studyEntity = studyService.readStudy(id);
         //지원서 체크
         Long resumeSeq = studyEntity.getResumeSeq()
                 .stream()

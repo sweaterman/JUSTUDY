@@ -19,6 +19,7 @@ package com.justudy.backend.GroupCall.model;
 
 import com.justudy.backend.GroupCall.dto.response.StudyRoomResponse;
 import com.justudy.backend.GroupCall.service.StudyRoomService;
+import com.justudy.backend.study.dto.response.StudyDetailResponse;
 import com.justudy.backend.study.dto.response.StudyResponse;
 import com.justudy.backend.study.service.StudyService;
 import com.justudy.backend.timer.dto.request.ActivityRequest;
@@ -78,7 +79,7 @@ public class RoomManager {
   public void removeRoom(Room room) {
     try {
       Long sequence = Long.parseLong(room.getName());//study seq....
-      StudyResponse studyResponse = studyService.readStudy(sequence);
+      StudyDetailResponse studyResponse = studyService.readStudy(sequence);
       String category = studyResponse.getTopCategory();
       ///
       StudyRoomResponse studyRoom = studyRoomService.getUUIDStudy(sequence);

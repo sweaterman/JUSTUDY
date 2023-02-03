@@ -1,7 +1,6 @@
 package com.justudy.backend.study.dto.response;
 
 import com.justudy.backend.study.domain.StudyResumeEntity;
-import com.justudy.backend.study.domain.StudyResumeRespond;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,9 +16,6 @@ public class StudyResumeResponse {
     private Long memberSeq;
     private String content;
     private LocalDateTime createdTime;
-    private LocalDateTime modifiedTime;
-    private LocalDateTime respondedTime;
-    private StudyResumeRespond respond;
 
     public static StudyResumeResponse makeBuilder(StudyResumeEntity entity) {
         return StudyResumeResponse.builder()
@@ -28,9 +24,6 @@ public class StudyResumeResponse {
                 .memberSeq(entity.getMember().getSequence())
                 .content(entity.getContent())
                 .createdTime(entity.getCreatedTime())
-                .modifiedTime(entity.getModifiedTime())
-                .respondedTime(entity.getRespondedTime())
-                .respond(entity.getRespond())
                 .build();
     }
 }

@@ -30,7 +30,7 @@ public class StudyCreate {
     private String leaderName;
 
 
-    public StudyEntity toEntity(CategoryEntity categoryEntity,Long leaderSeq) {
+    public StudyEntity toEntity(CategoryEntity categoryEntity) {
         //frequency는 따로 저장
         return StudyEntity
                 .builder()
@@ -40,7 +40,7 @@ public class StudyCreate {
                 .introduction(introduction)
                 .population(population)
                 .level(level)
-                .onlineOffline(meeting)
+                .meeting(meeting)
                 .isOpen(true)
                 .github(github)
                 .notion(notion)
