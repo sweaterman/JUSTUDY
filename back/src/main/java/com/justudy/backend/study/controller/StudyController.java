@@ -6,7 +6,6 @@ import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.service.UploadFileService;
-import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.dto.request.StudyEdit;
 import com.justudy.backend.study.dto.request.StudyMemberCreate;
@@ -22,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.List;
 
@@ -155,8 +153,8 @@ public class StudyController {
 
         //활동주기 수정
         studyFrequencyService.deleteStudyFrequencyByStudy(id);
-        studyFrequencyService.createStudyFrequencies(id,request.getFrequency());
-        
+        studyFrequencyService.createStudyFrequencies(id, request.getFrequency());
+
         //스터디 수정
         Long studySeq = studyService.updateStudy(id, request);
 
@@ -187,6 +185,20 @@ public class StudyController {
         //스터디 삭제
         studyService.deleteStudy(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+    /**
+     * 스터디 이름 중복체크 API
+     *
+     * @param name 스터디 이름
+     * @return ResponseEntity<Void> 없을시 200 OK 중복일시 409 CONFLICT
+     */
+    @GetMapping("/check/{name}")
+    public ResponseEntity<Void> checkStudyName(@PathVariable("name") String name) {
+        //todo 이름으로 스터디 검색
+        if (studyService.checkNickName(name))
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
     }
 
 

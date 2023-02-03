@@ -101,11 +101,16 @@ public class StudyService {
         return StudySearchResponse.makeBuilder(studyEntities
                 .stream()
                 .map(StudyResponse::makeBuilder)
-                .collect(Collectors.toList()), studyEntities.isLast());
+                .collect(Collectors.toList()), studyEntities.hasNext());
     }
 
 
     public StudyEntity getStudyByLeader(Long leaderSeq) {
         return studyRepository.findByLeaderSeq(leaderSeq);
+    }
+
+    public Boolean checkNickName(String nickName) {
+        if (studyRepository.readStudyByNickName(nickName) == null) return true;
+        return false;
     }
 }

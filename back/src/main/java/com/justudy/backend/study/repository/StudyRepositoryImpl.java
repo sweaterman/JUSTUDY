@@ -27,12 +27,7 @@ public class StudyRepositoryImpl implements StudyRepositorySupport {
     public Slice<StudyEntity> findAllBySearchOption(Pageable pageable, List<String> sub, String studyLeader, String studyName) {
         JPQLQuery<StudyEntity> query = queryFactory
                 .selectFrom(qStudyEntity)
-                .leftJoin(qStudyEntity.studyMembers, qStudyMemberEntity)
-                .fetchJoin()
-                .leftJoin(qStudyMemberEntity.member, qMemberEntity)
-                .fetchJoin()
-                .where(inCategories(sub), eqLeader(studyLeader), eqStudyName(studyName))
-                .limit(pageable.getPageSize()+1);
+                .where(inCategories(sub), eqLeader(studyLeader), eqStudyName(studyName));
 
         return pagingUtil.getSliceImpl(pageable, query, qStudyEntity.getClass());
     }
@@ -42,6 +37,14 @@ public class StudyRepositoryImpl implements StudyRepositorySupport {
         return queryFactory
                 .selectFrom(qStudyEntity)
                 .where(qStudyEntity.leaderSeq.eq(leaderSeq))
+                .fetchFirst();
+    }
+
+    @Override
+    public StudyEntity readStudyByNickName(String name) {
+        return queryFactory
+                .selectFrom(qStudyEntity)
+                .where(qStudyEntity.name.eq(name))
                 .fetchFirst();
     }
 
