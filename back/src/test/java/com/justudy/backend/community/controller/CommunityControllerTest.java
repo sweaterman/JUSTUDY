@@ -66,7 +66,8 @@ class CommunityControllerTest {
     @DisplayName("게시글 조회 ")
     void getList() throws Exception {
 
-        mockMvc.perform(get(COMMON_URL + "/board/test?category=backend&type=name&search=하이"))
+        mockMvc.perform(get(COMMON_URL + "/board/test?category=backend&type=nickname&search=하이")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print());
     }
 

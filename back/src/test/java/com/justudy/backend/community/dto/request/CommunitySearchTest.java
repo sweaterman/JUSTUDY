@@ -1,5 +1,6 @@
 package com.justudy.backend.community.dto.request;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -7,7 +8,19 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 class CommunitySearchTest {
+
+    @Test
+    @DisplayName("String convert to EnumType")
+    void convertToEnum() {
+        CommunitySearch condition = new CommunitySearch(10L, 30L,
+                "backend", "nickname",
+                "ssafy", "no");
+        System.out.println(condition);
+        System.out.println(condition.getType().getKey());
+        System.out.println(condition.getType().getValue());
+    }
 
     @Test
     @DisplayName("생성자 확인")
