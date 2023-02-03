@@ -1,8 +1,8 @@
 package com.justudy.backend.community.service;
 
 import com.justudy.backend.community.domain.CommunityBookmarkEntity;
+import com.justudy.backend.community.exception.BookmarkNotFound;
 import com.justudy.backend.community.repository.CommunityBookmarkRepository;
-import com.justudy.backend.exception.InvalidRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,8 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 class CommunityBookmarkServiceTest {
 
@@ -93,8 +92,27 @@ class CommunityBookmarkServiceTest {
 
         //expected
         assertThatThrownBy(() -> bookmarkService.deleteBookmark(WRONG_LOGIN, COMMUNITY_SEQUENCE))
-                .isInstanceOf(InvalidRequest.class);
+                .isInstanceOf(BookmarkNotFound.class);
         assertThatThrownBy(() -> bookmarkService.deleteBookmark(LOGIN_SEQUENCE, WRONG_COMMUNITY))
-                .isInstanceOf(InvalidRequest.class);
+                .isInstanceOf(BookmarkNotFound.class);
+    }
+
+    @Transactional
+    @Test
+    @DisplayName("게시글 관련된 북마크 전체 삭제")
+    void deleteAllByCommunity() {
+        //given
+        BDDMockito.willDoNothing()
+                .given(bookmarkRepository).deleteAllByCommunity(COMMUNITY_SEQUENCE);
+        BDDMockito.willDoNothing()
+                .given(bookmarkRepository).deleteAllByCommunity(1000L);
+        BDDMockito.willDoNothing()
+                .given(bookmarkRepository).deleteAllByCommunity(1001L);
+
+        //when
+        bookmarkService.deleteBookmarkByCommunity(COMMUNITY_SEQUENCE);
+
+        //then
+        BDDMockito.then(bookmarkRepository).should(only()).deleteAllByCommunity(COMMUNITY_SEQUENCE);
     }
 }
