@@ -13,15 +13,16 @@
                 <v-row>
                     <!-- 프로필 이미지 -->
                     <v-col cols="12" md="3">
-                        <v-row>
+                        <v-row v-if="user.imageSequence">
                             <!-- 받아온 이미지 src에 넣기 -->
+
                             <ProfilePicture
                                 :diameter="230"
                                 :height="70"
                                 :fontSize="32"
                                 content="LV"
                                 standard="px"
-                                :src="require('@/assets/banner.jpg')"
+                                :src="`${port}images/${user.imageSequence}`"
                                 style="padding: 5%"
                                 justify="center"
                                 align="center"
@@ -41,8 +42,13 @@
                     <!-- 프로필 상세 -->
                     <v-col cols="12" md="3">
                         <ProfileDetail :user="user" />
+                        <!-- {{ user }} -->
                     </v-col>
-
+                    <v-col>
+                        <router-link to="/mypage/update" style="text-decoration: none; color: black">
+                            <v-btn color="yellow" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'x-large', marginTop: '30%'}">회원 수정</v-btn>
+                        </router-link>
+                    </v-col>
                     <!-- 팔로우 N 팔로잉 -->
                     <v-col cols="12" md="6">
                         <v-row>
@@ -104,7 +110,7 @@
 
         <!-- 북마크한 글 파트 -->
         <v-row :style="{marginBottom: '5%'}">
-            <BoardList boardtitle="북마크한 글" />
+            <BoardList boardtitle="북마크한 글" :bookMarkList="bookMarkList" />
         </v-row>
 
         <!-- 달력 파트 -->
@@ -123,25 +129,28 @@ import RadarChart from '@/components/common/RadarChart.vue';
 import ModalComponent from '@/components/mypage/ModalComponent.vue';
 import BoardList from '@/components/common/BoardList.vue';
 // import TextButton from '@/components/common/TextButton.vue';
-
+// import {mapState} from 'vuex';
+import port from '@/store/port';
 export default {
     name: 'MyPageView',
     data() {
         return {
             level: '초보 개발자',
             dialog: false,
+            port: port,
             // store에서 담아올 값
-            user: {},
+
             following: {},
             follow: {},
             studyAnalyzeValue: [],
             studyRecommand: [],
             bookMark: [],
-            studyCalendar: []
+            studyCalendar: [],
+            user: {},
+            bookMarkList: []
         };
     },
     computed: {
-        // ...mapState(['aaa'])
         // userLoginIdx(){
         // return this.$store.state.user.userIdx;
         // },
@@ -167,9 +176,12 @@ export default {
             }
         }
     },
-    created() {
+    async created() {
         // 로그인한 유저 사진과 유저 정보 (닉네임,희망상태,희망진로)
-        //     this.$store.dispatch("user/getUser");
+        await this.$store.dispatch('moduleMyPage/getMyPageUser');
+        this.user = this.$store.state.moduleMyPage.user;
+        await this.$store.dispatch('moduleCommunity/getBookMarkList', {id: 50});
+        this.bookMarkList = this.$store.state.moduleCommunity.bookMarkList;
         // 팔로잉
         // this.$store.dispatch("user/following");
         // 팔로우

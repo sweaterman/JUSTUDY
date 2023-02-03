@@ -1,31 +1,43 @@
 <template>
     <v-app>
-        <div class="d-flex flex-column align-center pt-16">
-            <h1>당신의 레벨은?!?!?</h1>
-            <img src="@/assets/juniorClass.png" style="padding: 20px" />
-            <h1 style="font-size: 55px">초보 개발자</h1>
-            <!-- <img src="@/assets/middleClass.png" />
-            <h1 style="font-size: 55px">중급 개발자</h1>
-            <img src="@/assets/highClass.png" style="border-radius: 50px" />
-            <h1 style="font-size: 55px">고급 개발자</h1> -->
-            <div class="d-flex pt-10">
-                <router-link :to="`/self-test/problem/1`" style="text-decoration: none; color: black; margin-right: 10px">
-                    <BasicButton :buttonLength="150" :height="60" :fontSize="25" content="다시하기" standard="px" />
-                </router-link>
-                <router-link :to="`/`" style="text-decoration: none; color: black">
-                    <BasicButton :buttonLength="150" :height="60" :fontSize="25" content="메인으로" standard="px" />
-                </router-link>
-            </div>
-        </div>
+        <v-row>
+            <v-col cols="12" md="4" />
+            <v-col cols="12" md="4">
+                <v-row>
+                    <v-cols>
+                        <v-row justify="center" align="center">
+                            <h1 :style="{marginTop: '8%'}">당신의 레벨은?!?!?</h1>
+                        </v-row>
+                        <v-row justify="center" align="center">
+                            <h1 style="font-size: 55px">초보 개발자</h1>
+                        </v-row>
+                        <v-row justify="center" align="center">
+                            <img src="@/assets/juniorClass.png" style="padding: 20px" />
+                        </v-row>
+                    </v-cols>
+                </v-row>
+                <v-row :style="{marginTop: '5%'}">
+                    <v-col cols="12" md="5">
+                        <router-link :to="`/self-test/problem/1`" style="text-decoration: none; color: black" justify="center" align="center">
+                            <v-btn block color="yellow" @click="gotoResultPage()" :style="{height: '65px', width: '180px', fontWeight: 'bold', fontSize: 'x-large'}">다시하기</v-btn>
+                        </router-link>
+                    </v-col>
+                    <v-col cols="12" md="2" />
+                    <v-col cols="12" md="5">
+                        <router-link :to="`/`" style="text-decoration: none; color: black" justify="center" align="center">
+                            <v-btn block color="white" :style="{height: '65px', width: '180px', fontWeight: 'bold', fontSize: 'x-large'}">메인으로</v-btn>
+                        </router-link>
+                    </v-col>
+                </v-row>
+            </v-col>
+            <v-col cols="12" md="4" />
+        </v-row>
     </v-app>
 </template>
 <script>
-import BasicButton from '@/components/common/BasicButton.vue';
 export default {
     name: 'SelfTestProblem',
-    components: {
-        BasicButton
-    },
+    components: {},
     data() {
         return {
             // localStorage 연결
