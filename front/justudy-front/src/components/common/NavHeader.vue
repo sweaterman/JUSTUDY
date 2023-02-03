@@ -42,16 +42,25 @@
 </template>
 
 <script>
+import {mapState} from 'vuex';
+
 export default {
     name: 'NavHeaderBar',
     components: {},
-    data() {
-        return {
-            isLogin: false
-        };
+    computed: {
+        ...mapState('moduleLogin', ['isLogin'])
     },
+    // data() {
+    //     return {
+    //         isLogin: false
+    //     };
+    // },
     methods: {
         moveTo(link) {
+            //로그아웃을 한다.
+            if (link == '/') {
+                // this.$store.dispatch('moduleLogin/logout');
+            }
             window.location.href = link;
         }
     }

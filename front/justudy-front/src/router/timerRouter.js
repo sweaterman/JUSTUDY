@@ -1,8 +1,8 @@
 import TimerStart from '@/views/Timer/TimerStart.vue';
 import TimerMyStatistic from '@/views/Timer/TimerMyStatistic.vue';
-// import FriendStatisticsView from '@/views/Timer/FriendStatistics.vue';
+import TimerFriendStatistic from '@/views/Timer/TimerFriendStatistic.vue';
+
 import RankingAllView from '@/views/Timer/RankingAll.vue';
-import TimerOthersStatic from '@/views/Timer/TimerOthersStatic';
 export default [
     {
         path: '/timer/study-start',
@@ -17,8 +17,8 @@ export default [
     },
     {
         path: '/timer/friend-statistics',
-        name: 'TimerOthersStatic',
-        component: TimerOthersStatic
+        name: 'TimerFriendStatistic',
+        component: TimerFriendStatistic
     },
     {
         path: '/timer/ranking',

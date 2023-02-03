@@ -1,7 +1,7 @@
 <template>
     <v-app style="padding: 10%">
         <v-row style="height: 70%">
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="4" v-if="user.imageSequence">
                 <!-- 임시로 해놓음 -->
 
                 <ProfilePictureUpdate :diameter="300" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" :src="`${port}images/${user.imageSequence}`" @sendData="showData" />
@@ -63,7 +63,7 @@ export default {
     methods: {
         update() {
             // 일괄 수정 API
-
+            console.log(this.file);
             this.result = {
                 nickname: this.user.username,
                 password: this.user.password,

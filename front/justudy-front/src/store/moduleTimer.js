@@ -1,14 +1,39 @@
 import axios from 'axios';
+
 import port from './port';
 export default {
     namespaced: true,
     state: {
-        firstYesterday: {}
+        firstYesterday: {},
+        studyTimeWeek: {},
+        studyTimeMonth: {},
+        averageMemberWeek: {},
+        averageMemberMonth: {},
+        studyCategory: [],
+        studyCalendar: []
     },
     getters: {},
     mutations: {
         getFirstYesterday(state, payload) {
             state.firstYesterday = payload;
+        },
+        getStudyTimeWeek(state, payload) {
+            state.studyTimeWeek = payload;
+        },
+        getStudyTimeMonth(state, payload) {
+            state.studyTimeMonth = payload;
+        },
+        getAverageMembersWeek(state, payload) {
+            state.averageMemberWeek = payload;
+        },
+        getAverageMembersMonth(state, payload) {
+            state.averageMemberMonth = payload;
+        },
+        getStudyCategory(state, payload) {
+            state.studyCategory = payload;
+        },
+        getStudyCalendar(state, payload) {
+            state.studyCalendar = payload;
         }
     },
     actions: {
@@ -20,23 +45,42 @@ export default {
                 commit('getFirstYesterday', res.data);
             });
         },
-        getStudyTimeWeek(_, {seq}) {
-            axios.get(port + `timer/member/week?seq=${seq}`);
+        async getStudyTimeWeek({commit}, {seq}) {
+            await axios.get(port + `timer/member/week?seq=${seq}`).then(res => {
+                commit('getStudyTimeWeek', res.data);
+            });
         },
-        getStudyTimeMonth(_, {seq}) {
-            axios.get(port + `timer/member/month?seq=${seq}`);
+        async getStudyTimeMonth({commit}, {seq}) {
+            await axios.get(port + `timer/member/month?seq=${seq}`).then(res => {
+                commit('getStudyTimeMonth', res.data);
+            });
         },
-        getStudyCategory(_, {seq}) {
-            axios.get(port + `timer/member/category?seq=${seq}`);
+        async getStudyCategory({commit}, {seq}) {
+            await axios.get(port + `timer/member/category?seq=${seq}`).then(res => {
+                commit('getStudyCategory', res.data);
+            });
         },
-        getAverageTimeWeek() {
-            axios.get(port + 'timer/members/week');
+
+        async getAverageMembersWeek({commit}) {
+            await axios.get(port + 'timer/members/week').then(res => {
+                commit('getAverageMembersWeek', res.data);
+            });
         },
-        getAverageTimeMonth() {
-            axios.get(port + 'timer/members/month');
+        async getAverageMembersMonth({commit}) {
+            await axios.get(port + 'timer/members/month').then(res => {
+                commit('getAverageMembersMonth', res.data);
+            });
         },
-        getStudyCalendar(_, {seq}) {
-            axios.get(port + `timer/study-calendar?seq=${seq}`);
+        async getStudyCalendar({commit}, {seq, year, month}) {
+            await axios
+                .post(port + `timer/member-calendar`, {
+                    seq: seq,
+                    year: year,
+                    month: month
+                })
+                .then(res => {
+                    commit('getStudyCalendar', res.data);
+                });
         }
     }
 };
