@@ -1,25 +1,35 @@
 <template>
     <v-app>
-        <div class="d-flex flex-column justify-center align-center" style="width: 100%; height: 100%">
-            <h1>선택을 바꾸시지 않겠습니까?</h1>
-            <div class="d-flex pt-10">
-                <router-link :to="`/self-test/problem/3`" style="text-decoration: none; color: black; margin-right: 10px">
-                    <BasicButton :buttonLength="150" :height="60" :fontSize="25" content="아니오" standard="px" />
-                </router-link>
-                <router-link :to="`/self-test/result`" style="text-decoration: none; color: black">
-                    <BasicButton :buttonLength="150" :height="60" :fontSize="25" content="예" standard="px" @click="gotoResultPage()" />
-                </router-link>
-            </div>
-        </div>
+        <v-row>
+            <v-col cols="12" md="2" />
+            <v-col cols="12" md="8">
+                <v-row justify="center" align="center">
+                    <h1 :style="{marginTop: '25%'}">선택을 바꾸시지 않겠습니까?</h1>
+                </v-row>
+                <v-row :style="{marginTop: '10%'}" justify="center" align="center">
+                    <v-col cols="12" md="3" />
+                    <v-col cols="12" md="2">
+                        <router-link :to="`/self-test/result`" style="text-decoration: none; color: black">
+                            <v-btn block color="yellow" @click="gotoResultPage()" :style="{height: '65px', width: '180px', fontWeight: 'bold', fontSize: 'large'}">예</v-btn>
+                        </router-link>
+                    </v-col>
+                    <v-col cols="12" md="2" />
+                    <v-col cols="12" md="2">
+                        <router-link :to="`/self-test/problem/7`" style="text-decoration: none; color: black">
+                            <v-btn block color="white" :style="{height: '65px', width: '180px', fontWeight: 'bold', fontSize: 'large'}">아니오</v-btn>
+                        </router-link>
+                    </v-col>
+                    <v-col cols="12" md="3" />
+                </v-row>
+            </v-col>
+            <v-col cols="12" md="2" />
+        </v-row>
     </v-app>
 </template>
 <script>
-import BasicButton from '@/components/common/BasicButton.vue';
 export default {
     name: 'SelfTestProblem',
-    components: {
-        BasicButton
-    },
+    components: {},
     data() {
         return {};
     },

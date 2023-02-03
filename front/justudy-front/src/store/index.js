@@ -1,23 +1,35 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 
-import moduleUser from './moduleUser'
-import moduleCommunity from './moduleCommunity'
-import moduleStudy from './moduleStudy'
-Vue.use(Vuex)
+import moduleAdmin from './moduleAdmin';
+import moduleCommunity from './moduleCommunity';
+import moduleLogin from './moduleLogin';
+import moduleMain from './moduleMain';
+import moduleMyPage from './moduleMyPage';
+import moduleSelfTest from './moduleSelfTest';
+import moduleStudy from './moduleStudy';
+import moduleTimer from './moduleTimer';
+
+Vue.use(Vuex);
 
 export default new Vuex.Store({
-  // state: {
-  // },
-  // getters: {
-  // },
-  // mutations: {
-  // },
-  // actions: {
-  // },
-  modules: {
-    moduleUser : moduleUser,
-    moduleCommunity : moduleCommunity,
-    moduleStudy : moduleStudy
-  }
-})
+    // state: {
+    // },
+    // getters: {
+    // },
+    // mutations: {
+    // },
+    // actions: {
+    // },
+    modules: {
+        moduleAdmin: moduleAdmin,
+
+        moduleCommunity: moduleCommunity,
+        moduleLogin: moduleLogin,
+        moduleMain: moduleMain,
+        moduleMyPage: moduleMyPage,
+        moduleSelfTest: moduleSelfTest,
+        moduleStudy: moduleStudy,
+        moduleTimer: moduleTimer
+    }
+});
