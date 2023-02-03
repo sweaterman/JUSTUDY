@@ -10,6 +10,8 @@ import moduleSelfTest from './moduleSelfTest';
 import moduleStudy from './moduleStudy';
 import moduleTimer from './moduleTimer';
 import moduleRanking from './moduleRanking';
+import moduleWebRTC from './moduleWebRTC';
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -31,6 +33,7 @@ export default new Vuex.Store({
         moduleSelfTest: moduleSelfTest,
         moduleStudy: moduleStudy,
         moduleTimer: moduleTimer,
-        moduleRanking: moduleRanking
+        moduleRanking: moduleRanking,
+        moduleWebRTC: moduleWebRTC
     }
 });
