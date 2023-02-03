@@ -50,11 +50,12 @@ public class CommunityController {
     }
 
     @GetMapping("/board/test")
-    public List<CommunityListResponse> getList(@ModelAttribute CommunitySearchRequest request) {
+    public List<CommunityListResponse> getList(@ModelAttribute CommunitySearch condition) {
+        log.info("before = {}", condition);
+        log.info("method call = {}", condition.validateNull());
+        log.info("after = {}", condition);
 
-        log.info("request = {}", request);
-        CommunitySearch condition = new CommunitySearch(request);
-        log.info("condition = {}", condition);
+
         return communityService.getCommunities(condition);
     }
 

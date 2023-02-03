@@ -36,7 +36,7 @@ public class CommunityListResponse {
     public CommunityListResponse(CommunityEntity communityEntity) {
         this.sequence = communityEntity.getSequence();
         this.title = communityEntity.getTitle();
-        this.nickname = communityEntity.getMember().getNickname();
+        this.nickname = communityEntity.getMember().getNickname(); //memberEntity
         this.createdTime = communityEntity.getCreatedTime();
         this.isHighlighted = communityEntity.getIsHighlighted();
     }
