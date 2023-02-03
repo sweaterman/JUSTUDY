@@ -6,11 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;
-import java.util.Optional;
 
 
 public interface StudyRepositorySupport {
 
     Slice<StudyEntity> findAllBySearchOption(Pageable pageable, List<String> sub, String studyLeader, String studyName);
 
+    StudyEntity findByLeaderSeq(Long leaderSeq);
 }

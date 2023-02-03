@@ -13,13 +13,16 @@ import com.justudy.backend.study.exception.StudyNotFound;
 import com.justudy.backend.study.repository.StudyMemberRepository;
 import com.justudy.backend.study.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StudyMemberService {
@@ -43,7 +46,7 @@ public class StudyMemberService {
         //가입한 번호의 스터디 리스트 출력
         return studyMemberEntities
                 .stream()
-                .map(studyMemberEntity -> studyMemberEntity.getStudy())
+                .map(StudyMemberEntity::getStudy)
                 .map(StudyResponse::makeBuilder)
                 .collect(Collectors.toList());
     }
@@ -53,11 +56,12 @@ public class StudyMemberService {
         StudyEntity studyEntity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
         //todo session 아이디와 리더 비교해서 아닐시 오류 권한이 없습니다
+
         //스터디원인지 확인
-        StudyMemberEntity MemberEntity = checkStudyMember(studyEntity.getStudyMembers(), memberId);
-        studyEntity.getLeaderSeq();
+        StudyMemberEntity memberEntity = checkStudyMember(studyEntity.getStudyMembers(), memberId);
 
         //스터디원 추방
+        studyEntity.removeStudyMember(memberEntity);
         studyMemberRepository.deleteStudyMember(id, memberId);
     }
 
@@ -65,13 +69,14 @@ public class StudyMemberService {
     public void withdrawStudyMember(Long id, Long memberId) {
         StudyEntity studyEntity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
-        //todo session id와 리더 비교해서 아닐시 오류 권한이 없습니다
         //스터디원인지 확인
-        StudyMemberEntity MemberEntity = checkStudyMember(studyEntity.getStudyMembers(), memberId);
+        StudyMemberEntity memberEntity = checkStudyMember(studyEntity.getStudyMembers(), memberId);
+
         //memberid와 리더seq비교 아닐시 invalid request error
-        Long leaderSeq = studyEntity.getLeaderSeq();
-        if (checkLeader(leaderSeq, memberId)) throw new InvalidRequest("memberId", "리더는 탈퇴할 수 없습니다");
+        if (checkLeader(studyEntity.getLeaderSeq(), memberId)) throw new InvalidRequest("leader", "스터디장은 탈퇴할 수 없습니다.");
+
         //스터디 탈퇴
+        studyEntity.removeStudyMember(memberEntity);
         studyMemberRepository.deleteStudyMember(id, memberId);
     }
 
@@ -79,25 +84,32 @@ public class StudyMemberService {
     public Long createStudyMember(StudyMemberCreate request) {
         MemberEntity memberEntity = memberRepository.findById(request.getMemberSeq()).orElseThrow(MemberNotFound::new);
         StudyEntity studyEntity = studyRepository.findById(request.getStudySeq()).orElseThrow(StudyNotFound::new);
-
-        return studyMemberRepository.save(request.toEntity(memberEntity, studyEntity)).getSequence();
+        StudyMemberEntity studyMemberEntity = studyMemberRepository.save(request.toEntity(memberEntity, studyEntity));
+        studyEntity.addStudyMember(studyMemberEntity);
+        return studyMemberEntity.getSequence();
     }
 
     @Transactional
     public void deleteStudyMemberByStudy(Long studySequence) {
-        studyMemberRepository.deleteStudyMemberByStudy(studySequence);
+        StudyEntity studyEntity = studyRepository.findById(studySequence).orElseThrow(StudyNotFound::new);
+//        List<StudyMemberEntity> studyMemberEntities = studyMemberRepository.readAllByStudy(studySequence);
 
+        //ConcurrentModificationException을 피하기위해 iterator를 활용한 제거
+        for (Iterator<StudyMemberEntity> iterator = studyEntity.getStudyMembers().iterator(); iterator.hasNext(); ) {
+            iterator.next().changeStudy(null);
+            iterator.remove();
+        }
+        studyMemberRepository.deleteStudyMemberByStudy(studySequence);
     }
 
     private boolean checkLeader(Long leaderSeq, Long memberId) {
-        if (leaderSeq.longValue() == memberId.longValue()) return true;
-        return false;
+        return leaderSeq.longValue() == memberId.longValue();
     }
 
     private StudyMemberEntity checkStudyMember(List<StudyMemberEntity> studyMembers, Long memberId) {
         return studyMembers
                 .stream()
-                .filter(studyMemberEntity -> studyMemberEntity.getSequence().equals(memberId))
+                .filter(studyMemberEntity -> studyMemberEntity.getMember().getSequence().equals(memberId))
                 .findFirst()
                 .orElseThrow(StudyMemberNotFound::new);
     }
