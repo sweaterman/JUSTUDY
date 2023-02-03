@@ -23,8 +23,11 @@ public class CategoryEntity {
     @Column(name = "category_seq")
     private Long sequence;
 
-    @Column(name = "category_name")
-    private String name;
+    @Column(name = "category_key")
+    private String key;
+
+    @Column(name = "category_value")
+    private String value;
 
     @Column(name = "category_level")
     private Long categoryLevel;
@@ -39,8 +42,9 @@ public class CategoryEntity {
     private List<CategoryEntity> children = new ArrayList<>();
 
     @Builder
-    public CategoryEntity(String name,Long categoryLevel) {
-        this.name = name;
+    public CategoryEntity(String key, String value,Long categoryLevel) {
+        this.key = key;
+        this.value = value;
         this.categoryLevel = categoryLevel;
     }
 

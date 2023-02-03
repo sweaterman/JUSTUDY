@@ -2,7 +2,6 @@ package com.justudy.backend.study.dto.request;
 
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.study.domain.StudyEntity;
-import com.justudy.backend.study.domain.StudyFrequencyEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,34 +14,34 @@ import java.util.List;
 @Builder
 public class StudyCreate {
 
-    private List<StudyFrequencyEntity> frequencies;
-    private CategoryEntity category;
+    private List<StudyFrequencyCreate> frequency;
+    private String topCategory;
+    private String bottomCategory;
     private String name;
     private Long leaderSeq;
     private String introduction;
-    private Integer personnel;
+    private Integer population;
     private String level;
-    private String onlineOffline;
-    private Boolean isOpen;
+    private String meeting;
     private String github;
     private String notion;
-
     private Long imageSequence;
     private String startTime;
+    private String leaderName;
 
 
-    public StudyEntity toEntity() {
+    public StudyEntity toEntity(CategoryEntity categoryEntity,Long leaderSeq) {
+        //frequency는 따로 저장
         return StudyEntity
                 .builder()
-                .frequencies(frequencies)
-                .category(category)
+                .category(categoryEntity)
                 .name(name)
                 .leaderSeq(leaderSeq)
                 .introduction(introduction)
-                .personnel(personnel)
+                .population(population)
                 .level(level)
-                .onlineOffline(onlineOffline)
-                .isOpen(isOpen)
+                .onlineOffline(meeting)
+                .isOpen(true)
                 .github(github)
                 .notion(notion)
                 .createdTime(LocalDateTime.now())

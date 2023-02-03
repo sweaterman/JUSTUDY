@@ -4,7 +4,7 @@ import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.timer.domain.MemberActivityEntity;
 import com.justudy.backend.timer.domain.QMemberActivityEntity;
-import com.justudy.backend.timer.dto.request.MemberActivityRequest;
+import com.justudy.backend.timer.dto.request.ActivityRequest;
 import com.justudy.backend.timer.dto.response.ActivityCalendarResponse;
 import com.justudy.backend.timer.dto.response.ActivitySubjectResponse;
 import com.justudy.backend.timer.dto.response.ActivityToRank;
@@ -31,7 +31,7 @@ public class MemberActivityService {
   private final QMemberActivityEntity qMemberActivity = QMemberActivityEntity.memberActivityEntity;
 
   @Transactional
-  public void saveMemberAcitivity(MemberActivityRequest memberActivityRequest, Long seq,
+  public void saveMemberAcitivity(ActivityRequest memberActivityRequest, Long seq,
       Date today) {
     MemberEntity member = memberRepository.getReferenceById(seq);
     memberActivityRepository.save(MemberActivityEntity
@@ -87,7 +87,7 @@ public class MemberActivityService {
       return null;//에러페이지 넣기
     }
     Long count = result.get(qMemberActivity.member.countDistinct());
-    Long sum =result.get(qMemberActivity.time.sum());
+    Long sum = result.get(qMemberActivity.time.sum());
 
     Long sumTime = sum / count;
 

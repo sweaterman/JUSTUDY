@@ -1,5 +1,6 @@
 package com.justudy.backend.category.controller;
 
+import com.justudy.backend.category.dto.request.CategoryResponse;
 import com.justudy.backend.category.dto.request.CategorySearch;
 import com.justudy.backend.category.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -10,24 +11,24 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/category")
 @RestController
 public class CategoryController {
 
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
-    @GetMapping("/category")
-    public List<String> getCategories(@ModelAttribute CategorySearch  categorySearch) {
+    @GetMapping
+    public List<CategoryResponse> getCategories(@ModelAttribute CategorySearch  categorySearch) {
         return categoryService.getList(categorySearch);
     }
 
     @GetMapping("/main-category")
-    public List<String> getMainCategories() {
+    public List<CategoryResponse> getMainCategories() {
         return categoryService.getMainCategories();
     }
 
     @GetMapping("/sub-category")
-    public List<String> getSubCategories() {
+    public List<CategoryResponse> getSubCategories() {
         return categoryService.getSubCategories();
     }
 }
