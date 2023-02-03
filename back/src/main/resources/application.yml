@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: ssafy
-    url: jdbc:mysql://localhost:3306/justudy?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://db:3306/justudy?serverTimezone=UTC&characterEncoding=UTF-8
   # swagger
   mvc:
     pathmatch:
