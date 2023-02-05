@@ -27,7 +27,7 @@ public class StudyCreate {
     private String notion;
     private Long imageSequence;
     private String startTime;
-    private String leaderName;
+    private String leader;
 
 
     public StudyEntity toEntity(CategoryEntity categoryEntity) {

@@ -35,7 +35,6 @@ public class StudyResumeService {
                 .orElseThrow(StudyNotFound::new);
         MemberEntity memberEntity = memberRepository.findById(request.getMemberSeq())
                 .orElseThrow(MemberNotFound::new);
-        //todo 같은 스터디 이미 신청했는지 확인
 
         StudyResumeEntity studyResumeEntity = studyResumeRepository.save(request.toEntity(studyEntity, memberEntity));
         studyEntity.addStudyResume(studyResumeEntity);

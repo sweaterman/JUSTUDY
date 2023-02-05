@@ -15,10 +15,7 @@ import com.justudy.backend.study.domain.StudyFrequencyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.dto.request.StudyEdit;
 import com.justudy.backend.study.dto.request.StudyFrequencyCreate;
-import com.justudy.backend.study.dto.request.StudyFrequencyEdit;
 import com.justudy.backend.study.dto.response.StudyFrequencyResponse;
-import com.justudy.backend.study.dto.response.StudyResponse;
-import com.justudy.backend.study.dto.response.StudySearchResponse;
 import com.justudy.backend.study.repository.StudyFrequencyRepository;
 import com.justudy.backend.study.repository.StudyRepository;
 import org.assertj.core.api.Assertions;
@@ -33,12 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
@@ -243,7 +236,7 @@ class StudyFrequencyServiceTest {
                 .bottomCategory("java")
                 .name("test study")
                 .leaderSeq(findMember.getSequence())
-                .leaderName(findMember.getNickname())
+                .leader(findMember.getNickname())
                 .introduction("소개입니당")
                 .population(10)
                 .level("초보")

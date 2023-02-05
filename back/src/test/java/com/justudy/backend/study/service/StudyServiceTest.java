@@ -11,13 +11,11 @@ import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.member.service.MemberService;
 import com.justudy.backend.study.domain.StudyEntity;
-import com.justudy.backend.study.domain.StudyFrequencyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.dto.request.StudyEdit;
 import com.justudy.backend.study.dto.request.StudyFrequencyCreate;
 import com.justudy.backend.study.dto.request.StudyMemberCreate;
 import com.justudy.backend.study.dto.response.StudyDetailResponse;
-import com.justudy.backend.study.dto.response.StudyResponse;
 import com.justudy.backend.study.dto.response.StudySearchResponse;
 import com.justudy.backend.study.repository.StudyFrequencyRepository;
 import com.justudy.backend.study.repository.StudyMemberRepository;
@@ -144,7 +142,7 @@ class StudyServiceTest {
         StudyEdit edit = makeRequest(id, findMember, studyFrequencycreates);
 
         // When
-        Long studyId = service.updateStudy(id, edit);
+        Long studyId = service.updateStudy(id, edit, uploadImage);
         StudyEntity study = repository.findById(studyId).get();
 
         // Then
@@ -230,7 +228,7 @@ class StudyServiceTest {
                 .bottomCategory("java")
                 .name("test study")
                 .leaderSeq(findMember.getSequence())
-                .leaderName(findMember.getNickname())
+                .leader(findMember.getNickname())
                 .introduction("소개입니당")
                 .population(10)
                 .level("초보")

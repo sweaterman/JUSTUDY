@@ -5,7 +5,9 @@ import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
+import com.justudy.backend.file.service.FileStore;
 import com.justudy.backend.file.service.UploadFileService;
+import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.dto.request.StudyEdit;
 import com.justudy.backend.study.dto.request.StudyMemberCreate;
@@ -21,9 +23,13 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
 @Log4j2
 @RestController
 @RequestMapping("/api/study")
@@ -37,6 +43,7 @@ public class StudyController {
     private final StudyResumeService studyResumeService;
     private final StudyMemberService studyMemberService;
     private final UploadFileService uploadFileService;
+    private final FileStore fileStore;
 
     // ---------------------------------------------------------------스터디---------------------------------------------------------------
 
@@ -120,15 +127,20 @@ public class StudyController {
      * @return ResponseEntity<StudyDetailResponse> 201 CREATE, 생성된 스터디 정보
      */
     @PostMapping("/")
-    public ResponseEntity<StudyDetailResponse> createStudy(@RequestBody StudyCreate request) {
+    public ResponseEntity<StudyDetailResponse> createStudy(@RequestBody StudyCreate request, @RequestPart(name = "file", required = false) MultipartFile multipartFile, HttpSession session) throws IOException {
         //todo session 과 id 체크
+//        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+//        if (loginSequence != request.getLeaderSeq()) {
+//            throw new InvalidRequest();
+//        }
 
-        //todo 이미지 생성
-        UploadFileEntity basicImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
+        //이미지 생성
+        UploadFileEntity uploadImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
+        if (multipartFile != null)
+            uploadImage = fileStore.storeFile(multipartFile);
 
         //스터디 생성
-
-        Long studySeq = studyService.createStudy(request, basicImage);
+        Long studySeq = studyService.createStudy(request, uploadImage);
 
         //받은 활동주기 생성
         request.getFrequency().forEach(studyFrequencyCreate -> studyFrequencyService.createStudyFrequency(studySeq, studyFrequencyCreate));
@@ -136,7 +148,7 @@ public class StudyController {
         //스터디맴버 리더 추가
         //todo nickname으로 검색
         Long leaderSeq = 1L;
-//        Long leaderSeq = memberService;
+//        Long leaderSeq = memberService.findByNickName(leaderSeq);
         studyMemberService.createStudyMember(StudyMemberCreate
                 .builder()
                 .studySeq(studySeq)
@@ -156,17 +168,26 @@ public class StudyController {
      * 스터디 맴버나 지원서는 수정하지 않음
      */
     @PutMapping("/{id}")
-    public ResponseEntity<StudyDetailResponse> updateStudy(@PathVariable("id") Long id, @RequestBody StudyEdit request) {
+    public ResponseEntity<StudyDetailResponse> updateStudy(@PathVariable("id") Long id, @RequestBody StudyEdit request,
+                                                           @RequestPart(name = "file", required = false) MultipartFile multipartFile) throws IOException {
         //todo session 과 id 체크
+//        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+//        if (loginSequence != request.getLeaderSeq()) {
+//            throw new InvalidRequest();
+//        }
 
         //todo 이미지 수정
+        //파일 없을시 변경 x
+        UploadFileEntity uploadImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
+        if (multipartFile != null)
+            uploadImage = fileStore.storeFile(multipartFile);
 
         //활동주기 수정
         studyFrequencyService.deleteStudyFrequencyByStudy(id);
         studyFrequencyService.createStudyFrequencies(id, request.getFrequency());
 
         //스터디 수정
-        Long studySeq = studyService.updateStudy(id, request);
+        Long studySeq = studyService.updateStudy(id, request,uploadImage);
 
         //스터디 맴버 수정 이건 acceptStudyResume API에서 추가
         return ResponseEntity.status(HttpStatus.OK).body(studyService.readStudy(studySeq));
@@ -205,7 +226,6 @@ public class StudyController {
      */
     @GetMapping("/check/{name}")
     public ResponseEntity<Void> checkStudyName(@PathVariable("name") String name) {
-        //todo 이름으로 스터디 검색
         if (studyService.checkNickName(name))
             return ResponseEntity.status(HttpStatus.OK).body(null);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(null);

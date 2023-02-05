@@ -4,6 +4,8 @@ import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
+import com.justudy.backend.file.service.FileStore;
+import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
@@ -37,6 +39,9 @@ public class StudyService {
     private final CategoryRepository categoryRepository;
     private final StudyResumeRepository studyResumeRepository;
     private final StudyFrequencyRepository studyFrequencyRepository;
+    private final UploadFileService uploadFileService;
+
+    private final FileStore fileStore;
 
 // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
@@ -48,7 +53,6 @@ public class StudyService {
         //todo leaderSeq 멤버에서 검색해야함
         StudyEntity study = request.toEntity(categoryEntity);
 
-//        log.info("슬라이스3 info : {}", study.getStudyMembers().size());
         study.changeImage(basicImage);
         return studyRepository.save(study).getSequence();
     }
@@ -66,9 +70,11 @@ public class StudyService {
     }
 
     @Transactional
-    public Long updateStudy(long id, StudyEdit request) {
+    public Long updateStudy(long id, StudyEdit request, UploadFileEntity uploadImage) {
         StudyEntity entity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
+
+        entity.changeImage(uploadImage);
 
         entity.update(request.getName(), request.getIntroduction(), request.getPopulation(),
                 request.getLevel(), request.getOnlineOffline(), request.getIsOpen(), request.getGithub(),
@@ -80,6 +86,7 @@ public class StudyService {
     public void deleteStudy(Long studySequence) {
         studyRepository.findById(studySequence)
                 .orElseThrow(StudyNotFound::new);
+
         studyRepository.deleteById(studySequence);
     }
 
@@ -91,12 +98,12 @@ public class StudyService {
         String studyLeader = null;
         String studyName = null;
 
-        //todo 스터디장 스터디명 검색
         if (type != null && type.compareTo("leader") == 0) {
             studyLeader = search;
         } else if (type != null && type.compareTo("name") == 0) {
             studyName = search;
         }
+        log.info("서치 : {} {}", type, search);
         Slice<StudyEntity> studyEntities = studyRepository.findAllBySearchOption(pageable, sub, studyLeader, studyName);
         return StudySearchResponse.makeBuilder(studyEntities
                 .stream()
