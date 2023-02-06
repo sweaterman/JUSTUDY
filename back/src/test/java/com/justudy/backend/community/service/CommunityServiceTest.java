@@ -192,7 +192,7 @@ class CommunityServiceTest {
 
         BDDMockito.given(memberService.getMember(ArgumentMatchers.anyLong()))
                 .willReturn(mockMember);
-        BDDMockito.given(communityRepository.findById(ArgumentMatchers.anyLong()))
+        BDDMockito.given(communityRepository.findBySequence(ArgumentMatchers.anyLong()))
                 .willReturn(Optional.of(community));
 
         //when
@@ -239,7 +239,7 @@ class CommunityServiceTest {
 
         BDDMockito.given(memberService.getMember(ArgumentMatchers.anyLong()))
                 .willReturn(mockMember);
-        BDDMockito.given(communityRepository.findById(ArgumentMatchers.anyLong()))
+        BDDMockito.given(communityRepository.findBySequence(ArgumentMatchers.anyLong()))
                 .willReturn(Optional.of(community));
 
         //expected
@@ -266,7 +266,7 @@ class CommunityServiceTest {
 
         BDDMockito.given(memberService.getMember(ArgumentMatchers.anyLong()))
                 .willReturn(mockMember);
-        BDDMockito.given(communityRepository.findById(ArgumentMatchers.anyLong()))
+        BDDMockito.given(communityRepository.findBySequence(ArgumentMatchers.anyLong()))
                 .willReturn(Optional.of(community));
         BDDMockito.given(categoryService.getCategoryEntityByKey(NEW_CATEGORY_KEY))
                 .willReturn(new CategoryEntity(NEW_CATEGORY_KEY, NEW_CATEGORY_VALUE, 0L));
@@ -302,7 +302,7 @@ class CommunityServiceTest {
 
         BDDMockito.given(memberService.getMember(ArgumentMatchers.anyLong()))
                 .willReturn(mockMember);
-        BDDMockito.given(communityRepository.findById(ArgumentMatchers.anyLong()))
+        BDDMockito.given(communityRepository.findBySequence(ArgumentMatchers.anyLong()))
                 .willReturn(Optional.of(community));
         BDDMockito.given(categoryService.getCategoryEntityByKey(NEW_CATEGORY_KEY))
                 .willReturn(new CategoryEntity(NEW_CATEGORY_KEY, NEW_CATEGORY_VALUE, 0L));
