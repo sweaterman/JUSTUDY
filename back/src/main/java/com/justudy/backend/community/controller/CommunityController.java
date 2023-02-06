@@ -62,7 +62,7 @@ public class CommunityController {
     }
 
     @GetMapping("/board/popular")
-    public List<CommunityListResponse> getMostPopular(@PageableDefault(size = 20) Pageable pageable) {
+    public List<CommunityListResponse> getMostPopular(@PageableDefault(size = 10) Pageable pageable) {
         return communityService.getMostLoveCommunitiesOfWeek(pageable);
     }
 
