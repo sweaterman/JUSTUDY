@@ -7,7 +7,9 @@ import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.community.dto.request.CommunityCreate;
 import com.justudy.backend.community.dto.request.CommunityEdit;
+import com.justudy.backend.community.dto.request.CommunitySearch;
 import com.justudy.backend.community.dto.response.CommunityDetailResponse;
+import com.justudy.backend.community.dto.response.CommunityListResponse;
 import com.justudy.backend.community.service.CommunityBookmarkService;
 import com.justudy.backend.community.service.CommunityCommentService;
 import com.justudy.backend.community.service.CommunityLoveService;
@@ -17,6 +19,7 @@ import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -27,9 +30,14 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -63,11 +71,37 @@ class CommunityControllerTest {
     private final String CONTENT = "테스트내용";
 
     @Test
-    @DisplayName("게시글 조회 ")
+    @DisplayName("게시글 조회 - 조건 X, 좋아요 순")
     void getList() throws Exception {
+        //given
+        CommunitySearch nullCondition = createCondition(null, null, null);
+        System.out.println(nullCondition);
+        CommunitySearch likeCondition = createCondition(null, null, "like");
+        System.out.println(likeCondition);
 
-        mockMvc.perform(get(COMMON_URL + "/board/test?category=backend&type=nickname&search=하이")
+        List<CommunityListResponse> list = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+            list.add(new CommunityListResponse((long) i, "타이틀" + i, "내용" + i, LocalDateTime.now(), false, 1000 - i));
+        }
+        List<CommunityListResponse> sortedSequence = list.stream().sorted(Comparator.comparing(CommunityListResponse::getSequence).reversed())
+                .collect(Collectors.toList());
+        List<CommunityListResponse> sortedLoveCount = list.stream().sorted(Comparator.comparing(CommunityListResponse::getLoveCount).reversed())
+                .collect(Collectors.toList());
+        BDDMockito.given(communityService.getCommunities(ArgumentMatchers.eq(nullCondition)))
+                .willReturn(sortedSequence);
+        BDDMockito.given(communityService.getCommunities(ArgumentMatchers.eq(likeCondition)))
+                .willReturn(sortedLoveCount);
+
+        //expected
+        mockMvc.perform(get(COMMON_URL + "/board/test")
                         .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.size()", is(30)))
+                .andExpect(jsonPath("$.[0].sequence", is(30)))
+                .andDo(print());
+        mockMvc.perform(get(COMMON_URL + "/board/test?&order=like")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.size()", is(30)))
+                .andExpect(jsonPath("$[0].sequence").value(1))
                 .andDo(print());
     }
 
@@ -86,7 +120,7 @@ class CommunityControllerTest {
         BDDMockito.given(communityService.readCommunity(COMMUNITY_SEQUENCE))
                 .willReturn(response);
 
-        mockMvc.perform(get(COMMON_URL + "/board/{id}" , COMMUNITY_SEQUENCE))
+        mockMvc.perform(get(COMMON_URL + "/board/{id}", COMMUNITY_SEQUENCE))
                 .andExpect(jsonPath("$.title").value("제목"))
                 .andExpect(jsonPath("$.content").value("내용"))
                 .andExpect(jsonPath("$.category.key").value("frontend"))
@@ -196,6 +230,15 @@ class CommunityControllerTest {
                 .andDo(print());
     }
 
+    private static CommunitySearch createCondition(String type, String search, String order) {
+        return CommunitySearch.builder()
+                .page(0L)
+                .size(20L)
+                .type(type)
+                .search(search)
+                .order(order)
+                .build();
+    }
 
     private CommunityDetailResponse makeEditResponse(Long loginSequence,
                                                      Long communitySequence,
