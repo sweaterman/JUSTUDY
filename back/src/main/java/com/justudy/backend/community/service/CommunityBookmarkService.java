@@ -20,6 +20,8 @@ import java.util.List;
 public class CommunityBookmarkService {
     private final CommunityBookmarkRepository bookmarkRepository;
 
+    private final CommunityRepository communityRepository;
+
     @Transactional
     public Long createBookmark(Long loginSequence, Long communitySequence) {
         CommunityBookmarkEntity savedBookmark = bookmarkRepository.findBookmark(loginSequence, communitySequence)
@@ -32,6 +34,8 @@ public class CommunityBookmarkService {
 
     @Transactional
     public void deleteBookmark(Long loginSequence, Long communitySequence) {
+        CommunityEntity community = communityRepository.findById(communitySequence)
+                .orElseThrow(CommunityNotFound::new);
         CommunityBookmarkEntity findBookmark = bookmarkRepository.findBookmark(loginSequence, communitySequence)
                 .orElseThrow(BookmarkNotFound::new);
 
