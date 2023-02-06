@@ -82,12 +82,13 @@ public class InitDb {
             saveStudyFrequency();
             saveStudyMember();
             saveStudyRoom();
-            saveTimer();
-            saveRank();
+//            saveTimer();
+//            saveRank();
             saveTest1();
         }
 
         private void saveTest1() {
+            //스터디 이름 직접넣어서 좋재하지 않을시 수동으로 바꿔줘야함
             //test1
             UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
                     .orElseThrow(UploadFileNotFound::new);
@@ -95,10 +96,10 @@ public class InitDb {
             MemberEntity member = memberService.getMember(50L);
             StudyEntity study = studyService.getStudyByLeader(50L);
             //리더가 아닌 가입 스터디
-            final Long studyNotLeader = 179L;
+            final Long studyNotLeader = 228L;
             studyMemberService.createStudyMember(StudyMemberCreate.builder().memberSeq(member.getSequence()).studySeq(studyNotLeader).build());
             //팀장 아닐때 지원한 스터디
-            final Long studyNotLeader2 = 178L;
+            final Long studyNotLeader2 = 226L;
             studyResumeService.createStudyResume(studyNotLeader2, StudyResumeCreate.builder().memberSeq(member.getSequence()).studySeq(studyNotLeader2).content("지원할까말까").build());
 
             //지원안한 스터디
@@ -107,15 +108,15 @@ public class InitDb {
         }
 
         private void saveStudyMember() {
-            for (int i = 0; i < 10; i++) {
-                long memberSequence = 50 + (3 * i);
-                MemberEntity findmember = memberService.getMember(memberSequence);
-                StudyEntity findStudy = studyService.getStudyByLeader(findmember.getSequence());
-                studyMemberService.createStudyMember(StudyMemberCreate.builder().
-                        studySeq(findStudy.getSequence())
-                        .memberSeq(findmember.getSequence())
-                        .build());
-            }
+//            for (int i = 0; i < 10; i++) {
+//                long memberSequence = 50 + (3 * i);
+//                MemberEntity findmember = memberService.getMember(memberSequence);
+//                StudyEntity findStudy = studyService.getStudyByLeader(findmember.getSequence());
+//                studyMemberService.createStudyMember(StudyMemberCreate.builder().
+//                        studySeq(findStudy.getSequence())
+//                        .memberSeq(findmember.getSequence())
+//                        .build());
+//            }
         }
 
         private void saveStudyFrequency() throws ParseException {
@@ -130,7 +131,7 @@ public class InitDb {
                         StudyFrequencyCreate
                                 .builder()
                                 .studySeq(findStudy.getSequence())
-                                .week("월")
+                                .week(1L)
                                 .startTime(date)
                                 .endTime(date)
                                 .build());
@@ -163,7 +164,7 @@ public class InitDb {
                 }
 
             }
-            for (long i = 180; i < 230; i++) {
+            for (long i = 130; i < 180; i++) {
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     roomActivityService.saveRoomAcitivity(
@@ -221,24 +222,24 @@ public class InitDb {
                         Long studyId = studyService.createStudy(StudyCreate.builder().name("스터디" + memberSequence)
                                 .leaderSeq(findmember.getSequence()).introduction("아주 좋은 스터디1").population(32).level("초보")
                                 .meeting("온라인").github("https://github.com").notion("https://notion.com")
-                                .topCategory("backend").bottomCategory("java").leaderName(findmember.getNickname())
+                                .topCategory("backend").bottomCategory("java").leader(findmember.getNickname())
                                 .build(), basicImage);
-//                        studyMemberService.createStudyMember(StudyMemberCreate.builder().memberSeq(findmember.getSequence()).studySeq(studyId).build());
+                        studyMemberService.createStudyMember(StudyMemberCreate.builder().memberSeq(findmember.getSequence()).studySeq(studyId).build());
                     } else {
 
                         Long studyId = studyService.createStudy(StudyCreate.builder().name("스터디" + memberSequence)
                                 .leaderSeq(findmember.getSequence()).introduction("아주 좋은 스터디2").population(32).level("초보")
                                 .meeting("온라인").github("https://github.com").notion("https://notion.com")
-                                .topCategory("backend").bottomCategory("java").leaderName(findmember.getNickname())
+                                .topCategory("backend").bottomCategory("java").leader(findmember.getNickname())
                                 .build(), basicImage);
-//                        studyMemberService.createStudyMember(StudyMemberCreate.builder().memberSeq(findmember.getSequence()).studySeq(studyId).build());
+                        studyMemberService.createStudyMember(StudyMemberCreate.builder().memberSeq(findmember.getSequence()).studySeq(studyId).build());
                     }
                 }
             }
         }
 
         public void saveStudyRoom() {
-            for (long i = 130; i < 180; i++)
+            for (long i = 130; i < 230; i+=2)
                 studyRoomService.saveStudyRoom(i);
         }
 
@@ -363,7 +364,8 @@ public class InitDb {
                 .passwordCheck("1234")
                 .username("테스트" + number)
                 .nickname("테스트 봇" + number)
-                .nickname("테테" + number)
+                .region("SEOUL")
+                .category(new String[]{"Java", "Spring"})
                 .ssafyId("08" + number)
                 .phone(String.valueOf(number))
                 .email("testEmail" + number + "@ssafy.com")

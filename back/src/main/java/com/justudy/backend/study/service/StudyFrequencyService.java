@@ -3,6 +3,7 @@ package com.justudy.backend.study.service;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.domain.StudyFrequencyEntity;
+import com.justudy.backend.study.domain.StudyFrequencyWeek;
 import com.justudy.backend.study.dto.request.StudyFrequencyCreate;
 import com.justudy.backend.study.dto.request.StudyFrequencyEdit;
 import com.justudy.backend.study.dto.response.StudyFrequencyResponse;
@@ -54,7 +55,7 @@ public class StudyFrequencyService {
                 .orElseThrow(StudyNotFound::new);
         StudyFrequencyEntity studyFrequencyEntity = studyFrequencyRepository.findById(frequencySeq)
                 .orElseThrow(StudyFrequencyNotFound::new);
-        studyFrequencyEntity.update(studyEntity, request.getWeek(), request.getStartTime(), request.getEndTime());
+        studyFrequencyEntity.update(studyEntity, StudyFrequencyWeek.valueOf(StudyFrequencyWeek.getIndex(request.getWeek().intValue())), request.getStartTime(), request.getEndTime());
         return frequencySeq;
     }
 
