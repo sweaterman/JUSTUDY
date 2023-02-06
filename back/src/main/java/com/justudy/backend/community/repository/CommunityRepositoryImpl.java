@@ -40,10 +40,11 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
                 .join(communityEntity.member, memberEntity).fetchJoin()
                 .join(communityEntity.category, categoryEntity).fetchJoin()
                 .where(communityEntity.isHighlighted.eq(false),
-                        eqCategory(communitySearch.getCategory()))
+                        eqCategory(communitySearch.getCategory()),
+                        eqTypeAndSearch(communitySearch))
                 .limit(communitySearch.getSize() - list.size())
                 .offset(communitySearch.getOffsetWithNotice(list.size()))
-                .orderBy(communityEntity.sequence.desc())
+                .orderBy(orderByCondition(communitySearch))
                 .fetch();
         if (!list.addAll(commonList)) {
             throw new ImportBoardFail("community", "게시글 리스트 가져오기 실패");
