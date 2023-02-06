@@ -3,6 +3,7 @@ package com.justudy.backend.member.service;
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.service.FileStore;
 import com.justudy.backend.file.service.UploadFileService;
@@ -36,6 +37,8 @@ public class MemberServiceTest {
 
     private CategoryRepository categoryRepository = Mockito.mock(CategoryRepository.class);
 
+    private CommunityService communityService = Mockito.mock(CommunityService.class);
+
     private UploadFileService uploadFileService = Mockito.mock(UploadFileService.class);
 
     private FileStore fileStore = Mockito.mock(FileStore.class);
@@ -48,7 +51,7 @@ public class MemberServiceTest {
 
     @BeforeEach
     public void setUp() {
-        memberService = new MemberService(memberRepository, categoryRepository, uploadFileService, fileStore);
+        memberService = new MemberService(memberRepository, categoryRepository, uploadFileService, communityService,fileStore);
     }
 
     @Test
