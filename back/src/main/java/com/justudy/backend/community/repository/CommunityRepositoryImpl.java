@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.justudy.backend.category.domain.QCategoryEntity.categoryEntity;
 import static com.justudy.backend.community.domain.QCommunityEntity.communityEntity;
@@ -76,6 +77,16 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
     }
 
     @Override
+    public Optional<CommunityEntity> findBySequence(Long sequence) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(communityEntity)
+                .join(communityEntity.member, memberEntity).fetchJoin()
+                .join(communityEntity.category, categoryEntity).fetchJoin()
+                .where(communityEntity.sequence.eq(sequence))
+                .fetchFirst());
+    }
+
+    @Override
     public Page<CommunityEntity> findAllByNotice(Pageable pageable) {
         JPQLQuery<CommunityEntity> query = queryFactory
                 .selectFrom(qCommunity)
@@ -129,7 +140,7 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
                 .fetch();
     }
 
-    private  BooleanExpression eqTypeAndSearch(CommunitySearch communitySearch) {
+    private BooleanExpression eqTypeAndSearch(CommunitySearch communitySearch) {
         SearchType type = communitySearch.getType();
         if (type == null) {
             return null;

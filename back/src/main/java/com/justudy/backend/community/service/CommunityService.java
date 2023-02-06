@@ -50,7 +50,7 @@ public class CommunityService {
 
     @Transactional
     public Long deleteCommunity(Long loginSequence, Long communitySequence) {
-        CommunityEntity community = communityRepository.findById(communitySequence)
+        CommunityEntity community = communityRepository.findBySequence(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         validateWriter(loginSequence, community.getMember().getSequence());
         community.deleteCommunity();
@@ -60,8 +60,8 @@ public class CommunityService {
     }
 
     @Transactional
-    public CommunityDetailResponse readCommunity(Long communitySequence) {
-        CommunityEntity community = communityRepository.findById(communitySequence)
+    public CommunityDetailResponse readCommunityDetail(Long communitySequence) {
+        CommunityEntity community = communityRepository.findBySequence(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         community.addViewCount();
         return CommunityDetailResponse.makeBuilder(community);
@@ -69,7 +69,7 @@ public class CommunityService {
 
     @Transactional
     public CommunityDetailResponse updateCommunity(Long loginSequence, Long communitySequence, CommunityEdit request) {
-        CommunityEntity community = communityRepository.findById(communitySequence)
+        CommunityEntity community = communityRepository.findBySequence(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         validateWriter(loginSequence, community.getMember().getSequence());
 
