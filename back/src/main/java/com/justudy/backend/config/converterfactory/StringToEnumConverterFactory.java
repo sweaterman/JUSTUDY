@@ -37,6 +37,7 @@ public class StringToEnumConverterFactory implements ConverterFactory<String, En
             if (!StringUtils.hasText(source)) {
                 return null;
             }
+            source = source.toLowerCase();
 
             T enumModel = map.get(source);
             if (enumModel == null) {
