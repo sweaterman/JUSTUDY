@@ -39,10 +39,6 @@ public class CommunityListResponse {
         this.nickname = communityEntity.getMember().getNickname(); //memberEntity
         this.createdTime = communityEntity.getCreatedTime();
         this.isHighlighted = communityEntity.getIsHighlighted();
-    }
-
-    public CommunityListResponse ChangeCountOfLove(int countOfLove) {
-        this.loveCount = countOfLove;
-        return this;
+        this.loveCount = communityEntity.getLoveCount() + communityEntity.getWeekLoveCount(); //기존 좋아요 + 일주일간 좋아요
     }
 }
