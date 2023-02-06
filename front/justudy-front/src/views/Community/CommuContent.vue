@@ -1,17 +1,15 @@
 <template>
     <v-app>
-        <CommuHeader />
-
         <!-- 상세 글보기 -->
-        <v-row>
+        <v-row :style="{marginTop: '4%'}">
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <v-form ref="form" @submit.prevent="onSubmitForm">
                     <!-- 제목 -->
                     <v-row>
                         <!-- <v-btn depressed color="white" :style="{height: '65px', width: '165px', fontWeight: 'bold', fontSize: 'large', marginTop: '20%'}">글쓴이</v-btn> -->
-                        <div style="width: 300px; margin-left: 9%; margin-top: 1%">
-                            <h1>{{ title }}</h1>
+                        <div style="margin-left: 9%; margin-top: 1%">
+                            <h1>{{ Data.title }}</h1>
                         </div>
                         <!-- <v-text-field v-model="title" solo readonly depressed outlined label="제목" style="width: 80%; margin-right: 10%; margin-top: 0.5%"></v-text-field> -->
                     </v-row>
@@ -22,7 +20,7 @@
                     <!-- 글쓴이 -->
                     <v-row>
                         <div style="width: 300px; margin-left: 9%; margin-top: 1.7%; margin-bottom: 0.5%">
-                            <h3>{{ writer }}</h3>
+                            <h3>{{ Data.writer }}</h3>
                         </div>
                         <!-- <v-text-field v-model="writer" solo readonly outlined depressed label="글쓴이" style="width: 80%; height: 20px; margin-right: 10%; margin-top: 4%"></v-text-field> -->
                         <!-- <v-btn color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '3%', marginLeft: '10%'}"></v-btn> -->
@@ -30,7 +28,7 @@
 
                     <!-- 작성일 -->
                     <v-row>
-                        <div style="width: 300px; margin-left: 9%; padding-top: 4px; padding-bottom: 25px">작성일 : {{ createdAt }}</div>
+                        <div style="width: 300px; margin-left: 9%; padding-top: 4px; padding-bottom: 25px">작성일 : {{ Data.createdTime }}</div>
                         <!-- <v-text-field v-model="createdAt" solo readonly depressed outlined label="작성일" style="width: 80%; margin-right: 15%"></v-text-field> -->
                     </v-row>
                     <!-- 수정일 기능 -->
@@ -40,7 +38,7 @@
 
                     <!-- 내용 -->
                     <v-row>
-                        <div style="width: 300px; margin-left: 9%; margin-top: 2%; margin-bottom: 15%">{{ text }}</div>
+                        <div style="width: 300px; margin-left: 9%; margin-top: 2%; margin-bottom: 15%">{{ Data.content }}</div>
                     </v-row>
                     <v-col cols="12" md="2" />
                 </v-form>
@@ -59,7 +57,7 @@
                     <v-col cols="12" md="6"> </v-col>
                     <v-col cols="12" md="2" align="right">
                         <v-btn @click="editcontent" v-if="editable === false" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정</v-btn>
-                        <v-btn @click="editcontentfinish" v-if="editable === true" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정완료</v-btn>
+                        <!-- <v-btn @click="editcontentfinish" v-if="editable === true" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정완료</v-btn> -->
                     </v-col>
                     <v-col cols="12" md="2">
                         <v-btn @click="deletecontent" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">삭제</v-btn>
@@ -76,28 +74,30 @@
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <v-row>
-                    <v-textarea outlined readonly value="text" style="width: 100%; margin-left: 9%; margin-top: 2%; margin-bottom: 15%">여기는 아닌가</v-textarea>
+                    <CommuComment :contentId="contentId" />
                 </v-row>
             </v-col>
-
             <v-col cols="12" md="2" />
         </v-row>
     </v-app>
 </template>
 
 <script>
-import CommuHeader from '../../components/Community/CommuHeader.vue';
+import CommuComment from './CommuComment.vue';
 
 export default {
-    components: {CommuHeader},
-
+    name: 'CommuContent',
+    components: {CommuComment},
     data() {
+        const index = this.$route.params.id;
         return {
-            writer: '돌숭이', // 작성자
-            title: '돌숭이의 꿀팁', // 글 제목
-            createdAt: '2023/01/18', // 작성일
-            updatedAt: '2023/01/20', // 최근 수정일
-            text: '그런건 없습니다', // 글 내용
+            Data: {},
+            index: index,
+            // writer: '돌숭이', // 작성자
+            // title: '돌숭이의 꿀팁', // 글 제목
+            // createdAt: '2023/01/18', // 작성일
+            // updatedAt: '2023/01/20', // 최근 수정일
+            // text: '그런건 없습니다', // 글 내용
             editable: false // 수정가능여부 (수정 버튼누르면 true로 바뀜)
         };
     },
@@ -120,9 +120,20 @@ export default {
         //         alert(err);
         //     });
     },
+    async created() {
+        await this.$store.dispatch('moduleCommunity/getCommunityContent', {id: this.$route.params.id});
+        this.Data = this.$store.state.moduleCommunity.CommunityContent;
+    },
     methods: {
         moveback() {
             window.history.back(); // window.history.back()을 통해 뒤로가기
+        },
+        async deletecontent() {
+            // CommunityData.splice(this.index, 1);
+            await this.$store.dispatch('moduleCommunity/getCommunityContentDelete', {id: this.Data.sequence});
+            this.$router.push({
+                path: window.history.back()
+            });
         },
         // deletecontent() {
         //     // 글에 들어가서 삭제버튼 눌렀을 때
@@ -143,8 +154,15 @@ export default {
         //         });
         // },
         editcontent() {
-            this.editable = true;
+            this.$router.push({
+                name: 'CommuUpdate',
+                path: this.$route.path + 'update',
+                query: {
+                    category: this.Data.category
+                }
+            });
         },
+        editcontentfinish() {},
         // editcontentfinish() {
         //     // 수정완료 버튼을 눌렀을 때, 수정된 내용이 저장되야 되기 때문에 back서버와 통신 필요
         //     axios({

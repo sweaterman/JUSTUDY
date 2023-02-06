@@ -113,7 +113,7 @@
                         <v-subheader>MatterMost 인증하기</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="user.mmid" dense outlined label="MatterMost 아이디" :rules="[v => !!v || 'MM 인증은 필수입니다.']"></v-text-field>
+                        <v-text-field v-model="user.mmId" dense outlined label="MatterMost 아이디" :rules="[v => !!v || 'MM 인증은 필수입니다.']"></v-text-field>
                     </v-col>
                     <v-col cols="2">
                         <v-btn color="yellow" @click="movetoboard1('mattermost')" :style="{fontWeight: 'bold', fontSize: 'large'}">인증하기</v-btn>
@@ -157,7 +157,7 @@
                         <v-subheader>관심 기술 스택</v-subheader>
                     </v-col>
                     <v-col cols="8">
-                        <v-combobox v-model="user.stacks" :items="stackList" label="관심있는 기술 선택" multiple></v-combobox>
+                        <v-combobox v-model="user.category" :items="stackList" label="관심있는 기술 선택" multiple></v-combobox>
                     </v-col>
                 </v-row>
 
@@ -232,7 +232,7 @@ export default {
         return {
             showmodal: false,
             regionList: ['서울', '대전', '부울경', '광주'],
-            stackList: ['Vuejs', 'nodejs', 'React', 'Spring', 'SpringBoot', 'TensorFlow'],
+            stackList: ['Vuejs', 'Nodejs', 'React', 'Spring', 'SpringBoot', 'TensorFlow'],
             selfTest: false,
             // 담아서 store로 보낼 값
             user: {
@@ -247,7 +247,7 @@ export default {
                 mmId: '',
                 region: '',
                 dream: '',
-                category: '',
+                category: [],
                 introduction: ''
             }
         };
@@ -257,11 +257,30 @@ export default {
         movetomain() {
             window.location.href = '/';
         },
-        selftestDialog(check) {
+        async selftestDialog(check) {
             if (check == 'open') {
-                // 회원가입 API
-                // this.$store.dispatch("user/createUser",{ user : this.user})
-                this.selfTest = true;
+                if (
+                    this.user.userId == '' ||
+                    this.user.password == '' ||
+                    this.user.passwordCheck == '' ||
+                    this.user.username == '' ||
+                    this.user.nickname == '' ||
+                    this.user.ssafyId == '' ||
+                    this.user.phone == '' ||
+                    this.user.email == '' ||
+                    this.user.mmId == ''
+                ) {
+                    alert('필수 입력 항목을 모두 입력하시오');
+                } else if (this.user.password != this.user.passwordCheck) {
+                    alert('비밀번호와 비밀번호확인이 맞지 않습니다.');
+                } else if (this.user.region == '') {
+                    alert('지역을 선택하세요');
+                } else {
+                    // 회원가입 API
+
+                    await this.$store.dispatch('moduleLogin/signUp', {user: this.user});
+                    this.selfTest = true;
+                }
             } else if (check == 'close') {
                 this.selfTest = false;
             } else if (check == 'test') {

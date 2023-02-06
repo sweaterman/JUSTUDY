@@ -35,7 +35,6 @@ public class StudyResumeService {
                 .orElseThrow(StudyNotFound::new);
         MemberEntity memberEntity = memberRepository.findById(request.getMemberSeq())
                 .orElseThrow(MemberNotFound::new);
-        //todo 같은 스터디 이미 신청했는지 확인
 
         StudyResumeEntity studyResumeEntity = studyResumeRepository.save(request.toEntity(studyEntity, memberEntity));
         studyEntity.addStudyResume(studyResumeEntity);
@@ -43,10 +42,12 @@ public class StudyResumeService {
     }
 
     @Transactional
-    public void deleteStudyResume(Long id) {
+    public void deleteStudyResume(Long id, Long loginSequence) {
         StudyResumeEntity studyResumeEntity = studyResumeRepository.findById(id).orElseThrow(InvalidRequest::new);
         StudyEntity studyEntity = studyRepository.findById(studyResumeEntity.getStudy().getSequence())
                 .orElseThrow(StudyNotFound::new);
+        if (studyResumeEntity.getMember().getSequence() != loginSequence)
+            throw new InvalidRequest();
         studyEntity.removeStudyResume(studyResumeEntity);
         studyResumeRepository.deleteById(id);
     }
@@ -58,9 +59,11 @@ public class StudyResumeService {
     }
 
 
-    public List<StudyResumeResponse> readAllStudyResumeByStudy(Long id) {
-        studyRepository.findById(id)
+    public List<StudyResumeResponse> readAllStudyResumeByStudy(Long id, Long loginSequence) {
+        StudyEntity studyEntity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
+        if (loginSequence != studyEntity.getLeaderSeq()) throw new InvalidRequest();
+
         return studyResumeRepository.readAllStudyResumeByStudy(id)
                 .stream()
                 .map(StudyResumeResponse::makeBuilder)
@@ -73,6 +76,10 @@ public class StudyResumeService {
                 .map(StudyResumeEntity::getStudy)
                 .map(StudyResponse::makeBuilder)
                 .collect(Collectors.toList());
+    }
+
+    public void deleteById(Long id) {
+        studyResumeRepository.deleteById(id);
     }
 }
 

@@ -2,6 +2,7 @@ package com.justudy.backend.study.dto.request;
 
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.domain.StudyFrequencyEntity;
+import com.justudy.backend.study.domain.StudyFrequencyWeek;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +16,7 @@ import java.util.Date;
 public class StudyFrequencyEdit {
     private Long sequence;
     private Long studySeq;
-    private String week;
+    private Long week;
     private Date startTime;
     private Date endTime;
     private LocalDateTime modifiedTime;
@@ -25,7 +26,7 @@ public class StudyFrequencyEdit {
                 .builder()
                 .sequence(sequence)
                 .study(study)
-                .week(week)
+                .week(StudyFrequencyWeek.valueOf(StudyFrequencyWeek.getIndex(week.intValue())))
                 .startTime(startTime)
                 .endTime(endTime)
                 .modifiedTime(LocalDateTime.now())

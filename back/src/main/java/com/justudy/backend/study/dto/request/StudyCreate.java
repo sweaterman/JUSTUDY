@@ -27,8 +27,11 @@ public class StudyCreate {
     private String notion;
     private Long imageSequence;
     private String startTime;
-    private String leaderName;
+    private String leader;
 
+    public void changeLeaderSeq(Long leaderSeq) {
+        this.leaderSeq = leaderSeq;
+    }
 
     public StudyEntity toEntity(CategoryEntity categoryEntity) {
         //frequency는 따로 저장
