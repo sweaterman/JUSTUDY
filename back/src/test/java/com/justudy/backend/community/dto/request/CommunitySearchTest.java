@@ -12,6 +12,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CommunitySearchTest {
 
     @Test
+    @DisplayName("Equal 비교")
+    void isEqual() {
+        CommunitySearch first = new CommunitySearch(0L, 20L, null, null, null, "like");
+        CommunitySearch second = new CommunitySearch(0L, 20L, null, null, null, "like");
+
+        assertThat(first).isEqualTo(second);
+    }
+
+    @Test
     @DisplayName("String convert to EnumType")
     void convertToEnum() {
         CommunitySearch condition = new CommunitySearch(10L, 30L,
