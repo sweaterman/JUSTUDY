@@ -6,6 +6,7 @@ import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -28,8 +29,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        registry.addConverterFactory(new StringToEnumConverterFactory());
-        WebMvcConfigurer.super.addFormatters(registry);
+        ConverterFactory converterFactory = new StringToEnumConverterFactory();
+        registry.addConverterFactory(converterFactory);
     }
 
     //    @Override
