@@ -117,7 +117,7 @@ class CommunityControllerTest {
                 .category(new CategoryResponse("frontend", "FRONT-END"))
                 .build();
 
-        BDDMockito.given(communityService.readCommunity(COMMUNITY_SEQUENCE))
+        BDDMockito.given(communityService.readCommunityDetail(COMMUNITY_SEQUENCE))
                 .willReturn(response);
 
         mockMvc.perform(get(COMMON_URL + "/board/{id}", COMMUNITY_SEQUENCE))
@@ -127,7 +127,7 @@ class CommunityControllerTest {
                 .andExpect(jsonPath("$.category.value").value("FRONT-END"))
                 .andDo(print());
 
-        BDDMockito.then(communityService).should(times(1)).readCommunity(COMMUNITY_SEQUENCE);
+        BDDMockito.then(communityService).should(times(1)).readCommunityDetail(COMMUNITY_SEQUENCE);
     }
 
     @Test

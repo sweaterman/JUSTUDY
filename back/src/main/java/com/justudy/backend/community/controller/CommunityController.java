@@ -106,7 +106,7 @@ public class CommunityController {
      */
     @GetMapping("/board/{id}")
     public ResponseEntity<CommunityDetailResponse> readCommunityById(@PathVariable("id") Long communitySequence) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunity(communitySequence));
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunityDetail(communitySequence));
     }
 
     /**
