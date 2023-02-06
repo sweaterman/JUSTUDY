@@ -297,7 +297,10 @@ export default {
     name: 'MyRanking',
     data() {
         return {
-            data: MyRankingData
+            data: MyRankingData,
+            rankMemberYesterday: [],
+            rankMemberWeek: [],
+            rankMemberMonth: []
         };
     },
 
@@ -307,7 +310,14 @@ export default {
         DigitalClock
         // DigitalClockRankingFom
     },
-    created() {}
+    async created() {
+        await this.$store.dispatch('moduleRanking/getRankMemberYesterday');
+        this.rankMemberYesterday = this.$store.state.moduleRanking.rankMemberYesterday;
+        await this.$store.dispatch('moduleRanking/getRankMemberWeek');
+        this.rankMemberWeek = this.$store.state.moduleRanking.rankMemberWeek;
+        await this.$store.dispatch('moduleRanking/getRankMemberMonth');
+        this.rankMemberMonth = this.$store.state.moduleRanking.rankMemberMonth;
+    }
 };
 </script>
 <style>
