@@ -42,24 +42,24 @@ export default {
     },
     actions: {
         //공개된 스터디 받아오기
-        getPromotionStudies({commit}, page, type, search) {
-            const API_URL = `${port}study/?page=${page}&type=${type}&search=${search}`;
-            axios({
+        async getPromotionStudies({commit}, send) {
+            console.log('검색 진행', send);
+            const API_URL = `${port}study/?page=${send.page}&type=${send.type}&search=${send.content}`;
+            await axios({
                 url: API_URL,
                 method: 'GET'
             })
                 .then(res => {
                     commit('GET_PROMOTIONSTUDY', res.data);
-                    console.log(res.data);
                 })
                 .catch(err => {
                     console.log(err);
                 });
         },
         //공개된 스터디 목록에서 더보기를 눌렀을 때 처리하는 내용
-        getMorePromotionStudies({commit}, page, type, search) {
-            const API_URL = `${port}study/?page=${page}&type=${type}&search=${search}`;
-            axios({
+        async getMorePromotionStudies({commit}, send) {
+            const API_URL = `${port}study/?page=${send.page}&type=${send.type}&search=${send.content}`;
+            await axios({
                 url: API_URL,
                 method: 'GET'
             })
@@ -71,27 +71,26 @@ export default {
                 });
         },
         //상위 카테고리 받아오기
-        getTopCategories({commit}) {
+        async getTopCategories({commit}) {
             const API_URL = `${port}category/main-category`;
-            axios({
+            await axios({
                 url: API_URL,
                 method: 'GET'
             })
                 .then(res => {
                     commit('GET_TOPCATEGORIES', res.data);
-                    console.log(res.data);
                 })
                 .catch(err => {
                     console.log(err);
                 });
         },
         //하위 카테고리 받아오기
-        getBottomCategories({commit}, top) {
+        async getBottomCategories({commit}, top) {
             let API_URL = `${port}category`;
             if (top != '전체') {
                 API_URL += `?main=${top}`;
             }
-            axios({
+            await axios({
                 url: API_URL,
                 method: 'GET'
             })
@@ -103,24 +102,23 @@ export default {
                 });
         },
         //스터디 홍보페이지 상세 정보 받아오기
-        getApplyStudyInfo({commit}, studySeq) {
+        async getApplyStudyInfo({commit}, studySeq) {
             const API_URL = `${port}study/${studySeq}`;
-            axios({
+            await axios({
                 url: API_URL,
                 method: 'GET'
             })
                 .then(res => {
                     commit('GET_APPLYSTUDYINFO', res.data);
-                    console.log(res.data);
                 })
                 .catch(err => {
                     console.log(err);
                 });
         },
         //스터디 지원 신청
-        applyStudy({commit}, seq, sendData) {
+        async applyStudy({commit}, seq, sendData) {
             const API_URL = `${port}study/myStudy/${seq}`;
-            axios({
+            await axios({
                 url: API_URL,
                 method: 'POST',
                 params: sendData
@@ -134,9 +132,9 @@ export default {
                 });
         },
         //내가 지원한 스터디 목록 받아오기
-        getApplyStudies({commit}) {
+        async getApplyStudies({commit}) {
             const API_URL = `${port}study/myStudy/${'여기로그인한유저시퀀스'}`;
-            axios({
+            await axios({
                 url: API_URL,
                 method: 'GET'
             })
@@ -148,9 +146,9 @@ export default {
                 });
         },
         //내가 가입한 스터디 목록 받아오기
-        getMyStudies({commit}) {
+        async getMyStudies({commit}) {
             // const API_URL = `${port}/study/API안만들어진듯?`;
-            axios({
+            await axios({
                 // url: API_URL,
                 method: 'GET'
             })
@@ -162,9 +160,9 @@ export default {
                 });
         },
         //스터디 생성하기
-        createStudy({commit}, study) {
+        async createStudy({commit}, study) {
             const API_URL = `${port}study`;
-            axios({
+            await axios({
                 url: API_URL,
                 method: 'POST',
                 params: study
@@ -179,9 +177,9 @@ export default {
                 });
         },
         //스터디 상세페이지 정보 받아오기
-        getStudyInfo({commit}, studySeq) {
+        async getStudyInfo({commit}, studySeq) {
             const API_URL = `${port}study/${studySeq}`;
-            axios({
+            await axios({
                 url: API_URL,
                 method: 'GET'
             })

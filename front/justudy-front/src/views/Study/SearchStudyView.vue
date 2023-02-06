@@ -38,7 +38,7 @@
                     <!-- 하위 카테고리 buttons -->
                     <v-row>
                         <v-col cols="12">
-                            <div class="btnGroup" v-for="bot in bottomCategories" :key="bot.value">
+                            <div class="btnGroup" v-for="bot in bottomCategories" :key="bot.key">
                                 <v-btn outlined class="btnBot" rounded x-large @click="doSearch('category', bot.key)">
                                     <!-- 추후 SVG 아이콘으로 수정예정 -->
                                     <v-avatar size="50"><img src="@/assets/icon_70x70.png" alt="stackIcon" /></v-avatar>
@@ -103,7 +103,7 @@ export default {
     components: {StudyList},
     created() {
         //초기에 전체 데이터 받아오기
-        this.$store.dispatch('moduleStudy/getPromotionStudies', 1, null, null);
+        this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: null, content: null});
         if (this.promotionStudies.checkMore == false) {
             this.checkMore = false;
         }
@@ -128,6 +128,7 @@ export default {
             //검색할 때 제목인지, 스터디장인지 확인 후 검색 내용 담기는 곳
             searchSelect: null,
             searchContent: null,
+            searchSend: null,
 
             pageNum: 1,
             promotion: 'promotion',
@@ -136,16 +137,22 @@ export default {
         };
     },
     methods: {
-        doSearch(type, content) {
+        async doSearch(type, content) {
             this.pageNum = 0;
             if (type == 'search') {
                 if (this.searchSelect != null && this.searchContent != null) {
                     //검색을 클릭했기 때문에 카테고리를 선택했다면 카테고리는 null로 변경
                     this.choice = [];
 
+                    if (this.searchSelect == '스터디명') {
+                        this.searchSend = 'name';
+                    } else {
+                        this.searchSend = 'leader';
+                    }
+
                     //데이터 검색하고 받아오기.
-                    this.pageNum = 0;
-                    this.$store.dispatch('moduleStudy/getPromotionStudies', 0, this.searchSelect, this.searchContent);
+                    this.pageNum = 1;
+                    await this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: this.searchSend, content: this.searchContent});
                 }
             } else if (type == 'category') {
                 //카테고리를 클릭했기때문에 검색기능은 값이 있을 경우에 null로 만듦
@@ -159,32 +166,34 @@ export default {
                 this.choice = this.choice.filter((item, pos) => this.choice.indexOf(item) === pos);
 
                 //데이터 검색하고 받아오기.
-                this.pageNum = 0;
-                this.$store.dispatch('moduleStudy/getPromotionStudies', 0, 'category', this.choice);
+                this.pageNum = 1;
+                await this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: 'category', content: this.choice});
             }
         },
         remove(i) {
             this.choice = this.choice.filter(element => element !== i);
             this.doSearch('category');
         },
-        getMore() {
+        async getMore() {
             this.pageNum = this.pageNum + 1;
-            if (this.searchSelect == null && this.choice == []) {
-                //전체 스터디에서 더보기
-                this.$store.dispatch('moduleStudy/getMorePromotionStudies', this.pageNum, null, null);
+
+            if (this.choice.length != 0) {
+                //하부 카테고리 선택한 상태
+                await this.$store.dispatch('moduleStudy/getMorePromotionStudies', {page: this.pageNum, type: 'category', content: this.choice});
             } else if (this.searchSelect != null) {
                 //검색 버튼을 누른 상태
-                this.$store.dispatch('moduleStudy/getMorePromotionStudies', this.pageNum, this.searchSelect, this.searchContent);
+                await this.$store.dispatch('moduleStudy/getMorePromotionStudies', {page: this.pageNum, type: this.searchSend, content: this.searchContent});
             } else {
-                //하부 카테고리를 선택한 상태
-                this.$store.dispatch('moduleStudy/getMorePromotionStudies', this.pageNum, 'category', this.choice);
+                //전체 스터디 더보기
+                await this.$store.dispatch('moduleStudy/getMorePromotionStudies', {page: this.pageNum, type: null, content: null});
             }
 
             //기존에있는 스터디와 추가된 스터디 내용 합쳐주기
-            this.promotionStudies = this.promotionStudies.concat(this.morePromotionStudies);
+            this.promotionStudies.studyResponse = this.promotionStudies.studyResponse.concat(this.morePromotionStudies.studyResponse);
 
+            console.log('더보기 버튼 생성 유무 파악', this.morePromotionStudies);
             //더보기 버튼 생성 유무
-            if (this.morePromotionStudies.check == false) {
+            if (this.morePromotionStudies.checkMore == false) {
                 this.checkMore = false;
             } else {
                 this.checkMore = true;
@@ -194,12 +203,12 @@ export default {
             this.$router.push({path: `/study/create`});
         },
         //top에 해당하는 bottom 카테고리 가져오기
-        changeBottom(top) {
+        async changeBottom(top) {
             if (top == '전체') {
                 this.choice = [];
-                this.$store.dispatch('moduleStudy/getBottomCategories', '전체');
+                await this.$store.dispatch('moduleStudy/getBottomCategories', '전체');
             } else {
-                this.$store.dispatch('moduleStudy/getBottomCategories', top);
+                await this.$store.dispatch('moduleStudy/getBottomCategories', top);
             }
         }
     }

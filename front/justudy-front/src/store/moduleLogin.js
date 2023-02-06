@@ -3,7 +3,7 @@ import port from './port';
 export default {
     namespaced: true,
     state: {
-        isLogin: {}
+        isLogin: false
     },
     getters: {},
     mutations: {
@@ -48,6 +48,12 @@ export default {
                 .catch(err => {
                     console.log(err);
                 });
+        },
+
+        async signUp(_, {user}) {
+            const API_URL = `${port}member/register`;
+            console.log(user.password);
+            await axios.post(API_URL, user);
         }
     }
 };
