@@ -46,7 +46,6 @@ class CommunityBookmarkServiceTest {
 
         BDDMockito.given(bookmarkRepository.findBookmark(anyLong(), anyLong()))
                 .willReturn(Optional.empty());
-
         BDDMockito.given(bookmarkRepository.save(any(CommunityBookmarkEntity.class)))
                 .willReturn(newBookmark);
 
