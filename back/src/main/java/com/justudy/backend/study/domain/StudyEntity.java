@@ -42,7 +42,7 @@ public class StudyEntity {
     @JoinColumn(name = "study_category_seq")
     private CategoryEntity category;
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "studyEntity")
-    @JoinColumn(name = "study_room_seq")
+//    @JoinColumn(name = "study_room_seq")
     private StudyRoomEntity studyRoom;
     @Column(name = "study_name")
     private String name;
