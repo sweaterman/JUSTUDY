@@ -45,7 +45,7 @@ public class CommunityService {
         community.changeCategory(category);
         CommunityEntity savedCommunity = communityRepository.save(community);
 
-        return CommunityDetailResponse.makeBuilder(savedCommunity, 0);
+        return CommunityDetailResponse.makeBuilder(savedCommunity);
     }
 
     @Transactional
@@ -64,9 +64,7 @@ public class CommunityService {
         CommunityEntity community = communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         community.addViewCount();
-
-        Integer countOfLove = loveService.getCountOfLove(communitySequence);
-        return CommunityDetailResponse.makeBuilder(community, countOfLove);
+        return CommunityDetailResponse.makeBuilder(community);
     }
 
     @Transactional
@@ -79,8 +77,7 @@ public class CommunityService {
                 request.getContent(),
                 categoryService.getCategoryEntityByKey(request.getCategory()));
 
-        Integer countOfLove = loveService.getCountOfLove(communitySequence);
-        return CommunityDetailResponse.makeBuilder(community, countOfLove);
+        return CommunityDetailResponse.makeBuilder(community);
     }
 
     public List<CommunityListResponse> getCommunities(CommunitySearch condition) {
@@ -169,11 +166,4 @@ public class CommunityService {
                 .map(CommunityDetailResponse::makeBuilder)
                 .collect(Collectors.toList());
     }
-
-    private void validateWriter(Long loginSequence, Long writerSequence) {
-        if (loginSequence != writerSequence) {
-            throw new ForbiddenRequest();
-        }
-    }
-
 }
