@@ -54,7 +54,7 @@ class CommunityServiceTest {
                 categoryService,
                 bookmarkService,
                 loveService
-                );
+        );
     }
 
     @Test
@@ -74,7 +74,7 @@ class CommunityServiceTest {
             list.add(community);
         }
         for (int i = 0; i < 40; i++) {
-            CommunityEntity community = new CommunityEntity("공지제목" + i, "공지내용" + i, false);
+            CommunityEntity community = new CommunityEntity("제목" + i, "내용" + i, false);
             ReflectionTestUtils.setField(community, "member", makeTestMember(i + "", i + "", i + ""));
             list.add(community);
         }
@@ -112,7 +112,7 @@ class CommunityServiceTest {
                 .build();
         List<CommunityEntity> list = new ArrayList<>();
         for (int i = 0; i < 40; i++) {
-            CommunityEntity community = new CommunityEntity("공지제목" + i, "공지내용" + i, false);
+            CommunityEntity community = new CommunityEntity("제목" + i, "내용" + i, false);
             ReflectionTestUtils.setField(community, "member", makeTestMember(i + "", i + "", i + ""));
             list.add(community);
         }
@@ -189,7 +189,7 @@ class CommunityServiceTest {
         CommunityEntity community = makeTestCommunity();
         ReflectionTestUtils.setField(community, "member", mockMember);
         ReflectionTestUtils.setField(community, "sequence", 100L);
-        
+
         BDDMockito.given(memberService.getMember(ArgumentMatchers.anyLong()))
                 .willReturn(mockMember);
         BDDMockito.given(communityRepository.findById(ArgumentMatchers.anyLong()))
