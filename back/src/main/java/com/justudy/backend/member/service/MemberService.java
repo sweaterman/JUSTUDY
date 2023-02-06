@@ -1,7 +1,6 @@
 package com.justudy.backend.member.service;
 
 import com.justudy.backend.category.domain.CategoryEntity;
-import com.justudy.backend.category.dto.request.CategoryResponse;
 import com.justudy.backend.category.exception.CategoryNotFound;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
@@ -139,6 +138,11 @@ public class MemberService {
 
     public MemberEntity getMember(Long loginSequence) {
         return memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+    }
+
+    public Long getSequenceByNickname(String nickname) {
+        return memberRepository.findSequenceByNickname(nickname)
                 .orElseThrow(MemberNotFound::new);
     }
 

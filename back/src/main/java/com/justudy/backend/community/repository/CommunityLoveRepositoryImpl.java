@@ -32,4 +32,13 @@ public class CommunityLoveRepositoryImpl implements CommunityLoveRepositoryCusto
         entityManager.flush();
         entityManager.clear();
     }
+
+    @Override
+    public Integer countOfLove(Long communitySequence) {
+        return Math.toIntExact(queryFactory
+                .select(qLove.count())
+                .from(qLove)
+                .where(qLove.communitySequence.eq(communitySequence))
+                .fetchFirst());
+    }
 }

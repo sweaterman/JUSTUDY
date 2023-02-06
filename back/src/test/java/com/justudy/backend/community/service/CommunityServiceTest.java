@@ -6,9 +6,10 @@ import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.dto.request.CommunityCreate;
 import com.justudy.backend.community.dto.request.CommunityEdit;
-import com.justudy.backend.community.dto.response.CommunityResponse;
+import com.justudy.backend.community.dto.request.CommunitySearch;
+import com.justudy.backend.community.dto.response.CommunityDetailResponse;
+import com.justudy.backend.community.dto.response.CommunityListResponse;
 import com.justudy.backend.community.exception.CommunityNotFound;
-import com.justudy.backend.community.repository.CommunityLoveRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.exception.ForbiddenRequest;
 import com.justudy.backend.member.domain.MemberEntity;
@@ -23,6 +24,8 @@ import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +36,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 class CommunityServiceTest {
 
     private CommunityRepository communityRepository = Mockito.mock(CommunityRepository.class);
-    private CommunityLoveRepository loveRepository = Mockito.mock(CommunityLoveRepository.class);
     private CommunityBookmarkService bookmarkService = Mockito.mock(CommunityBookmarkService.class);
     private CommunityLoveService loveService = Mockito.mock(CommunityLoveService.class);
     private MemberService memberService = Mockito.mock(MemberService.class);
@@ -49,11 +51,87 @@ class CommunityServiceTest {
     @BeforeEach
     void setUp() {
         communityService = new CommunityService(communityRepository,
-                loveRepository,
                 categoryService,
                 bookmarkService,
                 loveService
                 );
+    }
+
+    @Test
+    @DisplayName("게시글 라스트 조회 - 공지글 있을 시")
+    void getCommunities() {
+        //given
+        final Long PAGE = 1L;
+        final Long SIZE = 20L;
+        CommunitySearch condition = CommunitySearch.builder()
+                .page(PAGE)
+                .size(SIZE)
+                .build();
+        List<CommunityEntity> list = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            CommunityEntity community = new CommunityEntity("공지제목" + i, "공지내용" + i, true);
+            ReflectionTestUtils.setField(community, "member", makeTestMember(i + "", i + "", i + ""));
+            list.add(community);
+        }
+        for (int i = 0; i < 40; i++) {
+            CommunityEntity community = new CommunityEntity("공지제목" + i, "공지내용" + i, false);
+            ReflectionTestUtils.setField(community, "member", makeTestMember(i + "", i + "", i + ""));
+            list.add(community);
+        }
+
+        long size = SIZE;
+        BDDMockito.given(communityRepository.getAllList(condition))
+                .willReturn(list.subList(0, (int) size));
+        for (long i = 0; i < 20; i++) {
+            BDDMockito.given(loveService.getCountOfLove(i))
+                    .willReturn((int) i);
+        }
+
+        //when
+        List<CommunityListResponse> communities = communityService.getCommunities(condition);
+
+        //then
+        assertThat(communities.size()).isEqualTo(size);
+        for (int i = 0; i < 3; i++) {
+            assertThat(communities.get(i).isHighlighted()).isTrue();
+        }
+        for (int i = 3; i < communities.size(); i++) {
+            assertThat(communities.get(i).isHighlighted()).isFalse();
+        }
+    }
+
+    @Test
+    @DisplayName("게시글 라스트 조회 - 공지글 없을 시")
+    void getCommunitiesWithoutNotice() {
+        //given
+        final Long PAGE = 1L;
+        final Long SIZE = 20L;
+        CommunitySearch condition = CommunitySearch.builder()
+                .page(PAGE)
+                .size(SIZE)
+                .build();
+        List<CommunityEntity> list = new ArrayList<>();
+        for (int i = 0; i < 40; i++) {
+            CommunityEntity community = new CommunityEntity("공지제목" + i, "공지내용" + i, false);
+            ReflectionTestUtils.setField(community, "member", makeTestMember(i + "", i + "", i + ""));
+            list.add(community);
+        }
+        long size = SIZE;
+        BDDMockito.given(communityRepository.getAllList(condition))
+                .willReturn(list.subList(0, (int) size));
+        for (long i = 0; i < 20; i++) {
+            BDDMockito.given(loveService.getCountOfLove(i))
+                    .willReturn((int) i);
+        }
+
+        //when
+        List<CommunityListResponse> communities = communityService.getCommunities(condition);
+
+        //then
+        assertThat(communities.size()).isEqualTo(size);
+        for (int i = 0; i < communities.size(); i++) {
+            assertThat(communities.get(i).isHighlighted()).isFalse();
+        }
     }
 
     @Test
@@ -88,7 +166,7 @@ class CommunityServiceTest {
 
 
         //when
-        CommunityResponse response = communityService.createCommunity(request,
+        CommunityDetailResponse response = communityService.createCommunity(request,
                 memberService.getMember(1L),
                 categoryService.getCategoryEntityByKey(CATEGORY_KEY));
 
@@ -196,7 +274,7 @@ class CommunityServiceTest {
 //                .willReturn(10);
 
         //when
-        CommunityResponse response = communityService.updateCommunity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, new CommunityEdit(NEW_TITLE, NEW_CONTENT, NEW_CATEGORY_KEY));
+        CommunityDetailResponse response = communityService.updateCommunity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE, new CommunityEdit(NEW_TITLE, NEW_CONTENT, NEW_CATEGORY_KEY));
 
         //then
         assertThat(response.getTitle()).isEqualTo(NEW_TITLE);

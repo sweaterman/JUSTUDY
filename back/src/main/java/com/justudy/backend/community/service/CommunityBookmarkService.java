@@ -1,8 +1,8 @@
 package com.justudy.backend.community.service;
 
 import com.justudy.backend.community.domain.CommunityBookmarkEntity;
+import com.justudy.backend.community.exception.BookmarkNotFound;
 import com.justudy.backend.community.repository.CommunityBookmarkRepository;
-import com.justudy.backend.exception.InvalidRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class CommunityBookmarkService {
     @Transactional
     public void deleteBookmark(Long loginSequence, Long communitySequence) {
         CommunityBookmarkEntity findBookmark = bookmarkRepository.findBookmark(loginSequence, communitySequence)
-                .orElseThrow(() -> new InvalidRequest());
+                .orElseThrow(BookmarkNotFound::new);
 
         bookmarkRepository.delete(findBookmark);
     }
