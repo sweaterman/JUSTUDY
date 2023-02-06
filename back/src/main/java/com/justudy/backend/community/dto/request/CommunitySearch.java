@@ -77,8 +77,8 @@ public class CommunitySearch {
         return (Math.max(1, page) - 1) * Math.min(size, MAX_SIZE);
     }
 
-    public Long getOffsetWithNotice(int listSize) {
-        return (Math.max(1, page) - 1) * Math.min(size - listSize, MAX_SIZE);
+    public Long getOffsetWithNotice(int noticesSize) {
+        return (Math.max(1, page) - 1) * Math.min(size - noticesSize, MAX_SIZE);
     }
 
     public Long getNoticeBoardSize() {
