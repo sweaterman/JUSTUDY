@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -48,6 +50,10 @@ public class CommunityLoveService {
 
     public Integer getCountOfLove(Long communitySequence) {
         return loveRepository.countOfLove(communitySequence);
+    }
+
+    public List<Long> getMyLoves(Long loginSequence) {
+        return loveRepository.findCommunitySequence(loginSequence);
     }
 
     private CommunityLoveEntity makeNewLove(Long loginSequence, Long communitySequence, CommunityEntity community) {
