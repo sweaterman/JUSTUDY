@@ -66,6 +66,11 @@ public class CommunityController {
         return communityService.getNotices(pageable);
     }
 
+    @GetMapping("/board/popular")
+    public List<CommunityListResponse> getMostPopular(@PageableDefault(size = 20) Pageable pageable) {
+        return communityService.getMostLoveCommunitiesOfWeek(pageable);
+    }
+
     /**
      * 일주일간 좋아요 많은 커뮤니티 정보를 가져오는 API
      *

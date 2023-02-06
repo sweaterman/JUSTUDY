@@ -85,12 +85,25 @@ public class CommunityService {
 
     public List<CommunityListResponse> getCommunities(CommunitySearch condition) {
         return communityRepository.getAllList(condition).stream()
-                .map(community -> {
-                    CommunityListResponse response = new CommunityListResponse(community);
-                    Integer countOfLove = loveService.getCountOfLove(response.getSequence());
-                    return response.ChangeCountOfLove(countOfLove);
-                }).collect(Collectors.toList());
+                .map(CommunityListResponse::new).collect(Collectors.toList());
     }
+
+    public List<CommunityListResponse> getNotices(Pageable pageable) {
+        return communityRepository.getAllNotice(pageable).stream()
+                .map(CommunityListResponse::new).collect(Collectors.toList());
+    }
+
+    public List<CommunityListResponse> getMostLoveCommunitiesOfWeek(Pageable pageable) {
+        return communityRepository.getMostLoveListOfWeek(pageable).stream()
+                .map(CommunityListResponse::new).collect(Collectors.toList());
+    }
+
+    private void validateWriter(Long loginSequence, Long writerSequence) {
+        if (loginSequence != writerSequence) {
+            throw new ForbiddenRequest();
+        }
+    }
+
 
     @Transactional
     public List<CommunityDetailResponse> readAllCommunity(int page, String category) {

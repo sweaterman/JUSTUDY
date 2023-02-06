@@ -13,6 +13,8 @@ public interface CommunityRepositoryCustom {
 
     List<CommunityEntity> getAllNotice(Pageable pageable);
 
+    List<CommunityEntity> getMostLoveListOfWeek(Pageable pageable);
+
 
     Page<CommunityEntity> findAllByNotice(Pageable pageable);
 

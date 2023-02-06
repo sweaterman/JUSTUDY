@@ -57,12 +57,21 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
 
     @Override
     public List<CommunityEntity> getAllNotice(Pageable pageable) {
-        return queryFactory.selectFrom(qCommunity)
+        return queryFactory.selectFrom(communityEntity)
                 .join(communityEntity.member, memberEntity).fetchJoin()
                 .where(communityEntity.isHighlighted.eq(true))
-                .limit(pageable.getPageNumber())
+                .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .orderBy(communityEntity.sequence.desc())
+                .fetch();
+    }
+
+    public List<CommunityEntity> getMostLoveListOfWeek(Pageable pageable) {
+        return queryFactory.selectFrom(communityEntity)
+                .join(communityEntity.member, memberEntity).fetchJoin()
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .orderBy(communityEntity.weekLoveCount.desc())
                 .fetch();
     }
 
