@@ -43,6 +43,8 @@ services:
       KMS_TURN_URL: "a104t:ssafy@3.38.116.236:3478?transport=udp"
     # volumes:
     #   - /kurento/modules/kurento:/etc/kurento/modules/kurento
+    networks:
+      - default
     restart: on-failure
 
   #coturn:
@@ -65,3 +67,8 @@ services:
   #  - /coturn/cert.pem:/etc/ssl/certs/cert.pem:ro
   # env_file:
   #  - coturn/coturn.env
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 255.255.248.0
