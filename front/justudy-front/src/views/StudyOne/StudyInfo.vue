@@ -134,6 +134,35 @@
                     <h2 v-if="studyInfo.member.length >= 3">{{ studyInfo.member[2].badge }}</h2>
                 </v-col>
             </v-row>
+
+            <v-row v-if="studyInfo.isLeader">
+                <v-col cols="12" align="end">
+                    <v-btn text @click="moveToEdit()">스터디 정보 수정하기</v-btn>
+                </v-col>
+            </v-row>
+
+            <v-row v-if="studyInfo.isMember">
+                <v-col cols="12" align="end">
+                    <v-btn text @click="withdrawDialog = true">스터디 탈퇴하기</v-btn>
+                </v-col>
+            </v-row>
+
+            <!-- 스터디 탈퇴하기 모달 -->
+            <v-dialog v-model="withdrawDialog" width="800">
+                <v-card>
+                    <v-card-title> 스터디 탈퇴 </v-card-title>
+
+                    <v-card-text> 스터디 탈퇴 시, 다시 가입하려면 방장에게 가입 요청 메시지를 보내야 합니다. 정말로 탈퇴하시겠습니까? </v-card-text>
+
+                    <v-divider></v-divider>
+
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="primary" text @click="withdraw()"> 탈퇴 </v-btn>
+                        <v-btn color="primary" text @click="withdrawDialog = false"> 취소 </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
         </v-container>
     </v-app>
 </template>
@@ -146,18 +175,20 @@ export default {
     computed: {
         //스터디룸 열려있는지 확인하는 부분 추가
         //스터디이미지 받아오는 부분 추가
-        ...mapState['studyInfo']
+        ...mapState('moduleStudy', ['studyInfo'])
     },
-    created() {
+    async created() {
         const pathName = new URL(document.location).pathname.split('/');
         const studySeq = pathName[pathName.length - 2];
-        this.$store.dispatch('getStudyInfo', studySeq);
-
-        //방장인지 확인해야함
+        await this.$store.dispatch('moduleStudy/getStudyInfo', studySeq);
+        if (this.studyInfo.isMember == false && this.studyInfo.isLeader == false) {
+            window.location.href = '/error';
+        }
     },
     data() {
         return {
             studyInfo: {
+                sequence: 1,
                 name: '리액트 용자 모임',
                 leader: '이연희',
                 population: 10,
@@ -192,10 +223,23 @@ export default {
                 목표: 모두 리액트 마스터하기 \n
                 예상 커리큘럼: Do it 리액트! 책을 순서대로 공부합니다. \n
                 개설 동기: 리액트를 너무 공부하고 싶었어요.. \n
-                주의사항: 노쇼 금지! `
+                주의사항: 노쇼 금지! `,
+                isLeader: true,
+                isMember: false
             },
-            roomOpen: false //스터디화상룸이 열려있는지 확인하는 변수
+            roomOpen: false, //스터디화상룸이 열려있는지 확인하는 변수
+            withdrawDialog: false //탈퇴 모달창
         };
+    },
+    methods: {
+        async withdraw() {
+            this.withdrawDialog = false;
+            await this.$store.dispatch('moduleStudy/withdrawStudy', this.studyInfo.sequence);
+            window.location.href = `/study/myStudy`;
+        },
+        moveToEdit() {
+            window.location.href = `/study/${this.studyInfo.sequence}/edit`;
+        }
     }
 };
 </script>
