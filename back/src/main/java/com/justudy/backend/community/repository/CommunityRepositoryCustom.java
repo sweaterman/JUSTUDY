@@ -11,6 +11,8 @@ public interface CommunityRepositoryCustom {
 
     List<CommunityEntity> getAllList(CommunitySearch communitySearch);
 
+    List<CommunityEntity> getAllNotice(Pageable pageable);
+
 
     Page<CommunityEntity> findAllByNotice(Pageable pageable);
 

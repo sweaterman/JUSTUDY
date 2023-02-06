@@ -3,8 +3,11 @@ package com.justudy.backend.community.repository;
 import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.domain.QCommunityEntity;
 import com.justudy.backend.community.dto.request.CommunitySearch;
+import com.justudy.backend.community.dto.request.SearchOrderType;
+import com.justudy.backend.community.dto.request.SearchType;
 import com.justudy.backend.community.exception.ImportBoardFail;
 import com.justudy.backend.util.PagingUtil;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -50,6 +53,17 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
             throw new ImportBoardFail("community", "게시글 리스트 가져오기 실패");
         }
         return list;
+    }
+
+    @Override
+    public List<CommunityEntity> getAllNotice(Pageable pageable) {
+        return queryFactory.selectFrom(qCommunity)
+                .join(communityEntity.member, memberEntity).fetchJoin()
+                .where(communityEntity.isHighlighted.eq(true))
+                .limit(pageable.getPageNumber())
+                .offset(pageable.getOffset())
+                .orderBy(communityEntity.sequence.desc())
+                .fetch();
     }
 
     @Override
