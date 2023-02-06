@@ -365,7 +365,7 @@ public class InitDb {
                 .username("테스트" + number)
                 .nickname("테스트 봇" + number)
                 .region("SEOUL")
-                .category(new String[] {"Java", "Spring"})
+                .category(new String[]{"Java", "Spring"})
                 .ssafyId("08" + number)
                 .phone(String.valueOf(number))
                 .email("testEmail" + number + "@ssafy.com")

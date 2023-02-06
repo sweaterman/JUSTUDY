@@ -7,13 +7,27 @@
 
                 <!-- 본문 -->
                 <v-col cols="12" md="8">
+                    <!-- 검색란 -->
+                    <v-row>
+                        <v-col cols="2">
+                            <v-select v-model="searchSelect" solo :items="items" label="검색"></v-select>
+                        </v-col>
+                        <v-col cols="8">
+                            <v-text-field v-model="searchContent" label="검색 내용"></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-btn block @click="doSearch('search', null)">검색</v-btn>
+                        </v-col>
+                    </v-row>
+
                     <!-- 상위 카테고리 tabs -->
                     <v-row style="margin-top: 10px; margin-bottom: 10px">
                         <v-col cols="12">
                             <v-tabs color="black" v-model="tab">
                                 <v-tabs-slider color="yellow"></v-tabs-slider>
-                                <v-tab v-for="top in top_categories" :key="top">
-                                    <h1>{{ top }}</h1>
+                                <v-tab @click="changeBottom('전체')"><h1>전체</h1></v-tab>
+                                <v-tab v-for="top in topCategories" :key="top.key" @click="changeBottom(top.key)">
+                                    <h1>{{ top.value }}</h1>
                                 </v-tab>
                             </v-tabs>
                         </v-col>
@@ -24,11 +38,11 @@
                     <!-- 하위 카테고리 buttons -->
                     <v-row>
                         <v-col cols="12">
-                            <div class="btnGroup" v-for="bot in bottom" :key="bot.name">
-                                <v-btn outlined class="btnBot" rounded x-large v-if="top_categories[tab] == bot.top" @click="doSearch(bot.name)">
+                            <div class="btnGroup" v-for="bot in bottomCategories" :key="bot.key">
+                                <v-btn outlined class="btnBot" rounded x-large @click="doSearch('category', bot.key)">
                                     <!-- 추후 SVG 아이콘으로 수정예정 -->
                                     <v-avatar size="50"><img src="@/assets/icon_70x70.png" alt="stackIcon" /></v-avatar>
-                                    {{ bot.name }}
+                                    {{ bot.value }}
                                 </v-btn>
                             </div>
                         </v-col>
@@ -44,72 +58,13 @@
                     </v-row>
 
                     <!-- 스터디 리스트 -->
-                    <v-row>
-                        <v-col cols="12">
-                            <v-row>
-                                <v-col cols="4" v-for="study in firstStudies" :key="study.seq">
-                                    <!-- 한 개의 스터디를 감싸고 있는 div -->
-                                    <div class="singleStudy">
-                                        <v-row justify="center">
-                                            <img class="hover" style="width: 95%" src="@/assets/test_study.jpg" alt="study_image" @click="moveToStudy(study.seq)" />
-                                        </v-row>
-                                        <v-row style="margin-bottom: 5px">
-                                            <v-col cols="12">
-                                                <h3 class="hover" @click="moveToStudy(study.seq)">{{ study.name }}</h3>
-                                            </v-col>
-                                            <!-- <v-col cols="5" v-if="!checkPersonnel(study.current_person, study.personnel)" style="color: #3edf23; font-weight: bold">
-                                                <div style="float: right">모집현황 {{ study.current_person }} / {{ study.personnel }}</div>
-                                            </v-col>
-                                            <v-col cols="5" v-if="checkPersonnel(study.current_person, study.personnel)" style="color: #ff0000; font-weight: bold">
-                                                <div style="float: right">모집현황 {{ study.current_person }} / {{ study.personnel }}</div>
-                                            </v-col> -->
-                                        </v-row>
+                    <StudyList :studies="promotionStudies.studyResponse" :type="promotion"></StudyList>
 
-                                        <v-row no-gutters align="center">
-                                            <v-col cols="4">
-                                                <v-subheader style="height: fit-content; padding: 0px">모집 현황</v-subheader>
-                                                <!-- <v-chip class="chip" color="yellow lighten-4">시작 예정일</v-chip> -->
-                                            </v-col>
-                                            <v-col cols="8" v-if="checkPersonnel(study.current_person, study.personnel)" style="color: #ff0000; font-weight: bold">
-                                                {{ study.current_person }} / {{ study.personnel }}
-                                            </v-col>
-                                            <v-col cols="8" v-if="!checkPersonnel(study.current_person, study.personnel)" style="color: #3edf23; font-weight: bold">
-                                                {{ study.current_person }} / {{ study.personnel }}
-                                            </v-col>
-                                        </v-row>
-                                        <v-row no-gutters align="center">
-                                            <v-col cols="4">
-                                                <v-subheader style="height: fit-content; padding: 0px">시작 예정일</v-subheader>
-                                                <!-- <v-chip class="chip" color="yellow lighten-4">시작 예정일</v-chip> -->
-                                            </v-col>
-                                            <v-col cols="8">
-                                                {{ study.starting_day }}
-                                            </v-col>
-                                        </v-row>
-                                        <v-row no-gutters align="center">
-                                            <v-col cols="4">
-                                                <v-subheader style="height: fit-content; padding: 0px">스터디장</v-subheader>
-                                                <!-- <v-chip class="chip" color="yellow lighten-4">스터디장</v-chip> -->
-                                            </v-col>
-                                            <v-col cols="8">
-                                                {{ study.teamLeader }}
-                                            </v-col>
-                                        </v-row>
-                                        <v-row dense>
-                                            <v-chip class="chip" color="yellow lighten-4">{{ study.weekday }}</v-chip>
-                                            <v-chip class="chip" color="yellow lighten-4">{{ study.on_off }}</v-chip>
-                                            <v-chip class="chip" color="yellow lighten-4">{{ study.level }}</v-chip>
-                                        </v-row>
-                                    </div>
-                                </v-col>
-                            </v-row>
-
-                            <v-row v-if="checkMore">
-                                <v-col cols="3"></v-col>
-                                <v-col cols="6"><v-btn outlined color="gold" block @click="getMore"> 더보기 </v-btn></v-col>
-                                <v-col cols="3"></v-col>
-                            </v-row>
-                        </v-col>
+                    <!-- 더보기 버튼 -->
+                    <v-row v-if="checkMore">
+                        <v-col cols="3"></v-col>
+                        <v-col cols="6"><v-btn outlined color="gold" block @click="getMore"> 더보기 </v-btn></v-col>
+                        <v-col cols="3"></v-col>
                     </v-row>
 
                     <!-- 스터디 생성 페이지로 연결 -->
@@ -140,285 +95,121 @@
 </template>
 
 <script>
-// import {mapState} from 'vuex';
+import StudyList from '@/components/study/StudyList.vue';
+import {mapState} from 'vuex';
 
 export default {
     name: 'SearchStudyView',
-    updated: {},
+    components: {StudyList},
+    created() {
+        //초기에 전체 데이터 받아오기
+        this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: null, content: null});
+        if (this.promotionStudies.checkMore == false) {
+            this.checkMore = false;
+        }
+        //카테고리 받아오기
+        this.$store.dispatch('moduleStudy/getTopCategories');
+        this.$store.dispatch('moduleStudy/getBottomCategories', '전체');
+    },
+    computed: {
+        ...mapState('moduleStudy', ['promotionStudies']),
+        ...mapState('moduleStudy', ['topCategories']),
+        ...mapState('moduleStudy', ['morePromotionStudies']),
+        ...mapState('moduleStudy', ['bottomCategories'])
+    },
     data() {
         return {
             tab: null,
             button: null,
+
+            //선택한 카테고리가 담기는 곳
             choice: [],
-            top_categories: ['프론트엔드', '백엔드', '모바일', 'CS'],
-            bottom: [
-                {
-                    name: 'React',
-                    top: '프론트엔드'
-                },
-                {
-                    name: 'Vue.js',
-                    top: '프론트엔드'
-                },
-                {
-                    name: 'Angular',
-                    top: '프론트엔드'
-                },
-                {
-                    name: 'Spring',
-                    top: '백엔드'
-                },
-                {
-                    name: 'node.js',
-                    top: '백엔드'
-                },
-                {
-                    name: 'Django',
-                    top: '백엔드'
-                },
-                {
-                    name: 'php',
-                    top: '백엔드'
-                },
-                {
-                    name: 'Flutter',
-                    top: '모바일'
-                },
-                {
-                    name: 'Kotiln',
-                    top: '모바일'
-                },
-                {
-                    name: 'ReactNative',
-                    top: '모바일'
-                },
-                {
-                    name: '컴퓨터구조',
-                    top: 'CS'
-                },
-                {
-                    name: '운영체제',
-                    top: 'CS'
-                },
-                {
-                    name: '알고리즘',
-                    top: 'CS'
-                },
-                {
-                    name: '네트워크',
-                    top: 'CS'
-                }
-            ],
-            //9개씩 끊어서 가져올 데이터
-            pageNum: 0,
 
-            //더보기 버튼을 표시할 지 체크
-            checkMore: true,
+            //검색할 때 제목인지, 스터디장인지 확인 후 검색 내용 담기는 곳
+            searchSelect: null,
+            searchContent: null,
+            searchSend: null,
 
-            //처음 9개의 데이터
-            firstStudies: [
-                {
-                    seq: 1,
-                    name: '스터디이름들글자테스트',
-                    current_person: 2,
-                    personnel: 4,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화',
-                    on_off: '온/오프라인',
-                    level: '초보'
-                },
-                {
-                    seq: 2,
-                    name: '이 스터디는 이름이 깁니다.',
-                    current_person: 4,
-                    personnel: 4,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화',
-                    on_off: '오프라인',
-                    level: '중급'
-                },
-                {
-                    seq: 3,
-                    name: '하지만 얘는 쟤보다 이름이 조금 더더더 깁니다.',
-                    current_person: 2,
-                    personnel: 5,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화, 수, 목, 금',
-                    on_off: '온/오프라인',
-                    level: '초보'
-                },
-                {
-                    seq: 4,
-                    name: '리액트 용자 모임',
-                    current_person: 2,
-                    personnel: 5,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화, 수, 목, 금',
-                    on_off: '온/오프라인',
-                    level: '초보'
-                },
-                {
-                    seq: 5,
-                    name: '리액트 용자 모임',
-                    current_person: 2,
-                    personnel: 5,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화, 수, 목, 금',
-                    on_off: '온/오프라인',
-                    level: '초보'
-                },
-                {
-                    seq: 6,
-                    name: '리액트 용자 모임',
-                    current_person: 2,
-                    personnel: 5,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화, 수, 목, 금',
-                    on_off: '온/오프라인',
-                    level: '초보'
-                },
-                {
-                    seq: 7,
-                    name: '리액트 용자 모임',
-                    current_person: 2,
-                    personnel: 5,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화, 수, 목, 금',
-                    on_off: '온/오프라인',
-                    level: '초보'
-                },
-                {
-                    seq: 8,
-                    name: '리액트 용자 모임',
-                    current_person: 2,
-                    personnel: 5,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화, 수, 목, 금',
-                    on_off: '온/오프라인',
-                    level: '초보'
-                },
-                {
-                    seq: 9,
-                    name: '리액트 용자 모임',
-                    current_person: 2,
-                    personnel: 5,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화, 수, 목, 금',
-                    on_off: '온/오프라인',
-                    level: '초보'
-                }
-            ],
-
-            //'더보기' 버튼으로 추가되는 데이터
-            moreData: [
-                {
-                    seq: 10,
-                    name: '리액트 용자 모임',
-                    current_person: 2,
-                    personnel: 5,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화, 수, 목, 금',
-                    on_off: '온/오프라인',
-                    level: '초보'
-                },
-                {
-                    seq: 11,
-                    name: '리액트 용자 모임',
-                    current_person: 2,
-                    personnel: 5,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화, 수, 목, 금',
-                    on_off: '온/오프라인',
-                    level: '초보'
-                },
-                {
-                    seq: 12,
-                    name: '리액트 용자 모임',
-                    current_person: 2,
-                    personnel: 5,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화, 수, 목, 금',
-                    on_off: '온/오프라인',
-                    level: '초보'
-                },
-                {
-                    seq: 13,
-                    name: '리액트 용자 모임',
-                    current_person: 2,
-                    personnel: 5,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화, 수, 목, 금',
-                    on_off: '온/오프라인',
-                    level: '초보'
-                },
-                {
-                    seq: 14,
-                    name: '리액트 용자 모임',
-                    current_person: 2,
-                    personnel: 5,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화, 수, 목, 금',
-                    on_off: '온/오프라인',
-                    level: '초보'
-                },
-                {
-                    seq: 15,
-                    name: '리액트 용자 모임',
-                    current_person: 2,
-                    personnel: 5,
-                    starting_day: '너만오면고',
-                    teamLeader: '이연희',
-                    weekday: '월, 화, 수, 목, 금',
-                    on_off: '온/오프라인',
-                    level: '초보'
-                }
-            ]
+            pageNum: 1,
+            promotion: 'promotion',
+            items: ['스터디명', '스터디장'],
+            checkMore: true
         };
     },
     methods: {
-        doSearch(bc) {
-            this.choice = this.choice.concat(bc);
-            this.choice = this.choice.filter((item, pos) => this.choice.indexOf(item) === pos);
+        async doSearch(type, content) {
+            this.pageNum = 0;
+            if (type == 'search') {
+                if (this.searchSelect != null && this.searchContent != null) {
+                    //검색을 클릭했기 때문에 카테고리를 선택했다면 카테고리는 null로 변경
+                    this.choice = [];
+
+                    if (this.searchSelect == '스터디명') {
+                        this.searchSend = 'name';
+                    } else {
+                        this.searchSend = 'leader';
+                    }
+
+                    //데이터 검색하고 받아오기.
+                    this.pageNum = 1;
+                    await this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: this.searchSend, content: this.searchContent});
+                }
+            } else if (type == 'category') {
+                //카테고리를 클릭했기때문에 검색기능은 값이 있을 경우에 null로 만듦
+                this.searchSelect = null;
+                this.searchContent = null;
+
+                console.log(type, content);
+
+                //기존에 선택한 카테고리가 이미 있다면 합치고 중복제거.
+                this.choice = this.choice.concat(content);
+                this.choice = this.choice.filter((item, pos) => this.choice.indexOf(item) === pos);
+
+                //데이터 검색하고 받아오기.
+                this.pageNum = 1;
+                await this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: 'category', content: this.choice});
+            }
         },
         remove(i) {
             this.choice = this.choice.filter(element => element !== i);
+            this.doSearch('category');
         },
-        moveToStudy(seq) {
-            this.$router.push({path: `/study/search/${seq}`});
-        },
-        getMore() {
-            //1. moreData에 9개 더받아온다. (더받아올 데이터가 있는지도 확인)
-            //2. moreData를 firstData에 합치고 moreData null 로 만들기
-            //pageNum 더하고 넘기기
-            this.firstStudies = this.firstStudies.concat(this.moreData);
-            this.moreData = null;
+        async getMore() {
+            this.pageNum = this.pageNum + 1;
 
-            //더받아올 데이터가 없다면 더보기 버튼 비활성화
-        },
-        checkPersonnel(c, p) {
-            //초록색이면 false, 빨간색이면 true
-            if (Number(p) - Number(c) > 2) {
-                return false;
+            if (this.choice.length != 0) {
+                //하부 카테고리 선택한 상태
+                await this.$store.dispatch('moduleStudy/getMorePromotionStudies', {page: this.pageNum, type: 'category', content: this.choice});
+            } else if (this.searchSelect != null) {
+                //검색 버튼을 누른 상태
+                await this.$store.dispatch('moduleStudy/getMorePromotionStudies', {page: this.pageNum, type: this.searchSend, content: this.searchContent});
             } else {
-                return true;
+                //전체 스터디 더보기
+                await this.$store.dispatch('moduleStudy/getMorePromotionStudies', {page: this.pageNum, type: null, content: null});
+            }
+
+            //기존에있는 스터디와 추가된 스터디 내용 합쳐주기
+            this.promotionStudies.studyResponse = this.promotionStudies.studyResponse.concat(this.morePromotionStudies.studyResponse);
+
+            console.log('더보기 버튼 생성 유무 파악', this.morePromotionStudies);
+            //더보기 버튼 생성 유무
+            if (this.morePromotionStudies.checkMore == false) {
+                this.checkMore = false;
+            } else {
+                this.checkMore = true;
             }
         },
         moveToCreate() {
             this.$router.push({path: `/study/create`});
+        },
+        //top에 해당하는 bottom 카테고리 가져오기
+        async changeBottom(top) {
+            if (top == '전체') {
+                this.choice = [];
+                await this.$store.dispatch('moduleStudy/getBottomCategories', '전체');
+            } else {
+                await this.$store.dispatch('moduleStudy/getBottomCategories', top);
+            }
         }
     }
 };
@@ -432,23 +223,6 @@ export default {
 .btnBot {
     margin-top: 10px;
     margin-right: 15px;
-}
-
-.chip {
-    margin: 5px 5px 0px 0px;
-}
-
-.hover {
-    cursor: pointer;
-}
-
-.singleStudy {
-    padding: 20px;
-    margin-bottom: 20px;
-    border-style: solid;
-    border-color: #eeeeee;
-    border-radius: 30px;
-    /* border-width: thin; */
 }
 
 .createCom {
