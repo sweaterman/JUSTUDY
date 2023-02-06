@@ -105,6 +105,25 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
                 .fetch();
     }
 
+    private  BooleanExpression eqTypeAndSearch(CommunitySearch communitySearch) {
+        SearchType type = communitySearch.getType();
+        if (type == null) {
+            return null;
+        }
+        if (communitySearch.getSearch() == null) {
+            return null;
+        }
+        return type.getExpression(communitySearch.getSearch());
+    }
+
+    private OrderSpecifier<?> orderByCondition(CommunitySearch communitySearch) {
+        SearchOrderType orderType = communitySearch.getOrder();
+        if (orderType == null) {
+            return communityEntity.sequence.desc();
+        }
+        return orderType.getOrderSpecifier();
+    }
+
     private BooleanExpression eqCategory(String category) {
         if (category == null || category.isEmpty()) {
             return null;

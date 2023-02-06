@@ -1,16 +1,26 @@
 package com.justudy.backend.community.dto.request;
 
 import com.justudy.backend.common.enum_util.EnumModel;
+import com.querydsl.core.types.OrderSpecifier;
+
+import static com.justudy.backend.community.domain.QCommunityEntity.communityEntity;
 
 public enum SearchOrderType implements EnumModel {
 
-    LIKE("like"),
-    VIEW("view");
+    LIKE("like", communityEntity.loveCount.desc()),
+    VIEW("view", communityEntity.viewCount.desc());
 
     private String value;
 
-    SearchOrderType(String value) {
+    private OrderSpecifier<?> orderSpecifier;
+
+    SearchOrderType(String value, OrderSpecifier<?> orderSpecifier) {
         this.value = value;
+        this.orderSpecifier = orderSpecifier;
+    }
+
+    public OrderSpecifier<?> getOrderSpecifier() {
+        return orderSpecifier;
     }
 
     @Override

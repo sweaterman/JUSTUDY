@@ -1,21 +1,16 @@
 package com.justudy.backend.community.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.justudy.backend.community.exception.SearchOrderTypeNotFound;
 import com.justudy.backend.community.exception.SearchTypeNotFound;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.ToString;
-import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 
 @Data
 public class CommunitySearch {
 
-    private static final Long DEFAULT_PAGE = 1L;
+    private static final Long DEFAULT_PAGE = 0L;
     private static final Long DEFAULT_SIZE = 20L;
 
     private static final Long NOTICE_SIZE = 3L;
@@ -34,13 +29,12 @@ public class CommunitySearch {
     private SearchOrderType order;
 
     @Builder
-    @JsonCreator
-    public CommunitySearch(@JsonProperty("page") Long page,
-                           @JsonProperty("size") Long size,
-                           @JsonProperty("category") String category,
-                           @JsonProperty("type") String type,
-                           @JsonProperty("search") String search,
-                           @JsonProperty("order") String order) {
+    public CommunitySearch(Long page,
+                           Long size,
+                           String category,
+                           String type,
+                           String search,
+                           String order) {
         this.page = page;
         this.size = size;
         this.category = category;
