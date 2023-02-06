@@ -1,5 +1,6 @@
 package com.justudy.backend.member.controller;
 
+import com.justudy.backend.community.dto.response.CommunityListResponse;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.service.UploadFileService;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -50,6 +52,18 @@ public class MemberController {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
         return memberService.getMypage(loginSequence);
+    }
+
+    @GetMapping("/bookmarks")
+    public List<CommunityListResponse> getMyBookmarks(HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return memberService.getMyBookmarks(loginSequence);
+    }
+
+    @GetMapping("/loves")
+    public List<CommunityListResponse> getMyLoves(HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return memberService.getMyLoves(loginSequence);
     }
 
     @GetMapping("/mypage/modify")

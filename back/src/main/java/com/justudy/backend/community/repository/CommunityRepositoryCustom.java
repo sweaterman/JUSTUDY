@@ -18,6 +18,11 @@ public interface CommunityRepositoryCustom {
 
     Optional<CommunityEntity> findBySequence(Long sequence);
 
+    List<CommunityEntity> getListBySequences(List<Long> sequences);
+
+
+
+
 
     Page<CommunityEntity> findAllByNotice(Pageable pageable);
 

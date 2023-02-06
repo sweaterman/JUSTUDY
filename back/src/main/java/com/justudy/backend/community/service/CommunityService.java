@@ -95,6 +95,20 @@ public class CommunityService {
                 .map(CommunityListResponse::new).collect(Collectors.toList());
     }
 
+    public List<CommunityListResponse> getMyBookmarks(Long loginSequence) {
+        List<Long> sequences = bookmarkService.getMyBookmarks(loginSequence);
+        return communityRepository.getListBySequences(sequences).stream()
+                .map(CommunityListResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<CommunityListResponse> getMyLoves(Long loginSequence) {
+        List<Long> sequences = loveService.getMyLoves(loginSequence);
+        return communityRepository.getListBySequences(sequences).stream()
+                .map(CommunityListResponse::new)
+                .collect(Collectors.toList());
+    }
+
     private void validateWriter(Long loginSequence, Long writerSequence) {
         if (loginSequence != writerSequence) {
             throw new ForbiddenRequest();

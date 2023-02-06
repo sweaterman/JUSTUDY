@@ -1,12 +1,17 @@
 package com.justudy.backend.community.service;
 
 import com.justudy.backend.community.domain.CommunityBookmarkEntity;
+import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.exception.BookmarkNotFound;
+import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.community.repository.CommunityBookmarkRepository;
+import com.justudy.backend.community.repository.CommunityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,6 +42,12 @@ public class CommunityBookmarkService {
     public void deleteBookmarkByCommunity(Long communitySequence) {
         bookmarkRepository.deleteAllByCommunity(communitySequence);
     }
+
+    public List<Long> getMyBookmarks(Long loginSequence) {
+        return bookmarkRepository.findCommunitySequence(loginSequence);
+    }
+
+
 
     private CommunityBookmarkEntity makeNewBookmark(Long loginSequence, Long communitySequence) {
         return new CommunityBookmarkEntity(loginSequence, communitySequence);

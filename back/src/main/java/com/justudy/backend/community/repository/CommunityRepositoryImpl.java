@@ -87,6 +87,23 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
     }
 
     @Override
+    public List<CommunityEntity> getListBySequences(List<Long> sequences) {
+        return queryFactory
+                .selectFrom(communityEntity)
+                .join(communityEntity.member, memberEntity).fetchJoin()
+                .where(communityEntity.sequence.in(sequences))
+                .fetch();
+    }
+
+
+
+
+
+
+
+
+
+    @Override
     public Page<CommunityEntity> findAllByNotice(Pageable pageable) {
         JPQLQuery<CommunityEntity> query = queryFactory
                 .selectFrom(qCommunity)

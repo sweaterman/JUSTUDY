@@ -4,6 +4,8 @@ import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.exception.CategoryNotFound;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.community.dto.response.CommunityListResponse;
+import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.exception.ConflictRequest;
 import com.justudy.backend.exception.ForbiddenRequest;
 import com.justudy.backend.exception.InvalidRequest;
@@ -47,6 +49,8 @@ public class MemberService {
 
     private final UploadFileService uploadFileService;
 
+    private final CommunityService communityService;
+
     private final FileStore fileStore;
 
     @Transactional
@@ -66,6 +70,14 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFound());
 
         return createMypageResponse(findMember);
+    }
+
+    public List<CommunityListResponse> getMyBookmarks(Long loginSequence) {
+        return communityService.getMyBookmarks(loginSequence);
+    }
+
+    public List<CommunityListResponse> getMyLoves(Long loginSequence) {
+        return communityService.getMyLoves(loginSequence);
     }
 
     public ModifyPageResponse getModifyPage(Long loginSequence) {
