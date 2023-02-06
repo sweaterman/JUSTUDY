@@ -33,7 +33,13 @@ public class StudyDetailResponse {
     private Long leaderSeq;
     private Long imageSequence;
 
+    private Boolean isApply;
+    private Boolean isMember;
+    private Boolean isLeader;
+
     public static StudyDetailResponse makeBuilder(StudyEntity entity) {
+
+
         //todo imagefile
         return StudyDetailResponse.builder()
                 .sequence(entity.getSequence())
@@ -63,6 +69,45 @@ public class StudyDetailResponse {
                 .notion(entity.getNotion())
 //                .imageSequence(entity.getImageFile().getSequence())
                 .startTime(entity.getStartTime())
+                .isApply(false)
+                .isMember(false)
+                .isLeader(false)
+                .build();
+    }
+
+    public static StudyDetailResponse makeBuilder(StudyEntity entity, Boolean isApply, Boolean isMember, Boolean isLeader) {
+        //todo imagefile
+        return StudyDetailResponse.builder()
+                .sequence(entity.getSequence())
+                .member(entity.getStudyMembers()
+                        .stream()
+                        .map(StudyMemberResponse::makeBuilder)
+                        .sorted(Comparator.comparing(StudyMemberResponse::getBadge).reversed())
+                        .collect(Collectors.toList()))
+                .resumeSeq(entity.getResumes()
+                        .stream()
+                        .map(StudyResumeEntity::getSequence)
+                        .collect(Collectors.toList()))
+                .frequency(entity.getFrequency()
+                        .stream()
+                        .map(StudyFrequencyResponse::makeBuilder)
+                        .collect(Collectors.toList()))
+                .topCategory(entity.getCategory().getParentCategory().getValue())
+                .bottomCategory(entity.getCategory().getValue())
+                .name(entity.getName())
+                .leaderSeq(entity.getLeaderSeq())
+                .introduction(entity.getIntroduction())
+                .population(entity.getPopulation())
+                .level(entity.getLevel())
+                .meeting(entity.getMeeting())
+                .isOpen(entity.getIsOpen())
+                .github(entity.getGithub())
+                .notion(entity.getNotion())
+//                .imageSequence(entity.getImageFile().getSequence())
+                .startTime(entity.getStartTime())
+                .isApply(isApply)
+                .isMember(isMember)
+                .isLeader(isLeader)
                 .build();
     }
 }

@@ -49,8 +49,7 @@ public class StudyService {
     public Long createStudy(StudyCreate request, UploadFileEntity basicImage) {
 
         CategoryEntity categoryEntity = categoryRepository.findByKey(request.getBottomCategory()).orElseThrow(InvalidRequest::new);
-//        memberRepository.find
-        //todo leaderSeq 멤버에서 검색해야함
+
         StudyEntity study = request.toEntity(categoryEntity);
 
         study.changeImage(basicImage);
@@ -63,10 +62,35 @@ public class StudyService {
         return StudyDetailResponse.makeBuilder(entity);
     }
 
-    public StudyDetailResponse readDetailStudy(Long studySequence) {
+    public StudyDetailResponse readDetailStudy(Long studySequence, Long loginSequence) {
         StudyEntity entity = studyRepository.findById(studySequence)
                 .orElseThrow(StudyNotFound::new);
-        return StudyDetailResponse.makeBuilder(entity);
+        Boolean isLeader = false;
+        Boolean isMember = false;
+        Boolean isApply = false;
+
+
+        //맴버일시
+        Long seq = entity.getStudyMembers()
+                .stream()
+                .map(studyMemberEntity -> studyMemberEntity.getMember().getSequence())
+                .filter(sequence -> sequence.longValue() == loginSequence)
+                .findFirst()
+                .orElse(null);
+        if (seq != null)
+            isMember = true;
+
+        //가입신청햇을시
+        if (studyResumeRepository.readStudyResumeByStudyAndMember(entity.getSequence(), loginSequence).orElse(null) != null)
+            isApply = true;
+
+
+        //리더일시
+        if (entity.getLeaderSeq() == loginSequence) {
+            isLeader = true;
+            isMember = false;
+        }
+        return StudyDetailResponse.makeBuilder(entity, isApply, isMember, isLeader);
     }
 
     @Transactional
@@ -119,5 +143,10 @@ public class StudyService {
     public Boolean checkNickName(String nickName) {
         if (studyRepository.readStudyByNickName(nickName) == null) return true;
         return false;
+    }
+
+    public Long getStudyLeader(Long id) {
+        return studyRepository.findById(id)
+                .orElseThrow(StudyNotFound::new).getLeaderSeq();
     }
 }

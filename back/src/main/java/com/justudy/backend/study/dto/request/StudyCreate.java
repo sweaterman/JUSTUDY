@@ -29,6 +29,9 @@ public class StudyCreate {
     private String startTime;
     private String leader;
 
+    public void changeLeaderSeq(Long leaderSeq) {
+        this.leaderSeq = leaderSeq;
+    }
 
     public StudyEntity toEntity(CategoryEntity categoryEntity) {
         //frequency는 따로 저장

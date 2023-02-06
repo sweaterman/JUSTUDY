@@ -32,16 +32,17 @@ public class StudyResponse {
 
 
     public static StudyResponse makeBuilder(StudyEntity entity) {
-//        log.info("슬라이드5 {}",entity.getStudyMembers().size());
-//        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info : {}", studyMember.getMember().getSequence()));
-//        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info : {}", studyMember.getMember().getNickname()));
-//
-//        String leader = entity.getStudyMembers()
-//                .stream()
-//                .filter(studyMemberEntity -> entity.getLeaderSeq().longValue() == studyMemberEntity.getMember().getSequence().longValue())
-//                .findFirst()
-//                .orElseThrow(InvalidRequest::new)
-//                .getMember().getNickname();
+        log.info("슬라이드5 {}",entity.getStudyMembers().size());
+        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info1 : {}", entity.getLeaderSeq()));
+        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info2 : {}", studyMember.getMember().getSequence()));
+        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info3 : {}", studyMember.getMember().getNickname()));
+
+        String leader = entity.getStudyMembers()
+                .stream()
+                .filter(studyMemberEntity -> entity.getLeaderSeq().longValue() == studyMemberEntity.getMember().getSequence().longValue())
+                .findFirst()
+                .orElseThrow(InvalidRequest::new)
+                .getMember().getNickname();
 
         //todo image 추가
         return StudyResponse.builder()
@@ -63,7 +64,7 @@ public class StudyResponse {
                 .isOpen(entity.getIsOpen())
 //                .imageSequence(entity.getImageFile().getSequence())
                 .startTime(entity.getStartTime())
-                .leader(null)
+                .leader(leader)
                 .build();
     }
 
