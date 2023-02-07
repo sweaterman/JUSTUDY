@@ -26,6 +26,7 @@ import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -53,11 +54,14 @@ public class MemberService {
 
     private final FileStore fileStore;
 
+    private final BCryptPasswordEncoder passwordEncoder;
+
     @Transactional
     public Long saveMember(MemberCreate request, UploadFileEntity basicImage) {
         validateCreateRequest(request);
 
-        MemberEntity member = request.toEntity();
+        String encodePassword = passwordEncoder.encode(request.getPassword());
+        MemberEntity member = request.toEntity(encodePassword);
         member.changeImage(basicImage);
         addCategory(request, member);
 
