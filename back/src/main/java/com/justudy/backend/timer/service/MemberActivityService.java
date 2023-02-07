@@ -35,14 +35,29 @@ public class MemberActivityService {
   public void saveMemberAcitivity(ActivityRequest memberActivityRequest, Long seq,
       Date today) {
     MemberEntity member = memberRepository.getReferenceById(seq);
-    memberActivityRepository.save(MemberActivityEntity
-        .builder()
-        .member(member)
-        .date(today)
-        .time(memberActivityRequest.getSecond())
-        .category(memberActivityRequest.getCategory())
-        .build()
-    );
+    Tuple storeTime = memberActivityRepository.findTodayRecord(today,memberActivityRequest.getCategory(), member);
+    if (storeTime == null) {
+      memberActivityRepository.save(MemberActivityEntity
+          .builder()
+          .member(member)
+          .date(today)
+          .time(memberActivityRequest.getSecond())
+          .category(memberActivityRequest.getCategory())
+          .build()
+      );
+    } else {
+      Long sum = memberActivityRequest.getSecond() + storeTime.get(qMemberActivity.time);
+      memberActivityRepository.save(MemberActivityEntity
+          .builder()
+              .sequence(storeTime.get(qMemberActivity.sequence))
+          .member(member)
+          .date(today)
+          .time(sum)
+          .category(memberActivityRequest.getCategory())
+          .build()
+      );
+
+    }
   }
 
   @Transactional
