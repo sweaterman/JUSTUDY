@@ -13,4 +13,6 @@ public interface StudyRepositorySupport {
     Slice<StudyEntity> findAllBySearchOption(Pageable pageable, List<String> sub, String studyLeader, String studyName);
 
     StudyEntity findByLeaderSeq(Long leaderSeq);
+
+    StudyEntity readStudyByNickName(String name);
 }

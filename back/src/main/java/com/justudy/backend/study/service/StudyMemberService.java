@@ -33,11 +33,12 @@ public class StudyMemberService {
 
     @Transactional
     public void updateStudyLeader(Long id, Long memberId) {
-        StudyEntity entity = studyRepository.findById(id)
+        StudyEntity studyEntity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
-
+        //스터디원인지 확인
+        checkStudyMember(studyEntity.getStudyMembers(), memberId);
         //스터디 리더 변경
-        entity.changeLeader(memberId);
+        studyEntity.changeLeader(memberId);
     }
 
     public List<StudyResponse> readAllRegisterStudy(Long id) {
@@ -55,7 +56,6 @@ public class StudyMemberService {
     public void exileStudyMember(Long id, Long memberId) {
         StudyEntity studyEntity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
-        //todo session 아이디와 리더 비교해서 아닐시 오류 권한이 없습니다
 
         //스터디원인지 확인
         StudyMemberEntity memberEntity = checkStudyMember(studyEntity.getStudyMembers(), memberId);
@@ -71,9 +71,6 @@ public class StudyMemberService {
                 .orElseThrow(StudyNotFound::new);
         //스터디원인지 확인
         StudyMemberEntity memberEntity = checkStudyMember(studyEntity.getStudyMembers(), memberId);
-
-        //memberid와 리더seq비교 아닐시 invalid request error
-        if (checkLeader(studyEntity.getLeaderSeq(), memberId)) throw new InvalidRequest("leader", "스터디장은 탈퇴할 수 없습니다.");
 
         //스터디 탈퇴
         studyEntity.removeStudyMember(memberEntity);

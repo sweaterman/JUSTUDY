@@ -3,19 +3,20 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "serve": "vue-cli-service serve",
+        "serve": "vue-cli-service serve --port 8081",
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint"
     },
     "dependencies": {
         "axios": "^1.2.2",
+        "chart.js": "^3.8.0",
         "core-js": "^3.8.3",
+        "simple-code-editor": "^1.2.2",
         "vue": "^2.6.14",
+        "vue-chartjs": "^4.0.4",
         "vue-router": "^3.6.5",
         "vuetify": "^2.6.0",
-        "vuex": "^3.6.2",
-        "chart.js": "^3.8.0",
-        "vue-chartjs": "^4.0.4"
+        "vuex": "^3.6.2"
     },
     "devDependencies": {
         "@babel/core": "^7.12.16",

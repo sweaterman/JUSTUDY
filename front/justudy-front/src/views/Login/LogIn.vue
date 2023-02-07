@@ -25,7 +25,7 @@
                         <v-subheader>아이디</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="id" dense outlined label="아이디" :rules="[v => !!v || '아이디는 필수입니다.']"></v-text-field>
+                        <v-text-field v-model="user.userId" dense outlined label="아이디" :rules="[v => !!v || '아이디는 필수입니다.']"></v-text-field>
                     </v-col>
                     <v-col cols="2" />
                 </v-row>
@@ -36,7 +36,7 @@
                         <v-subheader>비밀번호</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="password" dense outlined label="비밀번호" :rules="[v => !!v || '비밀번호는 필수입니다.']"></v-text-field>
+                        <v-text-field v-model="user.password" dense outlined label="비밀번호" :rules="[v => !!v || '비밀번호는 필수입니다.']"></v-text-field>
                     </v-col>
                 </v-row>
             </v-col>
@@ -49,10 +49,10 @@
         <v-row :style="{marginTop: '3%', marginBottom: '5%'}">
             <v-col cols="12" md="4" />
             <v-col cols="12" md="2" justify="center" align="center">
-                <v-btn color="yellow" @click="movetomain" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">로그인</v-btn>
+                <v-btn color="yellow" @click="movetomain" style="height: 50px; width: 170px; fontweight: bold; fontsize: large">로그인</v-btn>
             </v-col>
             <v-col cols="12" md="2" justify="center" align="center">
-                <v-btn color="yellow" @click="movetosignin" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'large'}">회원가입</v-btn>
+                <v-btn color="yellow" @click="movetosignin" style="height: 50px; width: 170px; fontweight: bold; fontsize: large">회원가입</v-btn>
             </v-col>
             <v-col cols="12" md="4" />
         </v-row>
@@ -70,12 +70,19 @@ export default {
     },
 
     data() {
-        return {};
+        return {
+            user: {
+                userId: '',
+                password: ''
+            }
+        };
     },
 
     methods: {
         movetomain() {
-            window.location.href = '/';
+            this.$store.dispatch('moduleLogin/login', {
+                user: this.user
+            });
         },
         movetosignin() {
             window.location.href = '/signin';

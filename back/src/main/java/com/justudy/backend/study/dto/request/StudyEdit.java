@@ -26,6 +26,7 @@ public class StudyEdit {
     private String github;
     private String notion;
     private String startTime;
+    private String leader;
 
 
 
