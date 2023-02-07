@@ -100,7 +100,7 @@ public class InitDb {
             studyMemberService.createStudyMember(StudyMemberCreate.builder().memberSeq(member.getSequence()).studySeq(studyNotLeader).build());
             //팀장 아닐때 지원한 스터디
             final Long studyNotLeader2 = 226L;
-            studyResumeService.createStudyResume(studyNotLeader2, StudyResumeCreate.builder().memberSeq(member.getSequence()).studySeq(studyNotLeader2).content("지원할까말까").build());
+            studyResumeService.createStudyResume(StudyResumeCreate.builder().memberSeq(member.getSequence()).studySeq(studyNotLeader2).content("지원할까말까").build());
 
             //지원안한 스터디
             final Long studyNotApply = 177L;

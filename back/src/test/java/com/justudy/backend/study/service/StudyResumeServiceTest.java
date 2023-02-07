@@ -105,7 +105,7 @@ class StudyResumeServiceTest {
         StudyResumeCreate create = makeResumeRequest(id, findMember.getSequence());
 
         // When
-        Long resumeId = studyResumeService.createStudyResume(id, create);
+        Long resumeId = studyResumeService.createStudyResume(create);
         StudyResumeEntity entity = studyResumeRepository.findById(resumeId).get();
 
         // Then
@@ -121,7 +121,7 @@ class StudyResumeServiceTest {
         StudyResumeCreate create = makeResumeRequest(id, findMember.getSequence());
 
         // When
-        Long resumeId = studyResumeService.createStudyResume(id, create);
+        Long resumeId = studyResumeService.createStudyResume(create);
 //        StudyResumeEntity entity = studyResumeRepository.findById(resumeId).get();
 
         StudyResumeResponse entity = studyResumeService.readStudyResume(resumeId);
@@ -142,8 +142,8 @@ class StudyResumeServiceTest {
         StudyResumeCreate create2 = makeResumeRequest(id, findMember2.getSequence());
 
         // When
-        Long resumeId = studyResumeService.createStudyResume(id, create);
-        Long resumeId2 = studyResumeService.createStudyResume(id, create2);
+        Long resumeId = studyResumeService.createStudyResume(create);
+        Long resumeId2 = studyResumeService.createStudyResume(create2);
 
 //        studyResumeService.deleteStudyResume(resumeId, loginSequence);
 //        studyResumeService.deleteStudyResume(resumeId2, loginSequence);
@@ -163,8 +163,8 @@ class StudyResumeServiceTest {
 
 
         // When
-        Long resumeId = studyResumeService.createStudyResume(id, create);
-        Long resumeId2 = studyResumeService.createStudyResume(id, create2);
+        Long resumeId = studyResumeService.createStudyResume(create);
+        Long resumeId2 = studyResumeService.createStudyResume(create2);
         StudyEntity studyEntity = repository.findById(id).get();
 //        studyEntity.addResume(studyResumeRepository.findById(resumeId).get());
 //        studyEntity.addResume(studyResumeRepository.findById(resumeId2).get());
@@ -189,8 +189,8 @@ class StudyResumeServiceTest {
 
 
         // When
-        Long resumeId = studyResumeService.createStudyResume(id, create);
-        Long resumeId2 = studyResumeService.createStudyResume(id, create2);
+        Long resumeId = studyResumeService.createStudyResume(create);
+        Long resumeId2 = studyResumeService.createStudyResume(create2);
         StudyEntity studyEntity = repository.findById(id).get();
         studyEntity.addStudyResume(studyResumeRepository.findById(resumeId).get());
         studyEntity.addStudyResume(studyResumeRepository.findById(resumeId2).get());

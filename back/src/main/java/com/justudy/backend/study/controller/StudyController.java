@@ -8,10 +8,7 @@ import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.service.FileStore;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.login.infra.SessionConst;
-import com.justudy.backend.study.dto.request.StudyCreate;
-import com.justudy.backend.study.dto.request.StudyEdit;
-import com.justudy.backend.study.dto.request.StudyMemberCreate;
-import com.justudy.backend.study.dto.request.StudyResumeApply;
+import com.justudy.backend.study.dto.request.*;
 import com.justudy.backend.study.dto.response.*;
 import com.justudy.backend.member.service.MemberService;
 import com.justudy.backend.study.service.StudyFrequencyService;
@@ -20,6 +17,8 @@ import com.justudy.backend.study.service.StudyResumeService;
 import com.justudy.backend.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +35,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StudyController {
 
+    private final int MAX_STUDY_PAGE_SIZE = 9;
     private final StudyService studyService;
     private final CategoryService categoryService;
     private final MemberService memberService;
@@ -64,14 +64,14 @@ public class StudyController {
     /**
      * 공개된 스터디 정보를 가져오는 API
      *
-     * @param page   페이지 넘버
+     * @param pageable   페이지 넘버
      * @param type   검색 분류(스터디명, 스터디장)
      * @param search 검색 내용
      * @return ResponseEntity<List < StudyResponse>> 200 OK, 스터디 정보 목록
      * 페이징, 검색,
      */
     @GetMapping("/")
-    public ResponseEntity<StudySearchResponse> readAllStudy(@RequestParam("page") int page, @RequestParam(value = "type", required = false) String type, @RequestParam(value = "search", required = false) String search) {
+    public ResponseEntity<StudySearchResponse> readAllStudy(@PageableDefault(size = MAX_STUDY_PAGE_SIZE) Pageable pageable, @RequestParam(value = "type", required = false) String type, @RequestParam(value = "search", required = false) String search) {
         List<String> Categories = null;
         //타입이 카테고리 검색이면
         if (type != null && type.compareTo("category") == 0) {
@@ -99,7 +99,7 @@ public class StudyController {
             search = null;
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(studyService.search(page, Categories, type, search));
+        return ResponseEntity.status(HttpStatus.OK).body(studyService.search(pageable, Categories, type, search));
     }
 
 
@@ -244,18 +244,17 @@ public class StudyController {
         return ResponseEntity.status(HttpStatus.OK).body(studyResumeService.readAllApplyStudy(loginSequence));
     }
 
-//    /**
-//     * 스터디 지원목록을 생성하는 API
-//     *
-//     * @param id      지원서 id
-//     * @param request 생성정보
-//     * @return ResponseEntity<StudyResumeResponse> 201 CREATE, 생성된 스터디 지원목록
-//     */
-//    @PostMapping("/apply/{id}")
-//    public ResponseEntity<StudyResumeResponse> createStudyResume(@PathVariable("id") Long id, @RequestBody StudyResumeCreate request) {
-//        Long resumeSeq = studyResumeService.createStudyResume(id, request);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(studyResumeService.readStudyResume(resumeSeq));
-//    }
+    /**
+     * 스터디 지원목록을 생성하는 API
+     *
+     * @param request 생성정보
+     * @return ResponseEntity<StudyResumeResponse> 201 CREATE, 생성된 스터디 지원목록
+     */
+    @PostMapping("/apply/")
+    public ResponseEntity<StudyResumeResponse> createStudyResume( @RequestBody StudyResumeCreate request) {
+        Long resumeSeq = studyResumeService.createStudyResume(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(studyResumeService.readStudyResume(resumeSeq));
+    }
 
     /**
      * 스터디 지원목록을 삭제하는 API

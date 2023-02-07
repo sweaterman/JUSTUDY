@@ -30,8 +30,8 @@ public class StudyResumeService {
     private final StudyResumeRepository studyResumeRepository;
 
     @Transactional
-    public Long createStudyResume(Long studySequence, StudyResumeCreate request) {
-        StudyEntity studyEntity = studyRepository.findById(studySequence)
+    public Long createStudyResume(StudyResumeCreate request) {
+        StudyEntity studyEntity = studyRepository.findById(request.getStudySeq())
                 .orElseThrow(StudyNotFound::new);
         MemberEntity memberEntity = memberRepository.findById(request.getMemberSeq())
                 .orElseThrow(MemberNotFound::new);

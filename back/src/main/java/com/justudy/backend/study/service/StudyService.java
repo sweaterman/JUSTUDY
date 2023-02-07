@@ -115,9 +115,9 @@ public class StudyService {
     }
 
 
-    public StudySearchResponse search(int page, List<String> sub, String type, String search) {
+    public StudySearchResponse search(Pageable pageable, List<String> sub, String type, String search) {
         int MAX_STUDY_PAGE_SIZE = 9;
-        Pageable pageable = PageRequest.of(page, MAX_STUDY_PAGE_SIZE);
+//        Pageable pageable = PageRequest.of(page, MAX_STUDY_PAGE_SIZE);
 
         String studyLeader = null;
         String studyName = null;
