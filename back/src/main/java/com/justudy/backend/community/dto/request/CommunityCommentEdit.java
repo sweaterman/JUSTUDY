@@ -1,8 +1,6 @@
 package com.justudy.backend.community.dto.request;
 
 import com.justudy.backend.community.domain.CommunityCommentEntity;
-import com.justudy.backend.community.domain.CommunityEntity;
-import com.justudy.backend.member.domain.MemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,16 +12,16 @@ import java.time.LocalDateTime;
 @Builder
 public class CommunityCommentEdit {
     private Long sequence;
-    private MemberEntity member;
-    private CommunityEntity community;
+    private Long memberSeq;
+    private Long communitySeq;
     private String content;
     private Long parentSeq;
 
 
     public CommunityCommentEntity toEntity() {
         return CommunityCommentEntity.builder()
-                .member(member)
-                .community(community)
+//                .member(memberSeq)
+//                .community(communitySeq)
                 .content(content)
                 .parentSeq(parentSeq)
                 .createdTime(LocalDateTime.now())
@@ -33,8 +31,8 @@ public class CommunityCommentEdit {
     public CommunityCommentEntity toEntity(Long sequence) {
         return CommunityCommentEntity.builder()
                 .sequence(sequence)
-                .member(member)
-                .community(community)
+//                .member(memberSeq)
+//                .community(communitySeq)
                 .content(content)
                 .parentSeq(parentSeq)
                 .createdTime(LocalDateTime.now())

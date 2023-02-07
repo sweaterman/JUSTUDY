@@ -1,6 +1,7 @@
 package com.justudy.backend.community.service;
 
 import com.justudy.backend.community.domain.CommunityCommentEntity;
+import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.dto.request.CommunityCommentCreate;
 import com.justudy.backend.community.dto.request.CommunityCommentEdit;
 import com.justudy.backend.community.dto.response.CommunityCommentResponse;
@@ -8,6 +9,9 @@ import com.justudy.backend.community.exception.CommentNotFound;
 import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.community.repository.CommunityCommentRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
+import com.justudy.backend.exception.InvalidRequest;
+import com.justudy.backend.member.domain.MemberEntity;
+import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,31 +27,23 @@ public class CommunityCommentService {
     private final CommunityCommentRepository repository;
 
     private final CommunityRepository communityRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public CommunityCommentResponse createComment(long id, CommunityCommentCreate request) {
         //community 탐색 후 널이면 에러
-        communityRepository.findById(id)
+        CommunityEntity communityEntity = communityRepository.findById(id)
                 .orElseThrow(CommunityNotFound::new);
+        MemberEntity memberEntity = memberRepository.findById(request.getMemberSeq())
+                .orElseThrow(InvalidRequest::new);
 
         //최대 그룹 찾기
-        Integer commentGroup = repository.findByGroup(request.getCommunity().getSequence());
+        Integer commentGroup = repository.findByGroup(request.getCommunitySeq());
+
+
         //댓글 작성
         if (request.getParentSeq() == null || request.getParentSeq() == 0L) {
-            CommunityCommentEntity savedComment = repository.save(CommunityCommentEntity.builder()
-                    .member(request.getMember())
-                    .community(request.getCommunity())
-                    .content(request.getContent())
-                    .createdTime(LocalDateTime.now())
-                    .modifiedTime(null)
-                    .isDeleted(false)
-                    .group(commentGroup + 1)
-                    .order(0)
-                    .parentSeq(0L)
-                    .step(0)
-                    .childNumber(0)
-                    .build());
-            return CommunityCommentResponse.makeBuilder(savedComment);
+            return CommunityCommentResponse.makeBuilder(repository.save(request.toEntity(communityEntity, memberEntity)));
 
         } else {//대댓글 작성
             //댓글이 없음 에러
@@ -59,19 +55,7 @@ public class CommunityCommentService {
             if (orderResult == null)
                 return null;
             //대댓글 저장
-            CommunityCommentEntity savedComment = repository.save(CommunityCommentEntity.builder()
-                    .member(request.getMember())
-                    .community(request.getCommunity())
-                    .content(request.getContent())
-                    .createdTime(LocalDateTime.now())
-                    .modifiedTime(null)
-                    .isDeleted(false)
-                    .group(parentComment.getGroup())
-                    .order(orderResult)
-                    .parentSeq(request.getParentSeq())
-                    .step(parentComment.getStep() + 1)
-                    .childNumber(0)
-                    .build());
+            CommunityCommentEntity savedComment = repository.save(request.toEntity(communityEntity, memberEntity));
 
             //부모의 자식 수 업데이트
             repository.updateChildNumber(parentComment.getSequence(), parentComment.getChildNumber());

@@ -45,4 +45,5 @@ public class CommunityCommentEntity {
     public void changeIsDeleted(boolean value) {
         this.isDeleted = value;
     }
+
 }
