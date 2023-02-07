@@ -131,7 +131,7 @@ public class InitDb {
                         StudyFrequencyCreate
                                 .builder()
                                 .studySeq(findStudy.getSequence())
-                                .week(1L)
+                                .week("월")
                                 .startTime(date)
                                 .endTime(date)
                                 .build());
