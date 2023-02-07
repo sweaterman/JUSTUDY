@@ -16,7 +16,7 @@ import java.util.Date;
 public class StudyFrequencyEdit {
     private Long sequence;
     private Long studySeq;
-    private Long week;
+    private String week;
     private Date startTime;
     private Date endTime;
     private LocalDateTime modifiedTime;
@@ -26,7 +26,7 @@ public class StudyFrequencyEdit {
                 .builder()
                 .sequence(sequence)
                 .study(study)
-                .week(StudyFrequencyWeek.valueOf(StudyFrequencyWeek.getIndex(week.intValue())))
+                .week(StudyFrequencyWeek.valueOf(week))
                 .startTime(startTime)
                 .endTime(endTime)
                 .modifiedTime(LocalDateTime.now())
