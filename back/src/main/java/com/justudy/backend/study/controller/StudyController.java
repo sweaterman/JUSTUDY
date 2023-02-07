@@ -5,12 +5,10 @@ import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
+import com.justudy.backend.file.service.FileStore;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.login.infra.SessionConst;
-import com.justudy.backend.study.dto.request.StudyCreate;
-import com.justudy.backend.study.dto.request.StudyEdit;
-import com.justudy.backend.study.dto.request.StudyMemberCreate;
-import com.justudy.backend.study.dto.request.StudyResumeApply;
+import com.justudy.backend.study.dto.request.*;
 import com.justudy.backend.study.dto.response.*;
 import com.justudy.backend.member.service.MemberService;
 import com.justudy.backend.study.service.StudyFrequencyService;
@@ -18,19 +16,26 @@ import com.justudy.backend.study.service.StudyMemberService;
 import com.justudy.backend.study.service.StudyResumeService;
 import com.justudy.backend.study.service.StudyService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+@Log4j2
 @RestController
 @RequestMapping("/api/study")
 @RequiredArgsConstructor
 public class StudyController {
 
+    private final int MAX_STUDY_PAGE_SIZE = 9;
     private final StudyService studyService;
     private final CategoryService categoryService;
     private final MemberService memberService;
@@ -38,6 +43,7 @@ public class StudyController {
     private final StudyResumeService studyResumeService;
     private final StudyMemberService studyMemberService;
     private final UploadFileService uploadFileService;
+    private final FileStore fileStore;
 
     // ---------------------------------------------------------------스터디---------------------------------------------------------------
 
@@ -58,36 +64,42 @@ public class StudyController {
     /**
      * 공개된 스터디 정보를 가져오는 API
      *
-     * @param page   페이지 넘버
+     * @param pageable   페이지 넘버
      * @param type   검색 분류(스터디명, 스터디장)
      * @param search 검색 내용
      * @return ResponseEntity<List < StudyResponse>> 200 OK, 스터디 정보 목록
      * 페이징, 검색,
      */
     @GetMapping("/")
-    public ResponseEntity<StudySearchResponse> readAllStudy(@RequestParam("page") int page, @RequestParam(value = "type", required = false) String type, @RequestParam(value = "search", required = false) String search) {
-        //todo session 과 id 체크
-//        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-
-        List<String> subCategories = null;
+    public ResponseEntity<StudySearchResponse> readAllStudy(@PageableDefault(size = MAX_STUDY_PAGE_SIZE) Pageable pageable, @RequestParam(value = "type", required = false) String type, @RequestParam(value = "search", required = false) String search) {
+        List<String> Categories = null;
         //타입이 카테고리 검색이면
         if (type != null && type.compareTo("category") == 0) {
-            subCategories = Arrays.asList(search.split(","));
+            Categories = Arrays.asList(search.split(","));
+            int flg = 0;
             List<CategoryResponse> response = categoryService.getSubCategories();
             for (CategoryResponse categoryResponse : response) {
-                int flg = 0;
-                for (String subCategory : subCategories) {
-                    if (subCategory.compareTo(categoryResponse.getValue()) == 0) {
+                for (String subCategory : Categories) {
+                    if (subCategory.compareTo(categoryResponse.getKey()) == 0) {
                         flg = 1;
                         break;
                     }
                 }
-                if (flg == 0) throw new InvalidRequest();
             }
+            response = categoryService.getSubCategories();
+            for (CategoryResponse categoryResponse : response) {
+                for (String mainCategory : Categories) {
+                    if (mainCategory.compareTo(categoryResponse.getKey()) == 0) {
+                        flg = 1;
+                        break;
+                    }
+                }
+            }
+            if (flg == 0) throw new InvalidRequest();
             search = null;
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(studyService.search(page, subCategories, type, search));
+        return ResponseEntity.status(HttpStatus.OK).body(studyService.search(pageable, Categories, type, search));
     }
 
 
@@ -98,11 +110,13 @@ public class StudyController {
      * @return ResponseEntity<StudyResponse> 200 OK, 스터디 정보 목록
      */
     @GetMapping("/{id}")
-    public ResponseEntity<StudyDetailResponse> readStudy(@PathVariable("id") Long id) {
+    public ResponseEntity<StudyDetailResponse> readStudy(@PathVariable("id") Long id, HttpSession session) {
         //todo session 과 id 체크
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
 
         // 뱃지순으로 정렬
-        return ResponseEntity.status(HttpStatus.OK).body(studyService.readDetailStudy(id));
+        return ResponseEntity.status(HttpStatus.OK).body(studyService.readDetailStudy(id, loginSequence));
     }
 
     /**
@@ -112,27 +126,26 @@ public class StudyController {
      * @return ResponseEntity<StudyDetailResponse> 201 CREATE, 생성된 스터디 정보
      */
     @PostMapping("/")
-    public ResponseEntity<StudyDetailResponse> createStudy(@RequestBody StudyCreate request) {
-        //todo session 과 id 체크
+    public ResponseEntity<StudyDetailResponse> createStudy(@RequestBody StudyCreate request, @RequestPart(name = "file", required = false) MultipartFile multipartFile, HttpSession session) throws IOException {
+        //session 과 id 체크
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        request.changeLeaderSeq(loginSequence);
 
-        //todo 이미지 생성
-        UploadFileEntity basicImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
-
+        //이미지 생성
+        UploadFileEntity uploadImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
+        if (multipartFile != null)
+            uploadImage = fileStore.storeFile(multipartFile);
         //스터디 생성
-
-        Long studySeq = studyService.createStudy(request, basicImage);
+        Long studySeq = studyService.createStudy(request, uploadImage);
 
         //받은 활동주기 생성
         request.getFrequency().forEach(studyFrequencyCreate -> studyFrequencyService.createStudyFrequency(studySeq, studyFrequencyCreate));
 
         //스터디맴버 리더 추가
-        //todo nickname으로 검색
-        Long leaderSeq = 1L;
-//        Long leaderSeq = memberService;
         studyMemberService.createStudyMember(StudyMemberCreate
                 .builder()
                 .studySeq(studySeq)
-                .memberSeq(leaderSeq)
+                .memberSeq(loginSequence)
                 .build());
         //todo 스터디 룸 생성
 
@@ -148,17 +161,26 @@ public class StudyController {
      * 스터디 맴버나 지원서는 수정하지 않음
      */
     @PutMapping("/{id}")
-    public ResponseEntity<StudyDetailResponse> updateStudy(@PathVariable("id") Long id, @RequestBody StudyEdit request) {
-        //todo session 과 id 체크
+    public ResponseEntity<StudyDetailResponse> updateStudy(@PathVariable("id") Long id, @RequestBody StudyEdit request,
+                                                           @RequestPart(name = "file", required = false) MultipartFile multipartFile, HttpSession session) throws IOException {
+        //session 과 id 체크
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        if (loginSequence != request.getLeaderSeq()) {
+            throw new InvalidRequest("", "리더가 아니면 스터디를 수정할 수 없습니다.");
+        }
 
         //todo 이미지 수정
+        //파일 없을시 변경 x
+        UploadFileEntity uploadImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
+        if (multipartFile != null)
+            uploadImage = fileStore.storeFile(multipartFile);
 
         //활동주기 수정
         studyFrequencyService.deleteStudyFrequencyByStudy(id);
-        studyFrequencyService.createStudyFrequencies(id,request.getFrequency());
-        
+        studyFrequencyService.createStudyFrequencies(id, request.getFrequency());
+
         //스터디 수정
-        Long studySeq = studyService.updateStudy(id, request);
+        Long studySeq = studyService.updateStudy(id, request, uploadImage);
 
         //스터디 맴버 수정 이건 acceptStudyResume API에서 추가
         return ResponseEntity.status(HttpStatus.OK).body(studyService.readStudy(studySeq));
@@ -171,8 +193,12 @@ public class StudyController {
      * @return ResponseEntity<Void> 204 NO CONTENT
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStudy(@PathVariable("id") Long id) {
-        //todo session 과 id 체크
+    public ResponseEntity<Void> deleteStudy(@PathVariable("id") Long id, HttpSession session) {
+        //session 과 id 체크
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        if (loginSequence != studyService.getStudyLeader(id).longValue()) {
+            throw new InvalidRequest("", "리더가 아니면 스터디를 삭제할 수 없습니다.");
+        }
 
         //todo 이미지 삭제
 
@@ -189,44 +215,59 @@ public class StudyController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
+    /**
+     * 스터디 이름 중복체크 API
+     *
+     * @param name 스터디 이름
+     * @return ResponseEntity<Void> 없을시 200 OK 중복일시 409 CONFLICT
+     */
+    @GetMapping("/check/{name}")
+    public ResponseEntity<Void> checkStudyName(@PathVariable("name") String name) {
+        if (studyService.checkNickName(name))
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+    }
+
 
     // ---------------------------------------------------------------스터디 지원---------------------------------------------------------------
 
     /**
      * 내가 지원한 스터디 목록을 가져오는 API
      *
-     * @param id 멤버 id
      * @return ResponseEntity<List < StudyResponse>> 200 OK, 스터디 지원목록 정보
      */
-    @GetMapping("/mystudy/apply/{id}")
-    public ResponseEntity<List<StudyResponse>> readAllApplyStudy(@PathVariable("id") Long id) {
-        //todo session 과 id 체크
-        return ResponseEntity.status(HttpStatus.OK).body(studyResumeService.readAllApplyStudy(id));
+    @GetMapping("/mystudy/apply/")
+    public ResponseEntity<List<StudyResponse>> readAllApplyStudy(HttpSession session) {
+        //session 과 id 체크
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        return ResponseEntity.status(HttpStatus.OK).body(studyResumeService.readAllApplyStudy(loginSequence));
     }
 
-//    /**
-//     * 스터디 지원목록을 생성하는 API
-//     *
-//     * @param id      지원서 id
-//     * @param request 생성정보
-//     * @return ResponseEntity<StudyResumeResponse> 201 CREATE, 생성된 스터디 지원목록
-//     */
-//    @PostMapping("/apply/{id}")
-//    public ResponseEntity<StudyResumeResponse> createStudyResume(@PathVariable("id") Long id, @RequestBody StudyResumeCreate request) {
-//        Long resumeSeq = studyResumeService.createStudyResume(id, request);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(studyResumeService.readStudyResume(resumeSeq));
-//    }
+    /**
+     * 스터디 지원목록을 생성하는 API
+     *
+     * @param request 생성정보
+     * @return ResponseEntity<StudyResumeResponse> 201 CREATE, 생성된 스터디 지원목록
+     */
+    @PostMapping("/apply/")
+    public ResponseEntity<StudyResumeResponse> createStudyResume( @RequestBody StudyResumeCreate request) {
+        Long resumeSeq = studyResumeService.createStudyResume(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(studyResumeService.readStudyResume(resumeSeq));
+    }
 
     /**
      * 스터디 지원목록을 삭제하는 API
      *
      * @param id 지원서 id
-     * @param id 스터디 sequence (PK)
      * @return ResponseEntity<Void> 204 NO CONTENT
      */
     @DeleteMapping("/apply/{id}")
-    public ResponseEntity<Void> deleteStudyResume(@PathVariable("id") Long id) {
-        studyResumeService.deleteStudyResume(id);
+    public ResponseEntity<Void> deleteStudyResume(@PathVariable("id") Long id, HttpSession session) {
+        //session
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        studyResumeService.deleteStudyResume(id, loginSequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
@@ -237,8 +278,11 @@ public class StudyController {
      * @return ResponseEntity<List < StudyResumeResponse>> 200 OK, 스터디 지원목록 정보
      */
     @GetMapping("/{id}/members/apply")
-    public ResponseEntity<List<StudyResumeResponse>> readAllResumeByStudy(@PathVariable("id") Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(studyResumeService.readAllStudyResumeByStudy(id));
+    public ResponseEntity<List<StudyResumeResponse>> readAllResumeByStudy(@PathVariable("id") Long id, HttpSession session) {
+        //session
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        return ResponseEntity.status(HttpStatus.OK).body(studyResumeService.readAllStudyResumeByStudy(id, loginSequence));
     }
 
     // ---------------------------------------------------------------스터디 활동주기---------------------------------------------------------------
@@ -303,12 +347,14 @@ public class StudyController {
      * 스터디장 위임하는 API
      *
      * @param id       스터디 sequence (PK)
-     * @param memberId 스터디 sequence (PK)
+     * @param memberId 멤버 sequence (PK)
      * @return ResponseEntity<Void> 200 OK, 수정된 스터디장 정보
      */
     @PutMapping("/{id}/members/{memberid}")
-    public ResponseEntity<Void> updateStudyLeader(@PathVariable("id") Long id, @PathVariable("memberid") Long memberId) {
-        //todo session 과 id 체크
+    public ResponseEntity<Void> updateStudyLeader(@PathVariable("id") Long id, @PathVariable("memberid") Long memberId, HttpSession session) {
+        //session 과 id 체크
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        if (loginSequence != studyService.getStudyLeader(id)) throw new InvalidRequest();
 
         studyMemberService.updateStudyLeader(id, memberId);
         return ResponseEntity.status(HttpStatus.OK).body(null);
@@ -323,8 +369,10 @@ public class StudyController {
      * @return ResponseEntity<Void> 204 NO CONTENT
      */
     @DeleteMapping("/{id}/members/{memberid}")
-    public ResponseEntity<Void> exileStudyMember(@PathVariable("id") Long id, @PathVariable("memberid") Long memberId) {
-        //todo session 과 리더 id 체크
+    public ResponseEntity<Void> exileStudyMember(@PathVariable("id") Long id, @PathVariable("memberid") Long memberId, HttpSession session) {
+        //session 과 리더 id 체크
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        if (loginSequence != studyService.getStudyLeader(id)) throw new InvalidRequest();
 
         studyMemberService.exileStudyMember(id, memberId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -333,42 +381,46 @@ public class StudyController {
     /**
      * 스터디 탈퇴 API
      *
-     * @param id       스터디 id
-     * @param memberId 멤버 id
+     * @param id 스터디 id
      * @return ResponseEntity<Void> 204 NO CONTENT
      * 스터디 리더일시 탈퇴 불가능
      */
-    @DeleteMapping("/{id}/withdraw/{memberid}")
-    public ResponseEntity<Void> withdrawStudyMember(@PathVariable("id") Long id, @PathVariable("memberid") Long memberId) {
-        //todo session 과  리더 id 체크 리더일시 탈퇴 불가능
-        //todo session 과 memberid 체크 아닐시 에러
-        studyMemberService.withdrawStudyMember(id, memberId);
+    @DeleteMapping("/{id}/withdraw")
+    public ResponseEntity<Void> withdrawStudyMember(@PathVariable("id") Long id, HttpSession session) {
+        //session 과  리더 id 체크 리더일시 탈퇴 불가능
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        if (loginSequence == studyService.getStudyLeader(id)) throw new InvalidRequest();
+
+        studyMemberService.withdrawStudyMember(id, loginSequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
     /**
      * 내가 가입한 스터디 목록을 가져오는 API
      *
-     * @param id 멤버 id
      * @return ResponseEntity<List < StudyResponse>> 200 OK, 가입한 스터디 목록 정보
      */
-    @GetMapping("/mystudy/register/{id}")
-    public ResponseEntity<List<StudyResponse>> readAllRegisterStudy(@PathVariable("id") Long id) {
-        //todo session 과 id 체크
-        return ResponseEntity.status(HttpStatus.OK).body(studyMemberService.readAllRegisterStudy(id));
+    @GetMapping("/mystudy/register")
+    public ResponseEntity<List<StudyResponse>> readAllRegisterStudy(HttpSession session) {
+        //session
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        return ResponseEntity.status(HttpStatus.OK).body(studyMemberService.readAllRegisterStudy(loginSequence));
     }
 
     /**
      * 스터디 신청 업데이트 API
      *
-     * @param id      멤버 id
+     * @param id      스터디 id
      * @param applyId 지원서 id
      * @param request isAccept
-     * @return ResponseEntity<List < StudyResponse>> 200 OK
+     * @return ResponseEntity<Void> 200 OK
      */
     @PutMapping("/study/{id}/members/apply/{applyid}")
-    public ResponseEntity<Void> acceptStudyResume(@PathVariable("id") Long id, @PathVariable("applyid") Long applyId, @RequestBody StudyResumeApply request) {
-        //todo session 과 leader id 체크
+    public ResponseEntity<Void> acceptStudyResume(@PathVariable("id") Long id, @PathVariable("applyid") Long applyId, @RequestBody StudyResumeApply request, HttpSession session) {
+        //session 과 leader id 체크
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        if (loginSequence == studyService.getStudyLeader(id)) throw new InvalidRequest();
 
         StudyDetailResponse studyEntity = studyService.readStudy(id);
         //지원서 체크
@@ -394,7 +446,7 @@ public class StudyController {
         }
 
         //지원서 삭제
-        studyResumeService.deleteStudyResume(resumeSeq);
+        studyResumeService.deleteById(resumeSeq);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 

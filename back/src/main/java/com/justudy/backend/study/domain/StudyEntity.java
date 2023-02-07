@@ -1,5 +1,6 @@
 package com.justudy.backend.study.domain;
 
+import com.justudy.backend.GroupCall.domain.StudyRoomEntity;
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import lombok.*;
@@ -40,7 +41,9 @@ public class StudyEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_category_seq")
     private CategoryEntity category;
-
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "studyEntity")
+//    @JoinColumn(name = "study_room_seq")
+    private StudyRoomEntity studyRoom;
     @Column(name = "study_name")
     private String name;
     @Column(name = "study_leader_seq")
