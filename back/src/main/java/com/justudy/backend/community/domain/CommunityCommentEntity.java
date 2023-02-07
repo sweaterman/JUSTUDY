@@ -18,10 +18,10 @@ public class CommunityCommentEntity {
     @Column(name = "comment_seq")
     private Long sequence;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "member_seq", name = "member_seq")
+    @JoinColumn(name = "member_seq")
     private MemberEntity member;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "community_seq", name = "community_seq")
+    @JoinColumn(name = "community_seq")
     private CommunityEntity community;
     @Column(name = "comment_content")
     private String content;

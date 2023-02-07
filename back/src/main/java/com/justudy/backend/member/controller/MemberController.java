@@ -1,8 +1,8 @@
 package com.justudy.backend.member.controller;
 
+import com.justudy.backend.community.dto.response.CommunityListResponse;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
-import com.justudy.backend.file.service.FileStore;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.dto.request.MemberCreate;
@@ -22,18 +22,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/member")
 public class MemberController {
 
     private final MemberService memberService;
 
     private final UploadFileService uploadFileService;
-
-    private final FileStore fileStore;
 
     @PostMapping("/register")
     public ResponseEntity<Void> signupMember(@RequestBody @Validated MemberCreate request) {
@@ -48,11 +47,23 @@ public class MemberController {
      * @param session session에서 memberSequence를 찾기 위해
      * @return MypageRespoonse 마이페이지 멤버 응답 객체
      */
-    @GetMapping("/mypage/member")
+    @GetMapping("/mypage")
     public MypageResponse getMypageInfomation(HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
         return memberService.getMypage(loginSequence);
+    }
+
+    @GetMapping("/bookmarks")
+    public List<CommunityListResponse> getMyBookmarks(HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return memberService.getMyBookmarks(loginSequence);
+    }
+
+    @GetMapping("/loves")
+    public List<CommunityListResponse> getMyLoves(HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return memberService.getMyLoves(loginSequence);
     }
 
     @GetMapping("/mypage/modify")
@@ -65,13 +76,11 @@ public class MemberController {
     @PatchMapping(value = "/mypage/modify",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Void> modifyMember(@RequestPart(name = "request") @Validated MemberEdit request,
-                                             @RequestPart MultipartFile multipartFile,
+                                             @RequestPart(name = "file", required = false) MultipartFile multipartFile,
                                              HttpSession session) throws IOException {
-
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        UploadFileEntity uploadImage = fileStore.storeFile(multipartFile);
 
-        memberService.editMember(loginSequence, request, uploadImage);
+        memberService.editMember(loginSequence, request, multipartFile);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

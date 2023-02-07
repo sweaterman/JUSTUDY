@@ -18,19 +18,22 @@
 package com.justudy.backend.GroupCall.model;
 
 import com.google.gson.JsonObject;
-import org.kurento.client.*;
-import org.kurento.jsonrpc.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.websocket.Session;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import javax.websocket.Session;
+import org.kurento.client.Continuation;
+import org.kurento.client.EventListener;
+import org.kurento.client.IceCandidate;
+import org.kurento.client.IceCandidateFoundEvent;
+import org.kurento.client.MediaPipeline;
+import org.kurento.client.WebRtcEndpoint;
+import org.kurento.jsonrpc.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author Ivan Gracia (izanmail@gmail.com)
  * @since 4.3.1
  */
@@ -38,7 +41,7 @@ public class UserSession implements Closeable {
 
   private static final Logger log = LoggerFactory.getLogger(UserSession.class);
 
-  private final String name;
+  private String name;
   private final Session session;
 
   private final MediaPipeline pipeline;
@@ -47,10 +50,12 @@ public class UserSession implements Closeable {
   private WebRtcEndpoint outgoingMedia;//final 제거
   private ConcurrentMap<String, WebRtcEndpoint> incomingMedia = new ConcurrentHashMap<>();
 
-  private final ConcurrentHashMap<String,String> imageOnFace = new ConcurrentHashMap<String,String>(){{
-    put("마리오 모자","https://velog.velcdn.com/images/uiseok/post/bade4912-c2ae-49bd-81ad-d82454f64307/image.png");
-    put("테스트 모자","https://kuku-keke.com/wp-content/uploads/2020/04/2497_4.png");
+  private final ConcurrentHashMap<String, String> imageOnFace = new ConcurrentHashMap<String, String>() {{
+    put("마리오 모자",
+        "https://velog.velcdn.com/images/uiseok/post/bade4912-c2ae-49bd-81ad-d82454f64307/image.png");
+    put("테스트 모자", "https://kuku-keke.com/wp-content/uploads/2020/04/2497_4.png");
   }};
+
   public UserSession(final String name, String roomName, final Session session,
       MediaPipeline pipeline) {
 
@@ -58,7 +63,7 @@ public class UserSession implements Closeable {
     this.name = name;
     this.session = session;
     this.roomName = roomName;
-    this.outgoingMedia = new WebRtcEndpoint.Builder(pipeline).build();
+    this.outgoingMedia = new WebRtcEndpoint.Builder(pipeline).useDataChannels().build();
 
     this.outgoingMedia.addIceCandidateFoundListener(new EventListener<IceCandidateFoundEvent>() {
 
@@ -89,6 +94,10 @@ public class UserSession implements Closeable {
     return name;
   }
 
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public Session getSession() {
     return session;
   }
@@ -103,6 +112,7 @@ public class UserSession implements Closeable {
   }
 
   public void receiveVideoFrom(UserSession sender, String sdpOffer) throws IOException {
+
     log.info("USER {}: connecting with {} in room {}", this.name, sender.getName(), this.roomName);
 
     log.trace("USER {}: SdpOffer for {} is {}", this.name, sender.getName(), sdpOffer);
@@ -131,7 +141,7 @@ public class UserSession implements Closeable {
     WebRtcEndpoint incoming = incomingMedia.get(sender.getName());
     if (incoming == null) {
       log.debug("PARTICIPANT {}: creating new endpoint for {}", this.name, sender.getName());
-      incoming = new WebRtcEndpoint.Builder(pipeline).build();
+      incoming = new WebRtcEndpoint.Builder(pipeline).useDataChannels().build();
       incoming.addIceCandidateFoundListener(new EventListener<IceCandidateFoundEvent>() {
 
         @Override
@@ -151,7 +161,6 @@ public class UserSession implements Closeable {
         }
       });
 
-
       incomingMedia.put(sender.getName(), incoming);
     }
 
@@ -170,19 +179,21 @@ public class UserSession implements Closeable {
     final WebRtcEndpoint incoming = incomingMedia.remove(senderName);
 
     log.debug("PARTICIPANT {}: removing endpoint for {}", this.name, senderName);
-    incoming.release(new Continuation<Void>() {
-      @Override
-      public void onSuccess(Void result) throws Exception {
+    if (incoming != null) {
+      incoming.release(new Continuation<Void>() {
+        @Override
+        public void onSuccess(Void result) throws Exception {
 //        log.trace("PARTICIPANT {}: Released successfully incoming EP for {}",
 //            UserSession.this.name, senderName);
-      }
+        }
 
-      @Override
-      public void onError(Throwable cause) throws Exception {
+        @Override
+        public void onError(Throwable cause) throws Exception {
 //        log.warn("PARTICIPANT {}: Could not release incoming EP for {}", UserSession.this.name,
 //            senderName);
-      }
-    });
+        }
+      });
+    }
   }
 
   @Override
@@ -194,20 +205,22 @@ public class UserSession implements Closeable {
 
       final WebRtcEndpoint ep = this.incomingMedia.get(remoteParticipantName);
 
-      ep.release(new Continuation<Void>() {
+      if (ep != null) {
+        ep.release(new Continuation<Void>() {
 
-        @Override
-        public void onSuccess(Void result) throws Exception {
+          @Override
+          public void onSuccess(Void result) throws Exception {
 //          log.trace("PARTICIPANT {}: Released successfully incoming EP for {}",
 //              UserSession.this.name, remoteParticipantName);
-        }
+          }
 
-        @Override
-        public void onError(Throwable cause) throws Exception {
+          @Override
+          public void onError(Throwable cause) throws Exception {
 //          log.warn("PARTICIPANT {}: Could not release incoming EP for {}", UserSession.this.name,
 //              remoteParticipantName);
-        }
-      });
+          }
+        });
+      }
     }
 
     outgoingMedia.release(new Continuation<Void>() {
@@ -248,6 +261,7 @@ public class UserSession implements Closeable {
     sender.addProperty("name", personName);
     this.sendMessage(sender);
   }
+
   public void transferMute(String personName) throws IOException {
     final JsonObject sender = new JsonObject();
     sender.addProperty("id", "mute");
@@ -255,29 +269,33 @@ public class UserSession implements Closeable {
     this.sendMessage(sender);
   }
 
-  public void transferExit() throws IOException{
+  public void transferExit() throws IOException {
     final JsonObject sender = new JsonObject();
     sender.addProperty("id", "exit");
     this.sendMessage(sender);
   }
-  public void transferRequestMute(String personName) throws IOException  {
+
+  public void transferRequestMute(String personName) throws IOException {
     final JsonObject sender = new JsonObject();
     sender.addProperty("id", "requestMuteVote");
     sender.addProperty("name", personName);
     this.sendMessage(sender);
   }
-  public void transferRequestExit()  throws IOException  {
+
+  public void transferRequestExit() throws IOException {
     final JsonObject sender = new JsonObject();
     sender.addProperty("id", "requestExitVote");
     this.sendMessage(sender);
   }
-  public void transferLadderResult(String value)  throws IOException   {
+
+  public void transferLadderResult(String value) throws IOException {
     final JsonObject sender = new JsonObject();
     sender.addProperty("id", "ladderResult");
     sender.addProperty("value", value);
     this.sendMessage(sender);
 
   }
+
   public void transferChatMessage(String personName, String message) throws IOException {
     final JsonObject sender = new JsonObject();
     sender.addProperty("id", "receiveChatMessage");
@@ -285,6 +303,7 @@ public class UserSession implements Closeable {
     sender.addProperty("message", message);
     this.sendMessage(sender);
   }
+
   /*
    * (non-Javadoc)
    *
