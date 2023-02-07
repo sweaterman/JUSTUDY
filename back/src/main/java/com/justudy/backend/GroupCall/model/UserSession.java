@@ -274,6 +274,12 @@ public class UserSession implements Closeable {
     sender.addProperty("id", "exit");
     this.sendMessage(sender);
   }
+  public void transferRequestBan(String personName) throws IOException {
+    final JsonObject sender = new JsonObject();
+    sender.addProperty("id", "requestBanVote");
+    sender.addProperty("name", personName);
+    this.sendMessage(sender);
+  }
 
   public void transferRequestMute(String personName) throws IOException {
     final JsonObject sender = new JsonObject();
