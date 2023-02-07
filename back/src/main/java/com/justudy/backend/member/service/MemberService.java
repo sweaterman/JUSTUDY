@@ -77,7 +77,9 @@ public class MemberService {
     }
 
     public List<CommunityListResponse> getMyBookmarks(Long loginSequence) {
-        return communityService.getMyBookmarks(loginSequence);
+        List<CommunityListResponse> myBookmarks = communityService.getMyBookmarks(loginSequence);
+        log.info("[getMyBookmarks] myBookmarks = {}", myBookmarks);
+        return myBookmarks;
     }
 
     public List<CommunityListResponse> getMyLoves(Long loginSequence) {
