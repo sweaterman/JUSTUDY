@@ -4,37 +4,7 @@
             <v-col cols="12" md="1" />
             <v-col cols="12" md="9">
                 <!-- 모든 참가자 화면 -->
-                <v-row>
-                    <v-sheet class="mx-auto" max-width="100%">
-                        <v-slide-group multiple show-arrows>
-                            <div style="display: inline-block" ref="el1" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el2" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el3" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el4" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el5" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el6" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el7" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el8" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el9" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el10" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el11" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el12" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el13" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el14" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el15" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el16" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el17" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el18" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el19" @click="viewChange"></div>
-                            <div style="display: inline-block" ref="el20" @click="viewChange"></div>
-                        </v-slide-group>
-                    </v-sheet>
-                </v-row>
-
-                <!-- 중앙 메인화면 -->
-                <v-row :style="{marginTop: '1%'}">
-                    <div style="width: 70%" ref="main"></div>
-                </v-row>
+                <div style="width: 100%" ref="main"></div>
             </v-col>
             <v-col cols="12" md="2" />
         </v-row>
@@ -85,22 +55,22 @@
                     </v-col>
 
                     <v-col cols="12" md="1" align="right">
-                        <!-- 해당 인원 강퇴! 이건 방장기능이라 제안하지 않음 -->
-                        <v-btn @click="banParticipant" color="white" depressed>
+                        <!-- 해당 인원 강퇴 제안하기-->
+                        <v-btn @click="requestBan" v-bind:disabled="btnDisable" color="white" depressed>
                             <span class="material-icons-outlined" style="color: orange"> waving_hand </span>
                         </v-btn>
                     </v-col>
 
                     <v-col cols="12" md="1" align="center">
                         <!-- 해당 인원 mute 제안하기 -->
-                        <v-btn @click="requestMute" v-bind:disabled="tempMuteBtnDisable" color="white" depressed>
+                        <v-btn @click="requestMute" v-bind:disabled="btnDisable" color="white" depressed>
                             <span class="material-icons-outlined" style="color: orange"> voice_over_off </span>
                         </v-btn>
                     </v-col>
 
                     <v-col cols="12" md="1" align="left">
                         <!-- 모두다 나가기 제안하기 -->
-                        <v-btn @click="requestExit" v-bind:disabled="tempExitBtnDisable" color="white" depressed>
+                        <v-btn @click="requestExit" v-bind:disabled="btnDisable" color="white" depressed>
                             <span class="material-icons-outlined" style="color: orange"> power_settings_new </span>
                         </v-btn>
                     </v-col>
@@ -133,6 +103,14 @@
                         <span class="material-icons-outlined"> visibility </span>
                         <v-btn @click="offViewAlarmDiv">X</v-btn>
                         <h2 v-text="getAlarmDivText"></h2>
+                    </div>
+
+                    <!-- 우상단 Ban투표 -->
+                    <div class="alarm" v-show="getIsViewBanDiv">
+                        <h2 v-text="getBanDivText"></h2>
+                        <h3 v-text="getRemainTime"></h3>
+                        <span class="material-icons-outlined"> visibility </span>
+                        <v-btn @click="banVote(true)">Yes</v-btn><v-btn @click="banVote(false)">No</v-btn>
                     </div>
 
                     <!-- 우상단 Mute투표 -->
@@ -216,8 +194,7 @@ export default {
             isShowEditor: false,
             namesFromParticipants: [], //이름만
             selected: '',
-            tempMuteBtnDisable: false,
-            tempExitBtnDisable: false
+            btnDisable: false
         };
     },
     created() {
@@ -229,31 +206,8 @@ export default {
         this.leave();
     },
     mounted() {
-        // 최대 참가 수 만큼 엘리먼트 정보 넣어줌. (현재 20명).  아래 addInitEl 부분은 필수
-        window.addEventListener('beforeunload', this.leaveRoom);
-        this.addInitEl([
-            this.$refs.el1,
-            this.$refs.el2,
-            this.$refs.el3,
-            this.$refs.el4,
-            this.$refs.el5,
-            this.$refs.el6,
-            this.$refs.el7,
-            this.$refs.el8,
-            this.$refs.el9,
-            this.$refs.el10,
-            this.$refs.el11,
-            this.$refs.el12,
-            this.$refs.el13,
-            this.$refs.el14,
-            this.$refs.el15,
-            this.$refs.el16,
-            this.$refs.el17,
-            this.$refs.el18,
-            this.$refs.el19,
-            this.$refs.el20
-        ]);
-
+        window.addEventListener('beforeunload', this.unLoadEvent);
+        this.addInitEl(this.InitEl);
         this.setMainParents(this.$refs.main);
         this.setSource('webcam');
         const data = {
@@ -266,7 +220,7 @@ export default {
     },
 
     beforeUnmount() {
-        window.removeEventListener('beforeunload', this.leaveRoom);
+        window.removeEventListener('beforeunload', this.unLoadEvent);
     },
 
     computed: {
@@ -278,9 +232,11 @@ export default {
             'getParticipants',
             'getSource',
             'getIsViewAlarmDiv',
+            'getIsViewBanDiv',
             'getIsViewMuteDiv',
             'getIsViewExitDiv',
             'getAlarmDivText',
+            'getBanDivText',
             'getMuteDivText',
             'getExitDivText',
             'getRemainTime',
@@ -312,11 +268,12 @@ export default {
             'exit',
             'reset',
             'share',
+            'requestBanSend',
             'requestMuteSend',
             'requestExitSend',
             'setViewAlarmDiv',
-            'requestMuteSend',
             'setIsViewMuteDiv',
+            'setIsViewBanDiv',
             'setIsViewExitDiv',
             'setIsLadder',
             'setIsChat',
@@ -367,51 +324,50 @@ export default {
             }
             console.log(this.namesFromParticipants);
         },
-        banParticipant() {
-            console.log(this.selected);
-            this.ban(this.selected);
-        },
         keepQuiet() {
-            console.log(this.selected);
             this.mute(this.selected);
-        },
-        viewChange(el) {
-            const curEl = el.currentTarget.firstChild;
-            const mainView = this.$refs.main;
-            while (mainView.hasChildNodes()) {
-                mainView.removeChild(mainView.firstChild);
-            }
-            let canvas = document.createElement('canvas');
-            let context = canvas.getContext('2d');
-            let videoEl = curEl;
-            canvas.style = 'width:100%';
-            mainView.appendChild(canvas);
-            function updateCanvas() {
-                context.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-                window.requestAnimationFrame(updateCanvas);
-            }
-            requestAnimationFrame(updateCanvas);
+            this.selected = '';
         },
         offViewAlarmDiv() {
             this.setViewAlarmDiv(false);
         },
-        requestMute() {
+        requestBan() {
             if (this.selected == '') {
-                console.log('음소거할 사람을 선택해주세요');
+                alert('강제 퇴장을 할 사람을 선택해주세요');
                 return;
             }
-            this.tempMuteBtnDisable = true;
+            this.btnDisable = true;
+            // this.ban(this.selected);
+            this.requestBanSend(this.selected);
+            setTimeout(() => {
+                this.btnDisable = false;
+            }, 6500);
+            this.selected = '';
+        },
+        requestMute() {
+            if (this.selected == '') {
+                alert('음소거할 사람을 선택해주세요');
+                return;
+            }
+            this.btnDisable = true;
             this.requestMuteSend(this.selected);
             setTimeout(() => {
-                this.tempMuteBtnDisable = false;
-            }, 6500); //여러번 누르기를 방지하기 위함(1초의 초기화 시간 + 5초의 투표시간)
+                this.btnDisable = false;
+            }, 6500);
+            this.selected = '';
         },
         requestExit() {
-            this.tempExitBtnDisable = true;
+            this.btnDisable = true;
             this.requestExitSend();
             setTimeout(() => {
-                this.tempExitBtnDisable = false;
-            }, 6500); //여러번 누르기를 방지하기 위함(1초의 초기화 시간 + 5초의 투표시간)
+                this.btnDisable = false;
+            }, 6500);
+        },
+        banVote(isSelected) {
+            if (isSelected) {
+                this.ban();
+            }
+            this.setIsViewBanDiv(false);
         },
         muteVote(isSelected) {
             if (isSelected) {
@@ -432,12 +388,13 @@ export default {
             this.setIsChat(true);
             this.setIsNewChat(false);
         },
-        //////////////////////////////////////////////////////
-        test() {
-            console.log(this.getAudio);
-        },
-        test2() {
-            console.log(this.getScreen);
+        unLoadEvent() {
+            let start = new Date();
+            let end = new Date();
+            this.leaveRoom();
+            while (end - start < 1000) {
+                end = new Date();
+            }
         }
     }
 };
