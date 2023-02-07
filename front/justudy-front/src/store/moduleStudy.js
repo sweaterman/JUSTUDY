@@ -27,6 +27,9 @@ export default {
         GET_BOTTOMCATEGORIES(state, payload) {
             state.bottomCategories = payload;
         },
+        emptyCategories(state) {
+            state.bottomCategories = null;
+        },
         GET_APPLYSTUDYINFO(state, payload) {
             state.applyStudyInfo = payload;
         },
@@ -106,7 +109,8 @@ export default {
             const API_URL = `${port}study/${studySeq}`;
             await axios({
                 url: API_URL,
-                method: 'GET'
+                method: 'GET',
+                withCredentials: true
             })
                 .then(res => {
                     commit('GET_APPLYSTUDYINFO', res.data);
@@ -121,7 +125,8 @@ export default {
             await axios({
                 url: API_URL,
                 method: 'POST',
-                params: sendData
+                params: sendData,
+                withCredentials: true
             })
                 .then(() => {
                     commit;
@@ -136,7 +141,8 @@ export default {
             const API_URL = `${port}study/myStudy/${'여기로그인한유저시퀀스'}`;
             await axios({
                 url: API_URL,
-                method: 'GET'
+                method: 'GET',
+                withCredentials: true
             })
                 .then(res => {
                     commit('GET_APPLYSTUDIES', res.data);
@@ -150,7 +156,8 @@ export default {
             // const API_URL = `${port}/study/API안만들어진듯?`;
             await axios({
                 // url: API_URL,
-                method: 'GET'
+                method: 'GET',
+                withCredentials: true
             })
                 .then(res => {
                     commit('GET_MYSTUDIES', res.data);
@@ -165,7 +172,8 @@ export default {
             await axios({
                 url: API_URL,
                 method: 'POST',
-                params: study
+                params: study,
+                withCredentials: true
             })
                 .then(res => {
                     commit;
@@ -181,10 +189,26 @@ export default {
             const API_URL = `${port}study/${studySeq}`;
             await axios({
                 url: API_URL,
-                method: 'GET'
+                method: 'GET',
+                withCredentials: true
             })
                 .then(res => {
                     commit('GET_STUDYINFO', res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디 탈퇴하기
+        async withdrawStudy({commit}, studySeq) {
+            const API_URL = `${port}study/${studySeq}/withdraw`;
+            await axios({
+                url: API_URL,
+                method: 'DELETE',
+                withCredentials: true
+            })
+                .then(() => {
+                    commit;
                 })
                 .catch(err => {
                     console.log(err);
