@@ -55,7 +55,7 @@ public class StudyFrequencyService {
                 .orElseThrow(StudyNotFound::new);
         StudyFrequencyEntity studyFrequencyEntity = studyFrequencyRepository.findById(frequencySeq)
                 .orElseThrow(StudyFrequencyNotFound::new);
-        studyFrequencyEntity.update(studyEntity, StudyFrequencyWeek.valueOf(StudyFrequencyWeek.getIndex(request.getWeek().intValue())), request.getStartTime(), request.getEndTime());
+        studyFrequencyEntity.update(studyEntity, StudyFrequencyWeek.valueOf(request.getWeek()), request.getStartTime(), request.getEndTime());
         return frequencySeq;
     }
 

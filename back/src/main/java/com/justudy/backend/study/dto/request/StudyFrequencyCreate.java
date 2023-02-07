@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Builder
 public class StudyFrequencyCreate {
     private Long studySeq;
-    private Long week;
+    private String week;
     private Date startTime;
     private Date endTime;
 
@@ -24,7 +24,7 @@ public class StudyFrequencyCreate {
         return StudyFrequencyEntity
                 .builder()
                 .study(study)
-                .week(StudyFrequencyWeek.valueOf(StudyFrequencyWeek.getIndex(week.intValue())))
+                .week(StudyFrequencyWeek.valueOf(week))
                 .startTime(startTime)
                 .endTime(endTime)
                 .createdTime(LocalDateTime.now())
