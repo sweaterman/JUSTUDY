@@ -3,16 +3,18 @@ package com.justudy.backend.member.service;
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.file.domain.UploadFileEntity;
+import com.justudy.backend.file.service.FileStore;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.domain.MemberRole;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
-import com.justudy.backend.member.exception.ConflictRequest;
-import com.justudy.backend.member.exception.ForbiddenRequest;
-import com.justudy.backend.member.exception.InvalidRequest;
+import com.justudy.backend.exception.ConflictRequest;
+import com.justudy.backend.exception.ForbiddenRequest;
+import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 
-import java.util.List;
+import java.io.IOException;
 import java.util.Optional;
 
 import static com.justudy.backend.member.dto.request.MemberCreate.MemberCreateBuilder;
@@ -35,7 +37,11 @@ public class MemberServiceTest {
 
     private CategoryRepository categoryRepository = Mockito.mock(CategoryRepository.class);
 
+    private CommunityService communityService = Mockito.mock(CommunityService.class);
+
     private UploadFileService uploadFileService = Mockito.mock(UploadFileService.class);
+
+    private FileStore fileStore = Mockito.mock(FileStore.class);
 
     private MemberService memberService;
 
@@ -45,7 +51,7 @@ public class MemberServiceTest {
 
     @BeforeEach
     public void setUp() {
-        memberService = new MemberService(memberRepository, categoryRepository, uploadFileService);
+        memberService = new MemberService(memberRepository, categoryRepository, uploadFileService, communityService,fileStore);
     }
 
     @Test
@@ -56,8 +62,7 @@ public class MemberServiceTest {
         UploadFileEntity imageFile = new UploadFileEntity("test", "testUuid");
         savedMember.changeImage(imageFile);
 
-
-        BDDMockito.given(memberRepository.findById(1L))
+        BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
                 .willReturn(Optional.of(savedMember));
 
         //when
@@ -74,8 +79,8 @@ public class MemberServiceTest {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
 
-        BDDMockito.given(memberRepository.findAll())
-                .willReturn(List.of(savedMember));
+        BDDMockito.given(memberRepository.findUserId(USER_ID))
+                .willReturn(Optional.of(USER_ID));
 
         //when
         MemberCreate request = makeMemberCreateBuilder()
@@ -95,8 +100,8 @@ public class MemberServiceTest {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
 
-        BDDMockito.given(memberRepository.findAll())
-                .willReturn(List.of(savedMember));
+        BDDMockito.given(memberRepository.findNickname(NICKNAME))
+                .willReturn(Optional.of(NICKNAME));
 
         //when
         MemberCreate request = makeMemberCreateBuilder()
@@ -115,8 +120,8 @@ public class MemberServiceTest {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
 
-        BDDMockito.given(memberRepository.findAll())
-                .willReturn(List.of(savedMember));
+        BDDMockito.given(memberRepository.findSsafyId(SSAFY_ID))
+                .willReturn(Optional.of(SSAFY_ID));
 
         //when
         MemberCreate request = makeMemberCreateBuilder()
@@ -146,30 +151,30 @@ public class MemberServiceTest {
 
     @Test
     @DisplayName("멤버 업데이트")
-    void editMember() {
+    void editMember() throws IOException {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
         UploadFileEntity oldImageFile = new UploadFileEntity("test", "testUuid");
         savedMember.changeImage(oldImageFile);
 
-        CategoryEntity backend = new CategoryEntity("backend", 1L);
-        CategoryEntity java = new CategoryEntity("Java", 1L);
+        CategoryEntity backend = new CategoryEntity("backend", "백엔드", 0L);
+        CategoryEntity java = new CategoryEntity("java", "Java", 1L);
         java.addParentCategory(backend);
-        CategoryEntity spring = new CategoryEntity("Spring", 1L);
+        CategoryEntity spring = new CategoryEntity("spring", "Spring", 1L);
         spring.addParentCategory(backend);
-        CategoryEntity python = new CategoryEntity("Python", 1L);
+        CategoryEntity python = new CategoryEntity("python", "Python", 1L);
         python.addParentCategory(backend);
 
-        BDDMockito.given(memberRepository.findById(1L))
+        BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
                 .willReturn(Optional.of(savedMember));
 
-        BDDMockito.given(categoryRepository.findByName("Java"))
+        BDDMockito.given(categoryRepository.findByValue("Java"))
                 .willReturn(Optional.of(java));
 
-        BDDMockito.given(categoryRepository.findByName("Spring"))
+        BDDMockito.given(categoryRepository.findByValue("Spring"))
                 .willReturn(Optional.of(spring));
 
-        BDDMockito.given(categoryRepository.findByName("Python"))
+        BDDMockito.given(categoryRepository.findByValue("Python"))
                 .willReturn(Optional.of(python));
 
         MemberEdit editRequest = MemberEdit.builder()
@@ -185,7 +190,7 @@ public class MemberServiceTest {
         UploadFileEntity newImageFile = new UploadFileEntity("newTest", "newTestUuid");
 
         //when
-        memberService.editMember(1L, editRequest, newImageFile);
+        memberService.editMember(1L, editRequest, null);
 
         //then
         assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
@@ -199,30 +204,30 @@ public class MemberServiceTest {
 
     @Test
     @DisplayName("멤버 비밀번호도 함께 업데이트")
-    void editMemberWithPassword() {
+    void editMemberWithPassword() throws IOException {
         //given
         MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
         UploadFileEntity oldImageFile = new UploadFileEntity("test", "testUuid");
         savedMember.changeImage(oldImageFile);
 
-        CategoryEntity backend = new CategoryEntity("backend", 1L);
-        CategoryEntity java = new CategoryEntity("Java", 1L);
+        CategoryEntity backend = new CategoryEntity("backend", "백엔드", 0L);
+        CategoryEntity java = new CategoryEntity("java", "Java", 1L);
         java.addParentCategory(backend);
-        CategoryEntity spring = new CategoryEntity("Spring", 1L);
+        CategoryEntity spring = new CategoryEntity("spring", "Spring", 1L);
         spring.addParentCategory(backend);
-        CategoryEntity python = new CategoryEntity("Python", 1L);
+        CategoryEntity python = new CategoryEntity("python", "Python", 1L);
         python.addParentCategory(backend);
 
-        BDDMockito.given(memberRepository.findById(1L))
+        BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
                 .willReturn(Optional.of(savedMember));
 
-        BDDMockito.given(categoryRepository.findByName("Java"))
+        BDDMockito.given(categoryRepository.findByValue("Java"))
                 .willReturn(Optional.of(java));
 
-        BDDMockito.given(categoryRepository.findByName("Spring"))
+        BDDMockito.given(categoryRepository.findByValue("Spring"))
                 .willReturn(Optional.of(spring));
 
-        BDDMockito.given(categoryRepository.findByName("Python"))
+        BDDMockito.given(categoryRepository.findByValue("Python"))
                 .willReturn(Optional.of(python));
 
         MemberEdit editRequest = MemberEdit.builder()
@@ -237,10 +242,8 @@ public class MemberServiceTest {
                 .introduction("나는 싸피생이다.")
                 .build();
 
-        UploadFileEntity newImageFile = new UploadFileEntity("newTest", "newTestUuid");
-
         //when
-        memberService.editMember(1L, editRequest, newImageFile);
+        memberService.editMember(1L, editRequest, null);
 
         //then
         assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
@@ -251,7 +254,7 @@ public class MemberServiceTest {
         assertThat(savedMember.getDream()).isEqualTo(editRequest.getDream());
         assertThat(savedMember.getIntroduction()).isEqualTo(editRequest.getIntroduction());
         assertThat(savedMember.getCategories().size()).isEqualTo(3);
-        assertThat(savedMember.getImageFile()).isEqualTo(newImageFile);
+        assertThat(savedMember.getImageFile()).isEqualTo(oldImageFile);
     }
 
     @Test

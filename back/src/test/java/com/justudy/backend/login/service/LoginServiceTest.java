@@ -3,7 +3,7 @@ package com.justudy.backend.login.service;
 import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.login.dto.request.LoginRequest;
 import com.justudy.backend.member.domain.MemberEntity;
-import com.justudy.backend.member.exception.InvalidRequest;
+import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

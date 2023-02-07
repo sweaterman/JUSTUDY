@@ -1,47 +1,60 @@
 package com.justudy.backend.community.service;
 
 import com.justudy.backend.community.domain.CommunityBookmarkEntity;
-import com.justudy.backend.community.dto.request.CommunityBookmarkCreate;
+import com.justudy.backend.community.domain.CommunityEntity;
+import com.justudy.backend.community.exception.BookmarkNotFound;
+import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.community.repository.CommunityBookmarkRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
-@Service
+@Slf4j
 @RequiredArgsConstructor
+@Service
 @Transactional(readOnly = true)
 public class CommunityBookmarkService {
-    private final CommunityBookmarkRepository repository;
+    private final CommunityBookmarkRepository bookmarkRepository;
+
+    private final CommunityRepository communityRepository;
 
     @Transactional
-    public void createBookmark(CommunityBookmarkCreate request) {
-        //북마크가 생성되어있다면 isChecked true && createdTime now()
-        Optional<CommunityBookmarkEntity> entity = repository.readBookmark(request);
-        if(entity.isEmpty()) {
-            CommunityBookmarkEntity createEntity = request.toEntity();
-            repository.save(createEntity);
-            return;
-        }
-        repository.updateBookmark(request);
+    public Long createBookmark(Long loginSequence, Long communitySequence) {
+        CommunityBookmarkEntity savedBookmark = bookmarkRepository.findBookmark(loginSequence, communitySequence)
+                .orElseGet(() ->
+                    bookmarkRepository.save(makeNewBookmark(loginSequence, communitySequence))
+                );
+
+        return savedBookmark.getSequence();
     }
 
     @Transactional
-    public void deleteBookmark(Long id,Long userId) {
-        //북마크가 없다면 error
-//        BookmarkEntity bookmarkEntity = repository.readBookmark(request);
-//        throw new CommunityBookmarkNotFound();
+    public void deleteBookmark(Long loginSequence, Long communitySequence) {
+        CommunityEntity community = communityRepository.findById(communitySequence)
+                .orElseThrow(CommunityNotFound::new);
+        CommunityBookmarkEntity findBookmark = bookmarkRepository.findBookmark(loginSequence, communitySequence)
+                .orElseThrow(BookmarkNotFound::new);
 
-        repository.deleteBookmark(id,userId);
+        bookmarkRepository.delete(findBookmark);
     }
 
-    public List<CommunityBookmarkEntity> readAllBookmarkByMember(Long userId) {
-        return repository.readAllBookmarkByMember(userId);
+    @Transactional
+    public void deleteBookmarkByCommunity(Long communitySequence) {
+        bookmarkRepository.deleteAllByCommunity(communitySequence);
+    }
+
+    public List<Long> getMyBookmarks(Long loginSequence) {
+        return bookmarkRepository.findCommunitySequence(loginSequence);
+    }
+
+
+
+    private CommunityBookmarkEntity makeNewBookmark(Long loginSequence, Long communitySequence) {
+        return new CommunityBookmarkEntity(loginSequence, communitySequence);
     }
 
 }

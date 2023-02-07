@@ -10,7 +10,7 @@
                     :plugins="plugins"
                     :css-classes="cssClasses"
                     :styles="styles"
-                    :width="{width}"
+                    :width="width"
                     :height="height"
                 />
             </v-col>

@@ -1,156 +1,123 @@
 package com.justudy.backend.community.service;
 
-import com.justudy.backend.community.domain.CommunityEntity;
-import com.justudy.backend.community.dto.request.CommunityCreate;
-import com.justudy.backend.community.dto.request.CommunityLoveCreate;
+import com.justudy.backend.community.domain.CommunityLoveEntity;
+import com.justudy.backend.community.exception.LoveNotFound;
 import com.justudy.backend.community.repository.CommunityLoveRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
-import com.justudy.backend.member.domain.MemberEntity;
-import com.justudy.backend.member.dto.request.MemberCreate;
-import com.justudy.backend.member.repository.MemberRepository;
-import com.justudy.backend.member.service.MemberService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.BDDMockito;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
-@SpringBootTest
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+
 class CommunityLoveServiceTest {
 
-    Logger log;
-    @Autowired
-    private CommunityRepository repository;
-    @Autowired
-    private CommunityLoveRepository loveRepository;
-    @Autowired
-    private CommunityLoveService service;
-    @Autowired
-    private CommunityService communityService;
+    private final Long LOGIN_SEQUENCE = 1L;
+    private final Long COMMUNITY_SEQUENCE = 5L;
+    private final Long LOVE_SEQUENCE = 10L;
 
-    @Autowired
-    MemberService memberService;
-    @Autowired
-    MemberRepository memberRepository;
-    private final String USER_ID = "justudy";
-    private final String NICKNAME = "levi";
-    private final String SSAFY_ID = "0847968";
-    MemberEntity findMember;
-    MemberEntity findMember2;
-    Optional<CommunityEntity> findCommunity;
+    private CommunityLoveService loveService;
 
-    @Transactional
+    private CommunityLoveRepository loveRepository = mock(CommunityLoveRepository.class);
+
+    private CommunityRepository communityRepository = mock(CommunityRepository.class);
+
     @BeforeEach
-    public void setUp() {
-        log = (Logger) LoggerFactory.getLogger(CommunityRepository.class);
-        log.info("정보1 : end set up->{}", findMember);
-        MemberCreate memberRequest = makeMemberCreateBuilder()
-                .userId(USER_ID)
-                .nickname(NICKNAME)
-                .ssafyId(SSAFY_ID)
-                .build();
-        Long savedMemberId = memberService.saveMember(memberRequest, null);
-        findMember = memberRepository.findById(savedMemberId).get();
-
-        Long savedCommunityId = communityService.createCommunity(CommunityCreate
-                .builder()
-                .member(findMember)
-                .category_seq(33L)
-                .title("title")
-                .content("내용")
-                .createdTime(LocalDateTime.now())
-                .build()
-        );
-        findCommunity = repository.findById(savedCommunityId);
-
-        //2번째 멤버 생성
-        MemberCreate memberRequest2 = makeMemberCreateBuilder()
-                .userId(USER_ID+"test")
-                .nickname(NICKNAME)
-                .ssafyId(SSAFY_ID)
-                .build();
-        Long savedMemberId2 = memberService.saveMember(memberRequest, null);
-        findMember2 = memberRepository.findById(savedMemberId2).get();
-
-
-        log.info("정보2 : end set up->{},{}", savedMemberId,savedMemberId2);
+    void setUp() {
+        loveService = new CommunityLoveService(loveRepository, communityRepository);
     }
 
     @Transactional
     @Test
+    @DisplayName("좋아요 생성")
     void createLove() {
-        // Given
-        CommunityLoveCreate create = makeRequest(findMember, findCommunity.get());
-        Assertions.assertThat(communityService.readCommunity(2L).getSequence()).isEqualTo(2L);
-        // When
-        service.createLove(create);
-        //같은내용 생성시  CommunityLoveAlreadyCreated
-//        service.createLove(create);
+        //given
+        CommunityLoveEntity newLove = new CommunityLoveEntity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+        ReflectionTestUtils.setField(newLove, "sequence", LOVE_SEQUENCE, Long.class);
 
-        // Then
-        Assertions.assertThat(service.readAllLoveByCommunity(2L).size()).isEqualTo(1);
+        BDDMockito.given(loveRepository.findLove(anyLong(), anyLong()))
+                .willReturn(Optional.empty());
+        BDDMockito.given(loveRepository.save(any(CommunityLoveEntity.class)))
+                .willReturn(newLove);
+
+        //when
+        Long loveSequence = loveService.createLove(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+
+        //then
+        assertThat(loveSequence).isEqualTo(LOVE_SEQUENCE);
+        BDDMockito.then(loveRepository).should(times(1)).findLove(anyLong(), anyLong());
+        BDDMockito.then(loveRepository).should(times(1)).save(any(CommunityLoveEntity.class));
     }
 
     @Transactional
     @Test
-    void readAllLoveByCommunity() {
-        // Given
-        CommunityLoveCreate create = makeRequest(findMember, findCommunity.get());
-        CommunityLoveCreate create2 = makeRequest(findMember2, findCommunity.get());
-        // When
-        service.createLove(create);
-        service.createLove(create2);
-        // Then
-        Assertions.assertThat(service.readAllLoveByCommunity(2L).size()).isEqualTo(2);
+    @DisplayName("좋아요 삭제")
+    void deleteLove() {
+        //given
+        CommunityLoveEntity newLove = new CommunityLoveEntity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+        ReflectionTestUtils.setField(newLove, "sequence", LOVE_SEQUENCE, Long.class);
+
+        BDDMockito.given(loveRepository.findLove(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE))
+                .willReturn(Optional.of(newLove));
+        BDDMockito.willDoNothing().given(loveRepository).delete(newLove);
+
+        //when
+        loveService.deleteLove(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+
+        //then
+        BDDMockito.then(loveRepository).should(times(1)).findLove(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+        BDDMockito.then(loveRepository).should(times(1)).delete(newLove);
     }
 
     @Transactional
     @Test
-    void deleteAllLoveByCommunity() {
-        // Given
-        CommunityLoveCreate create = makeRequest(findMember, findCommunity.get());
-        CommunityLoveCreate create2 = makeRequest(findMember2, findCommunity.get());
-        // When
-        service.createLove(create);
-        service.createLove(create2);
+    @DisplayName("좋아요 삭제 실패 - NotFound")
+    void deleteLoveNotFoundException() {
+        //given
+        final Long WRONG_LOGIN = 100L;
+        final Long WRONG_COMMUNITY = 1000L;
 
-        Assertions.assertThat(service.readAllLoveByCommunity(2L).size()).isEqualTo(2);
-        service.deleteAllLoveByCommunity(2L);
-        // Then
-        Assertions.assertThat(service.readAllLoveByCommunity(2L).size()).isEqualTo(0);
+        CommunityLoveEntity newLove = new CommunityLoveEntity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+        ReflectionTestUtils.setField(newLove, "sequence", LOVE_SEQUENCE, Long.class);
 
+        BDDMockito.given(loveRepository.findLove(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE))
+                .willReturn(Optional.of(newLove));
+        BDDMockito.willDoNothing().given(loveRepository).delete(newLove);
 
+        //expected
+        assertThatThrownBy(() -> loveService.deleteLove(WRONG_LOGIN, COMMUNITY_SEQUENCE))
+                .isInstanceOf(LoveNotFound.class);
+        assertThatThrownBy(() -> loveService.deleteLove(LOGIN_SEQUENCE, WRONG_COMMUNITY))
+                .isInstanceOf(LoveNotFound.class);
     }
 
-    @Test
-    void updateLove() {
 
-    }
+    @ParameterizedTest
+    @DisplayName("좋아요 개수 체크")
+    @ValueSource(longs = {1, 2, 3, 4, 5})
+    void CountLoveTest(long communitySequence) {
+        //given
+        final Integer LOVE_COUNTS = 10;
+        for (long i = 1; i <= 5; i++) {
+            BDDMockito.given(loveRepository.countOfLove(i))
+                    .willReturn(LOVE_COUNTS);
+        }
+        //when
+        Integer countOfLove = loveService.getCountOfLove(communitySequence);
 
-    private CommunityLoveCreate makeRequest(MemberEntity findMember, CommunityEntity findCommunity) {
-        return CommunityLoveCreate
-                .builder()
-                .community(findCommunity)
-                .member(findMember)
-                .build();
-    }
-
-    private MemberCreate.MemberCreateBuilder makeMemberCreateBuilder() {
-        return MemberCreate.builder()
-                .password("1234")
-                .passwordCheck("1234")
-                .username("이싸피")
-                .phone("01051391111")
-                .email("ssafylee@ssafy.com")
-                .region("SEOUL")
-                .dream("백엔드취업 희망")
-                .category(new String[]{"JAVA", "Spring", "JPA"})
-                .introduction("test.");
+        //expected
+        assertThat(countOfLove).isEqualTo(LOVE_COUNTS);
+        BDDMockito.then(loveRepository).should(only()).countOfLove(communitySequence);
     }
 }

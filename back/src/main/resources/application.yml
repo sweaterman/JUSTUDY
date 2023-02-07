@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ssafy
+    username: root
     password: ssafy
     url: jdbc:mysql://db:3306/justudy?serverTimezone=UTC&characterEncoding=UTF-8
   # swagger
@@ -33,6 +33,4 @@ logging:
 vue:
   loginUrl: "localhost:8081/login"
 
-file:
-  dir: C:\Users\SSAFY\Desktop\shin\Firs_Project\back\src\main\resources\static\image\
 

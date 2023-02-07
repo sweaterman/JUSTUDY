@@ -1,63 +1,44 @@
 package com.justudy.backend.community.repository;
 
-import com.justudy.backend.community.domain.*;
-import com.justudy.backend.community.dto.request.CommunityBookmarkCreate;
+import com.justudy.backend.community.domain.CommunityBookmarkEntity;
+import com.justudy.backend.community.domain.QCommunityBookmarkEntity;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class CommunityBookmarkRepositoryImpl implements CommunityBookmarkRepositorySupport {
+public class CommunityBookmarkRepositoryImpl implements CommunityBookmarkRepositoryCustom {
+
+    private final EntityManager entityManager;
     private final JPAQueryFactory queryFactory;
     private final QCommunityBookmarkEntity qBookmark = QCommunityBookmarkEntity.communityBookmarkEntity;
 
     @Override
-    public void saveBookmark(CommunityBookmarkCreate request) {
-//        queryFactory
-//                .insert(qBookmark)
-//                .columns(qBookmark.community,qBookmark.memberSeq,qBookmark.isChecked,qBookmark.createdTime)
-//                .values(request.getCommunity(),request.getMember(),true, LocalDateTime.now())
-//                .execute();
-    }
-
-    @Override
-    public Optional<CommunityBookmarkEntity> readBookmark(CommunityBookmarkCreate request) {
+    public Optional<CommunityBookmarkEntity> findBookmark(Long loginSequence, Long communitySequence) {
         return Optional.ofNullable(queryFactory
                 .selectFrom(qBookmark)
-                .where(qBookmark.community.sequence.eq(request.getCommunity().getSequence()), qBookmark.member.sequence.eq(request.getMember().getSequence()))
+                .where(qBookmark.memberSequence.eq(loginSequence), qBookmark.communitySequence.eq(communitySequence))
                 .fetchFirst());
     }
 
     @Override
-    public void updateBookmark(CommunityBookmarkCreate request) {
+    public void deleteAllByCommunity(Long communitySequence) {
         queryFactory
-                .update(qBookmark)
-                .set(qBookmark.isChecked,true)
-                .set(qBookmark.createdTime,LocalDateTime.now())
-                .where(qBookmark.community.sequence.eq(request.getCommunity().getSequence()),qBookmark.member.sequence.eq(request.getMember().getSequence()))
+                .delete(qBookmark)
+                .where(qBookmark.communitySequence.eq(communitySequence))
                 .execute();
+        entityManager.flush();
+        entityManager.clear();
     }
 
     @Override
-    public void deleteBookmark(Long id,Long userId) {
-        queryFactory
-                .update(qBookmark)
-                .set(qBookmark.isChecked,false)
-                .set(qBookmark.createdTime,LocalDateTime.now())
-                .where(qBookmark.community.sequence.eq(id),qBookmark.member.sequence.eq(userId))
-                .execute();
-
-    }
-
-    @Override
-    public List<CommunityBookmarkEntity> readAllBookmarkByMember(Long userId) {
-        return queryFactory
-                .select(qBookmark)
+    public List<Long> findCommunitySequence(Long loginSequence) {
+        return queryFactory.select(qBookmark.communitySequence)
                 .from(qBookmark)
-                .where(qBookmark.member.sequence.eq(userId),qBookmark.isChecked.eq(true))
+                .where(qBookmark.memberSequence.eq(loginSequence))
                 .fetch();
     }
 }

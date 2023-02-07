@@ -1,156 +1,120 @@
 package com.justudy.backend.community.service;
 
-import com.justudy.backend.community.domain.CommunityEntity;
-import com.justudy.backend.community.dto.request.CommunityBookmarkCreate;
-import com.justudy.backend.community.dto.request.CommunityCreate;
-import com.justudy.backend.community.dto.response.CommunityResponse;
+import com.justudy.backend.community.domain.CommunityBookmarkEntity;
+import com.justudy.backend.community.exception.BookmarkNotFound;
 import com.justudy.backend.community.repository.CommunityBookmarkRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
-import com.justudy.backend.member.domain.MemberEntity;
-import com.justudy.backend.member.dto.request.MemberCreate;
-import com.justudy.backend.member.repository.MemberRepository;
-import com.justudy.backend.member.service.MemberService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.BDDMockito;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
-@SpringBootTest
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+
 class CommunityBookmarkServiceTest {
 
-    Logger log;
-    @Autowired
-    private CommunityRepository repository;
-    @Autowired
-    private CommunityBookmarkRepository bookmarkRepository;
-    @Autowired
-    private CommunityBookmarkService service;
-    @Autowired
-    private CommunityService communityService;
+    private final Long LOGIN_SEQUENCE = 1L;
+    private final Long COMMUNITY_SEQUENCE = 5L;
+    private final Long BOOKMARK_SEQUENCE = 10L;
 
-    @Autowired
-    MemberService memberService;
-    @Autowired
-    MemberRepository memberRepository;
-    private final String USER_ID = "justudy";
-    private final String NICKNAME = "levi";
-    private final String SSAFY_ID = "0847968";
-    MemberEntity findMember;
-    Optional<CommunityEntity> findCommunity;
+    private CommunityBookmarkRepository bookmarkRepository = mock(CommunityBookmarkRepository.class);
 
-    @Transactional
+    private CommunityRepository communityRepository = mock(CommunityRepository.class);
+
+    private CommunityBookmarkService bookmarkService;
+
     @BeforeEach
-    public void setUp() {
-        log = (Logger) LoggerFactory.getLogger(CommunityRepository.class);
-        log.info("정보1 : end set up->{}", findMember);
-        MemberCreate memberRequest = makeMemberCreateBuilder()
-                .userId(USER_ID)
-                .nickname(NICKNAME)
-                .ssafyId(SSAFY_ID)
-                .build();
-        Long savedMemberId = memberService.saveMember(memberRequest, null);
-        findMember = memberRepository.findById(savedMemberId).get();
-
-        Long savedCommunityId = communityService.createCommunity(CommunityCreate
-                .builder()
-                .member(findMember)
-                .category_seq(33L)
-                .title("title")
-                .content("내용")
-                .createdTime(LocalDateTime.now())
-                .build()
-        );
-        findCommunity = repository.findById(savedCommunityId);
-        log.info("정보2 : end set up->{},{}", findMember, findCommunity);
-
+    void setUp() {
+        bookmarkService = new CommunityBookmarkService(bookmarkRepository, communityRepository);
     }
 
     @Transactional
     @Test
+    @DisplayName("북마크 생성")
     void createBookmark() {
-        // Given
+        //given
+        CommunityBookmarkEntity newBookmark = new CommunityBookmarkEntity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+        ReflectionTestUtils.setField(newBookmark, "sequence", BOOKMARK_SEQUENCE, Long.class);
 
-        CommunityBookmarkCreate create = makeRequest(findMember, findCommunity.get());
-        Assertions.assertThat(communityService.readAllCommunity(0, "33").size()).isEqualTo(1);
-//        log.info("정보3 ->{}", communityService.readAllCommunity(0, "33").get(0).getMember().getSequence());
-        // When
-        service.createBookmark(create);
-        service.createBookmark(create);
+        BDDMockito.given(bookmarkRepository.findBookmark(anyLong(), anyLong()))
+                .willReturn(Optional.empty());
+        BDDMockito.given(bookmarkRepository.save(any(CommunityBookmarkEntity.class)))
+                .willReturn(newBookmark);
 
-        // Then
-        Assertions.assertThat(service.readAllBookmarkByMember(1L).size()).isEqualTo(1);
-    }
+        //when
+        Long bookmarkSequence = bookmarkService.createBookmark(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
 
-
-    @Transactional
-    @Test
-    void deleteBookmark() {     // Given
-        CommunityBookmarkCreate create = makeRequest(findMember, findCommunity.get());
-        // When
-        service.createBookmark(create);
-        Assertions.assertThat(service.readAllBookmarkByMember(1L).size()).isEqualTo(1);
-        service.deleteBookmark(2L, 1L);
-
-        // Then
-        Assertions.assertThat(service.readAllBookmarkByMember(1L).size()).isEqualTo(0);
-
+        //then
+        assertThat(bookmarkSequence).isEqualTo(BOOKMARK_SEQUENCE);
+        BDDMockito.then(bookmarkRepository).should(times(1)).save(any(CommunityBookmarkEntity.class));
     }
 
     @Transactional
     @Test
-    void readAllBookmarkByMember() {
-        // Given
-        CommunityBookmarkCreate create = makeRequest(findMember, findCommunity.get());
-        //2번째 커뮤니티 생성
-        Long savedCommunityId2 = communityService.createCommunity(CommunityCreate
-                .builder()
-                .member(findMember)
-                .category_seq(33L)
-                .title("title")
-                .content("내용")
-                .createdTime(LocalDateTime.now())
-                .build()
-        );
-        Optional<CommunityEntity> findCommunity2 = repository.findById(savedCommunityId2);
+    @DisplayName("북마크 삭제")
+    void deleteBookmark() {
+        //given
+        CommunityBookmarkEntity newBookmark = new CommunityBookmarkEntity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+        ReflectionTestUtils.setField(newBookmark, "sequence", BOOKMARK_SEQUENCE, Long.class);
 
-        CommunityBookmarkCreate create2 = makeRequest(findMember, findCommunity2.get());
-        List<CommunityResponse> list = communityService.readAllCommunity(0, "33");
+        BDDMockito.given(bookmarkRepository.findBookmark(anyLong(), anyLong()))
+                .willReturn(Optional.of(newBookmark));
+        BDDMockito.willDoNothing().given(bookmarkRepository).delete(newBookmark);
 
-        // When
-        service.createBookmark(create);
-        service.createBookmark(create2);
+        //when
+        bookmarkService.deleteBookmark(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
 
-
-        // Then
-        Assertions.assertThat(service.readAllBookmarkByMember(1L).size()).isEqualTo(2);
+        //then
+        BDDMockito.then(bookmarkRepository).should(times(1)).findBookmark(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+        BDDMockito.then(bookmarkRepository).should(times(1)).delete(newBookmark);
     }
 
-    private CommunityBookmarkCreate makeRequest(MemberEntity findMember, CommunityEntity findCommunity) {
-        return CommunityBookmarkCreate
-                .builder()
-                .community(findCommunity)
-                .member(findMember)
-                .build();
+    @Transactional
+    @Test
+    @DisplayName("북마크 삭제 실패 - NotFound")
+    void deleteBookmarkNotFoundException() {
+        //given
+        final Long WRONG_LOGIN = 100L;
+        final Long WRONG_COMMUNITY = 1000L;
+
+        CommunityBookmarkEntity newBookmark = new CommunityBookmarkEntity(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE);
+        ReflectionTestUtils.setField(newBookmark, "sequence", BOOKMARK_SEQUENCE, Long.class);
+
+        BDDMockito.given(bookmarkRepository.findBookmark(LOGIN_SEQUENCE, COMMUNITY_SEQUENCE))
+                .willReturn(Optional.of(newBookmark));
+        BDDMockito.willDoNothing().given(bookmarkRepository).delete(newBookmark);
+
+        //expected
+        assertThatThrownBy(() -> bookmarkService.deleteBookmark(WRONG_LOGIN, COMMUNITY_SEQUENCE))
+                .isInstanceOf(BookmarkNotFound.class);
+        assertThatThrownBy(() -> bookmarkService.deleteBookmark(LOGIN_SEQUENCE, WRONG_COMMUNITY))
+                .isInstanceOf(BookmarkNotFound.class);
     }
 
-    private MemberCreate.MemberCreateBuilder makeMemberCreateBuilder() {
-        return MemberCreate.builder()
-                .password("1234")
-                .passwordCheck("1234")
-                .username("이싸피")
-                .phone("01051391111")
-                .email("ssafylee@ssafy.com")
-                .region("SEOUL")
-                .dream("백엔드취업 희망")
-                .category(new String[]{"JAVA", "Spring", "JPA"})
-                .introduction("test.");
+    @Transactional
+    @Test
+    @DisplayName("게시글 관련된 북마크 전체 삭제")
+    void deleteAllByCommunity() {
+        //given
+        BDDMockito.willDoNothing()
+                .given(bookmarkRepository).deleteAllByCommunity(COMMUNITY_SEQUENCE);
+        BDDMockito.willDoNothing()
+                .given(bookmarkRepository).deleteAllByCommunity(1000L);
+        BDDMockito.willDoNothing()
+                .given(bookmarkRepository).deleteAllByCommunity(1001L);
+
+        //when
+        bookmarkService.deleteBookmarkByCommunity(COMMUNITY_SEQUENCE);
+
+        //then
+        BDDMockito.then(bookmarkRepository).should(only()).deleteAllByCommunity(COMMUNITY_SEQUENCE);
     }
 }

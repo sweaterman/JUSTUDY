@@ -18,16 +18,19 @@ public class ProfileResponse {
 
     private String level;
 
+    private Integer badgeCount;
+
     @Builder
     public ProfileResponse(String nickname, String[] category,
                            Long imageSequence,
                            String dream, String introduction,
-                           String level) {
+                           String level, Integer badgeCount) {
         this.nickname = nickname;
         this.category = category;
         this.imageSequence = imageSequence;
         this.dream = dream;
         this.introduction = introduction;
         this.level = level;
+        this.badgeCount = badgeCount;
     }
 }
