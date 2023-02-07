@@ -3,6 +3,7 @@ package com.justudy.backend.member.domain;
 
 import com.justudy.backend.common.enum_util.Level;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.exception.ForbiddenRequest;
 import lombok.*;
@@ -77,6 +78,9 @@ public class MemberEntity {
             cascade = CascadeType.PERSIST,
             orphanRemoval = true)
     List<MemberCategoryEntity> categories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    List<CommunityEntity> boards = new ArrayList<>();
 
     @Column(name = "member_mm_id")
     private String mmId;
@@ -184,6 +188,11 @@ public class MemberEntity {
         this.categories.add(memberCategory);
         memberCategory.addMember(this);
     }
+
+    public void addBoard(CommunityEntity board) {
+        this.boards.add(board);
+    }
+
 
     public void changeMemberCategory(List<MemberCategoryEntity> categories) {
         for (MemberCategoryEntity category : categories) {

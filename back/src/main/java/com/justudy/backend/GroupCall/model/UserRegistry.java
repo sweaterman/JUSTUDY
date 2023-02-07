@@ -19,6 +19,7 @@ package com.justudy.backend.GroupCall.model;
 
 import javax.websocket.Session;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Map of users registered in the system. This class has a concurrent hash map to store users, using
@@ -29,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @authos Ivan Gracia (izanmail@gmail.com)
  * @since 4.3.1
  */
+@Slf4j
 public class UserRegistry  {
 
   private final ConcurrentHashMap<String, UserSession> usersByName = new ConcurrentHashMap<>();
@@ -53,8 +55,14 @@ public class UserRegistry  {
 
   public UserSession removeBySession(Session session) {
     final UserSession user = getBySession(session);
-    usersByName.remove(user.getName());
-    usersBySessionId.remove(session.getId());
+    try {
+      usersByName.remove(user.getName());
+      usersBySessionId.remove(session.getId());
+    }
+    catch (Exception e){
+      log.info(e.getMessage());
+    }
+
     return user;
   }
 

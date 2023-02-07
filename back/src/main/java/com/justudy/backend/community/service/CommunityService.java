@@ -97,6 +97,7 @@ public class CommunityService {
 
     public List<CommunityListResponse> getMyBookmarks(Long loginSequence) {
         List<Long> sequences = bookmarkService.getMyBookmarks(loginSequence);
+        log.info("[getMyBookmarks] sequences = {}", sequences);
         return communityRepository.getListBySequences(sequences).stream()
                 .map(CommunityListResponse::new)
                 .collect(Collectors.toList());

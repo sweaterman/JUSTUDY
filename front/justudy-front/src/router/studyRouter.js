@@ -8,6 +8,8 @@ import StudyCommuWrite from '@/views/Study/StudyCommuWrite';
 import StudyMain from '@/views/StudyOne/StudyMain';
 import StudyBoard from '@/views/StudyOne/StudyBoard';
 import StudyInfo from '@/views/StudyOne/StudyInfo';
+import StudyCalender from '@/views/StudyOne/StudyCalender';
+import StudyEdit from '@/views/StudyOne/StudyEdit';
 
 export default [
     {
@@ -64,6 +66,16 @@ export default [
                 path: 'board',
                 name: 'StudyBoard',
                 component: StudyBoard
+            },
+            {
+                path: 'calender',
+                name: 'StudyCalender',
+                component: StudyCalender
+            },
+            {
+                path: 'edit',
+                name: 'StudyEdit',
+                component: StudyEdit
             }
         ]
     }
