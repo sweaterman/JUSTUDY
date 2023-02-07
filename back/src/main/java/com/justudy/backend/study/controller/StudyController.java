@@ -138,6 +138,7 @@ public class StudyController {
             uploadImage = fileStore.storeFile(multipartFile);
         //스터디 생성
         Long studySeq = studyService.createStudy(request, uploadImage);
+        log.info("llooo{}",studySeq);
 
         //받은 활동주기 생성
         request.getFrequency().forEach(studyFrequencyCreate -> {
@@ -172,7 +173,8 @@ public class StudyController {
                                                            @RequestPart(name = "file", required = false) MultipartFile multipartFile, HttpSession session) throws IOException, ParseException {
         //session 과 id 체크
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        if (loginSequence != request.getLeaderSeq()) {
+        Long leader = studyService.readStudy(id).getLeaderSeq();
+        if (loginSequence != leader) {
             throw new InvalidRequest("", "리더가 아니면 스터디를 수정할 수 없습니다.");
         }
 
