@@ -159,19 +159,22 @@ export default {
         ...mapState('moduleStudy', ['applyStudyInfo']),
         ...mapState('moduleLogin', ['isLogin'])
     },
-    created() {
+    async created() {
         const pathName = new URL(document.location).pathname.split('/');
         const studySeq = pathName[pathName.length - 1];
-        this.$store.dispatch('moduleStudy/getApplyStudyInfo', studySeq);
+        await this.$store.dispatch('moduleStudy/getApplyStudyInfo', studySeq);
         this.sendData.studySeq = studySeq;
+
         //스터디 멤버에 내가 포함되어있거나 지원을 완료한 상태라면? applyDisplay 바꿔야함
+        if (this.applyStudyInfo.isApply == true || this.applyStudyInfo.isMember == true || this.applyStudyInfo.isLeader == true) {
+            this.applyDisplay = false;
+        }
     },
     data() {
         return {
             message_rules: [value => !!value || '보낼 메시지를 입력해주세요.'],
             sendData: {
                 studySeq: null,
-                memberSeq: 0,
                 content: null
             },
             applyData: false, //모달창
@@ -189,7 +192,7 @@ export default {
                 }
             } else if (check == 'T') {
                 //지원을한다. -> 마이스터디페이지로 이동함.
-                this.$store.dispatch('moduleStudy/applyStudy', this.applyStudyInfo.sequence, this.sendData);
+                this.$store.dispatch('moduleStudy/applyStudy', this.sendData);
                 if (this.sendData.content == '') {
                     alert('보낼 메시지를 입력해주세요!');
                 } else {

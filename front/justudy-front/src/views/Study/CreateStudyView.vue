@@ -28,7 +28,7 @@
                                     <v-text-field v-model="study.name" label="스터디 이름" :rules="name_rules" hide-details="auto"></v-text-field>
                                 </v-col>
                                 <v-col class="center" cols="4">
-                                    <v-btn color="green darken-1" outlined text @click="nameCheck(study.name)"> 중복체크 </v-btn>
+                                    <v-btn color="green darken-1" outlined text @click="nameCheckBtn(study.name)"> 중복체크 </v-btn>
                                 </v-col>
                             </v-row>
 
@@ -277,7 +277,7 @@ export default {
             introduction_rules: [value => !!value || '스터디 소개를 입력해주세요.'],
             startModal: false,
             endModal: false,
-            nameCheckVal: true,
+            nameCheckVal: false,
             uploadimageurl: null
         };
     },
@@ -286,10 +286,9 @@ export default {
         async checkTopCategory() {
             await this.$store.dispatch('moduleStudy/getBottomCategories', this.study.topCategory.key);
         },
-        nameCheckBtn(name) {
-            this.$store.dispatch('moduleStudy/nameCheck', name);
-            //중복체크 미완성 -> 확인 해봐야함.
-            this.nameCheckVal = this.$store.state.nameCheck;
+        async nameCheckBtn(name) {
+            await this.$store.dispatch('moduleStudy/nameCheck', name);
+            this.nameCheckVal = this.nameCheck;
         },
         createStudy() {
             if (
