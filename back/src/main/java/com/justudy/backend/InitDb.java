@@ -138,8 +138,8 @@ public class InitDb {
         }
 
         private void saveStudyFrequency() throws ParseException {
-            SimpleDateFormat formatter = new SimpleDateFormat("HH시 mm분");
-            java.util.Date date = formatter.parse("18시 00분");
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+            java.util.Date date = formatter.parse("18:00");
             for (int i = 0; i < 10; i++) {
                 long memberSequence = 50 + (3 * i);
                 MemberEntity findmember = memberService.getMember(memberSequence);
@@ -150,8 +150,8 @@ public class InitDb {
                                 .builder()
                                 .studySeq(findStudy.getSequence())
                                 .week("월")
-                                .startTime(date.toString())
-                                .endTime(date.toString())
+                                .startTime(formatter.format(date))
+                                .endTime(formatter.format(date))
                                 .build());
             }
         }
