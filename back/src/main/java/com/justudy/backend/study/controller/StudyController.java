@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class StudyController {
      * @return ResponseEntity<List < StudyResponse>> 200 OK, 스터디 정보 목록
      * 페이징, 검색,
      */
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<StudySearchResponse> readAllStudy(@PageableDefault(size = MAX_STUDY_PAGE_SIZE) Pageable pageable, @RequestParam(value = "type", required = false) String type, @RequestParam(value = "search", required = false) String search) {
         List<String> Categories = null;
         //타입이 카테고리 검색이면
@@ -125,7 +126,7 @@ public class StudyController {
      * @param request 생성정보
      * @return ResponseEntity<StudyDetailResponse> 201 CREATE, 생성된 스터디 정보
      */
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<StudyDetailResponse> createStudy(@RequestBody StudyCreate request, @RequestPart(name = "file", required = false) MultipartFile multipartFile, HttpSession session) throws IOException {
         //session 과 id 체크
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
@@ -139,7 +140,13 @@ public class StudyController {
         Long studySeq = studyService.createStudy(request, uploadImage);
 
         //받은 활동주기 생성
-        request.getFrequency().forEach(studyFrequencyCreate -> studyFrequencyService.createStudyFrequency(studySeq, studyFrequencyCreate));
+        request.getFrequency().forEach(studyFrequencyCreate -> {
+            try {
+                studyFrequencyService.createStudyFrequency(studySeq, studyFrequencyCreate);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         //스터디맴버 리더 추가
         studyMemberService.createStudyMember(StudyMemberCreate
@@ -162,7 +169,7 @@ public class StudyController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<StudyDetailResponse> updateStudy(@PathVariable("id") Long id, @RequestBody StudyEdit request,
-                                                           @RequestPart(name = "file", required = false) MultipartFile multipartFile, HttpSession session) throws IOException {
+                                                           @RequestPart(name = "file", required = false) MultipartFile multipartFile, HttpSession session) throws IOException, ParseException {
         //session 과 id 체크
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         if (loginSequence != request.getLeaderSeq()) {
@@ -236,7 +243,7 @@ public class StudyController {
      *
      * @return ResponseEntity<List < StudyResponse>> 200 OK, 스터디 지원목록 정보
      */
-    @GetMapping("/mystudy/apply/")
+    @GetMapping("/mystudy/apply")
     public ResponseEntity<List<StudyResponse>> readAllApplyStudy(HttpSession session) {
         //session 과 id 체크
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
@@ -250,7 +257,7 @@ public class StudyController {
      * @param request 생성정보
      * @return ResponseEntity<StudyResumeResponse> 201 CREATE, 생성된 스터디 지원목록
      */
-    @PostMapping("/apply/")
+    @PostMapping("/apply")
     public ResponseEntity<StudyResumeResponse> createStudyResume(@RequestBody StudyResumeCreate request, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         request.changeMemberSeq(loginSequence);
@@ -262,7 +269,7 @@ public class StudyController {
     /**
      * 스터디 지원목록을 삭제하는 API
      *
-     * @param id 지원서 id
+     * @param id 스터디 id
      * @return ResponseEntity<Void> 204 NO CONTENT
      */
     @DeleteMapping("/apply/{id}")
