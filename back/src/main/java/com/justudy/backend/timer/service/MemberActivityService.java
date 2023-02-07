@@ -15,6 +15,7 @@ import com.querydsl.core.Tuple;
 import java.sql.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -57,8 +58,12 @@ public class MemberActivityService {
   }
 
   @Transactional
-  public Long getSumTimeByIdAndPeriod(Date ago, Date cur, Long userSeq) {
-    MemberEntity member = memberRepository.getReferenceById(userSeq);
+  public Long getSumTimeByNickNameAndPeriod(Date ago, Date cur, String nickName) {
+    Optional<Long> userSeq = memberRepository.findSequenceByNickname(nickName);
+    if (userSeq.isEmpty()) {
+      return null;
+    }
+    MemberEntity member = memberRepository.getReferenceById(userSeq.get());
     if (member == null) {
       return null;//에러 페이지 넣기
     }
@@ -70,8 +75,12 @@ public class MemberActivityService {
   }
 
   @Transactional
-  public List<ActivitySubjectResponse> getSumTimeByIdAndCategory(Long userSeq) {
-    MemberEntity member = memberRepository.getReferenceById(userSeq);
+  public List<ActivitySubjectResponse> getSumTimeByNickNameAndCategory(String nickName) {
+    Optional<Long> userSeq = memberRepository.findSequenceByNickname(nickName);
+    if (userSeq.isEmpty()) {
+      return null;
+    }
+    MemberEntity member = memberRepository.getReferenceById(userSeq.get());
     if (member == null) {
       return null;//에러 페이지 넣기
     }
@@ -96,9 +105,13 @@ public class MemberActivityService {
 
 
   @Transactional
-  public List<ActivityCalendarResponse> getCalendarTimeById(Date ago, Date cur,
-      Long userSeq) {
-    MemberEntity member = memberRepository.getReferenceById(userSeq);
+  public List<ActivityCalendarResponse> getCalendarTimeByNickName(Date ago, Date cur,
+      String nickName) {
+    Optional<Long> userSeq = memberRepository.findSequenceByNickname(nickName);
+    if (userSeq.isEmpty()) {
+      return null;
+    }
+    MemberEntity member = memberRepository.getReferenceById(userSeq.get());
     if (member == null) {
       return null;//에러 페이지 넣기
     }
