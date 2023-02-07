@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Entity
 public class UploadFileEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "upload_file_seq")
     private Long sequence;
 

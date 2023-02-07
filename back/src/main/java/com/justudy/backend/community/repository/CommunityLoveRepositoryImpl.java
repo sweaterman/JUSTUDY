@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -40,5 +41,13 @@ public class CommunityLoveRepositoryImpl implements CommunityLoveRepositoryCusto
                 .from(qLove)
                 .where(qLove.communitySequence.eq(communitySequence))
                 .fetchFirst());
+    }
+
+    @Override
+    public List<Long> findCommunitySequence(Long loginSequence) {
+        return queryFactory.select(qLove.communitySequence)
+                .from(qLove)
+                .where(qLove.memberSequence.eq(loginSequence))
+                .fetch();
     }
 }
