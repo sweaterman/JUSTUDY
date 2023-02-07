@@ -232,7 +232,7 @@ class StudyMemberServiceTest {
                 .bottomCategory("java")
                 .name("test study")
                 .leaderSeq(findMember.getSequence())
-                .leaderName(findMember.getNickname())
+                .leader(findMember.getNickname())
                 .introduction("소개입니당")
                 .population(10)
                 .level("초보")

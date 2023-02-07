@@ -37,6 +37,12 @@ public class CommunityEntity {
     @Column(name = "community_view_count")
     private Integer viewCount;
 
+    @Column(name = "community_love_count")
+    private Integer loveCount;
+
+    @Column(name = "community_week_love_count")
+    private Integer weekLoveCount;
+
     @Column(name = "community_created_time")
     private LocalDateTime createdTime;
 
@@ -49,9 +55,6 @@ public class CommunityEntity {
     @Column(name = "community_is_highlighted", columnDefinition = "TINYINT(1)")
     private Boolean isHighlighted;
 
-    @Column(name = "community_week_love_count")
-    private Integer weekLoveCount;
-
     @Builder
     public CommunityEntity(String title, String content,
                            Boolean isHighlighted) {
@@ -59,6 +62,7 @@ public class CommunityEntity {
         this.content = content;
         this.isHighlighted = isHighlighted;
         this.viewCount = 0;
+        this.loveCount = 0;
         this.weekLoveCount = 0;
         this.createdTime = LocalDateTime.now();
         this.modifiedTime = createdTime;
@@ -75,12 +79,22 @@ public class CommunityEntity {
         this.category = category;
     }
 
-    public void changeWeekLoveCount(Integer weekLoveCount) {
-        this.weekLoveCount = weekLoveCount;
-    }
 
     public void addViewCount() {
         this.viewCount += 1;
+    }
+
+    public void mergeLoveCountWithWeek() {
+        this.loveCount += weekLoveCount;
+        weekLoveCount = 0;
+    }
+
+    public void addWeekLoveCount() {
+        this.weekLoveCount += 1;
+    }
+
+    public void removeWeekLoveCount() {
+        this.weekLoveCount -= 1;
     }
 
     public void deleteCommunity() {

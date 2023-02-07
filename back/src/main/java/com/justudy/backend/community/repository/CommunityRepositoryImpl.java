@@ -3,8 +3,11 @@ package com.justudy.backend.community.repository;
 import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.domain.QCommunityEntity;
 import com.justudy.backend.community.dto.request.CommunitySearch;
+import com.justudy.backend.community.dto.request.SearchOrderType;
+import com.justudy.backend.community.dto.request.SearchType;
 import com.justudy.backend.community.exception.ImportBoardFail;
 import com.justudy.backend.util.PagingUtil;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -13,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.justudy.backend.category.domain.QCategoryEntity.categoryEntity;
 import static com.justudy.backend.community.domain.QCommunityEntity.communityEntity;
@@ -31,7 +35,8 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
     public List<CommunityEntity> getAllList(CommunitySearch communitySearch) {
         List<CommunityEntity> list = queryFactory.selectFrom(communityEntity)
                 .join(communityEntity.member, memberEntity).fetchJoin()
-                .where(communityEntity.isHighlighted.eq(true))
+                .where(communityEntity.isHighlighted.eq(true),
+                        communityEntity.isDeleted.eq(false))
                 .limit(communitySearch.getNoticeBoardSize())
                 .orderBy(communityEntity.sequence.desc())
                 .fetch();
@@ -40,16 +45,59 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
                 .join(communityEntity.member, memberEntity).fetchJoin()
                 .join(communityEntity.category, categoryEntity).fetchJoin()
                 .where(communityEntity.isHighlighted.eq(false),
-                        eqCategory(communitySearch.getCategory()))
+                        eqCategory(communitySearch.getCategory()),
+                        eqTypeAndSearch(communitySearch),
+                        communityEntity.isDeleted.eq(false))
                 .limit(communitySearch.getSize() - list.size())
                 .offset(communitySearch.getOffsetWithNotice(list.size()))
-                .orderBy(communityEntity.sequence.desc())
+                .orderBy(orderByCondition(communitySearch))
                 .fetch();
         if (!list.addAll(commonList)) {
             throw new ImportBoardFail("community", "게시글 리스트 가져오기 실패");
         }
         return list;
     }
+
+    @Override
+    public List<CommunityEntity> getAllNotice(Pageable pageable) {
+        return queryFactory.selectFrom(communityEntity)
+                .join(communityEntity.member, memberEntity).fetchJoin()
+                .where(communityEntity.isHighlighted.eq(true), communityEntity.isDeleted.eq(false))
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .orderBy(communityEntity.sequence.desc())
+                .fetch();
+    }
+
+    public List<CommunityEntity> getMostLoveListOfWeek(Pageable pageable) {
+        return queryFactory.selectFrom(communityEntity)
+                .join(communityEntity.member, memberEntity).fetchJoin()
+                .where(communityEntity.isDeleted.eq(false))
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .orderBy(communityEntity.weekLoveCount.desc())
+                .fetch();
+    }
+
+    @Override
+    public Optional<CommunityEntity> findBySequence(Long sequence) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(communityEntity)
+                .join(communityEntity.member, memberEntity).fetchJoin()
+                .join(communityEntity.category, categoryEntity).fetchJoin()
+                .where(communityEntity.sequence.eq(sequence))
+                .fetchFirst());
+    }
+
+    @Override
+    public List<CommunityEntity> getListBySequences(List<Long> sequences) {
+        return queryFactory
+                .selectFrom(communityEntity)
+                .join(communityEntity.member, memberEntity).fetchJoin()
+                .where(communityEntity.sequence.in(sequences), communityEntity.isDeleted.eq(false))
+                .fetch();
+    }
+
 
     @Override
     public Page<CommunityEntity> findAllByNotice(Pageable pageable) {
@@ -103,6 +151,25 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
                 .orderBy(qCommunity.weekLoveCount.desc())
                 .limit(MAX_POPULAR_SIZE)
                 .fetch();
+    }
+
+    private BooleanExpression eqTypeAndSearch(CommunitySearch communitySearch) {
+        SearchType type = communitySearch.getType();
+        if (type == null) {
+            return null;
+        }
+        if (communitySearch.getSearch() == null) {
+            return null;
+        }
+        return type.getExpression(communitySearch.getSearch());
+    }
+
+    private OrderSpecifier<?> orderByCondition(CommunitySearch communitySearch) {
+        SearchOrderType orderType = communitySearch.getOrder();
+        if (orderType == null) {
+            return communityEntity.sequence.desc();
+        }
+        return orderType.getOrderSpecifier();
     }
 
     private BooleanExpression eqCategory(String category) {

@@ -4,6 +4,8 @@ import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.exception.CategoryNotFound;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.community.dto.response.CommunityListResponse;
+import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.exception.ConflictRequest;
 import com.justudy.backend.exception.ForbiddenRequest;
 import com.justudy.backend.exception.InvalidRequest;
@@ -24,6 +26,7 @@ import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -47,13 +50,18 @@ public class MemberService {
 
     private final UploadFileService uploadFileService;
 
+    private final CommunityService communityService;
+
     private final FileStore fileStore;
+
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
     public Long saveMember(MemberCreate request, UploadFileEntity basicImage) {
         validateCreateRequest(request);
 
-        MemberEntity member = request.toEntity();
+        String encodePassword = passwordEncoder.encode(request.getPassword());
+        MemberEntity member = request.toEntity(encodePassword);
         member.changeImage(basicImage);
         addCategory(request, member);
 
@@ -66,6 +74,14 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFound());
 
         return createMypageResponse(findMember);
+    }
+
+    public List<CommunityListResponse> getMyBookmarks(Long loginSequence) {
+        return communityService.getMyBookmarks(loginSequence);
+    }
+
+    public List<CommunityListResponse> getMyLoves(Long loginSequence) {
+        return communityService.getMyLoves(loginSequence);
     }
 
     public ModifyPageResponse getModifyPage(Long loginSequence) {

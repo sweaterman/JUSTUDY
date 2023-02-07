@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class StudyResumeRepositoryImpl implements StudyResumeRepositorySupport {
@@ -39,5 +40,17 @@ public class StudyResumeRepositoryImpl implements StudyResumeRepositorySupport {
                 .fetchJoin()
                 .where(qMember.sequence.eq(id))
                 .fetch();
+    }
+
+    @Override
+    public Optional<StudyResumeEntity> readStudyResumeByStudyAndMember(Long sequence, Long loginSequence) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(qStudyResume)
+                .join(qStudyResume.member, qMember)
+                .fetchJoin()
+                .join(qStudyResume.study, qStudy)
+                .fetchJoin()
+                .where(qStudyResume.study.sequence.eq(sequence), qStudyResume.member.sequence.eq(loginSequence))
+                .fetchFirst());
     }
 }

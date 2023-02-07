@@ -45,12 +45,12 @@ public class CommunityService {
         community.changeCategory(category);
         CommunityEntity savedCommunity = communityRepository.save(community);
 
-        return CommunityDetailResponse.makeBuilder(savedCommunity, 0);
+        return CommunityDetailResponse.makeBuilder(savedCommunity);
     }
 
     @Transactional
     public Long deleteCommunity(Long loginSequence, Long communitySequence) {
-        CommunityEntity community = communityRepository.findById(communitySequence)
+        CommunityEntity community = communityRepository.findBySequence(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         validateWriter(loginSequence, community.getMember().getSequence());
         community.deleteCommunity();
@@ -60,18 +60,16 @@ public class CommunityService {
     }
 
     @Transactional
-    public CommunityDetailResponse readCommunity(Long communitySequence) {
-        CommunityEntity community = communityRepository.findById(communitySequence)
+    public CommunityDetailResponse readCommunityDetail(Long communitySequence) {
+        CommunityEntity community = communityRepository.findBySequence(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         community.addViewCount();
-
-        Integer countOfLove = loveService.getCountOfLove(communitySequence);
-        return CommunityDetailResponse.makeBuilder(community, countOfLove);
+        return CommunityDetailResponse.makeBuilder(community);
     }
 
     @Transactional
     public CommunityDetailResponse updateCommunity(Long loginSequence, Long communitySequence, CommunityEdit request) {
-        CommunityEntity community = communityRepository.findById(communitySequence)
+        CommunityEntity community = communityRepository.findBySequence(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         validateWriter(loginSequence, community.getMember().getSequence());
 
@@ -79,18 +77,44 @@ public class CommunityService {
                 request.getContent(),
                 categoryService.getCategoryEntityByKey(request.getCategory()));
 
-        Integer countOfLove = loveService.getCountOfLove(communitySequence);
-        return CommunityDetailResponse.makeBuilder(community, countOfLove);
+        return CommunityDetailResponse.makeBuilder(community);
     }
 
     public List<CommunityListResponse> getCommunities(CommunitySearch condition) {
         return communityRepository.getAllList(condition).stream()
-                .map(community -> {
-                    CommunityListResponse response = new CommunityListResponse(community);
-                    Integer countOfLove = loveService.getCountOfLove(response.getSequence());
-                    return response.ChangeCountOfLove(countOfLove);
-                }).collect(Collectors.toList());
+                .map(CommunityListResponse::new).collect(Collectors.toList());
     }
+
+    public List<CommunityListResponse> getNotices(Pageable pageable) {
+        return communityRepository.getAllNotice(pageable).stream()
+                .map(CommunityListResponse::new).collect(Collectors.toList());
+    }
+
+    public List<CommunityListResponse> getMostLoveCommunitiesOfWeek(Pageable pageable) {
+        return communityRepository.getMostLoveListOfWeek(pageable).stream()
+                .map(CommunityListResponse::new).collect(Collectors.toList());
+    }
+
+    public List<CommunityListResponse> getMyBookmarks(Long loginSequence) {
+        List<Long> sequences = bookmarkService.getMyBookmarks(loginSequence);
+        return communityRepository.getListBySequences(sequences).stream()
+                .map(CommunityListResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<CommunityListResponse> getMyLoves(Long loginSequence) {
+        List<Long> sequences = loveService.getMyLoves(loginSequence);
+        return communityRepository.getListBySequences(sequences).stream()
+                .map(CommunityListResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    private void validateWriter(Long loginSequence, Long writerSequence) {
+        if (loginSequence != writerSequence) {
+            throw new ForbiddenRequest();
+        }
+    }
+
 
     @Transactional
     public List<CommunityDetailResponse> readAllCommunity(int page, String category) {
@@ -156,11 +180,4 @@ public class CommunityService {
                 .map(CommunityDetailResponse::makeBuilder)
                 .collect(Collectors.toList());
     }
-
-    private void validateWriter(Long loginSequence, Long writerSequence) {
-        if (loginSequence != writerSequence) {
-            throw new ForbiddenRequest();
-        }
-    }
-
 }

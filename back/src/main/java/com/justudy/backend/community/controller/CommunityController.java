@@ -15,6 +15,8 @@ import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,62 +36,30 @@ public class CommunityController {
     private final CommunityBookmarkService communityBookmarkService;
     private final CommunityCommentService communityCommentService;
     private final CategoryService categoryService;
-    // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
     /**
-     * 모든 검색 정보를 가져오는 API
-     *
-     * @param page   페이지 넘버
-     * @param type   검색 분류(아이디, 제목, 내용)
-     * @param search 검색할 값
-     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
-     */
-    @GetMapping("/board/search")
-    public ResponseEntity<List<CommunityDetailResponse>> readAllCommunityBySearch(@RequestParam("page") int page, @RequestParam("type") String type, @RequestParam("saerch") String search) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.search(page, type, search));
-    }
-
-    @GetMapping("/board/test")
-    public List<CommunityListResponse> getList(@ModelAttribute CommunitySearch condition) {
-        log.info("before = {}", condition);
-        log.info("method call = {}", condition.validateNull());
-        log.info("after = {}", condition);
-
-
-        return communityService.getCommunities(condition);
-    }
-
-    /**
-     * 일주일간 좋아요 많은 커뮤니티 정보를 가져오는 API
-     *
-     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
-     */
-    @GetMapping("/board/love")
-    public ResponseEntity<List<CommunityDetailResponse>> readPopularCommunity() {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readPopularCommunity());
-    }
-
-    /**
-     * 카테고리별 커뮤니티 정보를 가져오는 API
-     *
-     * @param page 페이지 넘버
-     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 1페이지는 맨위 N개 공지 정보 + 커뮤니티 정보 목록
+     * page - default 0
+     * size - default 20
+     * category
+     * type - nickname, title, content
+     * search - 검색 내용
+     * order - view, like
      */
     @GetMapping("/board")
-    public ResponseEntity<List<CommunityDetailResponse>> readAllCommunity(@RequestParam("page") int page, @RequestParam("category") String category) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readAllCommunity(page,category));
+    public List<CommunityListResponse> getList(@ModelAttribute CommunitySearch condition) {
+        return communityService.getCommunities(condition.validateNull());
     }
 
-    /**
-     * 커뮤니티 공지 정보를 가져오는 API
-     *
-     * @param page 페이지 넘버
-     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 공지 정보 목록
-     */
-    @GetMapping("/board/notice")
-    public ResponseEntity<List<CommunityDetailResponse>> readAllNoticeCommunity(@RequestParam("page") int page) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readAllNoticeCommunity(page));
+    @GetMapping("/board/notices")
+    public List<CommunityListResponse> getNotices(@PageableDefault(size = 20) Pageable pageable) {
+        return communityService.getNotices(pageable);
     }
+
+    @GetMapping("/board/popular")
+    public List<CommunityListResponse> getMostPopular(@PageableDefault(size = 10) Pageable pageable) {
+        return communityService.getMostLoveCommunitiesOfWeek(pageable);
+    }
+
 
     /**
      * 커뮤니티 상세 정보를 가져오는 API
@@ -97,9 +67,9 @@ public class CommunityController {
      * @param communitySequence PK
      * @return ResponseEntity<CommunityResponse> 200 OK, 커뮤니티 상세 정보
      */
-    @GetMapping("/board/{id}")
-    public ResponseEntity<CommunityDetailResponse> readCommunityById(@PathVariable("id") Long communitySequence) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunity(communitySequence));
+    @GetMapping("/board/{boardId}")
+    public ResponseEntity<CommunityDetailResponse> readCommunityById(@PathVariable("boardId") Long communitySequence) {
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunityDetail(communitySequence));
     }
 
     /**
@@ -142,24 +112,13 @@ public class CommunityController {
      * @param communitySequence 커뮤니티 sequence (PK)
      * @return ResponseEntity<Void> 204 No Content
      */
-    @DeleteMapping("/board/{id}")
-    public ResponseEntity<Void> deleteCommunity(@PathVariable("id") long communitySequence, HttpSession session) {
+    @DeleteMapping("/board/{boardId}")
+    public ResponseEntity<Void> deleteCommunity(@PathVariable("boardId") long communitySequence, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
         communityService.deleteCommunity(loginSequence, communitySequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
-
-//    /**
-//     * 모든 커뮤니티 정보를 가져오는 API
-//     *
-//     * @param page 페이지 넘버
-//     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
-//     */
-//    @GetMapping("/board")
-//    public ResponseEntity<List<CommunityResponse>> readAllCommunity(@RequestParam("page") int page) {
-//        return ResponseEntity.status(HttpStatus.OK).body(communityService.readAllCommunity(page));
-//    }
 
     // ---------------------------------------------------------------북마크---------------------------------------------------------------
 
@@ -194,15 +153,6 @@ public class CommunityController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
-    /**
-     * 북마크 불러오기 API
-     *
-     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 유저별 북마크 목록
-     */
-//    @GetMapping("/board/bookmark/{userId}")
-//    public ResponseEntity<List<CommunityBookmarkEntity>> readAllBookmarkByMember(@PathVariable("userId") Long userId) {
-//        return ResponseEntity.status(HttpStatus.OK).body(communityBookmarkService.readAllBookmarkByMember(userId));
-//    }
     // ---------------------------------------------------------------좋아요---------------------------------------------------------------
 
     /**
@@ -228,20 +178,6 @@ public class CommunityController {
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
-
-    /**
-     * 좋아요 불러오기 API
-     *
-     * @param id     커뮤니티 sequence
-     * @param loveId 좋아요 sequence
-     * @return ResponseEntity<List < CommunityLove>> 200 OK, 좋아요 정보 목록
-     * 관리전용
-     */
-//    @GetMapping("/board/love/{id}")
-//    public ResponseEntity<List<CommunityLoveEntity>> readLove(@PathVariable("id") Long id, @PathVariable("id") Long loveId) {
-//        return ResponseEntity.status(HttpStatus.OK).body(communityLoveService.readAllLoveByCommunity(loveId));
-//    }
-
 
 // ---------------------------------------------------------------댓글---------------------------------------------------------------
 
@@ -293,5 +229,41 @@ public class CommunityController {
     public ResponseEntity<Void> deleteComment(@PathVariable("id") long id, @PathVariable("commentId") long commentId) {
         communityCommentService.deleteComment(id, commentId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+
+
+
+    /**
+     * 모든 검색 정보를 가져오는 API
+     *
+     * @param page   페이지 넘버
+     * @param type   검색 분류(아이디, 제목, 내용)
+     * @param search 검색할 값
+     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
+     */
+//    @GetMapping("/board/search")
+    public ResponseEntity<List<CommunityDetailResponse>> readAllCommunityBySearch(@RequestParam("page") int page, @RequestParam("type") String type, @RequestParam("saerch") String search) {
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.search(page, type, search));
+    }
+    /**
+     * 일주일간 좋아요 많은 커뮤니티 정보를 가져오는 API
+     *
+     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
+     */
+//    @GetMapping("/board/love")
+    public ResponseEntity<List<CommunityDetailResponse>> readPopularCommunity() {
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.readPopularCommunity());
+    }
+
+    /**
+     * 커뮤니티 공지 정보를 가져오는 API
+     *
+     * @param page 페이지 넘버
+     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 공지 정보 목록
+     */
+//    @GetMapping("/board/notice")
+    public ResponseEntity<List<CommunityDetailResponse>> readAllNoticeCommunity(@RequestParam("page") int page) {
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.readAllNoticeCommunity(page));
     }
 }
