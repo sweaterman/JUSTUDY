@@ -143,13 +143,7 @@ public class MemberService {
         List<MemberCategoryEntity> newCategories = createNewMemberCategories(editRequest);
         findMember.changeMemberCategory(newCategories);
 
-        UploadFileEntity oldImageFile = findMember.getImageFile();
         findMember.edit(memberEditor);
-        UploadFileEntity newImageFile = findMember.getImageFile();
-
-        if (validateImageFile(oldImageFile.getSequence(), newImageFile.getSequence())) {
-            uploadFileService.saveUploadFile(newImageFile);
-        }
 
         return findMember.getSequence();
     }
