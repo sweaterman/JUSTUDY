@@ -37,10 +37,8 @@ public class CommunityDetailResponse {
         this.modifiedTime = modifiedTime;
         this.loveCount = loveCount;
     }
+
     public static CommunityDetailResponse makeBuilder(CommunityEntity entity) {
-        return makeBuilder(entity,0);
-    }
-    public static CommunityDetailResponse makeBuilder(CommunityEntity entity, Integer loveCount) {
         return CommunityDetailResponse.builder()
                 .sequence(entity.getSequence())
                 .memberSequence(entity.getMember().getSequence())
@@ -51,7 +49,7 @@ public class CommunityDetailResponse {
                 .viewCount(entity.getViewCount())
                 .createdTime(entity.getCreatedTime())
                 .modifiedTime(entity.getModifiedTime())
-                .loveCount(loveCount)
+                .loveCount(entity.getLoveCount() + entity.getWeekLoveCount())
                 .build();
     }
 }

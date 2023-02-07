@@ -77,10 +77,10 @@ public class MemberCreate {
         this.introduction = introduction;
     }
 
-    public MemberEntity toEntity() {
+    public MemberEntity toEntity(String encodePassword) {
         return MemberEntity.builder()
                 .userId(userId)
-                .password(password)
+                .password(encodePassword)
                 .username(username)
                 .nickname(nickname)
                 .ssafyId(ssafyId)

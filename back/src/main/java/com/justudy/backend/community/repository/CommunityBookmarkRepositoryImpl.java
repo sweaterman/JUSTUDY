@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -31,5 +32,13 @@ public class CommunityBookmarkRepositoryImpl implements CommunityBookmarkReposit
                 .execute();
         entityManager.flush();
         entityManager.clear();
+    }
+
+    @Override
+    public List<Long> findCommunitySequence(Long loginSequence) {
+        return queryFactory.select(qBookmark.communitySequence)
+                .from(qBookmark)
+                .where(qBookmark.memberSequence.eq(loginSequence))
+                .fetch();
     }
 }
