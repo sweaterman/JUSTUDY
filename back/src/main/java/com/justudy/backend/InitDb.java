@@ -1,6 +1,6 @@
 package com.justudy.backend;
 
-//import com.justudy.backend.GroupCall.service.StudyRoomService;
+import com.justudy.backend.GroupCall.service.StudyRoomService;
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.community.dto.request.CommunityCreate;
@@ -86,7 +86,7 @@ public class InitDb {
         private final StudyResumeService studyResumeService;
 
         private final MemberActivityService memberActivityService;
-//        private final StudyRoomService studyRoomService;
+        private final StudyRoomService studyRoomService;
         private final RoomActivityService roomActivityService;
         private final RankDummy rankDummy;
 
@@ -99,7 +99,7 @@ public class InitDb {
             saveStudy();
             saveStudyFrequency();
             saveStudyMember();
-//            saveStudyRoom();
+            saveStudyRoom();
 //            saveTimer();
 //            saveRank();
             saveTest1();
@@ -258,8 +258,8 @@ public class InitDb {
         }
 
         public void saveStudyRoom() {
-            for (long i = 130; i < 230; i += 2){}
-//                studyRoomService.saveStudyRoom(i);
+            for (long i = 130; i < 230; i += 2)
+                studyRoomService.saveStudyRoom(i);
         }
 
         private void saveImageFile() {
