@@ -64,9 +64,9 @@ public class StudyController {
     /**
      * 공개된 스터디 정보를 가져오는 API
      *
-     * @param pageable   페이지 넘버
-     * @param type   검색 분류(스터디명, 스터디장)
-     * @param search 검색 내용
+     * @param pageable 페이지 넘버
+     * @param type     검색 분류(스터디명, 스터디장)
+     * @param search   검색 내용
      * @return ResponseEntity<List < StudyResponse>> 200 OK, 스터디 정보 목록
      * 페이징, 검색,
      */
@@ -251,7 +251,10 @@ public class StudyController {
      * @return ResponseEntity<StudyResumeResponse> 201 CREATE, 생성된 스터디 지원목록
      */
     @PostMapping("/apply/")
-    public ResponseEntity<StudyResumeResponse> createStudyResume( @RequestBody StudyResumeCreate request) {
+    public ResponseEntity<StudyResumeResponse> createStudyResume(@RequestBody StudyResumeCreate request, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        request.changeMemberSeq(loginSequence);
+
         Long resumeSeq = studyResumeService.createStudyResume(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(studyResumeService.readStudyResume(resumeSeq));
     }
