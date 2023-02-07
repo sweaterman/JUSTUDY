@@ -13,6 +13,7 @@ import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -43,7 +45,21 @@ public class CommunityCommentService {
 
         //댓글 작성
         if (request.getParentSeq() == null || request.getParentSeq() == 0L) {
-            return CommunityCommentResponse.makeBuilder(repository.save(request.toEntity(communityEntity, memberEntity)));
+            CommunityCommentEntity savedComment = repository.save(CommunityCommentEntity.builder()
+                    .member(memberEntity)
+                    .community(communityEntity)
+                    .content(request.getContent())
+                    .createdTime(LocalDateTime.now())
+                    .modifiedTime(null)
+                    .isDeleted(false)
+                    .group(commentGroup + 1)
+                    .order(0)
+                    .parentSeq(0L)
+                    .step(0)
+                    .childNumber(0)
+                    .build());
+            return CommunityCommentResponse.makeBuilder(savedComment);
+//            return CommunityCommentResponse.makeBuilder(repository.save(request.toEntity(communityEntity, memberEntity, commentGroup + 1, 0, 0L, 0)));
 
         } else {//대댓글 작성
             //댓글이 없음 에러
@@ -51,11 +67,25 @@ public class CommunityCommentService {
                     .orElseThrow(CommentNotFound::new);
 
             Integer orderResult = orderAndUpdate(parentComment);
+
             //null 이면 대댓글 작성 오류
             if (orderResult == null)
                 return null;
             //대댓글 저장
-            CommunityCommentEntity savedComment = repository.save(request.toEntity(communityEntity, memberEntity));
+            CommunityCommentEntity savedComment = repository.save(CommunityCommentEntity.builder()
+                    .member(memberEntity)
+                    .community(communityEntity)
+                    .content(request.getContent())
+                    .createdTime(LocalDateTime.now())
+                    .modifiedTime(null)
+                    .isDeleted(false)
+                    .group(parentComment.getGroup())
+                    .order(orderResult)
+                    .parentSeq(request.getParentSeq())
+                    .step(parentComment.getStep() + 1)
+                    .childNumber(0)
+                    .build());
+//            CommunityCommentEntity savedComment = repository.save(request.toEntity(communityEntity, memberEntity, parentComment.getGroup(), orderResult, request.getParentSeq(), parentComment.getStep()));
 
             //부모의 자식 수 업데이트
             repository.updateChildNumber(parentComment.getSequence(), parentComment.getChildNumber());
@@ -92,18 +122,21 @@ public class CommunityCommentService {
     }
 
     @Transactional
-    public void UpdateComment(long id, long commentId, CommunityCommentEdit request) {
-        repository.findById(commentId)
+    public void UpdateComment(long id, long commentId, CommunityCommentEdit request, Long loginSequence) {
+        CommunityCommentEntity communityCommentEntity = repository.findById(commentId)
                 .orElseThrow(CommentNotFound::new);
-        repository.save(request.toEntity(commentId));
+        if (loginSequence != communityCommentEntity.getMember().getSequence()) throw new InvalidRequest();
+        communityCommentEntity.update(request.getContent());
+//        repository.save(request.toEntity(commentId));
     }
 
     @Transactional
-    public void deleteComment(long id, long commentId) {
-        CommunityCommentEntity entity = repository.findById(commentId)
+    public void deleteComment(long id, long commentId, Long loginSequence) {
+        CommunityCommentEntity communityCommentEntity = repository.findById(commentId)
                 .orElseThrow(CommentNotFound::new);
+        if (loginSequence != communityCommentEntity.getMember().getSequence()) throw new InvalidRequest();
         //isDelete true로 변환
-        entity.changeIsDeleted(true);
+        communityCommentEntity.changeIsDeleted(true);
 //        repository.save(entity);
     }
 

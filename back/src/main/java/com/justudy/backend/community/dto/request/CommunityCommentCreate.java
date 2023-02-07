@@ -17,14 +17,38 @@ public class CommunityCommentCreate {
     private Long communitySeq;
     private String content;
     private Long parentSeq;
+//
+//    public CommunityCommentEntity toEntity(CommunityEntity communityEntity, MemberEntity memberEntity, Integer commentGroup) {//
+//        return CommunityCommentEntity.builder()
+//                .member(memberEntity)
+//                .community(communityEntity)
+//                .content(content)
+//                .parentSeq(parentSeq)
+//                .createdTime(LocalDateTime.now())
+//                .isDeleted(false)
+//                .group(commentGroup)
+//                .step(0)
+//                .order(0)
+//                .childNumber(0)
+//                .build();
+//    }
 
-    public CommunityCommentEntity toEntity(CommunityEntity communityEntity, MemberEntity memberEntity) {//
+    public Object toEntity(CommunityEntity communityEntity, MemberEntity memberEntity, Integer group, Integer orderResult, Long parentSeq, Integer step) {
         return CommunityCommentEntity.builder()
                 .member(memberEntity)
                 .community(communityEntity)
                 .content(content)
                 .parentSeq(parentSeq)
                 .createdTime(LocalDateTime.now())
+                .isDeleted(false)
+                .group(group)
+                .step(step)
+                .order(orderResult)
+                .childNumber(0)
                 .build();
+    }
+
+    public void changeMemberSeq(Long loginSequence) {
+        this.memberSeq = loginSequence;
     }
 }

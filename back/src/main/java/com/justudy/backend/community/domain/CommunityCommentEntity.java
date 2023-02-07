@@ -1,5 +1,6 @@
 package com.justudy.backend.community.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.justudy.backend.member.domain.MemberEntity;
 import lombok.*;
 
@@ -17,7 +18,7 @@ public class CommunityCommentEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "comment_seq")
     private Long sequence;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_seq")
     private MemberEntity member;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,4 +47,8 @@ public class CommunityCommentEntity {
         this.isDeleted = value;
     }
 
+    public void update(String content) {
+        this.content=content;
+        this.modifiedTime=LocalDateTime.now();
+    }
 }

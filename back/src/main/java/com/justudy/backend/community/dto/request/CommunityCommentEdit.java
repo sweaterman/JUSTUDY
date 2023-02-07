@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 public class CommunityCommentEdit {
     private Long sequence;
-    private Long memberSeq;
+    private String memberNickName;
     private Long communitySeq;
     private String content;
     private Long parentSeq;

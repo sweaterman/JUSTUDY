@@ -6,15 +6,17 @@ import com.justudy.backend.member.domain.MemberEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import java.time.LocalDateTime;
 
+@Log4j2
 @Getter
 @NoArgsConstructor
 public class CommunityCommentResponse {
     private Long sequence;
-    private MemberEntity member;
-    private CommunityEntity community;
+    private Long memberSeq;
+    private Long communitySeq;
     private String content;
     private LocalDateTime createdTime;
     private LocalDateTime modifiedTime;
@@ -22,12 +24,12 @@ public class CommunityCommentResponse {
     private Long parentSeq;
 
     @Builder
-    public CommunityCommentResponse(Long sequence, MemberEntity member, CommunityEntity community,
+    public CommunityCommentResponse(Long sequence, Long memberSeq, Long communitySeq,
                                     String content, LocalDateTime createdTime, LocalDateTime modifiedTime,
                                     Boolean isDeleted, Long parentSeq) {
         this.sequence = sequence;
-        this.member = member;
-        this.community = community;
+        this.memberSeq = memberSeq;
+        this.communitySeq = communitySeq;
         this.content = content;
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
@@ -37,13 +39,13 @@ public class CommunityCommentResponse {
 
     public static CommunityCommentResponse makeBuilder(CommunityCommentEntity entity) {
         String comment = entity.getContent();
-        if (entity.getIsDeleted())
+        if (entity.getIsDeleted() == true)
             comment = "삭제된 댓글입니다.";
 
         return CommunityCommentResponse.builder()
                 .sequence(entity.getSequence())
-                .member(entity.getMember())
-                .community(entity.getCommunity())
+                .memberSeq(entity.getMember().getSequence())
+                .communitySeq(entity.getCommunity().getSequence())
                 .content(comment)
                 .createdTime(entity.getCreatedTime())
                 .modifiedTime(entity.getModifiedTime())
