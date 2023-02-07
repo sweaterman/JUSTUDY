@@ -9,11 +9,12 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;
-
+@Log4j2
 @RequiredArgsConstructor
 public class StudyRepositoryImpl implements StudyRepositorySupport {
 
@@ -27,12 +28,11 @@ public class StudyRepositoryImpl implements StudyRepositorySupport {
     public Slice<StudyEntity> findAllBySearchOption(Pageable pageable, List<String> sub, String studyLeader, String studyName) {
         JPQLQuery<StudyEntity> query = queryFactory
                 .selectFrom(qStudyEntity)
-                .leftJoin(qStudyEntity.studyMembers, qStudyMemberEntity)
+                .join(qStudyEntity.studyMembers,qStudyMemberEntity)
                 .fetchJoin()
-                .leftJoin(qStudyMemberEntity.member, qMemberEntity)
+                .join(qStudyMemberEntity.member,qMemberEntity)
                 .fetchJoin()
-                .where(inCategories(sub), eqLeader(studyLeader), eqStudyName(studyName))
-                .limit(pageable.getPageSize()+1);
+                .where(inCategories(sub), eqLeader(studyLeader), eqStudyName(studyName));
 
         return pagingUtil.getSliceImpl(pageable, query, qStudyEntity.getClass());
     }
@@ -45,12 +45,19 @@ public class StudyRepositoryImpl implements StudyRepositorySupport {
                 .fetchFirst();
     }
 
+    @Override
+    public StudyEntity readStudyByNickName(String name) {
+        return queryFactory
+                .selectFrom(qStudyEntity)
+                .where(qStudyEntity.name.eq(name))
+                .fetchFirst();
+    }
+
     private BooleanExpression inCategories(List<String> subCategories) {
         QStudyEntity entity = QStudyEntity.studyEntity;
         if (subCategories == null || subCategories.isEmpty()) {
             return null;
         }
-        //todo 여러 카테고리일시 모두 검색
         return entity.category.key.in(subCategories);
     }
 

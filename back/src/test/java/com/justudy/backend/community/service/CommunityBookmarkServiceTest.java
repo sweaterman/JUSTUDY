@@ -3,6 +3,7 @@ package com.justudy.backend.community.service;
 import com.justudy.backend.community.domain.CommunityBookmarkEntity;
 import com.justudy.backend.community.exception.BookmarkNotFound;
 import com.justudy.backend.community.repository.CommunityBookmarkRepository;
+import com.justudy.backend.community.repository.CommunityRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,11 +27,13 @@ class CommunityBookmarkServiceTest {
 
     private CommunityBookmarkRepository bookmarkRepository = mock(CommunityBookmarkRepository.class);
 
+    private CommunityRepository communityRepository = mock(CommunityRepository.class);
+
     private CommunityBookmarkService bookmarkService;
 
     @BeforeEach
     void setUp() {
-        bookmarkService = new CommunityBookmarkService(bookmarkRepository);
+        bookmarkService = new CommunityBookmarkService(bookmarkRepository, communityRepository);
     }
 
     @Transactional
@@ -43,7 +46,6 @@ class CommunityBookmarkServiceTest {
 
         BDDMockito.given(bookmarkRepository.findBookmark(anyLong(), anyLong()))
                 .willReturn(Optional.empty());
-
         BDDMockito.given(bookmarkRepository.save(any(CommunityBookmarkEntity.class)))
                 .willReturn(newBookmark);
 

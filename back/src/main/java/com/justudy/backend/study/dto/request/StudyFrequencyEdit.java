@@ -2,6 +2,7 @@ package com.justudy.backend.study.dto.request;
 
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.domain.StudyFrequencyEntity;
+import com.justudy.backend.study.domain.StudyFrequencyWeek;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +26,7 @@ public class StudyFrequencyEdit {
                 .builder()
                 .sequence(sequence)
                 .study(study)
-                .week(week)
+                .week(StudyFrequencyWeek.valueOf(week))
                 .startTime(startTime)
                 .endTime(endTime)
                 .modifiedTime(LocalDateTime.now())

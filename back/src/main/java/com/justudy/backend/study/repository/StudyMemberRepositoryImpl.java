@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class StudyMemberRepositoryImpl implements StudyMemberRepositorySupport {
@@ -43,5 +44,17 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositorySupport {
                 .delete(qStudyMemberEntity)
                 .where(qStudyMemberEntity.study.sequence.eq(studySequence))
                 .execute();
+    }
+
+    @Override
+    public Optional<StudyMemberEntity> readStudyMemberById(Long id, Long memberId) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(qStudyMemberEntity)
+                .join(qStudyMemberEntity.study, qStudyEntity)
+                .fetchJoin()
+                .join(qStudyMemberEntity.member, qMemberEntity)
+                .fetchJoin()
+                .where(qMemberEntity.sequence.eq(memberId), qStudyEntity.sequence.eq(id))
+                .fetchFirst());
     }
 }
