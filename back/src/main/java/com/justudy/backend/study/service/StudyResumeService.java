@@ -43,13 +43,20 @@ public class StudyResumeService {
 
     @Transactional
     public void deleteStudyResume(Long id, Long loginSequence) {
-        StudyResumeEntity studyResumeEntity = studyResumeRepository.findById(id).orElseThrow(InvalidRequest::new);
-        StudyEntity studyEntity = studyRepository.findById(studyResumeEntity.getStudy().getSequence())
+        StudyEntity studyEntity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
+
+        StudyResumeEntity studyResumeEntity = studyEntity.getResumes()
+                .stream()
+//                .map(studyResumeEntity1 -> studyResumeEntity1)
+                .filter(memberEntity -> memberEntity.getMember().getSequence() == loginSequence)
+                .findFirst()
+                .orElseThrow(StudyResumeNotFound::new);
+
         if (studyResumeEntity.getMember().getSequence() != loginSequence)
             throw new InvalidRequest();
         studyEntity.removeStudyResume(studyResumeEntity);
-        studyResumeRepository.deleteById(id);
+        studyResumeRepository.deleteById(studyResumeEntity.getSequence());
     }
 
     public StudyResumeResponse readStudyResume(Long resumeSeq) {

@@ -223,8 +223,8 @@ class StudyFrequencyServiceTest {
                 .builder()
                 .studySeq(study)
                 .week("월")
-                .startTime(date)
-                .endTime(date)
+                .startTime(date.toString())
+                .endTime(date.toString())
                 .build();
     }
 
