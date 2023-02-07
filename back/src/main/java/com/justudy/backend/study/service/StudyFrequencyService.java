@@ -16,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +42,7 @@ public class StudyFrequencyService {
 
     @Transactional
 
-    public Long createStudyFrequency(Long studySequence, StudyFrequencyCreate request) {
+    public Long createStudyFrequency(Long studySequence, StudyFrequencyCreate request) throws ParseException {
         StudyEntity studyEntity = studyRepository.findById(studySequence)
                 .orElseThrow(StudyNotFound::new);
         StudyFrequencyEntity studyFrequencyEntity = studyFrequencyRepository.save(request.toEntity(studyEntity));
@@ -87,7 +88,7 @@ public class StudyFrequencyService {
         studyFrequencyRepository.deleteByStudy(studySequence);
     }
 
-    public void createStudyFrequencies(Long studySequence, List<StudyFrequencyCreate> frequencies) {
+    public void createStudyFrequencies(Long studySequence, List<StudyFrequencyCreate> frequencies) throws ParseException {
         if (frequencies == null || frequencies.isEmpty()) return;
         StudyEntity studyEntity = studyRepository.findById(studySequence)
                 .orElseThrow(StudyNotFound::new);
