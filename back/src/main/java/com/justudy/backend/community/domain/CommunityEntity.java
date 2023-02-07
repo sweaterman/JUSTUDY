@@ -72,7 +72,7 @@ public class CommunityEntity {
     //== 연관관계 편의메소드 ==//
     public void addMember(MemberEntity member) {
         this.member = member;
-        //todo Member와 연관관계 업데이트
+        member.addBoard(this);
     }
 
     public void changeCategory(CategoryEntity category) {
