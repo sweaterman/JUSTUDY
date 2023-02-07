@@ -94,6 +94,9 @@ public class GroupCallService   {
       case "exit":
         allExit(jsonMessage.get("room").getAsString());
         break;
+      case "requestBan":
+        requestBan(jsonMessage.get("name").getAsString(),jsonMessage.get("room").getAsString());
+        break;
       case "requestMute":
         requestMute(jsonMessage.get("name").getAsString(),jsonMessage.get("room").getAsString());
         break;
@@ -144,6 +147,13 @@ public class GroupCallService   {
       user.transferRequestExit();
     }
   }
+  private void requestBan(String personName, String roomName) throws Exception {
+    final Room room = roomManager.getRoom(roomName);
+
+    for(UserSession user : room.getParticipants()){
+      user.transferRequestBan(personName);
+    }
+  }
 
   private void requestMute(String personName, String roomName) throws Exception {
     final Room room = roomManager.getRoom(roomName);
@@ -153,6 +163,14 @@ public class GroupCallService   {
     }
   }
 
+  private void ban(String personName, String roomName) throws Exception {
+    final Room room = roomManager.getRoom(roomName);
+
+    for(UserSession user : room.getParticipants()){
+      if( user.getName().equals(personName ))
+        user.transferBan(personName);
+    }
+  }
   private void mute(String personName, String roomName)throws Exception {
     final Room room = roomManager.getRoom(roomName);
 
@@ -170,14 +188,6 @@ public class GroupCallService   {
     }
   }
 
-  private void ban(String personName, String roomName) throws Exception {
-    final Room room = roomManager.getRoom(roomName);
-
-    for(UserSession user : room.getParticipants()){
-      if( user.getName().equals(personName ))
-        user.transferBan(personName);
-    }
-  }
 
 
   @OnOpen
