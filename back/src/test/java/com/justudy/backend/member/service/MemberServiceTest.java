@@ -51,7 +51,7 @@ public class MemberServiceTest {
 
     @BeforeEach
     public void setUp() {
-        memberService = new MemberService(memberRepository, categoryRepository, uploadFileService, communityService,fileStore);
+//        memberService = new MemberService(memberRepository, categoryRepository, uploadFileService, communityService,fileStore);
     }
 
     @Test

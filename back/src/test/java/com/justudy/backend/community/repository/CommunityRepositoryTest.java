@@ -1,6 +1,6 @@
 package com.justudy.backend.community.repository;
 
-import com.justudy.backend.GroupCall.config.WebSocketConfig;
+//import com.justudy.backend.GroupCall.config.WebSocketConfig;
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.community.domain.CommunityEntity;
