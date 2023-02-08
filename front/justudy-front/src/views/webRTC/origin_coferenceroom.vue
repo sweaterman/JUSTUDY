@@ -1,112 +1,114 @@
 <template>
-    <div>
-        <!-- 중앙 메인화면 -->
-        <div style="width: 70%" ref="main"></div>
-        <!-- 모든 참가자 화면 -->
-        <v-sheet class="mx-auto" max-width="100%">
-            <v-slide-group multiple show-arrows>
-                <div style="display: inline-block" ref="el1" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el2" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el3" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el4" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el5" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el6" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el7" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el8" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el9" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el10" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el11" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el12" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el13" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el14" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el15" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el16" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el17" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el18" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el19" @click="viewChange"></div>
-                <div style="display: inline-block" ref="el20" @click="viewChange"></div>
-            </v-slide-group>
-        </v-sheet>
-        <!-- 기능모음 -->
-        <div id="room" style="width: 100%">
-            <!-- 방 그냥 나가기 -->
-            <v-btn type="button" id="button-leave" @mouseup="leaveRoom">Leave room</v-btn>
-            <!-- 내 소리 온 오프 전환 -->
-            <v-btn @click="setMute">소리on/off</v-btn>
-            <!-- 소리 상태 콘솔에 읽어보기 -->
-            <v-btn @click="test">get소리</v-btn>
-            <!-- 내 화면 온 오프 전환 -->
-            <v-btn @click="setScreen">화면on/off</v-btn>
-            <!-- 화면 상태 콘솔에 읽어보기 -->
-            <v-btn @click="test2">get화면</v-btn>
-            <!-- 화면 공유 세팅 -->
-            <v-btn @click="shareScreen">화면공유on/off</v-btn>
-            <!-- 참가자 이름을 불러옴.... -->
-            <select v-model="selected" @click="getPeople" style="width: 100px">
-                <option v-for="(item, index) in namesFromParticipants" :key="index">
-                    {{ item }}
-                </option>
-            </select>
+    <v-app>
+        <div>
+            <!-- 중앙 메인화면 -->
+            <div style="width: 70%" ref="main"></div>
+            <!-- 모든 참가자 화면 -->
+            <v-sheet class="mx-auto" max-width="100%">
+                <v-slide-group multiple show-arrows>
+                    <div style="display: inline-block" ref="el1" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el2" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el3" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el4" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el5" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el6" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el7" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el8" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el9" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el10" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el11" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el12" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el13" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el14" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el15" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el16" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el17" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el18" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el19" @click="viewChange"></div>
+                    <div style="display: inline-block" ref="el20" @click="viewChange"></div>
+                </v-slide-group>
+            </v-sheet>
+            <!-- 기능모음 -->
+            <div id="room" style="width: 100%">
+                <!-- 방 그냥 나가기 -->
+                <v-btn type="button" id="button-leave" @mouseup="leaveRoom">Leave room</v-btn>
+                <!-- 내 소리 온 오프 전환 -->
+                <v-btn @click="setMute">소리on/off</v-btn>
+                <!-- 소리 상태 콘솔에 읽어보기 -->
+                <v-btn @click="test">get소리</v-btn>
+                <!-- 내 화면 온 오프 전환 -->
+                <v-btn @click="setScreen">화면on/off</v-btn>
+                <!-- 화면 상태 콘솔에 읽어보기 -->
+                <v-btn @click="test2">get화면</v-btn>
+                <!-- 화면 공유 세팅 -->
+                <v-btn @click="shareScreen">화면공유on/off</v-btn>
+                <!-- 참가자 이름을 불러옴.... -->
+                <select v-model="selected" @click="getPeople" style="width: 100px">
+                    <option v-for="(item, index) in namesFromParticipants" :key="index">
+                        {{ item }}
+                    </option>
+                </select>
 
-            <!-- 해당 인원 강퇴! 이건 방장기능이라 제안하지 않음 -->
-            <v-btn @click="banParticipant">강퇴</v-btn>
-            <!-- 해당 인원 mute 제안하기 -->
-            <v-btn @click="requestMute" v-bind:disabled="tempMuteBtnDisable">mute제안</v-btn>
-            <!-- 모두다 나가기 제안하기 -->
-            <v-btn @click="requestExit" v-bind:disabled="tempExitBtnDisable">스터디 모두 종료 제안</v-btn>
-            <!-- 사다리타기 생성 -->
-            <v-btn @click="onLadder">사다리타기</v-btn>
-            <!-- 채팅창 생성 -->
-            <v-btn @click="onChat">채팅창</v-btn>
-            <span v-show="getIsNewChat">‼</span>
-            <v-btn @click="showEditor">에디터</v-btn>
-        </div>
+                <!-- 해당 인원 강퇴! 이건 방장기능이라 제안하지 않음 -->
+                <v-btn @click="banParticipant">강퇴</v-btn>
+                <!-- 해당 인원 mute 제안하기 -->
+                <v-btn @click="requestMute" v-bind:disabled="tempMuteBtnDisable">mute제안</v-btn>
+                <!-- 모두다 나가기 제안하기 -->
+                <v-btn @click="requestExit" v-bind:disabled="tempExitBtnDisable">스터디 모두 종료 제안</v-btn>
+                <!-- 사다리타기 생성 -->
+                <v-btn @click="onLadder">사다리타기</v-btn>
+                <!-- 채팅창 생성 -->
+                <v-btn @click="onChat">채팅창</v-btn>
+                <span v-show="getIsNewChat">‼</span>
+                <v-btn @click="showEditor">에디터</v-btn>
+            </div>
 
-        <!-- 우상단 알림 css 수정시에는 v-show를 true로 해주신 다음에 디자인 수정하시고, 원래대로 하시면 되겠습니다.-->
-        <div class="alarm" v-show="getIsViewAlarmDiv">
-            <v-btn @click="offViewAlarmDiv">X</v-btn>
-            <h2 v-text="getAlarmDivText"></h2>
-        </div>
-        <!-- 우상단 Mute투표 -->
-        <div class="alarm" v-show="getIsViewMuteDiv">
-            <h2 v-text="getMuteDivText"></h2>
-            <h3 v-text="getRemainTime"></h3>
-            <v-btn @click="muteVote(true)">Yes</v-btn><v-btn @click="muteVote(false)">No</v-btn>
-        </div>
-        <!-- 우상단 방나가기투표 -->
-        <div class="alarm" v-show="getIsViewExitDiv">
-            <h2 v-text="getExitDivText"></h2>
-            >
-            <h3 v-text="getRemainTime"></h3>
-            <v-btn @click="exitVote(true)">Yes</v-btn><v-btn @click="exitVote(false)">No</v-btn>
-        </div>
+            <!-- 우상단 알림 css 수정시에는 v-show를 true로 해주신 다음에 디자인 수정하시고, 원래대로 하시면 되겠습니다.-->
+            <div class="alarm" v-show="getIsViewAlarmDiv">
+                <v-btn @click="offViewAlarmDiv">X</v-btn>
+                <h2 v-text="getAlarmDivText"></h2>
+            </div>
+            <!-- 우상단 Mute투표 -->
+            <div class="alarm" v-show="getIsViewMuteDiv">
+                <h2 v-text="getMuteDivText"></h2>
+                <h3 v-text="getRemainTime"></h3>
+                <v-btn @click="muteVote(true)">Yes</v-btn><v-btn @click="muteVote(false)">No</v-btn>
+            </div>
+            <!-- 우상단 방나가기투표 -->
+            <div class="alarm" v-show="getIsViewExitDiv">
+                <h2 v-text="getExitDivText"></h2>
+                >
+                <h3 v-text="getRemainTime"></h3>
+                <v-btn @click="exitVote(true)">Yes</v-btn><v-btn @click="exitVote(false)">No</v-btn>
+            </div>
 
-        <!-- 사다리 타기(중앙에 배치) -->
-        <ladder id="ladderCSS" v-if="getIsLadder" />
-        <!--  채팅창 우측에 배치 -->
-        <coferencechat id="chatCSS" v-show="getIsChat" />
-        <!-- code editor  -->
-        <CodeEditor
-            class="leftArrange"
-            height="800px"
-            v-show="isShowEditor"
-            v-model="codeContent"
-            :language_selector="true"
-            :languages="[
-                ['javascript', 'JS'],
-                ['python', 'Python'],
-                ['cpp', 'c++'],
-                ['java', 'Java']
-            ]"
-        ></CodeEditor>
-    </div>
+            <!-- 사다리 타기(중앙에 배치) -->
+            <meetingLadder id="ladderCSS" v-if="getIsLadder" />
+            <!--  채팅창 우측에 배치 -->
+            <meetingChat id="chatCSS" v-show="getIsChat" />
+            <!-- code editor  -->
+            <CodeEditor
+                class="leftArrange"
+                height="800px"
+                v-show="isShowEditor"
+                v-model="codeContent"
+                :language_selector="true"
+                :languages="[
+                    ['javascript', 'JS'],
+                    ['python', 'Python'],
+                    ['cpp', 'c++'],
+                    ['java', 'Java']
+                ]"
+            ></CodeEditor>
+        </div>
+    </v-app>
 </template>
 <script>
-import ladder from '@/views/ladder.vue';
-import coferencechat from '@/views/coferencechat.vue';
+import meetingLadder from '../../components/webRTC/meetingLadder.vue';
+import meetingChat from '../../components/webRTC/meetingChat.vue';
 import {mapActions, mapGetters} from 'vuex';
 import CodeEditor from 'simple-code-editor';
-const modulegroupcall = 'modulegroupcall';
+const moduleWebRTC = 'moduleWebRTC';
 function debounce(fn, delay) {
     var timeoutID = null;
     return function () {
@@ -120,8 +122,8 @@ function debounce(fn, delay) {
 }
 export default {
     components: {
-        ladder,
-        coferencechat,
+        meetingLadder,
+        meetingChat,
         CodeEditor
     },
     data() {
@@ -170,7 +172,7 @@ export default {
         this.setMainParents(this.$refs.main);
         this.setSource('webcam');
         const data = {
-            url: 'ws://localhost:8080/groupcall',
+            url: 'wss://i8a104.p.ssafy.io/groupcall',
             person: this.getPersonName,
             room: this.getRoomName
         };
@@ -182,7 +184,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(modulegroupcall, [
+        ...mapGetters(moduleWebRTC, [
             'getPersonName',
             'getRoomName',
             'getAudio',
@@ -211,7 +213,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions(modulegroupcall, [
+        ...mapActions(moduleWebRTC, [
             'addInitEl',
             'setMainParents',
             'setSource',
@@ -247,7 +249,7 @@ export default {
         },
         shareScreen() {
             const data = {
-                url: 'ws://localhost:8080/groupcall',
+                url: 'wss://i8a104.p.ssafy.io/groupcall',
                 person: this.getPersonName,
                 room: this.getRoomName
             };

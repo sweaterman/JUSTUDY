@@ -13,8 +13,6 @@ public enum StudyFrequencyWeek implements EnumModel {
 
     private final String value;
 
-    private static final StudyFrequencyWeek[] list = StudyFrequencyWeek.values();
-
     StudyFrequencyWeek(String value) {
         this.value = value;
     }
@@ -28,9 +26,5 @@ public enum StudyFrequencyWeek implements EnumModel {
     @Override
     public String getValue() {
         return value;
-    }
-
-    public static String getIndex(int i) {
-        return list[i].value;
     }
 }

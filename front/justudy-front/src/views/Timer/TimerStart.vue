@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <v-row :style="{marginTop: '2%'}">
+        <v-row :style="{marginTop: '1%'}">
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <!-- 타이머 메뉴 바 -->
@@ -26,7 +26,7 @@
                 <TimerCamera />
 
                 <!-- 타이머 구현 -->
-                <v-row :style="{marginTop: '5%'}">
+                <v-row :style="{marginTop: '1%'}">
                     <hr width="100%" />
                     <v-col cols="12" md="2" justify="center" align="center">
                         <v-img :src="require('@/assets/fire3.gif')" :style="`width: 1200; height: 1000; `" />
