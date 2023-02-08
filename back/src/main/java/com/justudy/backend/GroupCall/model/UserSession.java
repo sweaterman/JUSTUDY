@@ -113,7 +113,9 @@ public class UserSession implements Closeable {
 
   public void receiveVideoFrom(UserSession sender, String sdpOffer) throws IOException {
 
-    log.info("USER {}: connecting with {} in room {}", this.name, sender.getName(), this.roomName);
+    log.info("USER {}: ", this.name);
+    log.info("connecting with {}", sender.getName());
+    log.info("in room {}", this.roomName);
 
     log.trace("USER {}: SdpOffer for {} is {}", this.name, sender.getName(), sdpOffer);
 
