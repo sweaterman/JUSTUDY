@@ -10,6 +10,7 @@ import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.community.dto.request.CommunitySearch;
 import com.justudy.backend.community.dto.response.CommunityDetailResponse;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
+import com.justudy.backend.community.dto.response.ListResult;
 import com.justudy.backend.community.service.CommunityBookmarkService;
 import com.justudy.backend.community.service.CommunityCommentService;
 import com.justudy.backend.community.service.CommunityLoveService;
@@ -72,7 +73,7 @@ class CommunityControllerTest {
     private final String CONTENT = "테스트내용";
 
     @Test
-    @DisplayName("게시글 조회 - 조건 X, 좋아요 순")
+    @DisplayName("게시글 리스트 조회 - 일반, 좋아요 순")
     void getList() throws Exception {
         //given
         CommunitySearch nullCondition = createCondition(null, null, null);
@@ -89,20 +90,20 @@ class CommunityControllerTest {
         List<CommunityListResponse> sortedLoveCount = list.stream().sorted(Comparator.comparing(CommunityListResponse::getLoveCount).reversed())
                 .collect(Collectors.toList());
         BDDMockito.given(communityService.getCommunities(ArgumentMatchers.eq(nullCondition)))
-                .willReturn(sortedSequence);
+                .willReturn(new ListResult<>(sortedSequence, 30L));
         BDDMockito.given(communityService.getCommunities(ArgumentMatchers.eq(likeCondition)))
-                .willReturn(sortedLoveCount);
+                .willReturn(new ListResult<>(sortedLoveCount, 30L));
 
         //expected
-        mockMvc.perform(get(COMMON_URL + "/board/test")
+        mockMvc.perform(get(COMMON_URL + "/board")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.size()", is(30)))
-                .andExpect(jsonPath("$.[0].sequence", is(30)))
+                .andExpect(jsonPath("$.communityList.size()", is(30)))
+                .andExpect(jsonPath("$.communityList[0].sequence", is(30)))
                 .andDo(print());
-        mockMvc.perform(get(COMMON_URL + "/board/test?&order=like")
+        mockMvc.perform(get(COMMON_URL + "/board?&order=like")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.size()", is(30)))
-                .andExpect(jsonPath("$[0].sequence").value(1))
+                .andExpect(jsonPath("$.communityList.size()", is(30)))
+                .andExpect(jsonPath("$.communityList[0].sequence").value(1))
                 .andDo(print());
     }
 

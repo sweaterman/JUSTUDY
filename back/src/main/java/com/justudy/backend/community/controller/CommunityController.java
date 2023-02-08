@@ -6,6 +6,7 @@ import com.justudy.backend.community.dto.request.*;
 import com.justudy.backend.community.dto.response.CommunityCommentResponse;
 import com.justudy.backend.community.dto.response.CommunityDetailResponse;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
+import com.justudy.backend.community.dto.response.ListResult;
 import com.justudy.backend.community.service.CommunityBookmarkService;
 import com.justudy.backend.community.service.CommunityCommentService;
 import com.justudy.backend.community.service.CommunityLoveService;
@@ -46,12 +47,12 @@ public class CommunityController {
      * order - view, like
      */
     @GetMapping("/board")
-    public List<CommunityListResponse> getList(@ModelAttribute CommunitySearch condition) {
+    public ListResult<List<CommunityListResponse>> getList(@ModelAttribute CommunitySearch condition) {
         return communityService.getCommunities(condition.validateNull());
     }
 
     @GetMapping("/board/notices")
-    public List<CommunityListResponse> getNotices(@PageableDefault(size = 20) Pageable pageable) {
+    public ListResult<List<CommunityListResponse>> getNotices(@PageableDefault(size = 20) Pageable pageable) {
         return communityService.getNotices(pageable);
     }
 

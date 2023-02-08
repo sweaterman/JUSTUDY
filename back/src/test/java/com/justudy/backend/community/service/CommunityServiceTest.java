@@ -9,6 +9,7 @@ import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.community.dto.request.CommunitySearch;
 import com.justudy.backend.community.dto.response.CommunityDetailResponse;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
+import com.justudy.backend.community.dto.response.ListResult;
 import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.exception.ForbiddenRequest;
@@ -82,22 +83,25 @@ class CommunityServiceTest {
         long size = SIZE;
         BDDMockito.given(communityRepository.getAllList(condition))
                 .willReturn(list.subList(0, (int) size));
+        BDDMockito.given(communityRepository.getCountOfList(condition))
+                .willReturn(40L);
         for (long i = 0; i < 20; i++) {
             BDDMockito.given(loveService.getCountOfLove(i))
                     .willReturn((int) i);
         }
 
         //when
-        List<CommunityListResponse> communities = communityService.getCommunities(condition);
+        ListResult<List<CommunityListResponse>> result = communityService.getCommunities(condition);
 
         //then
-        assertThat(communities.size()).isEqualTo(size);
+        assertThat(result.getCommunityList().size()).isEqualTo(size);
         for (int i = 0; i < 3; i++) {
-            assertThat(communities.get(i).isHighlighted()).isTrue();
+            assertThat(result.getCommunityList().get(i).isHighlighted()).isTrue();
         }
-        for (int i = 3; i < communities.size(); i++) {
-            assertThat(communities.get(i).isHighlighted()).isFalse();
+        for (int i = 3; i < result.getCommunityList().size(); i++) {
+            assertThat(result.getCommunityList().get(i).isHighlighted()).isFalse();
         }
+        assertThat(result.getTotalCount()).isEqualTo(40L);
     }
 
     @Test
@@ -119,19 +123,22 @@ class CommunityServiceTest {
         long size = SIZE;
         BDDMockito.given(communityRepository.getAllList(condition))
                 .willReturn(list.subList(0, (int) size));
+        BDDMockito.given(communityRepository.getCountOfList(condition))
+                .willReturn(40L);
         for (long i = 0; i < 20; i++) {
             BDDMockito.given(loveService.getCountOfLove(i))
                     .willReturn((int) i);
         }
 
         //when
-        List<CommunityListResponse> communities = communityService.getCommunities(condition);
+        ListResult<List<CommunityListResponse>> result = communityService.getCommunities(condition);
 
         //then
-        assertThat(communities.size()).isEqualTo(size);
-        for (int i = 0; i < communities.size(); i++) {
-            assertThat(communities.get(i).isHighlighted()).isFalse();
+        assertThat(result.getCommunityList().size()).isEqualTo(size);
+        for (int i = 0; i < result.getCommunityList().size(); i++) {
+            assertThat(result.getCommunityList().get(i).isHighlighted()).isFalse();
         }
+        assertThat(result.getTotalCount()).isEqualTo(40L);
     }
 
     @Test
@@ -216,7 +223,7 @@ class CommunityServiceTest {
         ReflectionTestUtils.setField(community, "sequence", RIGHT_SEQUENCE);
         ReflectionTestUtils.setField(community, "member", mockMember);
 
-        BDDMockito.given(communityRepository.findById(10L))
+        BDDMockito.given(communityRepository.findBySequence(10L))
                 .willReturn(Optional.of(community));
 
         //expected

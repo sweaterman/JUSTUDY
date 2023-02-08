@@ -8,6 +8,7 @@ import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.community.dto.request.CommunitySearch;
 import com.justudy.backend.community.dto.response.CommunityDetailResponse;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
+import com.justudy.backend.community.dto.response.ListResult;
 import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.member.domain.MemberEntity;
@@ -80,14 +81,20 @@ public class CommunityService {
         return CommunityDetailResponse.makeBuilder(community);
     }
 
-    public List<CommunityListResponse> getCommunities(CommunitySearch condition) {
-        return communityRepository.getAllList(condition).stream()
+    public ListResult<List<CommunityListResponse>> getCommunities(CommunitySearch condition) {
+        List<CommunityListResponse> communityList = communityRepository.getAllList(condition).stream()
                 .map(CommunityListResponse::new).collect(Collectors.toList());
+        Long countOfList = communityRepository.getCountOfList(condition);
+
+        return new ListResult<>(communityList, countOfList);
     }
 
-    public List<CommunityListResponse> getNotices(Pageable pageable) {
-        return communityRepository.getAllNotice(pageable).stream()
+    public ListResult<List<CommunityListResponse>> getNotices(Pageable pageable) {
+        List<CommunityListResponse> noticeList = communityRepository.getAllNotice(pageable).stream()
                 .map(CommunityListResponse::new).collect(Collectors.toList());
+        Long countOfNotices = communityRepository.getCountOfNotices();
+
+        return new ListResult<>(noticeList, countOfNotices);
     }
 
     public List<CommunityListResponse> getMostLoveCommunitiesOfWeek(Pageable pageable) {
