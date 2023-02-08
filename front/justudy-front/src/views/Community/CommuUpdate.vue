@@ -37,12 +37,13 @@
                             </v-col>
                             <v-col cols="12" md="10">
                                 <v-text-field
-                                    v-model="board.title"
+                                    v-model="study.title"
                                     outlined
                                     label="제목을 입력하세요"
                                     style="width: 80%; margin-right: 10%; margin-left: 5%"
                                     :rules="[v => (!!(v.length > 0) && !(v.length >= 30)) || '제목 글자수를 지켜주세요.']"
                                 >
+                                    {{ study.title }}
                                 </v-text-field>
                             </v-col>
                         </v-row>
