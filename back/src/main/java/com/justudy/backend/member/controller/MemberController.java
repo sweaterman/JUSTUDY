@@ -48,7 +48,7 @@ public class MemberController {
      * @return MypageRespoonse 마이페이지 멤버 응답 객체
      */
     @GetMapping("/mypage")
-    public MypageResponse getMypageInfomation(HttpSession session) {
+    public MypageResponse getMypageInformation(HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
         return memberService.getMypage(loginSequence);
