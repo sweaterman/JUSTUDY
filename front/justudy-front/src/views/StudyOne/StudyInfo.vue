@@ -187,46 +187,46 @@ export default {
     },
     data() {
         return {
-            // studyInfo: {
-            //     sequence: 1,
-            //     name: '리액트 용자 모임',
-            //     leader: '이연희',
-            //     population: 10,
-            //     category: 'Vue',
-            //     member: [
-            //         {
-            //             sequence: 1,
-            //             nickname: '이연희',
-            //             name: '이연희이름',
-            //             badge: 6542
-            //         },
-            //         {
-            //             sequence: 2,
-            //             nickname: '김싸피임',
-            //             name: '김싸피',
-            //             badge: 5422
-            //         },
-            //         {
-            //             sequence: 3,
-            //             nickname: '박싸피임',
-            //             name: '박싸피룰루',
-            //             badge: 546
-            //         }
-            //     ],
-            //     level: '초보',
-            //     meeting: '온/오프라인',
-            //     isOpen: true,
-            //     github: 'http://this.is.git.link',
-            //     notion: 'http://this.is.notion.link',
-            //     start_time: '2023.01.02',
-            //     information: `주제: 리액트입니다 \n
-            //     목표: 모두 리액트 마스터하기 \n
-            //     예상 커리큘럼: Do it 리액트! 책을 순서대로 공부합니다. \n
-            //     개설 동기: 리액트를 너무 공부하고 싶었어요.. \n
-            //     주의사항: 노쇼 금지! `,
-            //     isLeader: true,
-            //     isMember: false
-            // },
+            studyInfo: {
+                sequence: 1,
+                name: '리액트 용자 모임',
+                leader: '이연희',
+                population: 10,
+                category: 'Vue',
+                member: [
+                    {
+                        sequence: 1,
+                        nickname: '이연희',
+                        name: '이연희이름',
+                        badge: 6542
+                    },
+                    {
+                        sequence: 2,
+                        nickname: '김싸피임',
+                        name: '김싸피',
+                        badge: 5422
+                    },
+                    {
+                        sequence: 3,
+                        nickname: '박싸피임',
+                        name: '박싸피룰루',
+                        badge: 546
+                    }
+                ],
+                level: '초보',
+                meeting: '온/오프라인',
+                isOpen: true,
+                github: 'http://this.is.git.link',
+                notion: 'http://this.is.notion.link',
+                start_time: '2023.01.02',
+                information: `주제: 리액트입니다 \n
+                목표: 모두 리액트 마스터하기 \n
+                예상 커리큘럼: Do it 리액트! 책을 순서대로 공부합니다. \n
+                개설 동기: 리액트를 너무 공부하고 싶었어요.. \n
+                주의사항: 노쇼 금지! `,
+                isLeader: true,
+                isMember: false
+            },
             roomOpen: false, //스터디화상룸이 열려있는지 확인하는 변수
             withdrawDialog: false //탈퇴 모달창
         };
