@@ -68,7 +68,6 @@ public class MemberControllerTest {
                 .ssafyId("0847968")
                 .phone("01051391111")
                 .email("ssafylee@ssafy.com")
-                .mmId("sklee0206")
                 .region("SEOUL")
                 .dream("백엔드취업 희망")
                 .category(new String[]{"JAVA", "Spring"})
