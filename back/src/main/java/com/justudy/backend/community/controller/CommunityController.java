@@ -69,8 +69,10 @@ public class CommunityController {
      * @return ResponseEntity<CommunityResponse> 200 OK, 커뮤니티 상세 정보
      */
     @GetMapping("/board/{boardId}")
-    public ResponseEntity<CommunityDetailResponse> readCommunityById(@PathVariable("boardId") Long communitySequence) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunityDetail(communitySequence));
+    public ResponseEntity<CommunityDetailResponse> readCommunityById(@PathVariable("boardId") Long communitySequence,
+                                                                     HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunityDetail(communitySequence, loginSequence));
     }
 
     /**
