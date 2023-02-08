@@ -191,7 +191,7 @@ class Webcam {
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const modelPath = './public/models';
+const modelPath = 'https://cdn.jsdelivr.net/gh/cgarciagl/face-api.js/weights/';
 const activeTime = 0.23;
 export default {
     name: 'FaceRecognition',
@@ -232,10 +232,10 @@ export default {
                         console.log('webcam started');
                         console.log(result);
                         Promise.all([
-                            window.faceapi.nets.tinyFaceDetector.loadFromDisk(modelPath),
-                            window.faceapi.nets.faceLandmark68TinyNet.loadFromDisk(modelPath),
-                            window.faceapi.nets.faceExpressionNet.loadFromDisk(modelPath),
-                            window.faceapi.nets.ageGenderNet.loadFromDisk(modelPath)
+                            window.faceapi.nets.tinyFaceDetector.loadFromUri(modelPath),
+                            window.faceapi.nets.faceLandmark68TinyNet.loadFromUri(modelPath),
+                            window.faceapi.nets.faceExpressionNet.loadFromUri(modelPath),
+                            window.faceapi.nets.ageGenderNet.loadFromUri(modelPath)
                         ]).then(() => {
                             this.createCanvas();
                             this.startDetection();
