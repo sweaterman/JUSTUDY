@@ -57,9 +57,6 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
         if (commonList.isEmpty()) {
             return List.of();
         }
-//        if (!list.addAll(commonList)) {
-//            throw new ImportBoardFail("community", "게시글 리스트 가져오기 실패");
-//        }
         return list;
     }
 

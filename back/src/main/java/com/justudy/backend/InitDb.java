@@ -27,8 +27,10 @@ import com.justudy.backend.timer.dto.request.ActivityRequest;
 import com.justudy.backend.timer.dto.request.ActivityRequest;
 import com.justudy.backend.timer.service.MemberActivityService;
 import com.justudy.backend.timer.service.RoomActivityService;
+
 import java.sql.Date;
 import java.time.LocalDate;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,22 @@ import java.time.LocalDate;
 public class InitDb {
 
     private final InitService initService;
+
+    private static MemberCreate makeMemberCreate(int number) {
+        MemberCreate request = MemberCreate.builder()
+                .userId("test" + number)
+                .password("1234")
+                .passwordCheck("1234")
+                .username("테스트" + number)
+                .nickname("테스트 봇" + number)
+                .region("SEOUL")
+                .category(new String[]{"Java", "Spring"})
+                .ssafyId("08" + number)
+                .phone(String.valueOf(number))
+                .email("testEmail" + number + "@ssafy.com")
+                .build();
+        return request;
+    }
 
     @PostConstruct
     public void init() throws ParseException {
@@ -100,7 +118,7 @@ public class InitDb {
             studyMemberService.createStudyMember(StudyMemberCreate.builder().memberSeq(member.getSequence()).studySeq(studyNotLeader).build());
             //팀장 아닐때 지원한 스터디
             final Long studyNotLeader2 = 226L;
-            studyResumeService.createStudyResume(studyNotLeader2, StudyResumeCreate.builder().memberSeq(member.getSequence()).studySeq(studyNotLeader2).content("지원할까말까").build());
+            studyResumeService.createStudyResume(StudyResumeCreate.builder().memberSeq(member.getSequence()).studySeq(studyNotLeader2).content("지원할까말까").build());
 
             //지원안한 스터디
             final Long studyNotApply = 177L;
@@ -120,8 +138,8 @@ public class InitDb {
         }
 
         private void saveStudyFrequency() throws ParseException {
-            SimpleDateFormat formatter = new SimpleDateFormat("HH시 mm분");
-            java.util.Date date = formatter.parse("18시 00분");
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+            java.util.Date date = formatter.parse("18:00");
             for (int i = 0; i < 10; i++) {
                 long memberSequence = 50 + (3 * i);
                 MemberEntity findmember = memberService.getMember(memberSequence);
@@ -131,14 +149,14 @@ public class InitDb {
                         StudyFrequencyCreate
                                 .builder()
                                 .studySeq(findStudy.getSequence())
-                                .week(1L)
-                                .startTime(date)
-                                .endTime(date)
+                                .week("월")
+                                .startTime(formatter.format(date))
+                                .endTime(formatter.format(date))
                                 .build());
             }
         }
 
-        private void saveRank(){
+        private void saveRank() {
             rankDummy.renewalStudyYesterdayRank();
             rankDummy.renewalStudyWeekRank();
             rankDummy.renewalStudyMonthRank();
@@ -147,20 +165,21 @@ public class InitDb {
             rankDummy.renewalPersonMonthRank();
 
         }
+
         private void saveTimer() {
             for (int i = 0; i < 10; i++) {
                 long memberSequence = 50 + (3 * i);
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
-                        new ActivityRequest((long) (Math.random() * 50), "frontend"), memberSequence,
-                        day);
+                            new ActivityRequest((long) (Math.random() * 50), "frontend"), memberSequence,
+                            day);
                 }
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
-                        new ActivityRequest((long) (Math.random() * 50), "backend"), memberSequence,
-                        day);
+                            new ActivityRequest((long) (Math.random() * 50), "backend"), memberSequence,
+                            day);
                 }
 
             }
@@ -168,14 +187,14 @@ public class InitDb {
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     roomActivityService.saveRoomAcitivity(
-                        new ActivityRequest((long) (Math.random() * 50), "frontend"), i,
-                        day);
+                            new ActivityRequest((long) (Math.random() * 50), "frontend"), i,
+                            day);
                 }
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     roomActivityService.saveRoomAcitivity(
-                        new ActivityRequest((long) (Math.random() * 50), "backend"), i,
-                        day);
+                            new ActivityRequest((long) (Math.random() * 50), "backend"), i,
+                            day);
                 }
 
             }
@@ -238,7 +257,7 @@ public class InitDb {
         }
 
         public void saveStudyRoom() {
-            for (long i = 130; i < 230; i+=2)
+            for (long i = 130; i < 230; i += 2)
                 studyRoomService.saveStudyRoom(i);
         }
 
@@ -302,8 +321,8 @@ public class InitDb {
         private void makeMobileSubCategory(CategoryEntity mobile) {
             categoryRepository.save(createSubCategory("flutter", "Flutter", 1L, mobile));
             categoryRepository.save(createSubCategory("swift", "Swift", 1L, mobile));
-            categoryRepository.save(createSubCategory( "kotlinMobile", "Kotlin", 1L, mobile));
-            categoryRepository.save(createSubCategory("react-native","ReactNative", 1L, mobile));
+            categoryRepository.save(createSubCategory("kotlinMobile", "Kotlin", 1L, mobile));
+            categoryRepository.save(createSubCategory("react-native", "ReactNative", 1L, mobile));
             categoryRepository.save(createSubCategory("unity", "Unity", 1L, mobile));
         }
 
@@ -356,19 +375,4 @@ public class InitDb {
                     .build();
         }
     }
-    private static MemberCreate makeMemberCreate(int number) {
-        MemberCreate request = MemberCreate.builder()
-                .userId("test" + number)
-                .password("1234")
-                .passwordCheck("1234")
-                .username("테스트" + number)
-                .nickname("테스트 봇" + number)
-                .region("SEOUL")
-                .category(new String[]{"Java", "Spring"})
-                .ssafyId("08" + number)
-                .phone(String.valueOf(number))
-                .email("testEmail" + number + "@ssafy.com")
-                .build();
-        return request;
-        }
 }

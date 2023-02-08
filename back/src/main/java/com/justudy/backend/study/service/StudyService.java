@@ -7,6 +7,7 @@ import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.service.FileStore;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.member.repository.MemberRepository;
+import com.justudy.backend.member.service.MemberService;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.dto.request.StudyEdit;
@@ -59,7 +60,8 @@ public class StudyService {
     public StudyDetailResponse readStudy(Long studySequence) {
         StudyEntity entity = studyRepository.findById(studySequence)
                 .orElseThrow(StudyNotFound::new);
-        return StudyDetailResponse.makeBuilder(entity);
+        String leaderName = memberRepository.findById(entity.getLeaderSeq()).get().getNickname();
+        return StudyDetailResponse.makeBuilder(entity, leaderName);
     }
 
     public StudyDetailResponse readDetailStudy(Long studySequence, Long loginSequence) {
@@ -86,11 +88,12 @@ public class StudyService {
 
 
         //리더일시
+        String leaderName = memberRepository.findById(loginSequence).get().getNickname();
         if (entity.getLeaderSeq() == loginSequence) {
             isLeader = true;
             isMember = false;
         }
-        return StudyDetailResponse.makeBuilder(entity, isApply, isMember, isLeader);
+        return StudyDetailResponse.makeBuilder(entity, isApply, isMember, isLeader, leaderName);
     }
 
     @Transactional
@@ -115,9 +118,9 @@ public class StudyService {
     }
 
 
-    public StudySearchResponse search(int page, List<String> sub, String type, String search) {
+    public StudySearchResponse search(Pageable pageable, List<String> sub, String type, String search) {
         int MAX_STUDY_PAGE_SIZE = 9;
-        Pageable pageable = PageRequest.of(page, MAX_STUDY_PAGE_SIZE);
+//        Pageable pageable = PageRequest.of(page, MAX_STUDY_PAGE_SIZE);
 
         String studyLeader = null;
         String studyName = null;

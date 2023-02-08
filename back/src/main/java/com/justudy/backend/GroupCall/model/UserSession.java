@@ -113,7 +113,9 @@ public class UserSession implements Closeable {
 
   public void receiveVideoFrom(UserSession sender, String sdpOffer) throws IOException {
 
-    log.info("USER {}: connecting with {} in room {}", this.name, sender.getName(), this.roomName);
+    log.info("USER {}: ", this.name);
+    log.info("connecting with {}", sender.getName());
+    log.info("in room {}", this.roomName);
 
     log.trace("USER {}: SdpOffer for {} is {}", this.name, sender.getName(), sdpOffer);
 
@@ -272,6 +274,12 @@ public class UserSession implements Closeable {
   public void transferExit() throws IOException {
     final JsonObject sender = new JsonObject();
     sender.addProperty("id", "exit");
+    this.sendMessage(sender);
+  }
+  public void transferRequestBan(String personName) throws IOException {
+    final JsonObject sender = new JsonObject();
+    sender.addProperty("id", "requestBanVote");
+    sender.addProperty("name", personName);
     this.sendMessage(sender);
   }
 

@@ -18,6 +18,10 @@ public class StudyResumeCreate {
     private Long memberSeq;
     private String content;
 
+    public void changeMemberSeq(Long memberSeq) {
+        this.memberSeq = memberSeq;
+    }
+
     public StudyResumeEntity toEntity(StudyEntity studyEntity, MemberEntity memberEntity) {
         return StudyResumeEntity
                 .builder()
