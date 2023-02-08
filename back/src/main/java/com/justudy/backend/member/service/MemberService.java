@@ -302,19 +302,19 @@ public class MemberService {
         return passwordEncoder.encode(password);
     }
 
-    private void isDuplicatedUserId(String userId) {
+    public void isDuplicatedUserId(String userId) {
         if (memberRepository.findUserId(userId).isPresent()) {
             throw new ConflictRequest("userId", "이미 가입된 아이디입니다.");
         }
     }
 
-    private void isDuplicatedNickname(String nickname) {
+    public void isDuplicatedNickname(String nickname) {
         if (memberRepository.findNickname(nickname).isPresent()) {
             throw new ConflictRequest("nickname", "이미 가입된 닉네임입니다.");
         }
     }
 
-    private void isDuplicatedSsafyId(String ssafyId) {
+    public void isDuplicatedSsafyId(String ssafyId) {
         if (memberRepository.findSsafyId(ssafyId).isPresent()) {
             throw new ConflictRequest("ssafyId", "이미 가입된 SSAFY학번입니다.");
         }
