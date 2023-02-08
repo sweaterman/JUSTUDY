@@ -35,7 +35,8 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
     public List<CommunityEntity> getAllList(CommunitySearch communitySearch) {
         List<CommunityEntity> list = queryFactory.selectFrom(communityEntity)
                 .join(communityEntity.member, memberEntity).fetchJoin()
-                .where(communityEntity.isHighlighted.eq(true))
+                .where(communityEntity.isHighlighted.eq(true),
+                        communityEntity.isDeleted.eq(false))
                 .limit(communitySearch.getNoticeBoardSize())
                 .orderBy(communityEntity.sequence.desc())
                 .fetch();
@@ -44,6 +45,7 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
                 .join(communityEntity.member, memberEntity).fetchJoin()
                 .join(communityEntity.category, categoryEntity).fetchJoin()
                 .where(communityEntity.isHighlighted.eq(false),
+                        communityEntity.isDeleted.eq(false),
                         eqCategory(communitySearch.getCategory()),
                         eqTypeAndSearch(communitySearch))
                 .limit(communitySearch.getSize() - list.size())
@@ -57,14 +59,35 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
     }
 
     @Override
+    public Long getCountOfList(CommunitySearch communitySearch) {
+        return queryFactory.select(communityEntity.count())
+                .from(communityEntity)
+                .where(communityEntity.isHighlighted.eq(false),
+                        communityEntity.isDeleted.eq(false),
+                        eqCategory(communitySearch.getCategory()),
+                        eqTypeAndSearch(communitySearch))
+                .fetchFirst();
+    }
+
+    @Override
     public List<CommunityEntity> getAllNotice(Pageable pageable) {
         return queryFactory.selectFrom(communityEntity)
                 .join(communityEntity.member, memberEntity).fetchJoin()
-                .where(communityEntity.isHighlighted.eq(true))
+                .where(communityEntity.isHighlighted.eq(true),
+                        communityEntity.isDeleted.eq(false))
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .orderBy(communityEntity.sequence.desc())
                 .fetch();
+    }
+
+    @Override
+    public Long getCountOfNotices() {
+        return queryFactory.select(communityEntity.count())
+                .from(communityEntity)
+                .where(communityEntity.isHighlighted.eq(true),
+                        communityEntity.isDeleted.eq(false))
+                .fetchFirst();
     }
 
     public List<CommunityEntity> getMostLoveListOfWeek(Pageable pageable) {
