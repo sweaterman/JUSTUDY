@@ -11,10 +11,10 @@
                         <div align="left" :style="{fontSize: 'xx-large'}">자유 게시판</div>
                     </v-col>
                     <v-col cols="12" md="2" align="right">
-                        <v-select :items="searchoption" v-model="searchoptionselected" :style="{width: '150px'}" />
+                        <v-select :items="searchoption" item-text="value" item-value="key" v-model="searchoptionselected" label="항목선택" :style="{width: '150px'}" />
                     </v-col>
                     <v-col cols="12" md="4">
-                        <v-text-field v-model="searchkeyword" dense outlined label="검색키워드" full-width />
+                        <v-text-field v-model="searchkeyword" dense outlined label="검색키워드" full-width @keyup.enter = "searchstart"/>
                     </v-col>
                     <v-col cols="12" md="1">
                         <v-btn @click="searchstart">검색</v-btn>
@@ -35,6 +35,10 @@
             <v-col cols="12" md="8">
                 <v-row>
                     <v-simple-table style="width: 100%">
+                                <!-- 
+                                    정렬 클릭시 updateData(category,type,search,order) 실행하면 됩니다
+                                    order에 ""값이면 번호, "like" 면 좋아요 "view"면 조회수
+                                -->
                         <thead>
                             <tr style="font-weight: bolder">
                                 <td style="width: 15%; font-size: x-large">No</td>
@@ -46,6 +50,7 @@
                             </tr>
                         </thead>
                         <tbody>
+                            
                             <tr v-for="(value, index) in Data" :key="index" @click="movetocontent(value.sequence)">
                                 <td>{{ index + 1 }}</td>
                                 <td>
@@ -107,23 +112,28 @@
 <script>
 import CategoryHeader from '../../components/common/CategoryHeader.vue';
 // import {mapState} from 'vuex';
-import CommunityData from '@/data/CommunityData';
 
 export default {
     name: 'CommuBoard',
     components: {CategoryHeader},
-    async created() {
-        await this.$store.dispatch('moduleCommunity/getCommunityBoard', {number: this.$route.params.page - 1, category: this.$route.query.category});
-        this.Data = this.$store.state.moduleCommunity.CommunityBoard;
-    },
     data() {
         return {
             Data: [],
-            cnt: CommunityData.length
+            cnt: 0,
+            // searchoption : [{key :"작성자",value :"title"},{key :"작성자",value :"title"},{key :"작성자",value :"title"}],
+            searchoption : [{key:"nickname",value:"작성자"},{key:"title",value:"제목"},{key:"content",value:"내용"}],
+            searchoptionselected : "",
+            searchkeyword: "",
+            category: "",
+            type:"",
+            search:"",
             //contentlist: [], // 현재 게시판과 페이지에 맞는 글 리스트들
             //cnt: 0 // 현재 게시판의 총 글 개수
         };
     },
+    mounted(){
+        this.updateData("");
+    },  
     computed: {
         // // computed는 계산 목적으로 사용된다고 보면 됨
         totalpage() {
@@ -146,9 +156,12 @@ export default {
         // movetoboard3() {
         //     window.location.href = '/community/3/?page=1';
         // },
-        async updateData(data) {
-            await this.$store.dispatch('moduleCommunity/getCommunityBoard', {number: this.$route.params.page - 1, category: data});
-            this.Data = this.$store.state.moduleCommunity.CommunityBoard;
+        async updateData(data,type,search,order) {
+            await this.$store.dispatch('moduleCommunity/getCommunityBoard', {number: this.$route.params.page, category: data, type:type,search:search,order:order});
+           this.Data = this.$store.state.moduleCommunity.CommunityBoard;
+           this.category = data;
+           this.type=this.searchoptionselected;
+           this.search=this.searchkeyword;
         },
 
         movetomain() {
@@ -196,6 +209,9 @@ export default {
                 var pp = parseInt(this.$route.query.page) + 1;
                 window.location.href = window.location.pathname + '?page=' + pp;
             }
+        },
+        searchstart(){
+            this.updateData(this.category,this.searchoptionselected,this.searchkeyword)
         }
     }
 };

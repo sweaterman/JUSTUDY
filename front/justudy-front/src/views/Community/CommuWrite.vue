@@ -20,15 +20,15 @@
                 <v-form v-model="isFormValid" ref="form" @submit.prevent="onSubmitForm">
                     <v-card>
                         <!-- 작성자 -->
-                        <v-row>
+                        <!-- <v-row>
                             <v-col cols="12" md="2" justify="center" align="center" :style="{color: 'white'}">
                                 <v-btn depressed color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '20%', marginLeft: '15%'}">작성자</v-btn>
                             </v-col>
                             <v-col cols="12" md="10">
-                                <v-text-field v-model="writer" solo readonly outlined depressed style="width: 80%; height: 20px; margin-right: 10%; margin-left: 5%; margin-top: 4%"></v-text-field>
-                                <!-- <v-btn color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '3%', marginLeft: '10%'}"></v-btn> -->
+                                <v-text-field v-model="nickname" solo readonly outlined depressed style="width: 80%; height: 20px; margin-right: 10%; margin-left: 5%; margin-top: 4%"></v-text-field>
+                                <v-btn color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '3%', marginLeft: '10%'}"></v-btn>
                             </v-col>
-                        </v-row>
+                        </v-row> -->
 
                         <!-- 제목 -->
                         <v-row>
@@ -83,7 +83,6 @@
 </template>
 
 <script>
-import CommunityData from '@/data/CommunityData';
 import CategoryHeader from '../../components/common/CategoryHeader.vue';
 import TextButton from '../../components/common/TextButton.vue';
 
@@ -92,8 +91,6 @@ export default {
     data() {
         // const index = this.$route.params.id;
         return {
-            data: CommunityData,
-            writer: '돌숭이',
             title: '',
             content: '',
             tab: null,
@@ -107,6 +104,8 @@ export default {
                 isHighlighted: false
             }
         };
+    },
+    mounted(){
     },
     methods: {
         moveback() {
@@ -124,7 +123,7 @@ export default {
             // });
             this.board.category = this.$route.query.category;
             this.board.isHighlighted = false;
-            console.log(this.board.category);
+            console.log(this.board);
             await this.$store.dispatch('moduleCommunity/getCommunityContentWrite', {board: this.board});
             this.$router.push({
                 path: window.history.back()

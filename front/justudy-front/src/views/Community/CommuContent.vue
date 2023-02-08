@@ -20,7 +20,7 @@
                     <!-- 글쓴이 -->
                     <v-row>
                         <div style="width: 300px; margin-left: 9%; margin-top: 1.7%; margin-bottom: 0.5%">
-                            <h3>{{ Data.writer }}</h3>
+                            <h3>작성자 : {{ Data.nickname }}</h3>
                         </div>
                         <!-- <v-text-field v-model="writer" solo readonly outlined depressed label="글쓴이" style="width: 80%; height: 20px; margin-right: 10%; margin-top: 4%"></v-text-field> -->
                         <!-- <v-btn color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '3%', marginLeft: '10%'}"></v-btn> -->
@@ -56,7 +56,7 @@
                     </v-col>
                     <v-col cols="12" md="6"> </v-col>
                     <v-col cols="12" md="2" align="right">
-                        <v-btn @click="editcontent" v-if="editable === false" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정</v-btn>
+                        <v-btn @click="editcontent" v-if="editable == false" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정</v-btn>
                         <!-- <v-btn @click="editcontentfinish" v-if="editable === true" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정완료</v-btn> -->
                     </v-col>
                     <v-col cols="12" md="2">
@@ -74,7 +74,7 @@
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <v-row>
-                    <CommuComment :contentId="contentId" />
+                    <CommuComment v-if="Data !==null " :contentId="Data.sequence" />
                 </v-row>
             </v-col>
             <v-col cols="12" md="2" />
@@ -91,7 +91,7 @@ export default {
     data() {
         const index = this.$route.params.id;
         return {
-            Data: {},
+            Data: null,
             index: index,
             // writer: '돌숭이', // 작성자
             // title: '돌숭이의 꿀팁', // 글 제목
