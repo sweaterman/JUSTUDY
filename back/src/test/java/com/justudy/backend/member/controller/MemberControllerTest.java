@@ -2,9 +2,9 @@ package com.justudy.backend.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.justudy.backend.common.enum_util.Level;
+import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
-import com.justudy.backend.file.service.FileStore;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberStatus;
@@ -18,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -32,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
-@WebMvcTest(MemberController.class)
+@WebMvcTest(value = MemberController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 public class MemberControllerTest {
 
     @Autowired
@@ -46,9 +47,6 @@ public class MemberControllerTest {
 
     @MockBean
     private UploadFileService uploadFileService;
-
-    @MockBean
-    private FileStore fileStore;
 
     @Test
     @DisplayName("POST /register 요청")
@@ -68,7 +66,6 @@ public class MemberControllerTest {
                 .ssafyId("0847968")
                 .phone("01051391111")
                 .email("ssafylee@ssafy.com")
-                .mmId("sklee0206")
                 .region("SEOUL")
                 .dream("백엔드취업 희망")
                 .category(new String[]{"JAVA", "Spring"})
@@ -86,6 +83,20 @@ public class MemberControllerTest {
                 .andDo(print());
 
         BDDMockito.then(uploadFileService).should().getUploadFile(anyLong());
+    }
+
+    @Test
+    @DisplayName("GET /check")
+    void validateMember() throws Exception {
+        //given
+        final String NICKNAME = "nickname";
+        final String SSAFY_ID = "078462";
+        final String USER_ID = "sklee0206";
+
+        BDDMockito.willThrow(InvalidRequest.class).given(memberService).isDuplicatedNickname(NICKNAME);
+
+        mockMvc.perform(get("/api/member/check" + "?nickname=test&ssafyid=1234&userid=sklee0206"))
+                .andDo(print());
     }
 
     @Test

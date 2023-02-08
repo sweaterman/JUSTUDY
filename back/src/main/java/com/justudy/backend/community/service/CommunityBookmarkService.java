@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -51,7 +52,9 @@ public class CommunityBookmarkService {
         return bookmarkRepository.findCommunitySequence(loginSequence);
     }
 
-
+    public Optional<CommunityBookmarkEntity> findBookmark(Long loginSequence , Long communitySequence) {
+        return bookmarkRepository.findBookmark(loginSequence, communitySequence);
+    }
 
     private CommunityBookmarkEntity makeNewBookmark(Long loginSequence, Long communitySequence) {
         return new CommunityBookmarkEntity(loginSequence, communitySequence);
