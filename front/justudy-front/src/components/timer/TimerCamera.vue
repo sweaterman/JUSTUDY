@@ -232,10 +232,10 @@ export default {
                         console.log('webcam started');
                         console.log(result);
                         Promise.all([
-                            window.faceapi.nets.tinyFaceDetector.load(modelPath),
-                            window.faceapi.nets.faceLandmark68TinyNet.load(modelPath),
-                            window.faceapi.nets.faceExpressionNet.load(modelPath),
-                            window.faceapi.nets.ageGenderNet.load(modelPath)
+                            window.faceapi.nets.tinyFaceDetector.loadFromUri(modelPath),
+                            window.faceapi.nets.faceLandmark68TinyNet.loadFromUri(modelPath),
+                            window.faceapi.nets.faceExpressionNet.loadFromUri(modelPath),
+                            window.faceapi.nets.ageGenderNet.loadFromUri(modelPath)
                         ]).then(() => {
                             this.createCanvas();
                             this.startDetection();
