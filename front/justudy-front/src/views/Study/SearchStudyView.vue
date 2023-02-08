@@ -160,8 +160,6 @@ export default {
                 this.searchSelect = null;
                 this.searchContent = null;
 
-                console.log(type, content);
-
                 if (content != null) {
                     //기존에 선택한 카테고리가 이미 있다면 합치고 중복제거.
                     this.choice = this.choice.concat(content);
@@ -170,10 +168,15 @@ export default {
 
                 //데이터 검색하고 받아오기.
                 this.pageNum = 1;
-                await this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: 'category', content: this.choice});
+                if (this.choice == []) {
+                    await this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: 'category', content: ''});
+                } else {
+                    await this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: 'category', content: this.choice});
+                }
             }
         },
         remove(i) {
+            this.pageNum = 1;
             this.choice = this.choice.filter(element => element !== i);
             this.doSearch('category');
         },
