@@ -12,6 +12,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -22,6 +23,7 @@ import static com.justudy.backend.category.domain.QCategoryEntity.categoryEntity
 import static com.justudy.backend.community.domain.QCommunityEntity.communityEntity;
 import static com.justudy.backend.member.domain.QMemberEntity.memberEntity;
 
+@Slf4j
 @RequiredArgsConstructor
 public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
 
@@ -52,9 +54,12 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
                 .offset(communitySearch.getOffsetWithNotice(list.size()))
                 .orderBy(orderByCondition(communitySearch))
                 .fetch();
-        if (!list.addAll(commonList)) {
-            throw new ImportBoardFail("community", "게시글 리스트 가져오기 실패");
+        if (commonList.isEmpty()) {
+            return List.of();
         }
+//        if (!list.addAll(commonList)) {
+//            throw new ImportBoardFail("community", "게시글 리스트 가져오기 실패");
+//        }
         return list;
     }
 
@@ -186,12 +191,15 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
 
     private BooleanExpression eqTypeAndSearch(CommunitySearch communitySearch) {
         SearchType type = communitySearch.getType();
+        log.info("type = {}", type);
         if (type == null) {
             return null;
         }
+        log.info("communitySearch.getSearch() = {}", communitySearch.getSearch());
         if (communitySearch.getSearch() == null) {
             return null;
         }
+        log.info("type.getExpression = {}", type.getExpression(communitySearch.getSearch()));
         return type.getExpression(communitySearch.getSearch());
     }
 
