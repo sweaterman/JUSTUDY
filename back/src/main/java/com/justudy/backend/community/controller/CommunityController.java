@@ -233,40 +233,4 @@ public class CommunityController {
         communityCommentService.deleteComment(id, commentId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
-
-
-
-
-    /**
-     * 모든 검색 정보를 가져오는 API
-     *
-     * @param page   페이지 넘버
-     * @param type   검색 분류(아이디, 제목, 내용)
-     * @param search 검색할 값
-     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
-     */
-//    @GetMapping("/board/search")
-    public ResponseEntity<List<CommunityDetailResponse>> readAllCommunityBySearch(@RequestParam("page") int page, @RequestParam("type") String type, @RequestParam("saerch") String search) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.search(page, type, search));
-    }
-    /**
-     * 일주일간 좋아요 많은 커뮤니티 정보를 가져오는 API
-     *
-     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
-     */
-//    @GetMapping("/board/love")
-    public ResponseEntity<List<CommunityDetailResponse>> readPopularCommunity() {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readPopularCommunity());
-    }
-
-    /**
-     * 커뮤니티 공지 정보를 가져오는 API
-     *
-     * @param page 페이지 넘버
-     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 공지 정보 목록
-     */
-//    @GetMapping("/board/notice")
-    public ResponseEntity<List<CommunityDetailResponse>> readAllNoticeCommunity(@RequestParam("page") int page) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readAllNoticeCommunity(page));
-    }
 }
