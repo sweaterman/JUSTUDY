@@ -111,7 +111,11 @@ class CommunityControllerTest {
     @DisplayName("게시글 상세 조회 [GET] /board/{id}")
     void getCommunityDetail() throws Exception {
         //given
+        final Long LOGIN_SEQUENCE = 1000L;
         final Long COMMUNITY_SEQUENCE = 15L;
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(SessionConst.LOGIN_USER, LOGIN_SEQUENCE);
+
         CommunityDetailResponse response = CommunityDetailResponse.builder()
                 .sequence(COMMUNITY_SEQUENCE)
                 .title("제목")
@@ -119,17 +123,18 @@ class CommunityControllerTest {
                 .category(new CategoryResponse("frontend", "FRONT-END"))
                 .build();
 
-        BDDMockito.given(communityService.readCommunityDetail(COMMUNITY_SEQUENCE))
+        BDDMockito.given(communityService.readCommunityDetail(COMMUNITY_SEQUENCE, LOGIN_SEQUENCE))
                 .willReturn(response);
 
-        mockMvc.perform(get(COMMON_URL + "/board/{id}", COMMUNITY_SEQUENCE))
+        mockMvc.perform(get(COMMON_URL + "/board/{id}", COMMUNITY_SEQUENCE)
+                        .session(session))
                 .andExpect(jsonPath("$.title").value("제목"))
                 .andExpect(jsonPath("$.content").value("내용"))
                 .andExpect(jsonPath("$.category.key").value("frontend"))
                 .andExpect(jsonPath("$.category.value").value("FRONT-END"))
                 .andDo(print());
 
-        BDDMockito.then(communityService).should(times(1)).readCommunityDetail(COMMUNITY_SEQUENCE);
+        BDDMockito.then(communityService).should(times(1)).readCommunityDetail(COMMUNITY_SEQUENCE, LOGIN_SEQUENCE);
     }
 
     @Test
