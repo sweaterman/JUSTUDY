@@ -12,6 +12,8 @@ import moduleTimer from './moduleTimer';
 import moduleRanking from './moduleRanking';
 import moduleWebRTC from './moduleWebRTC';
 
+import createPersistedState from 'vuex-persistedstate';
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -35,5 +37,11 @@ export default new Vuex.Store({
         moduleTimer: moduleTimer,
         moduleRanking: moduleRanking,
         moduleWebRTC: moduleWebRTC
-    }
+    },
+    //로그인 상태 저장만을 위한 플러그인설치
+    plugins: [
+        createPersistedState({
+            paths: ['moduleLogin']
+        })
+    ]
 });
