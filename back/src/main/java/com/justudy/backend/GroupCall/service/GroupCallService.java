@@ -25,29 +25,25 @@ import com.justudy.backend.GroupCall.model.Room;
 import com.justudy.backend.GroupCall.model.RoomManager;
 import com.justudy.backend.GroupCall.model.UserRegistry;
 import com.justudy.backend.GroupCall.model.UserSession;
-import org.kurento.client.FaceOverlayFilter;
+import java.io.IOException;
+import javax.websocket.OnClose;
+import javax.websocket.OnMessage;
+import javax.websocket.OnOpen;
+import javax.websocket.Session;
+import javax.websocket.server.ServerEndpoint;
 import org.kurento.client.IceCandidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.server.ServerEndpoint;
-import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
- * 
  * @author Ivan Gracia (izanmail@gmail.com)
  * @since 4.3.1
  */
 @Service
-@ServerEndpoint(value ="/groupcall", configurator = ServerEndpointConfig.class)
-public class GroupCallService   {
+@ServerEndpoint(value = "/groupcall", configurator = ServerEndpointConfig.class)
+public class GroupCallService {
 
   private static final Logger log = LoggerFactory.getLogger(GroupCallService.class);
 
@@ -86,28 +82,30 @@ public class GroupCallService   {
         leaveRoom(user);
         break;
       case "ban":
-        ban(jsonMessage.get("name").getAsString(),jsonMessage.get("room").getAsString());
+        ban(jsonMessage.get("name").getAsString(), jsonMessage.get("room").getAsString());
         break;
       case "mute":
-        mute(jsonMessage.get("name").getAsString(),jsonMessage.get("room").getAsString());
+        mute(jsonMessage.get("name").getAsString(), jsonMessage.get("room").getAsString());
         break;
       case "exit":
         allExit(jsonMessage.get("room").getAsString());
         break;
       case "requestBan":
-        requestBan(jsonMessage.get("name").getAsString(),jsonMessage.get("room").getAsString());
+        requestBan(jsonMessage.get("name").getAsString(), jsonMessage.get("room").getAsString());
         break;
       case "requestMute":
-        requestMute(jsonMessage.get("name").getAsString(),jsonMessage.get("room").getAsString());
+        requestMute(jsonMessage.get("name").getAsString(), jsonMessage.get("room").getAsString());
         break;
       case "requestExit":
         requestExit(jsonMessage.get("room").getAsString());
         break;
       case "sendLadderResult":
-        sendLadderResult(jsonMessage.get("name").getAsString(),jsonMessage.get("room").getAsString(),jsonMessage.get("value").getAsString());
+        sendLadderResult(jsonMessage.get("name").getAsString(),
+            jsonMessage.get("room").getAsString(), jsonMessage.get("value").getAsString());
         break;
       case "sendChat":
-        sendChatMessage(jsonMessage.get("name").getAsString(),jsonMessage.get("room").getAsString(),jsonMessage.get("message").getAsString());
+        sendChatMessage(jsonMessage.get("name").getAsString(),
+            jsonMessage.get("room").getAsString(), jsonMessage.get("message").getAsString());
         break;
       case "onIceCandidate":
         JsonObject candidate = jsonMessage.get("candidate").getAsJsonObject();
@@ -123,34 +121,37 @@ public class GroupCallService   {
     }
   }
 
-  private void sendChatMessage(String personName, String roomName, String message) throws Exception   {
+  private void sendChatMessage(String personName, String roomName, String message)
+      throws Exception {
     final Room room = roomManager.getRoom(roomName);
 
-    for(UserSession user : room.getParticipants()){
-      user.transferChatMessage(personName,message);
+    for (UserSession user : room.getParticipants()) {
+      user.transferChatMessage(personName, message);
     }
   }
 
-  private void sendLadderResult(String personName, String roomName, String value) throws Exception  {
+  private void sendLadderResult(String personName, String roomName, String value) throws Exception {
     final Room room = roomManager.getRoom(roomName);
 
-    for(UserSession user : room.getParticipants()){
-      if( user.getName().equals(personName ))
+    for (UserSession user : room.getParticipants()) {
+      if (user.getName().equals(personName)) {
         user.transferLadderResult(value);
+      }
     }
   }
 
-  private void requestExit(String roomName) throws Exception  {
+  private void requestExit(String roomName) throws Exception {
     final Room room = roomManager.getRoom(roomName);
 
-    for(UserSession user : room.getParticipants()){
+    for (UserSession user : room.getParticipants()) {
       user.transferRequestExit();
     }
   }
+
   private void requestBan(String personName, String roomName) throws Exception {
     final Room room = roomManager.getRoom(roomName);
 
-    for(UserSession user : room.getParticipants()){
+    for (UserSession user : room.getParticipants()) {
       user.transferRequestBan(personName);
     }
   }
@@ -158,36 +159,39 @@ public class GroupCallService   {
   private void requestMute(String personName, String roomName) throws Exception {
     final Room room = roomManager.getRoom(roomName);
 
-    for(UserSession user : room.getParticipants()){
-        user.transferRequestMute(personName);
+    for (UserSession user : room.getParticipants()) {
+      user.transferRequestMute(personName);
     }
   }
 
   private void ban(String personName, String roomName) throws Exception {
     final Room room = roomManager.getRoom(roomName);
 
-    for(UserSession user : room.getParticipants()){
-      if( user.getName().equals(personName ))
+    for (UserSession user : room.getParticipants()) {
+      if (user.getName().equals(personName)) {
         user.transferBan(personName);
+      }
     }
   }
-  private void mute(String personName, String roomName)throws Exception {
+
+  private void mute(String personName, String roomName) throws Exception {
     final Room room = roomManager.getRoom(roomName);
 
-    for(UserSession user : room.getParticipants()){
-      if( user.getName().equals(personName ))
+    for (UserSession user : room.getParticipants()) {
+      if (user.getName().equals(personName)) {
         user.transferMute(personName);
+      }
 
     }
   }
-  private void allExit(String roomName)throws Exception {
+
+  private void allExit(String roomName) throws Exception {
     final Room room = roomManager.getRoom(roomName);
 
-    for(UserSession user : room.getParticipants()) {
+    for (UserSession user : room.getParticipants()) {
       user.transferExit();//모두에게 exit올리기
     }
   }
-
 
 
   @OnOpen
@@ -199,17 +203,60 @@ public class GroupCallService   {
   @OnClose
   public void afterConnectionClosed(Session session) throws Exception {
     UserSession user = registry.removeBySession(session);
+    if (user == null) {
+      log.info("......duplicate eror");
+      return;
+    }
+    log.info("user getRoomName : {}", user.getRoomName());
     roomManager.getRoom(user.getRoomName()).leave(user);
   }
 
   private void joinRoom(JsonObject params, Session session) throws IOException {
     final String roomName = params.get("room").getAsString();
-    final String name = params.get("name").getAsString();
+    String name = params.get("name").getAsString();
+
     log.info("PARTICIPANT {}: trying to join room {}", name, roomName);
 
     Room room = roomManager.getRoom(roomName);
-    UserSession user = room.join(name, session);
 
+    boolean existCheck = false;
+    int retryNum = 0;
+
+    for (UserSession userSession : room.getParticipants()) {//같은 이름 찾기
+      if (userSession.getName().equals(name)) {
+        existCheck = true;
+        break;
+      }
+    }
+
+    if (existCheck) {//같은 이름 존재하면 발생
+      String changName = name;
+      while (existCheck) {//이름이 같지 않을 때까지 이름 섞기
+        changName = new StringBuilder(name).append((char)((int)(Math.random()*26)+65)).toString();
+        boolean reCheck = false;
+
+        for (UserSession userSession : room.getParticipants()) {
+          if (userSession.getName().equals(changName))//아쉽지만 바뀐 이름도 이미 존재 다시 섞자
+          {
+            reCheck = true;
+          }
+        }
+        existCheck = reCheck;
+        if(retryNum++>30)
+          break;
+      }
+      name = changName;
+      //새로운 이름을 할당해서 전달해줌
+      JsonObject sender = new JsonObject();
+      sender.addProperty("id", "changeName");
+      sender.addProperty("name", name);
+      synchronized (session) {
+        session.getBasicRemote().sendText(sender.toString());
+      }
+
+    }
+
+    UserSession user = room.join(name, session);
 
     registry.register(user);
 
