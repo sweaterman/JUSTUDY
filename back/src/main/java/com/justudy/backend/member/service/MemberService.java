@@ -290,7 +290,7 @@ public class MemberService {
         String newPassword = editRequest.getPassword();
         String newPasswordCheck = editRequest.getPasswordCheck();
         if (StringUtils.hasText(newPassword)
-                && StringUtils.hasText(newPasswordCheck)) {
+                || StringUtils.hasText(newPasswordCheck)) {
             isNotEqualPassword(newPassword, newPasswordCheck);
         }
     }
@@ -314,7 +314,7 @@ public class MemberService {
     }
 
     private void isNotEqualPassword(String password, String passwordCheck) {
-        if (!password.equals(passwordCheck)) {
+        if (password == null || !password.equals(passwordCheck)) {
             throw new InvalidRequest("password", "비밀번호와 비밀번호확인이 다릅니다.");
         }
     }
