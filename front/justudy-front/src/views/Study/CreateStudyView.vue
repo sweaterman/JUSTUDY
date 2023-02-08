@@ -28,7 +28,7 @@
                                     <v-text-field v-model="study.name" label="스터디 이름" :rules="name_rules" hide-details="auto"></v-text-field>
                                 </v-col>
                                 <v-col class="center" cols="4">
-                                    <v-btn color="green darken-1" outlined text @click="nameCheck(study.name)"> 중복체크 </v-btn>
+                                    <v-btn color="green darken-1" outlined text @click="nameCheckBtn(study.name)"> 중복체크 </v-btn>
                                 </v-col>
                             </v-row>
 
@@ -55,16 +55,6 @@
 
                         <!-- 기본 정보 선택 부분 -->
                         <v-col cols="12" md="6" style="padding: 3em">
-                            <!-- 팀장 -->
-                            <v-row>
-                                <v-col cols="4">
-                                    <v-subheader no-gutters>팀장</v-subheader>
-                                </v-col>
-                                <v-col cols="8">
-                                    <v-text-field v-model="study.leader" solo readonly></v-text-field>
-                                </v-col>
-                            </v-row>
-
                             <!-- 상위 카테고리 -->
                             <v-row>
                                 <v-col cols="4">
@@ -118,60 +108,71 @@
                                     <v-subheader>활동 주기</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    <v-row>
-                                        <v-col cols="12">
-                                            <v-btn-toggle v-model="study.frequency.week" multiple>
-                                                <v-btn rounded color="primary"> 월 </v-btn>
-                                                <v-btn rounded color="primary"> 화 </v-btn>
-                                                <v-btn rounded color="primary"> 수 </v-btn>
-                                                <v-btn rounded color="primary"> 목 </v-btn>
-                                                <v-btn rounded color="primary"> 금 </v-btn>
-                                                <v-btn rounded color="primary"> 토 </v-btn>
-                                                <v-btn rounded color="primary"> 일 </v-btn>
-                                            </v-btn-toggle>
+                                    <!-- 활동주기 확인/삭제하는 v-for -->
+                                    <v-row v-for="i in frequency_num" :key="i">
+                                        <v-col cols="6"> {{ study.frequency[i - 1].week }} / {{ study.frequency[i - 1].startTime }} ~ {{ study.frequency[i - 1].endTime }} </v-col>
+                                        <v-col cols="6">
+                                            <v-btn
+                                                class="mx-2"
+                                                fab
+                                                dark
+                                                x-small
+                                                color="red"
+                                                @click="deleteFrequency(study.frequency[i - 1].week, study.frequency[i - 1].startTime, study.frequency[i - 1].endTime)"
+                                            >
+                                                <v-icon dark> mdi-minus </v-icon>
+                                            </v-btn>
                                         </v-col>
                                     </v-row>
 
+                                    <!-- 활동주기 추가하는 Dialog -->
                                     <v-row>
-                                        <v-col cols="6">
-                                            <v-dialog ref="dialog" v-model="startModal" :return-value.sync="study.frequency.startTime" persistent width="290px">
-                                                <template v-slot:activator="{on, attrs}">
-                                                    <v-text-field
-                                                        v-model="study.frequency.startTime"
-                                                        label="시작 시간"
-                                                        prepend-icon="mdi-clock-time-four-outline"
-                                                        readonly
-                                                        v-bind="attrs"
-                                                        v-on="on"
-                                                    ></v-text-field>
-                                                </template>
-                                                <v-time-picker v-if="startModal" v-model="study.frequency.startTime" full-width>
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn text color="primary" @click="startModal = false"> 취소 </v-btn>
-                                                    <v-btn text color="primary" @click="$refs.dialog.save(study.frequency.startTime)"> 확인 </v-btn>
-                                                </v-time-picker>
-                                            </v-dialog>
-                                        </v-col>
-                                        <v-col cols="6">
-                                            <v-dialog ref="dialog2" v-model="endModal" :return-value.sync="study.frequency.endTime" persistent width="290px">
-                                                <template v-slot:activator="{on, attrs}">
-                                                    <v-text-field
-                                                        v-model="study.frequency.endTime"
-                                                        label="끝나는 시간"
-                                                        prepend-icon="mdi-clock-time-four-outline"
-                                                        readonly
-                                                        v-bind="attrs"
-                                                        v-on="on"
-                                                    ></v-text-field>
-                                                </template>
-                                                <v-time-picker v-if="endModal" v-model="study.frequency.endTime" full-width>
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn text color="primary" @click="endModal = false"> 취소 </v-btn>
-                                                    <v-btn text color="primary" @click="$refs.dialog2.save(study.frequency.endTime)"> 확인 </v-btn>
-                                                </v-time-picker>
-                                            </v-dialog>
+                                        <v-col cols="12">
+                                            <v-btn @click="frequency_dialog = true">활동주기 추가</v-btn>
                                         </v-col>
                                     </v-row>
+
+                                    <!-- 활동주기 모달 -->
+                                    <v-dialog v-model="frequency_dialog" width="800">
+                                        <v-card>
+                                            <v-card-title> 활동 주기 추가 </v-card-title>
+
+                                            <v-card-text>
+                                                <v-row>
+                                                    <v-col cols="3">
+                                                        <v-subheader>요일 선택</v-subheader>
+                                                    </v-col>
+                                                    <v-col cols="9">
+                                                        <v-combobox v-model="temp_frequency.week" :items="week_option" label="요일 선택"></v-combobox>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row>
+                                                    <v-col cols="6">
+                                                        <v-subheader>스터디 시작 시간</v-subheader>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-subheader>스터디 끝나는 시간</v-subheader>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row>
+                                                    <v-col cols="6">
+                                                        <v-time-picker v-model="temp_frequency.startTime" ampm-in-title format="ampm"></v-time-picker>
+                                                    </v-col>
+                                                    <v-col cols="6">
+                                                        <v-time-picker v-model="temp_frequency.endTime" ampm-in-title format="ampm"></v-time-picker>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-card-text>
+
+                                            <v-divider></v-divider>
+
+                                            <v-card-actions>
+                                                <v-spacer></v-spacer>
+                                                <v-btn color="primary" text @click="addFrequency()"> 확인 </v-btn>
+                                                <v-btn color="primary" text @click="frequency_dialog = false"> 취소 </v-btn>
+                                            </v-card-actions>
+                                        </v-card>
+                                    </v-dialog>
                                 </v-col>
                             </v-row>
 
@@ -252,29 +253,31 @@ export default {
                 name: '',
                 introduction: 'test',
                 population: '',
-                leader: '', //본인닉네임들어가기
                 level: '',
                 topCategory: '',
                 bottomCategory: '',
-                frequency: {
-                    week: '',
-                    startTime: '',
-                    endTime: ''
-                },
+                frequency: [],
                 meeting: '',
                 github: '',
                 notion: '',
                 start_time: ''
             },
+            temp_frequency: {
+                week: null,
+                startTime: null,
+                endTime: null
+            },
+            week_option: ['월', '화', '수', '목', '금', '토', '일'],
+            frequency_num: 0,
+            frequency_dialog: false,
             levelList: ['초보', '중급', '고급'],
             meetingList: ['온라인', '오프라인', '온/오프라인'],
-            leader: '김싸피',
             populationList: ['2', '3', '4', '5', '6', '7', '8', '9', '10'],
             name_rules: [value => !!value || '스터디 이름을 입력해주세요.'],
             introduction_rules: [value => !!value || '스터디 소개를 입력해주세요.'],
             startModal: false,
             endModal: false,
-            nameCheckVal: true,
+            nameCheckVal: false,
             uploadimageurl: null
         };
     },
@@ -283,10 +286,9 @@ export default {
         async checkTopCategory() {
             await this.$store.dispatch('moduleStudy/getBottomCategories', this.study.topCategory.key);
         },
-        nameCheckBtn(name) {
-            this.$store.dispatch('moduleStudy/nameCheck', name);
-            //중복체크 미완성 -> 확인 해봐야함.
-            this.nameCheckVal = this.$store.state.nameCheck;
+        async nameCheckBtn(name) {
+            await this.$store.dispatch('moduleStudy/nameCheck', name);
+            this.nameCheckVal = this.nameCheck;
         },
         createStudy() {
             if (
@@ -296,9 +298,7 @@ export default {
                 this.study.level == '' ||
                 this.study.topCategory == '' ||
                 this.study.bottomCategory == '' ||
-                this.study.frequency.frequency_week == '' ||
-                this.study.frequency.frequency_start == '' ||
-                this.study.frequency.frequency_end == '' ||
+                this.study.frequency.length == 0 ||
                 this.study.meeting == '' ||
                 this.study.start_time == ''
             ) {
@@ -307,11 +307,41 @@ export default {
             } else if (this.nameCheckVal == false) {
                 alert('스터디 이름 중복체크를 완료해주세요.');
             } else {
-                //등록 요청 보내기.
-                //비동기방식 처리해야할거 같기도.. 일단 go
+                const sendStudy = {
+                    name: this.study.name,
+                    introduction: this.study.introduction,
+                    population: Number(this.study.population),
+                    topCategory: this.study.topCategory.key,
+                    bottomCategory: this.study.bottomCategory.key,
+                    level: this.study.level,
+                    meeting: this.study.meeting,
+                    github: this.study.github,
+                    notion: this.study.notion,
+                    start_time: this.study.start_time,
+                    frequency: this.study.frequency
+                };
 
-                this.$store.dispatch('moduleStudy/createStudy', this.study);
+                //등록 요청 보내기.
+                this.$store.dispatch('moduleStudy/createStudy', sendStudy);
+                console.log(sendStudy);
             }
+        },
+        addFrequency() {
+            this.frequency_num = this.frequency_num + 1;
+            this.study.frequency = this.study.frequency.concat({
+                week: this.temp_frequency.week,
+                startTime: this.temp_frequency.startTime,
+                endTime: this.temp_frequency.endTime
+            });
+            this.temp_frequency.week = null;
+            this.temp_frequency.startTime = null;
+            this.temp_frequency.endTime = null;
+            this.frequency_dialog = false;
+        },
+        deleteFrequency(w, s, e) {
+            this.frequency_num = this.frequency_num - 1;
+            const tempStudy = this.study.frequency.filter(o => o.week !== w && o.startTime !== s && o.endTime !== e);
+            this.study.frequency = tempStudy;
         }
     }
 };

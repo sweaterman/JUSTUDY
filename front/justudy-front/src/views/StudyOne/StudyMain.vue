@@ -8,6 +8,7 @@
                 <!-- 본문 -->
                 <v-col col="12" md="8">
                     <router-link :to="`/study/${studySeq}/info`">INFO</router-link> | <router-link :to="`/study/${studySeq}/board`">BOARD</router-link> |
+                    <router-link :to="`/study/${studySeq}/calender`">CALENDER</router-link>
                     <router-view></router-view>
                 </v-col>
 

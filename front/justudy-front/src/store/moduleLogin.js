@@ -1,22 +1,22 @@
 import axios from 'axios';
 import port from './port';
+
 export default {
     namespaced: true,
     state: {
-        isLogin: false
+        isLogin: {
+            loginCheck: false
+        }
     },
     getters: {},
     mutations: {
         SET_ISLOGIN(state, payload) {
             state.isLogin = payload;
-        },
-        SET_LOGOUT(state, payload) {
-            state.isLogin = payload;
         }
     },
     actions: {
-        login({commit}, {user}) {
-            axios
+        async login({commit}, {user}) {
+            await axios
                 .post(
                     port + 'login',
                     {
@@ -28,7 +28,7 @@ export default {
                     }
                 )
                 .then(() => {
-                    commit('SET_ISLOGIN', true);
+                    commit('SET_ISLOGIN', {loginCheck: true});
                     window.location.href = '/';
                 })
                 .catch(err => {
@@ -36,24 +36,20 @@ export default {
                     alert('아이디/비밀번호가 일치하지 않습니다.');
                 });
         },
-        logout({commit}) {
+        async logout({commit}) {
             const API_URL = `${port}logout`;
-            axios({
+            await axios({
                 url: API_URL,
-                method: 'POST'
+                method: 'POST',
+                withCredentials: true
             })
                 .then(() => {
-                    commit('SET_LOGOUT', false);
+                    commit('SET_ISLOGIN', {loginCheck: false});
+                    window.location.href = '/';
                 })
                 .catch(err => {
                     console.log(err);
                 });
-        },
-
-        async signUp(_, {user}) {
-            const API_URL = `${port}member/register`;
-            console.log(user.password);
-            await axios.post(API_URL, user);
         }
     }
 };

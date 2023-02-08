@@ -20,15 +20,15 @@
                 <v-form v-model="isFormValid" ref="form" @submit.prevent="onSubmitForm">
                     <v-card>
                         <!-- 작성자 -->
-                        <v-row>
+                        <!-- <v-row>
                             <v-col cols="12" md="2" justify="center" align="center" :style="{color: 'white'}">
                                 <v-btn depressed color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '20%', marginLeft: '15%'}">작성자</v-btn>
                             </v-col>
                             <v-col cols="12" md="10">
                                 <v-text-field v-model="writer" solo readonly outlined depressed style="width: 80%; height: 20px; margin-right: 10%; margin-left: 5%; margin-top: 4%"></v-text-field>
-                                <!-- <v-btn color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '3%', marginLeft: '10%'}"></v-btn> -->
+                                <v-btn color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '3%', marginLeft: '10%'}"></v-btn>
                             </v-col>
-                        </v-row>
+                        </v-row> -->
 
                         <!-- 제목 -->
                         <v-row>
@@ -37,12 +37,13 @@
                             </v-col>
                             <v-col cols="12" md="10">
                                 <v-text-field
-                                    v-model="board.title"
+                                    v-model="study.title"
                                     outlined
                                     label="제목을 입력하세요"
                                     style="width: 80%; margin-right: 10%; margin-left: 5%"
                                     :rules="[v => (!!(v.length > 0) && !(v.length >= 30)) || '제목 글자수를 지켜주세요.']"
                                 >
+                                    {{ study.title }}
                                 </v-text-field>
                             </v-col>
                         </v-row>
@@ -114,9 +115,9 @@ export default {
             //     content: this.content,
             //     writer: this.writer
             // });
-            this.board.category = this.$route.query.category;
+            this.board.category = this.$route.query.category.key;
             this.board.isHighlighted = false;
-            console.log(this.board.category);
+            console.log(this.board);
             await this.$store.dispatch('moduleCommunity/getCommunityContentUpdate', {id: this.Data.sequence, board: this.board});
             this.$router.push({
                 path: window.history.back()

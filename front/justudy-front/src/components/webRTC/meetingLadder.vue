@@ -1,23 +1,72 @@
 <template>
-    <div>
-        <!-- 참가자들 -->
-        <v-btn @click="ladderClose">X</v-btn>
-        <h1>참가자 이름</h1>
-        <div>
-            <div v-for="(item, index) in namesFromParticipants" :key="index" v-text="item"></div>
-        </div>
-        <!-- 사다리타기 결과 적기 -->
-        <h1>당첨항목</h1>
-        <div>
-            <div v-for="(item, index) in valuesFromParticipants" :key="index">
-                <label :for="index" v-text="index"></label>
-                <input :id="index" v-model="valuesFromParticipants[index]" />
-            </div>
-        </div>
-        <div>
-            <v-btn @click="ladderStart">사다리 돌리기</v-btn>
-            <v-btn @click="ladderTransfer">결과 전송하기</v-btn>
-        </div>
+    <div class="card_section">
+        <v-container>
+            <v-row>
+                <v-col>
+                    <v-row justify="center" align="center">
+                        <v-col justify="center" align="center">
+                            <div :style="{fontWeight: 'bold', fontSize: 'xx-large'}">제비 뽑기</div>
+                        </v-col>
+                    </v-row>
+
+                    <!-- 참가자들 -->
+                    <v-col :style="{padding: '12%'}">
+                        <v-row>
+                            <v-col>
+                                <div :style="{fontWeight: 'bold', fontSize: 'x-large'}">참여자</div>
+                                <hr :style="{width: '80%'}" />
+                            </v-col>
+                        </v-row>
+                        <v-row justify="center" align="center">
+                            <v-col>
+                                <div>
+                                    <div v-for="(item, index) in namesFromParticipants" :key="index" v-text="item"></div>
+                                </div>
+                            </v-col>
+                        </v-row>
+                    </v-col>
+
+                    <!-- 사다리타기 결과 적기 -->
+                    <v-col :style="{padding: '12%'}">
+                        <v-row>
+                            <v-col>
+                                <div :style="{fontWeight: 'bold', fontSize: 'x-large'}">당첨 항목</div>
+                                <hr :style="{width: '80%'}" />
+                            </v-col>
+                        </v-row>
+                        <!-- 사다리타기 결과 적기 -->
+                        <v-row>
+                            <v-col>
+                                <div>
+                                    <div v-for="(item, index) in valuesFromParticipants" :key="index">
+                                        <v-row>
+                                            <v-col cols="12" md="4" justify="center" align="center">
+                                                <label :for="index" v-text="index"></label>
+                                            </v-col>
+                                            <v-col cols="12" md="8" justify="center" align="center">
+                                                <input :id="index" v-model="valuesFromParticipants[index]" />
+                                            </v-col>
+                                        </v-row>
+                                    </div>
+                                </div>
+                            </v-col>
+                        </v-row>
+                    </v-col>
+
+                    <!-- 실행 버튼 -->
+                    <v-row :style="{padding: '12%'}">
+                        <v-btn @click="ladderStart" color="white" :style="{color: 'green'}">
+                            <v-col cols="12" md="4">
+                                <span class="material-icons-outlined"> add_task </span>
+                            </v-col>
+                            <v-col cols="12" md="8">
+                                <div>결과 확인</div>
+                            </v-col>
+                        </v-btn>
+                    </v-row>
+                </v-col>
+            </v-row>
+        </v-container>
     </div>
 </template>
 
@@ -61,7 +110,6 @@ export default {
             let tempParticipants = this.namesFromParticipants.slice();
             let tempValues = this.valuesFromParticipants.slice();
             this.ladderResult = [];
-
             while (tempParticipants.length > 0) {
                 let indexParticipant = Math.random() * tempParticipants.length;
                 let indexValue = Math.random() * tempValues.length;
@@ -86,8 +134,18 @@ export default {
 </script>
 
 <style scoped>
+.card_section {
+    padding: 10px;
+    /* margin-bottom: 1px; */
+    border-style: solid;
+    border-color: #eeeeee;
+    border-radius: 30px;
+    /* border-width: thin; */
+}
+</style>
+<!-- <style scoped>
 input {
     background-color: darkgray;
     border: 2 solid black;
 }
-</style>
+</style> -->

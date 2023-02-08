@@ -49,12 +49,12 @@ export default {
     name: 'MyStudyView',
     components: {StudyList},
     created() {
-        this.$store.dispatch('getApplyStudies');
-        this.$store.dispatch('getMyStudies');
+        this.$store.dispatch('moduleStudy/getApplyStudies');
+        this.$store.dispatch('moduleStudy/getMyStudies');
     },
     computed: {
-        ...mapState['applyStudies'],
-        ...mapState['myStudies']
+        ...mapState('moduleStudy', ['applyStudies']),
+        ...mapState('moduleStudy', ['myStudies'])
     },
     data() {
         return {
