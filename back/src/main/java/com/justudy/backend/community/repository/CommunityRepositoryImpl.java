@@ -93,6 +93,8 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
     public List<CommunityEntity> getMostLoveListOfWeek(Pageable pageable) {
         return queryFactory.selectFrom(communityEntity)
                 .join(communityEntity.member, memberEntity).fetchJoin()
+                .where(communityEntity.isHighlighted.eq(false),
+                        communityEntity.isDeleted.eq(false))
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .orderBy(communityEntity.weekLoveCount.desc())
@@ -105,7 +107,8 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
                 .selectFrom(communityEntity)
                 .join(communityEntity.member, memberEntity).fetchJoin()
                 .join(communityEntity.category, categoryEntity).fetchJoin()
-                .where(communityEntity.sequence.eq(sequence))
+                .where(communityEntity.sequence.eq(sequence),
+                        communityEntity.isDeleted.eq(false))
                 .fetchFirst());
     }
 
@@ -114,7 +117,8 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
         return queryFactory
                 .selectFrom(communityEntity)
                 .join(communityEntity.member, memberEntity).fetchJoin()
-                .where(communityEntity.sequence.in(sequences))
+                .where(communityEntity.sequence.in(sequences),
+                        communityEntity.isDeleted.eq(false))
                 .fetch();
     }
 
