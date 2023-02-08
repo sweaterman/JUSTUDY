@@ -19,17 +19,20 @@ public class CommunityListResponse {
 
     private boolean isHighlighted;
 
+    private Integer viewCount;
+
     private Integer loveCount;
 
     @Builder
     public CommunityListResponse(Long sequence, String title, String nickname,
-                                 LocalDateTime createdTime,
-                                 boolean isHighlighted, Integer loveCount) {
+                                 LocalDateTime createdTime, boolean isHighlighted,
+                                 Integer viewCount, Integer loveCount) {
         this.sequence = sequence;
         this.title = title;
         this.nickname = nickname;
         this.createdTime = createdTime;
         this.isHighlighted = isHighlighted;
+        this.viewCount = viewCount;
         this.loveCount = loveCount;
     }
 
@@ -39,6 +42,7 @@ public class CommunityListResponse {
         this.nickname = communityEntity.getMember().getNickname(); //memberEntity
         this.createdTime = communityEntity.getCreatedTime();
         this.isHighlighted = communityEntity.getIsHighlighted();
+        this.viewCount = communityEntity.getViewCount(); //조회수
         this.loveCount = communityEntity.getLoveCount() + communityEntity.getWeekLoveCount(); //기존 좋아요 + 일주일간 좋아요
     }
 }

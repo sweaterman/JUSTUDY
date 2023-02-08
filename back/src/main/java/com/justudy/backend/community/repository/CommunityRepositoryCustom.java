@@ -12,7 +12,11 @@ public interface CommunityRepositoryCustom {
 
     List<CommunityEntity> getAllList(CommunitySearch communitySearch);
 
+    Long getCountOfList(CommunitySearch communitySearch);
+
     List<CommunityEntity> getAllNotice(Pageable pageable);
+
+    Long getCountOfNotices();
 
     List<CommunityEntity> getMostLoveListOfWeek(Pageable pageable);
 
