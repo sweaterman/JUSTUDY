@@ -2,9 +2,9 @@ package com.justudy.backend.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.justudy.backend.common.enum_util.Level;
+import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
-import com.justudy.backend.file.service.FileStore;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberStatus;
@@ -48,9 +48,6 @@ public class MemberControllerTest {
     @MockBean
     private UploadFileService uploadFileService;
 
-    @MockBean
-    private FileStore fileStore;
-
     @Test
     @DisplayName("POST /register 요청")
     void signupMember() throws Exception {
@@ -86,6 +83,20 @@ public class MemberControllerTest {
                 .andDo(print());
 
         BDDMockito.then(uploadFileService).should().getUploadFile(anyLong());
+    }
+
+    @Test
+    @DisplayName("GET /check")
+    void validateMember() throws Exception {
+        //given
+        final String NICKNAME = "nickname";
+        final String SSAFY_ID = "078462";
+        final String USER_ID = "sklee0206";
+
+        BDDMockito.willThrow(InvalidRequest.class).given(memberService).isDuplicatedNickname(NICKNAME);
+
+        mockMvc.perform(get("/api/member/check" + "?nickname=test&ssafyid=1234&userid=sklee0206"))
+                .andDo(print());
     }
 
     @Test
