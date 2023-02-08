@@ -82,12 +82,6 @@ public class MemberEntity {
     @OneToMany(mappedBy = "member")
     List<CommunityEntity> boards = new ArrayList<>();
 
-    @Column(name = "member_mm_id")
-    private String mmId;
-
-    @Column(name = "member_mm_valid")
-    private boolean isMMValid;
-
     @Column(name = "member_badge_count")
     private Integer badgeCount;
 
@@ -96,6 +90,9 @@ public class MemberEntity {
 
     @Column(name = "member_is_banned")
     private boolean isBanned;
+
+    @Column(name = "member_valid")
+    private boolean isValid;
 
     @Column(name = "member_created_time")
     private LocalDateTime createdTime;
@@ -108,8 +105,7 @@ public class MemberEntity {
                         String username, String nickname,
                         String ssafyId, String phone, String email,
                         Region region, String dream, String introduction,
-                        UploadFileEntity imageFile,
-                        String mmId, boolean isMMValid) {
+                        UploadFileEntity imageFile) {
         this.userId = userId;
         this.password = password;
         this.username = username;
@@ -121,9 +117,8 @@ public class MemberEntity {
         this.dream = dream;
         this.introduction = introduction;
 
-        this.mmId = mmId;
-        this.isMMValid = false;
 
+        this.isValid = false;
         this.imageFile = imageFile;
 
         this.role = MemberRole.USER;
