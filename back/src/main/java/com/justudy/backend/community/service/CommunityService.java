@@ -11,11 +11,10 @@ import com.justudy.backend.community.dto.response.CommunityListResponse;
 import com.justudy.backend.community.dto.response.ListResult;
 import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.community.repository.CommunityRepository;
-import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.exception.ForbiddenRequest;
+import com.justudy.backend.member.domain.MemberEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +45,7 @@ public class CommunityService {
         community.changeCategory(category);
         CommunityEntity savedCommunity = communityRepository.save(community);
 
-        return CommunityDetailResponse.makeBuilder(savedCommunity);
+        return CommunityDetailResponse.makeBuilder(savedCommunity, true, false, false);
     }
 
     @Transactional
@@ -61,11 +60,15 @@ public class CommunityService {
     }
 
     @Transactional
-    public CommunityDetailResponse readCommunityDetail(Long communitySequence) {
+    public CommunityDetailResponse readCommunityDetail(Long communitySequence, Long loginSequence) {
         CommunityEntity community = communityRepository.findBySequence(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
+        boolean isWriter = community.getMember().getSequence() == loginSequence;
+        boolean isBookmarked = bookmarkService.findBookmark(loginSequence, communitySequence).isPresent();
+        boolean isLoved = loveService.findLove(loginSequence, communitySequence).isPresent();
+
         community.addViewCount();
-        return CommunityDetailResponse.makeBuilder(community);
+        return CommunityDetailResponse.makeBuilder(community,isWriter, isBookmarked, isLoved);
     }
 
     @Transactional
@@ -78,7 +81,7 @@ public class CommunityService {
                 request.getContent(),
                 categoryService.getCategoryEntityByKey(request.getCategory()));
 
-        return CommunityDetailResponse.makeBuilder(community);
+        return CommunityDetailResponse.makeBuilder(community, true, false, false);
     }
 
     public ListResult<List<CommunityListResponse>> getCommunities(CommunitySearch condition) {
