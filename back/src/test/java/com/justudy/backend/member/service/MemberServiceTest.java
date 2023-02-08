@@ -237,6 +237,9 @@ public class MemberServiceTest {
         BDDMockito.given(categoryRepository.findByValue("Python"))
                 .willReturn(Optional.of(python));
 
+        BDDMockito.given(passwordEncoder.encode("0123456789"))
+                .willReturn("abcdefghij");
+
         MemberEdit editRequest = MemberEdit.builder()
                 .nickname(NICKNAME)
                 .password("0123456789")
@@ -254,7 +257,7 @@ public class MemberServiceTest {
 
         //then
         assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
-        assertThat(savedMember.getPassword()).isEqualTo(editRequest.getPassword());
+        assertThat(savedMember.getPassword()).isEqualTo("abcdefghij");
         assertThat(savedMember.getPhone()).isEqualTo(editRequest.getPhone());
         assertThat(savedMember.getEmail()).isEqualTo(editRequest.getEmail());
         assertThat(savedMember.getRegion()).isEqualTo(Region.valueOf(editRequest.getRegion()));
