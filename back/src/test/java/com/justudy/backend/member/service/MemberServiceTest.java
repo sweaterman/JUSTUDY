@@ -264,6 +264,52 @@ public class MemberServiceTest {
         assertThat(savedMember.getImageFile()).isEqualTo(oldImageFile);
     }
 
+    @ParameterizedTest
+    @CsvSource(value = {"'0123456789', null", "null, '0123456789'"}, nullValues = "null")
+    @DisplayName("비밀번호, 비밀번호 확인이 하나씩 들어올 때")
+    void passwordWithoutPasswordCheck(String password, String passwordCheck) throws IOException {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+        UploadFileEntity oldImageFile = new UploadFileEntity("test", "testUuid");
+        savedMember.changeImage(oldImageFile);
+
+        CategoryEntity backend = new CategoryEntity("backend", "백엔드", 0L);
+        CategoryEntity java = new CategoryEntity("java", "Java", 1L);
+        java.addParentCategory(backend);
+        CategoryEntity spring = new CategoryEntity("spring", "Spring", 1L);
+        spring.addParentCategory(backend);
+        CategoryEntity python = new CategoryEntity("python", "Python", 1L);
+        python.addParentCategory(backend);
+
+        BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
+                .willReturn(Optional.of(savedMember));
+
+        BDDMockito.given(categoryRepository.findByValue("Java"))
+                .willReturn(Optional.of(java));
+        BDDMockito.given(categoryRepository.findByValue("Spring"))
+                .willReturn(Optional.of(spring));
+        BDDMockito.given(categoryRepository.findByValue("Python"))
+                .willReturn(Optional.of(python));
+
+        MemberEdit editRequest = MemberEdit.builder()
+                .nickname(NICKNAME)
+                .password(password)
+                .passwordCheck(passwordCheck)
+                .phone("9999999999")
+                .email("shinkwang.dev@gmail.com")
+                .region("DAEJEON")
+                .dream("그만하자")
+                .category(new String[]{"Java", "Spring", "Python"})
+                .introduction("나는 싸피생이다.")
+                .build();
+
+        //expected
+        assertThatThrownBy(() -> memberService.editMember(1L, editRequest, null))
+                .isInstanceOf(InvalidRequest.class)
+                .hasMessage("잘못된 요청입니다.");
+    }
+
+
     @Test
     @DisplayName("회원 탈퇴")
     void deleteMember() {
