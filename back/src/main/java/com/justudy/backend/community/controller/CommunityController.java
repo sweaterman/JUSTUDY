@@ -14,6 +14,7 @@ import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.service.MemberService;
+import com.sun.net.httpserver.HttpsServer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -95,8 +96,8 @@ public class CommunityController {
     /**
      * 커뮤니티 수정 API
      *
-     * @param communitySequence      커뮤니티 sequence (PK)
-     * @param request 수정 정보
+     * @param communitySequence 커뮤니티 sequence (PK)
+     * @param request           수정 정보
      * @return ResponseEntity<UserResponse> 200 OK, 수정된 커뮤니티글 정보
      */
     @PutMapping("/board/{id}")
@@ -127,6 +128,7 @@ public class CommunityController {
 
     /**
      * 북마크 생성 API - DONE
+     *
      * @param communitySequence
      * @param session
      */
@@ -192,8 +194,9 @@ public class CommunityController {
      * @return ResponseEntity<List < CommentResponse>> 200 OK, 댓글 정보 목록
      */
     @GetMapping("/board/{id}/comments")
-    public ResponseEntity<List<CommunityCommentResponse>> readAllCommentByBoard(@PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityCommentService.readAllComment(id));
+    public ResponseEntity<List<CommunityCommentResponse>> readAllCommentByBoard(@PathVariable("id") Long id, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return ResponseEntity.status(HttpStatus.OK).body(communityCommentService.readAllComment(id, loginSequence));
     }
 
     /**
@@ -204,7 +207,9 @@ public class CommunityController {
      * @return ResponseEntity<CommentResponse> 201 Created, 생성된 댓글 정보
      */
     @PostMapping("/board/{id}/comments")
-    public ResponseEntity<CommunityCommentResponse> createComment(@PathVariable("id") long id, @RequestBody CommunityCommentCreate request) {
+    public ResponseEntity<CommunityCommentResponse> createComment(@PathVariable("id") Long id, @RequestBody CommunityCommentCreate request, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        request.changeMemberSeq(loginSequence);
         return ResponseEntity.status(HttpStatus.CREATED).body(communityCommentService.createComment(id, request));
     }
 
@@ -215,9 +220,10 @@ public class CommunityController {
      * @param commentId 댓글의 id
      * @param request   수정 정보
      */
-    @PutMapping("/board/{id}/comments/{comment_id}")
-    public ResponseEntity<Void> updateComment(@PathVariable("id") long id, @PathVariable("commentId") long commentId, @RequestBody CommunityCommentEdit request) {
-        communityCommentService.UpdateComment(id, commentId, request);
+    @PutMapping("/board/{id}/comments/{commentid}")
+    public ResponseEntity<Void> updateComment(@PathVariable("id") Long id, @PathVariable("commentid") Long commentId, @RequestBody CommunityCommentEdit request, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        communityCommentService.UpdateComment(id, commentId, request, loginSequence);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
@@ -228,9 +234,10 @@ public class CommunityController {
      * @param commentId 댓글의 id
      * @return ResponseEntity<Object> 204 No Content
      */
-    @DeleteMapping("/board/{id}/comments/{comment_id}")
-    public ResponseEntity<Void> deleteComment(@PathVariable("id") long id, @PathVariable("commentId") long commentId) {
-        communityCommentService.deleteComment(id, commentId);
+    @DeleteMapping("/board/{id}/comments/{commentid}")
+    public ResponseEntity<Void> deleteComment(@PathVariable("id") Long id, @PathVariable("commentid") Long commentId, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        communityCommentService.deleteComment(id, commentId, loginSequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 }
