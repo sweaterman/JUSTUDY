@@ -11,7 +11,8 @@ export default {
         applyStudyInfo: {}, //공개된 스터디 상세 정보
         applyStudies: [], //내가 지원한 스터디 목록
         myStudies: [], // 내가 가입한 스터디 목록
-        studyInfo: {} //스터디 상세 정보
+        studyInfo: {}, //스터디 상세 정보
+        nameCheck: false
     },
     getters: {},
     mutations: {
@@ -41,13 +42,23 @@ export default {
         },
         GET_STUDYINFO(state, payload) {
             state.studyInfo = payload;
+        },
+        CHECK_NAME(state, payload) {
+            state.nameCheck = payload;
         }
     },
     actions: {
         //공개된 스터디 받아오기
         async getPromotionStudies({commit}, send) {
             console.log('검색 진행', send);
-            const API_URL = `${port}study/?page=${send.page}&type=${send.type}&search=${send.content}`;
+            let API_URL;
+            if (send.content == '') {
+                API_URL = `${port}study/?page=${send.page}`;
+            } else {
+                API_URL = `${port}study/?page=${send.page}&type=${send.type}&search=${send.content}`;
+            }
+            console.log(API_URL);
+
             await axios({
                 url: API_URL,
                 method: 'GET'
@@ -105,14 +116,15 @@ export default {
                 });
         },
         //스터디 홍보페이지 상세 정보 받아오기
-        async getApplyStudyInfo({commit}, studySeq) {
-            const API_URL = `${port}study/${studySeq}`;
+        async getApplyStudyInfo({commit}, id) {
+            const API_URL = `${port}study/${id}`;
             await axios({
                 url: API_URL,
                 method: 'GET',
                 withCredentials: true
             })
                 .then(res => {
+                    console.log('홍보 스터디 상세: ', res.data);
                     commit('GET_APPLYSTUDYINFO', res.data);
                 })
                 .catch(err => {
@@ -120,17 +132,17 @@ export default {
                 });
         },
         //스터디 지원 신청
-        async applyStudy({commit}, seq, sendData) {
-            const API_URL = `${port}study/myStudy/${seq}`;
+        async applyStudy({commit}, sendData) {
+            const API_URL = `${port}study/apply`;
             await axios({
                 url: API_URL,
                 method: 'POST',
-                params: sendData,
+                data: sendData,
                 withCredentials: true
             })
                 .then(() => {
                     commit;
-                    this.$router.push({path: `/study/myStudy`});
+                    window.location.replace('/study/myStudy');
                 })
                 .catch(err => {
                     console.log(err);
@@ -138,7 +150,7 @@ export default {
         },
         //내가 지원한 스터디 목록 받아오기
         async getApplyStudies({commit}) {
-            const API_URL = `${port}study/myStudy/${'여기로그인한유저시퀀스'}`;
+            const API_URL = `${port}study/mystudy/apply`;
             await axios({
                 url: API_URL,
                 method: 'GET',
@@ -153,9 +165,9 @@ export default {
         },
         //내가 가입한 스터디 목록 받아오기
         async getMyStudies({commit}) {
-            // const API_URL = `${port}/study/API안만들어진듯?`;
+            const API_URL = `${port}study/mystudy/register`;
             await axios({
-                // url: API_URL,
+                url: API_URL,
                 method: 'GET',
                 withCredentials: true
             })
@@ -166,19 +178,37 @@ export default {
                     console.log(err);
                 });
         },
+        //스터디 이름 중복체크
+        async nameCheck({commit}, name) {
+            const API_URL = `${port}study/check/${name}`;
+            await axios({
+                url: API_URL,
+                method: 'GET'
+            })
+                .then(() => {
+                    commit('CHECK_NAME', true);
+                    alert('사용 가능한 이름입니다.');
+                })
+                .catch(err => {
+                    if (err.response.status == 409) {
+                        alert('이미 사용 중인 이름입니다.');
+                    } else {
+                        console.log(err);
+                    }
+                });
+        },
         //스터디 생성하기
         async createStudy({commit}, study) {
             const API_URL = `${port}study`;
             await axios({
                 url: API_URL,
                 method: 'POST',
-                params: study,
+                data: study,
                 withCredentials: true
             })
                 .then(res => {
                     commit;
-                    //이렇게 하는게 맞나?
-                    this.$router.push({path: `/study/search/${res.data.sequence}`});
+                    window.location.replace(`/study/${res.data.sequence}/info`);
                 })
                 .catch(err => {
                     console.log(err);
@@ -193,6 +223,7 @@ export default {
                 withCredentials: true
             })
                 .then(res => {
+                    console.log(res.data);
                     commit('GET_STUDYINFO', res.data);
                 })
                 .catch(err => {
@@ -209,6 +240,22 @@ export default {
             })
                 .then(() => {
                     commit;
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디 지원 취소
+        async deleteApply({commit}, seq) {
+            const API_URL = `${port}study/apply/${seq}`;
+            await axios({
+                url: API_URL,
+                method: 'DELETE',
+                withCredentials: true
+            })
+                .then(() => {
+                    commit;
+                    window.location.reload();
                 })
                 .catch(err => {
                     console.log(err);

@@ -79,13 +79,13 @@ export default {
     },
 
     methods: {
-        movetomain() {
-            this.$store.dispatch('moduleLogin/login', {
+        async movetomain() {
+            await this.$store.dispatch('moduleLogin/login', {
                 user: this.user
             });
         },
         movetosignin() {
-            window.location.href = '/signin';
+            window.location.href = '/signUp';
         }
     }
 };
