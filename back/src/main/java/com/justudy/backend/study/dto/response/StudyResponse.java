@@ -62,7 +62,7 @@ public class StudyResponse {
                 .level(entity.getLevel())
                 .meeting(entity.getMeeting())
                 .isOpen(entity.getIsOpen())
-//                .imageSequence(entity.getImageFile().getSequence())
+                .imageSequence(entity.getImageFile().getSequence())
                 .startTime(entity.getStartTime())
                 .leader(leader)
                 .build();
