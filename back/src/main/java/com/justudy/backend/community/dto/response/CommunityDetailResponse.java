@@ -63,6 +63,9 @@ public class CommunityDetailResponse {
                 .createdTime(entity.getCreatedTime())
                 .modifiedTime(entity.getModifiedTime())
                 .loveCount(entity.getLoveCount() + entity.getWeekLoveCount())
+                .isWriter(isWriter)
+                .isBookmarked(isBookmarked)
+                .isLoved(isLoved)
                 .build();
     }
 }
