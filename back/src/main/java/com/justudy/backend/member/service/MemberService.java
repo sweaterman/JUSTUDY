@@ -131,7 +131,7 @@ public class MemberService {
 
         MemberEditor memberEditor = editorBuilder
                 .nickname(editRequest.getNickname())
-                .password(editRequest.getPassword())
+                .password(encodePassword(editRequest.getPassword()))
                 .phone(editRequest.getPhone())
                 .email(editRequest.getEmail())
                 .region(Region.valueOf(editRequest.getRegion()))
@@ -293,6 +293,13 @@ public class MemberService {
                 || StringUtils.hasText(newPasswordCheck)) {
             isNotEqualPassword(newPassword, newPasswordCheck);
         }
+    }
+
+    private String encodePassword(String password) {
+        if (password == null) {
+            return null;
+        }
+        return passwordEncoder.encode(password);
     }
 
     private void isDuplicatedUserId(String userId) {
