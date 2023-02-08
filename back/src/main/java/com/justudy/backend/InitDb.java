@@ -216,7 +216,6 @@ public class InitDb {
             return CommunityCreate.builder()
                     .title("제목 " + number)
                     .content("내용 " + number)
-                    .isHighlighted(false)
                     .build();
         }
 

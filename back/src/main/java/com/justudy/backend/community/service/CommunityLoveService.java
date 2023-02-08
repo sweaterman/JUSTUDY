@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -54,6 +55,10 @@ public class CommunityLoveService {
 
     public List<Long> getMyLoves(Long loginSequence) {
         return loveRepository.findCommunitySequence(loginSequence);
+    }
+
+    public Optional<CommunityLoveEntity> findLove(Long loginSequence, Long communitySequence) {
+        return loveRepository.findLove(loginSequence, communitySequence);
     }
 
     private CommunityLoveEntity makeNewLove(Long loginSequence, Long communitySequence, CommunityEntity community) {

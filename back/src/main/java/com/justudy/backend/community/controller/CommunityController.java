@@ -6,6 +6,7 @@ import com.justudy.backend.community.dto.request.*;
 import com.justudy.backend.community.dto.response.CommunityCommentResponse;
 import com.justudy.backend.community.dto.response.CommunityDetailResponse;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
+import com.justudy.backend.community.dto.response.ListResult;
 import com.justudy.backend.community.service.CommunityBookmarkService;
 import com.justudy.backend.community.service.CommunityCommentService;
 import com.justudy.backend.community.service.CommunityLoveService;
@@ -13,6 +14,7 @@ import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.service.MemberService;
+import com.sun.net.httpserver.HttpsServer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -46,12 +48,12 @@ public class CommunityController {
      * order - view, like
      */
     @GetMapping("/board")
-    public List<CommunityListResponse> getList(@ModelAttribute CommunitySearch condition) {
+    public ListResult<List<CommunityListResponse>> getList(@ModelAttribute CommunitySearch condition) {
         return communityService.getCommunities(condition.validateNull());
     }
 
     @GetMapping("/board/notices")
-    public List<CommunityListResponse> getNotices(@PageableDefault(size = 20) Pageable pageable) {
+    public ListResult<List<CommunityListResponse>> getNotices(@PageableDefault(size = 20) Pageable pageable) {
         return communityService.getNotices(pageable);
     }
 
@@ -68,8 +70,10 @@ public class CommunityController {
      * @return ResponseEntity<CommunityResponse> 200 OK, 커뮤니티 상세 정보
      */
     @GetMapping("/board/{boardId}")
-    public ResponseEntity<CommunityDetailResponse> readCommunityById(@PathVariable("boardId") Long communitySequence) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunityDetail(communitySequence));
+    public ResponseEntity<CommunityDetailResponse> readCommunityById(@PathVariable("boardId") Long communitySequence,
+                                                                     HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunityDetail(communitySequence, loginSequence));
     }
 
     /**
@@ -190,8 +194,9 @@ public class CommunityController {
      * @return ResponseEntity<List < CommentResponse>> 200 OK, 댓글 정보 목록
      */
     @GetMapping("/board/{id}/comments")
-    public ResponseEntity<List<CommunityCommentResponse>> readAllCommentByBoard(@PathVariable("id") Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityCommentService.readAllComment(id));
+    public ResponseEntity<List<CommunityCommentResponse>> readAllCommentByBoard(@PathVariable("id") Long id, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return ResponseEntity.status(HttpStatus.OK).body(communityCommentService.readAllComment(id, loginSequence));
     }
 
     /**
@@ -234,40 +239,5 @@ public class CommunityController {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         communityCommentService.deleteComment(id, commentId, loginSequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-    }
-
-
-    /**
-     * 모든 검색 정보를 가져오는 API
-     *
-     * @param page   페이지 넘버
-     * @param type   검색 분류(아이디, 제목, 내용)
-     * @param search 검색할 값
-     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
-     */
-//    @GetMapping("/board/search")
-    public ResponseEntity<List<CommunityDetailResponse>> readAllCommunityBySearch(@RequestParam("page") int page, @RequestParam("type") String type, @RequestParam("saerch") String search) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.search(page, type, search));
-    }
-
-    /**
-     * 일주일간 좋아요 많은 커뮤니티 정보를 가져오는 API
-     *
-     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
-     */
-//    @GetMapping("/board/love")
-    public ResponseEntity<List<CommunityDetailResponse>> readPopularCommunity() {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readPopularCommunity());
-    }
-
-    /**
-     * 커뮤니티 공지 정보를 가져오는 API
-     *
-     * @param page 페이지 넘버
-     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 공지 정보 목록
-     */
-//    @GetMapping("/board/notice")
-    public ResponseEntity<List<CommunityDetailResponse>> readAllNoticeCommunity(@RequestParam("page") int page) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readAllNoticeCommunity(page));
     }
 }

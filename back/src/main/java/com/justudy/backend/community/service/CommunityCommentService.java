@@ -58,7 +58,7 @@ public class CommunityCommentService {
                     .step(0)
                     .childNumber(0)
                     .build());
-            return CommunityCommentResponse.makeBuilder(savedComment);
+            return CommunityCommentResponse.makeBuilder(savedComment, request.getMemberSeq());
 //            return CommunityCommentResponse.makeBuilder(repository.save(request.toEntity(communityEntity, memberEntity, commentGroup + 1, 0, 0L, 0)));
 
         } else {//대댓글 작성
@@ -89,7 +89,7 @@ public class CommunityCommentService {
 
             //부모의 자식 수 업데이트
             repository.updateChildNumber(parentComment.getSequence(), parentComment.getChildNumber());
-            return CommunityCommentResponse.makeBuilder(savedComment);
+            return CommunityCommentResponse.makeBuilder(savedComment, request.getMemberSeq());
         }
     }
 
@@ -116,9 +116,8 @@ public class CommunityCommentService {
     }
 
     //한건의 댓글 읽기
-    public CommunityCommentResponse readComment(Long id) {
-        return CommunityCommentResponse.makeBuilder(repository.findById(id)
-                .orElseThrow(CommentNotFound::new));
+    public CommunityCommentResponse readComment(Long id, Long loginSequence) {
+        return CommunityCommentResponse.makeBuilder(repository.findById(id).orElseThrow(CommentNotFound::new), loginSequence);
     }
 
     @Transactional
@@ -140,8 +139,8 @@ public class CommunityCommentService {
 //        repository.save(entity);
     }
 
-    public List<CommunityCommentResponse> readAllComment(long id) {
-        return repository.readAllComment(id).stream().map(CommunityCommentResponse::makeBuilder).collect(Collectors.toList());
+    public List<CommunityCommentResponse> readAllComment(long id, Long loginSequence) {
+        return repository.readAllComment(id).stream().map(a -> CommunityCommentResponse.makeBuilder(a, loginSequence)).collect(Collectors.toList());
     }
 
 }

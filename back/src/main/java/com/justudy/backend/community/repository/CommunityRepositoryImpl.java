@@ -12,6 +12,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -22,6 +23,7 @@ import static com.justudy.backend.category.domain.QCategoryEntity.categoryEntity
 import static com.justudy.backend.community.domain.QCommunityEntity.communityEntity;
 import static com.justudy.backend.member.domain.QMemberEntity.memberEntity;
 
+@Slf4j
 @RequiredArgsConstructor
 public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
 
@@ -45,34 +47,56 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
                 .join(communityEntity.member, memberEntity).fetchJoin()
                 .join(communityEntity.category, categoryEntity).fetchJoin()
                 .where(communityEntity.isHighlighted.eq(false),
+                        communityEntity.isDeleted.eq(false),
                         eqCategory(communitySearch.getCategory()),
-                        eqTypeAndSearch(communitySearch),
-                        communityEntity.isDeleted.eq(false))
+                        eqTypeAndSearch(communitySearch))
                 .limit(communitySearch.getSize() - list.size())
                 .offset(communitySearch.getOffsetWithNotice(list.size()))
                 .orderBy(orderByCondition(communitySearch))
                 .fetch();
-        if (!list.addAll(commonList)) {
-            throw new ImportBoardFail("community", "게시글 리스트 가져오기 실패");
+        if (commonList.isEmpty()) {
+            return List.of();
         }
         return list;
+    }
+
+    @Override
+    public Long getCountOfList(CommunitySearch communitySearch) {
+        return queryFactory.select(communityEntity.count())
+                .from(communityEntity)
+                .where(communityEntity.isHighlighted.eq(false),
+                        communityEntity.isDeleted.eq(false),
+                        eqCategory(communitySearch.getCategory()),
+                        eqTypeAndSearch(communitySearch))
+                .fetchFirst();
     }
 
     @Override
     public List<CommunityEntity> getAllNotice(Pageable pageable) {
         return queryFactory.selectFrom(communityEntity)
                 .join(communityEntity.member, memberEntity).fetchJoin()
-                .where(communityEntity.isHighlighted.eq(true), communityEntity.isDeleted.eq(false))
+                .where(communityEntity.isHighlighted.eq(true),
+                        communityEntity.isDeleted.eq(false))
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .orderBy(communityEntity.sequence.desc())
                 .fetch();
     }
 
+    @Override
+    public Long getCountOfNotices() {
+        return queryFactory.select(communityEntity.count())
+                .from(communityEntity)
+                .where(communityEntity.isHighlighted.eq(true),
+                        communityEntity.isDeleted.eq(false))
+                .fetchFirst();
+    }
+
     public List<CommunityEntity> getMostLoveListOfWeek(Pageable pageable) {
         return queryFactory.selectFrom(communityEntity)
                 .join(communityEntity.member, memberEntity).fetchJoin()
-                .where(communityEntity.isDeleted.eq(false))
+                .where(communityEntity.isHighlighted.eq(false),
+                        communityEntity.isDeleted.eq(false))
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .orderBy(communityEntity.weekLoveCount.desc())
@@ -85,7 +109,8 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
                 .selectFrom(communityEntity)
                 .join(communityEntity.member, memberEntity).fetchJoin()
                 .join(communityEntity.category, categoryEntity).fetchJoin()
-                .where(communityEntity.sequence.eq(sequence))
+                .where(communityEntity.sequence.eq(sequence),
+                        communityEntity.isDeleted.eq(false))
                 .fetchFirst());
     }
 
@@ -94,9 +119,17 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
         return queryFactory
                 .selectFrom(communityEntity)
                 .join(communityEntity.member, memberEntity).fetchJoin()
-                .where(communityEntity.sequence.in(sequences), communityEntity.isDeleted.eq(false))
+                .where(communityEntity.sequence.in(sequences),
+                        communityEntity.isDeleted.eq(false))
                 .fetch();
     }
+
+
+
+
+
+
+
 
 
     @Override
@@ -155,12 +188,15 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
 
     private BooleanExpression eqTypeAndSearch(CommunitySearch communitySearch) {
         SearchType type = communitySearch.getType();
+        log.info("type = {}", type);
         if (type == null) {
             return null;
         }
+        log.info("communitySearch.getSearch() = {}", communitySearch.getSearch());
         if (communitySearch.getSearch() == null) {
             return null;
         }
+        log.info("type.getExpression = {}", type.getExpression(communitySearch.getSearch()));
         return type.getExpression(communitySearch.getSearch());
     }
 
