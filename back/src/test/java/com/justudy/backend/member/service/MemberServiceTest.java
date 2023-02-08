@@ -20,8 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -41,6 +44,8 @@ public class MemberServiceTest {
 
     private UploadFileService uploadFileService = Mockito.mock(UploadFileService.class);
 
+    private BCryptPasswordEncoder passwordEncoder = Mockito.mock(BCryptPasswordEncoder.class);
+
     private FileStore fileStore = Mockito.mock(FileStore.class);
 
     private MemberService memberService;
@@ -51,7 +56,9 @@ public class MemberServiceTest {
 
     @BeforeEach
     public void setUp() {
-        memberService = new MemberService(memberRepository, categoryRepository, uploadFileService, communityService,fileStore);
+        memberService = new MemberService(memberRepository, categoryRepository,
+                uploadFileService, communityService,
+                fileStore, passwordEncoder);
     }
 
     @Test
