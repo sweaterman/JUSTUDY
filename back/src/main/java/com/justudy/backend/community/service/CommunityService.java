@@ -8,13 +8,13 @@ import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.community.dto.request.CommunitySearch;
 import com.justudy.backend.community.dto.response.CommunityDetailResponse;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
+import com.justudy.backend.community.dto.response.ListResult;
 import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.community.repository.CommunityRepository;
-import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.exception.ForbiddenRequest;
+import com.justudy.backend.member.domain.MemberEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +45,7 @@ public class CommunityService {
         community.changeCategory(category);
         CommunityEntity savedCommunity = communityRepository.save(community);
 
-        return CommunityDetailResponse.makeBuilder(savedCommunity);
+        return CommunityDetailResponse.makeBuilder(savedCommunity, true, false, false);
     }
 
     @Transactional
@@ -60,11 +60,15 @@ public class CommunityService {
     }
 
     @Transactional
-    public CommunityDetailResponse readCommunityDetail(Long communitySequence) {
+    public CommunityDetailResponse readCommunityDetail(Long communitySequence, Long loginSequence) {
         CommunityEntity community = communityRepository.findBySequence(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
+        boolean isWriter = community.getMember().getSequence() == loginSequence;
+        boolean isBookmarked = bookmarkService.findBookmark(loginSequence, communitySequence).isPresent();
+        boolean isLoved = loveService.findLove(loginSequence, communitySequence).isPresent();
+
         community.addViewCount();
-        return CommunityDetailResponse.makeBuilder(community);
+        return CommunityDetailResponse.makeBuilder(community,isWriter, isBookmarked, isLoved);
     }
 
     @Transactional
@@ -77,17 +81,23 @@ public class CommunityService {
                 request.getContent(),
                 categoryService.getCategoryEntityByKey(request.getCategory()));
 
-        return CommunityDetailResponse.makeBuilder(community);
+        return CommunityDetailResponse.makeBuilder(community, true, false, false);
     }
 
-    public List<CommunityListResponse> getCommunities(CommunitySearch condition) {
-        return communityRepository.getAllList(condition).stream()
+    public ListResult<List<CommunityListResponse>> getCommunities(CommunitySearch condition) {
+        List<CommunityListResponse> communityList = communityRepository.getAllList(condition).stream()
                 .map(CommunityListResponse::new).collect(Collectors.toList());
+        Long countOfList = communityRepository.getCountOfList(condition);
+
+        return new ListResult<>(communityList, countOfList);
     }
 
-    public List<CommunityListResponse> getNotices(Pageable pageable) {
-        return communityRepository.getAllNotice(pageable).stream()
+    public ListResult<List<CommunityListResponse>> getNotices(Pageable pageable) {
+        List<CommunityListResponse> noticeList = communityRepository.getAllNotice(pageable).stream()
                 .map(CommunityListResponse::new).collect(Collectors.toList());
+        Long countOfNotices = communityRepository.getCountOfNotices();
+
+        return new ListResult<>(noticeList, countOfNotices);
     }
 
     public List<CommunityListResponse> getMostLoveCommunitiesOfWeek(Pageable pageable) {
@@ -114,71 +124,5 @@ public class CommunityService {
         if (loginSequence != writerSequence) {
             throw new ForbiddenRequest();
         }
-    }
-
-
-    @Transactional
-    public List<CommunityDetailResponse> readAllCommunity(int page, String category) {
-        Pageable pageable = PageRequest.of(page, MAX_PAGE_SIZE);
-        //맨 처음페이지는 공지3개 추가
-        //공지 없을 시 일반글로 출력
-        Long noticeCount = communityRepository.noticeCount();
-        if (page == 0 && noticeCount > 0) {
-            noticeCount = noticeCount < MAX_NOTICE_SIZE ? noticeCount : MAX_NOTICE_SIZE;
-            Pageable noticePageable = PageRequest.of(0, noticeCount.intValue());
-            Pageable categoryPageable = PageRequest.of(0, MAX_PAGE_SIZE - noticeCount.intValue());
-
-            List<CommunityDetailResponse> noticeList = communityRepository.findAllByNotice(noticePageable)
-                    .stream()
-                    .map(CommunityDetailResponse::makeBuilder)
-                    .collect(Collectors.toList());
-            List<CommunityDetailResponse> categoryList = communityRepository.findAll(categoryPageable, category)
-                    .stream()
-                    .map(CommunityDetailResponse::makeBuilder)
-                    .collect(Collectors.toList());
-
-            noticeList.addAll(categoryList);
-            return noticeList;
-        }
-
-        return communityRepository.findAll(pageable, category)
-                .stream()
-                .map(CommunityDetailResponse::makeBuilder)
-                .collect(Collectors.toList());
-    }
-
-    public List<CommunityDetailResponse> readAllNoticeCommunity(int page) {
-        Pageable pageable = PageRequest.of(page, MAX_PAGE_SIZE);
-        return communityRepository.findAllByNotice(pageable)
-                .stream()
-                .map(CommunityDetailResponse::makeBuilder)
-                .collect(Collectors.toList());
-    }
-
-    public List<CommunityDetailResponse> search(int page, String type, String search) {
-        Pageable pageable = PageRequest.of(page, MAX_PAGE_SIZE);
-        String name = null;
-        String title = null;
-        String content = null;
-
-        if (type.compareTo("name") == 0) {
-            name = search;
-        } else if (type.compareTo("title") == 0) {
-            title = search;
-        } else {
-            content = search;
-        }
-
-        return communityRepository.findAllBySearchOption(pageable, name, title, content)
-                .stream()
-                .map(CommunityDetailResponse::makeBuilder)
-                .collect(Collectors.toList());
-    }
-
-    public List<CommunityDetailResponse> readPopularCommunity() {
-        return communityRepository.findPopularCommunity()
-                .stream()
-                .map(CommunityDetailResponse::makeBuilder)
-                .collect(Collectors.toList());
     }
 }
