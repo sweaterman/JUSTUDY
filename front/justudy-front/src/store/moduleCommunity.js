@@ -7,15 +7,15 @@ export default {
         CommunityBoard: [],
         topCategory: [],
         CommunityContent: {},
-        bookMarkList: []
+        bookMarkList: [],
+
+        commentList:[],
+
     },
     getters: {},
     mutations: {
         GET_COMMUNITYBOARD(state, payload) {
             state.CommunityBoard = payload;
-        },
-        GET_COMMUNITYSEARCH(state, payload) {
-            state.CommunitySearch = payload;
         },
         GET_COMMUNITYCONTENT(state, payload) {
             state.CommunityContent = payload;
@@ -28,11 +28,24 @@ export default {
         },
         getBookMarkList(state, payload) {
             state.bookMarkList = payload;
+        },
+
+        GET_COMMENTLIST(state,payload){
+            state.commentList=payload;
         }
     },
     actions: {
-        async getCommunityBoard({commit}, {number, category}) {
-            const API_URL = `${port}community/board?page=${number}&category=${category}`;
+        async getCommunityBoard({commit}, {number, category,type,search,order}) {
+            
+            let API_URL = `${port}community/board?page=${number}&category=${category}`;
+            
+            if(!(typeof type == "undefined" || type==null || type==""))
+                API_URL += `&type=${type}`
+            if(!(typeof search == "undefined" || search==null || search==""))
+                API_URL += `&search=${search}`
+            if(!(typeof order == "undefined" || order==null ||order ==""))
+                API_URL += `&order=${order}`
+
             await axios({
                 url: API_URL,
                 method: 'GET'
@@ -41,19 +54,7 @@ export default {
                     commit('GET_COMMUNITYBOARD', res.data);
                 })
                 .catch(err => {
-                    console.log(err);
-                });
-        },
-        getCommunitySearch({commit}, number, category, type, search) {
-            const API_URL = `${port}/community/boards?page=${number}&search=${search}&type=${type}&search=${search}`;
-            axios({
-                url: API_URL,
-                method: 'GET'
-            })
-                .then(res => {
-                    commit('GET_MOREPROMOTIONSTUDY', res.data);
-                })
-                .catch(err => {
+                    commit('GET_COMMUNITYBOARD',null);
                     console.log(err);
                 });
         },
@@ -102,12 +103,186 @@ export default {
                 }
             );
         },
-        async getBookMarkList({commit}, {id}) {
-            const API_URL = `${port}community/board/bookmark/${id}`;
-            await axios.get(API_URL).then(res => {
-                commit('getBookMarkList', res.data);
+        //한민 작업
+        //북마크 생성
+        //reload 필요?
+        async createBookMark({commit}, {id,bookMark}) {
+            const API_URL = `${port}community/board/${id}/bookmark`;
+            await axios({
+                url: API_URL,
+                method: 'POST',
+                data: bookMark,
+                withCredentials: true
+            }).then(() => {
+                commit;
+            })
+            .catch(err => {
+                console.log(err);
             });
         },
-        getTopCategory() {}
+        //북마크 삭제
+        //reload 필요?
+        async deleteBookMark({commit}, {id}) {
+            const API_URL = `${port}community/board/${id}/bookmark`;
+            await axios({
+                url: API_URL,
+                method: 'DELETE',
+                withCredentials: true
+            }).then(() => {
+                    commit;
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //카테고리 불러오기
+        async getTopCategories({commit}) {
+            const API_URL = `${port}category/main-category`;
+            await axios({
+                url: API_URL,
+                method: 'GET'
+            })
+                .then(res => {
+                    commit('GET_TOPCATEGORIES', res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //공지 불러오기
+        async getCommunityNoticeBoard({commit}, {number}) {
+            const API_URL = `${port}community/board/notice?page=${number}`;
+            await axios({
+                url: API_URL,
+                method: 'GET'
+            })
+                .then(res => {
+                    commit('GET_COMMUNITYBOARD', res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //좋아요 생성
+        //reload 필요?
+        async createLove({commit}, {id,love}) {
+            const API_URL = `${port}community/board/${id}/love`;
+            await axios({
+                url: API_URL,
+                method: 'POST',
+                data: love,
+                withCredentials: true
+            }).then(() => {
+                commit;
+            })
+            .catch(err => {
+                console.log(err);
+            });
+        },
+        //좋아요 삭제
+        //reload 필요?
+        async deleteLove({commit}, {id}) {
+            const API_URL = `${port}community/board/${id}/love`;
+            await axios({
+                url: API_URL,
+                method: 'DELETE',
+                withCredentials: true
+            }).then(() => {
+                    commit;
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+
+        //게시글 별 댓글 불러오기
+        async getCommentList({commit},{id}) {
+            const API_URL = `${port}community/board/${id}/comments`;
+            await axios({
+                url: API_URL,
+                method: 'GET',
+                withCredentials: true
+            })
+                .then(res => {
+                    commit('GET_COMMENTLIST', res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //댓글 생성
+        //reload 필요?
+        async createComment({commit}, {id,comment}) {
+            const API_URL = `${port}community/board/${id}/comments`;
+            await axios({
+                url: API_URL,
+                method: 'POST',
+                data: comment,
+                withCredentials: true
+            }).then(() => {
+                commit;
+                window.location.reload();
+            })
+            .catch(err => {
+                console.log(err);
+            });
+        },
+        //댓글 삭제        
+        //reload 필요?
+        async deleteComment({commit}, {id,commentid}) {
+            const API_URL = `${port}community/board/${id}/comments/${commentid}`;
+            await axios({
+                url: API_URL,
+                method: 'DELETE',
+                withCredentials: true
+            }).then(() => {
+                    commit;
+                    window.location.reload();
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //댓글 수정
+        //reload 필요?
+        async updateComment({commit}, {id,commentid,comment}) {
+            const API_URL = `${port}community/board/${id}/comments/${commentid}`;
+            await axios({
+                url: API_URL,
+                method: 'PUT',
+                data: comment,
+                withCredentials: true
+            }).then(() => {
+                    commit;
+                    window.location.reload();
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+
+        //인기글 불러오기 메인 페이지 기능 
+        // async getPopularCommunityBoard({commit}, {number}) {
+        //     const API_URL = `${port}community/board/popular?page=${number}`;
+        //     await axios({
+        //         url: API_URL,
+        //         method: 'GET'
+        //     })
+        //         .then(res => {
+        //             commit('', res.data);
+        //         })
+        //         .catch(err => {
+        //             console.log(err);
+        //         });
+        // },
+
+        //북마크 리스트 커뮤니티쪽 작업 아닌듯
+        // async getBookMarkList({commit}, {id}) {
+        //     const API_URL = `${port}community/board/bookmark/${id}`;
+        //     await axios.get(API_URL).then(res => {
+        //         commit('getBookMarkList', res.data);
+        //     });
+        // },
+
     }
 };

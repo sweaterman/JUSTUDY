@@ -25,7 +25,7 @@ export default {
         updateData(data) {
             // console.log('aaaa');
             this.$emit('click', data);
-            this.$router.push(`${this.$route.path}?category=${data}`);
+            this.$router.push(`${this.$route.path}?category=${data}&page=1`);
         }
     },
     data() {
