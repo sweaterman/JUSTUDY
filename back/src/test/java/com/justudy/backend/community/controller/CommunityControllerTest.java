@@ -83,7 +83,7 @@ class CommunityControllerTest {
 
         List<CommunityListResponse> list = new ArrayList<>();
         for (int i = 1; i <= 30; i++) {
-            list.add(new CommunityListResponse((long) i, "타이틀" + i, "내용" + i, LocalDateTime.now(), false, 1000 - i));
+            list.add(new CommunityListResponse((long) i, "타이틀" + i, "내용" + i, LocalDateTime.now(), false, i, 1000 - i));
         }
         List<CommunityListResponse> sortedSequence = list.stream().sorted(Comparator.comparing(CommunityListResponse::getSequence).reversed())
                 .collect(Collectors.toList());
