@@ -150,7 +150,6 @@ export default {
                     } else {
                         this.searchSend = 'leader';
                     }
-
                     //데이터 검색하고 받아오기.
                     this.pageNum = 1;
                     await this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: this.searchSend, content: this.searchContent});

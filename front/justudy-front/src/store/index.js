@@ -11,6 +11,7 @@ import moduleStudy from './moduleStudy';
 import moduleTimer from './moduleTimer';
 import moduleRanking from './moduleRanking';
 import moduleWebRTC from './moduleWebRTC';
+import moduleSignUp from './moduleSignUp';
 
 import createPersistedState from 'vuex-persistedstate';
 
@@ -27,7 +28,6 @@ export default new Vuex.Store({
     // },
     modules: {
         moduleAdmin: moduleAdmin,
-
         moduleCommunity: moduleCommunity,
         moduleLogin: moduleLogin,
         moduleMain: moduleMain,
@@ -36,7 +36,8 @@ export default new Vuex.Store({
         moduleStudy: moduleStudy,
         moduleTimer: moduleTimer,
         moduleRanking: moduleRanking,
-        moduleWebRTC: moduleWebRTC
+        moduleWebRTC: moduleWebRTC,
+        moduleSignUp: moduleSignUp
     },
     //로그인 상태 저장만을 위한 플러그인설치
     plugins: [
