@@ -42,6 +42,31 @@ public class MemberController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @GetMapping("/check")
+    public ResponseEntity<Void> validateMember(@RequestParam(name = "userid", required = false) String userId,
+                                               @RequestParam(name = "nickname", required = false) String nickname,
+                                               @RequestParam(name = "ssafyid", required = false) String ssafyId
+                                               ) {
+
+        log.info("userId = {}", userId);
+        log.info("nickname = {}", nickname);
+        log.info("ssafyId = {}", ssafyId);
+        validateParameter(userId, nickname, ssafyId);
+        return null;
+    }
+
+    private void validateParameter(String userId, String nickname, String ssafyId) {
+        if (userId != null) {
+            memberService.isDuplicatedUserId(userId);
+        }
+        if (nickname != null) {
+            memberService.isDuplicatedNickname(nickname);
+        }
+        if (ssafyId != null) {
+            memberService.isDuplicatedSsafyId(ssafyId);
+        }
+    }
+
     /**
      * 마이페이지 멤버 정보 API
      * @param session session에서 memberSequence를 찾기 위해
@@ -102,7 +127,6 @@ public class MemberController {
      * ADMIN 유저의 회원 삭제 API
      * @param memberSequence - Target Member Sequence
      * @param session
-     *
      */
     @DeleteMapping("/admin/members/{memberSequence}")
     public ResponseEntity<Void> banMember(@PathVariable Long memberSequence, HttpSession session) {
