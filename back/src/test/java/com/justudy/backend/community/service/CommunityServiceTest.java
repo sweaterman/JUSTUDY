@@ -150,7 +150,6 @@ class CommunityServiceTest {
                 .category(CATEGORY_KEY)
                 .title(TITLE)
                 .content(CONTENT)
-                .isHighlighted(false)
                 .build();
 
         MemberEntity mockMember = makeTestMember("test", "test", "test");

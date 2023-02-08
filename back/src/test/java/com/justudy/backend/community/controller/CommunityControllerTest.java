@@ -158,7 +158,6 @@ class CommunityControllerTest {
                 .category(CATEGORY_KEY)
                 .title(TITLE)
                 .content(CONTENT)
-                .isHighlighted(false)
                 .build();
         BDDMockito.given(communityService.createCommunity(request, mockMember, mockCategory))
                 .willReturn(makeCommunityResponse(mockMember, mockCategory));
