@@ -10,12 +10,15 @@ import com.justudy.backend.timer.dto.response.ActivitySubjectResponse;
 import com.justudy.backend.timer.dto.response.ActivityToRank;
 import com.justudy.backend.timer.dto.response.MemberActivityBeforeRank;
 import com.justudy.backend.timer.dto.response.MemberActivityYesterdayResponse;
+import com.justudy.backend.timer.exception.NicknameNotFound;
+import com.justudy.backend.timer.exception.YesterdayNoData;
 import com.justudy.backend.timer.repository.MemberActivityRepository;
 import com.querydsl.core.Tuple;
 import java.sql.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalLong;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,8 +38,9 @@ public class MemberActivityService {
   public void saveMemberAcitivity(ActivityRequest memberActivityRequest, Long seq,
       Date today) {
     MemberEntity member = memberRepository.getReferenceById(seq);
-    Tuple storeTime = memberActivityRepository.findTodayRecord(today,memberActivityRequest.getCategory(), member);
-    if (storeTime == null) {
+    Optional<Tuple> storeTime = memberActivityRepository.findTodayRecord(today,memberActivityRequest.getCategory(), member);
+
+    if (storeTime.isEmpty()) {
       memberActivityRepository.save(MemberActivityEntity
           .builder()
           .member(member)
@@ -46,10 +50,10 @@ public class MemberActivityService {
           .build()
       );
     } else {
-      Long sum = memberActivityRequest.getSecond() + storeTime.get(qMemberActivity.time);
+      Long sum = memberActivityRequest.getSecond() + storeTime.get().get(qMemberActivity.time);
       memberActivityRepository.save(MemberActivityEntity
           .builder()
-              .sequence(storeTime.get(qMemberActivity.sequence))
+              .sequence(storeTime.get().get(qMemberActivity.sequence))
           .member(member)
           .date(today)
           .time(sum)
@@ -62,42 +66,30 @@ public class MemberActivityService {
 
   @Transactional
   public MemberActivityYesterdayResponse getMemberActivityYesterdayTop(Date yesterday) {
-    Tuple ret = memberActivityRepository.findTopTimeByYesterday(yesterday);
-    if (ret == null) {
-      log.info("findTopTimeByYesterday null");
-      return null;//에러 페이지 넣기
-    }
+    Tuple ret = memberActivityRepository.findTopTimeByYesterday(yesterday).orElseThrow(() -> new YesterdayNoData());
     MemberEntity member = ret.get(qMemberActivity.member);
     Long second = ret.get(qMemberActivity.time.sum());
+
     return new MemberActivityYesterdayResponse(member.getNickname(), second);
   }
 
   @Transactional
   public Long getSumTimeByNickNameAndPeriod(Date ago, Date cur, String nickName) {
-    Optional<Long> userSeq = memberRepository.findSequenceByNickname(nickName);
-    if (userSeq.isEmpty()) {
-      return null;
-    }
-    MemberEntity member = memberRepository.getReferenceById(userSeq.get());
+    Long userSeq = memberRepository.findSequenceByNickname(nickName).orElseThrow(() -> new NicknameNotFound());
+    MemberEntity member = memberRepository.getReferenceById(userSeq);
     if (member == null) {
-      return null;//에러 페이지 넣기
+      throw new NicknameNotFound();
     }
-    Long sumTime = memberActivityRepository.findTimeByPeriodAndMember(ago, cur, member);
-    if (sumTime == null) {
-      sumTime = 0l;
-    }
+    Long sumTime = memberActivityRepository.findTimeByPeriodAndMember(ago, cur, member).orElse(0l);
     return sumTime;
   }
 
   @Transactional
   public List<ActivitySubjectResponse> getSumTimeByNickNameAndCategory(String nickName) {
-    Optional<Long> userSeq = memberRepository.findSequenceByNickname(nickName);
-    if (userSeq.isEmpty()) {
-      return null;
-    }
-    MemberEntity member = memberRepository.getReferenceById(userSeq.get());
+    Long userSeq = memberRepository.findSequenceByNickname(nickName).orElseThrow(() -> new NicknameNotFound());
+    MemberEntity member = memberRepository.getReferenceById(userSeq);
     if (member == null) {
-      return null;//에러 페이지 넣기
+      throw new NicknameNotFound();
     }
 
     return memberActivityRepository.findTimeByCategoryAndMember(member);
@@ -106,12 +98,12 @@ public class MemberActivityService {
 
   @Transactional
   public Long getAvgTimeByPeriod(Date ago, Date cur) {
-    Tuple result = memberActivityRepository.findAllTimeByPeriod(ago, cur);
-    if (result == null) {
-      return null;//에러페이지 넣기
-    }
-    Long count = result.get(qMemberActivity.member.countDistinct());
-    Long sum = result.get(qMemberActivity.time.sum());
+    Optional<Tuple> result = memberActivityRepository.findAllTimeByPeriod(ago, cur);
+    if(result.isEmpty())
+      return 0l;
+
+    Long count = result.get().get(qMemberActivity.member.countDistinct());
+    Long sum = result.get().get(qMemberActivity.time.sum());
 
     Long sumTime = sum / count;
 
@@ -122,15 +114,11 @@ public class MemberActivityService {
   @Transactional
   public List<ActivityCalendarResponse> getCalendarTimeByNickName(Date ago, Date cur,
       String nickName) {
-    Optional<Long> userSeq = memberRepository.findSequenceByNickname(nickName);
-    if (userSeq.isEmpty()) {
-      return null;
-    }
-    MemberEntity member = memberRepository.getReferenceById(userSeq.get());
+    Long userSeq = memberRepository.findSequenceByNickname(nickName).orElseThrow(() -> new NicknameNotFound());
+    MemberEntity member = memberRepository.getReferenceById(userSeq);
     if (member == null) {
-      return null;//에러 페이지 넣기
+      throw new NicknameNotFound();
     }
-
     return memberActivityRepository.findCalendarById(ago, cur, member);
 
   }
