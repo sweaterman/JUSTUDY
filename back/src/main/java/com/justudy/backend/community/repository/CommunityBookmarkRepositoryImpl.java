@@ -20,7 +20,8 @@ public class CommunityBookmarkRepositoryImpl implements CommunityBookmarkReposit
     public Optional<CommunityBookmarkEntity> findBookmark(Long loginSequence, Long communitySequence) {
         return Optional.ofNullable(queryFactory
                 .selectFrom(qBookmark)
-                .where(qBookmark.memberSequence.eq(loginSequence), qBookmark.communitySequence.eq(communitySequence))
+                .where(qBookmark.memberSequence.eq(loginSequence),
+                        qBookmark.communitySequence.eq(communitySequence))
                 .fetchFirst());
     }
 

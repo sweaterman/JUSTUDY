@@ -66,6 +66,17 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
+    public Optional<String> findMmId(String mmId) {
+        return Optional.ofNullable(queryFactory
+                .select(memberEntity.mmId)
+                .from(memberEntity)
+                .where(memberEntity.isDeleted.eq(false),
+                        memberEntity.isBanned.eq(false),
+                        memberEntity.mmId.eq(mmId))
+                .fetchOne());
+    }
+
+    @Override
     public Optional<Long> findSequenceByNickname(String nickname) {
         return Optional.ofNullable(queryFactory
                 .select(memberEntity.sequence)
