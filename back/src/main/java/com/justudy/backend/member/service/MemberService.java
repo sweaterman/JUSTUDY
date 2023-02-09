@@ -206,6 +206,7 @@ public class MemberService {
     }
 
     private void addCategory(MemberCreate request, MemberEntity member) {
+        log.info("request.getCategory.length = ", request.getCategory().length);
         List<CategoryEntity> categories = Arrays.stream(request.getCategory())
                 .map(category -> (categoryRepository.findByValue(category)
                         .orElseThrow(CategoryNotFound::new)))
