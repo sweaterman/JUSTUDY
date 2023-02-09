@@ -4,10 +4,10 @@
             <!-- 상단 스터디 정보 -->
             <v-row>
                 <!-- 스터디 룸 아이콘 -->
-                <v-col col="12" md="5">
+                <v-col cols="12" md="5" :style="{padding: '2%'}" justify="center" align="center">
                     <!-- 스터디 이미지 -->
                     <v-row>
-                        <v-col cols="12">
+                        <v-col>
                             <img class="img" style="width: 100%" src="@/assets/study_320x180.png" alt="study_image" />
                         </v-col>
                     </v-row>
@@ -15,11 +15,35 @@
                     <v-row v-if="!roomOpen" justify="center">
                         <!-- 바로 참여하기 -->
                         <v-col cols="6" align="center">
-                            <v-btn rounded color="red" dark>바로 참여하기</v-btn>
+                            <!-- <v-btn v-if="!checkName" @click="ntc" :style="{color: 'crimson'}"> -->
+                            <v-btn v-if="!onAir" disabled :style="{color: 'black'}">
+                                <v-col>
+                                    <span class="material-icons-outlined"> radio_button_checked </span>
+                                </v-col>
+                                <v-col cols="12" md="9">
+                                    <span color="white">지금 참여하기</span>
+                                </v-col>
+                            </v-btn>
+                            <v-btn v-if="onAir" @click="onAirClicked('on')" :style="{color: 'crimson'}">
+                                <v-col>
+                                    <span class="material-icons-outlined"> radio_button_checked </span>
+                                </v-col>
+                                <v-col cols="12" md="9">
+                                    <span color="white">지금 참여하기</span>
+                                </v-col>
+                            </v-btn>
                         </v-col>
                         <!-- 알림보내기 -->
                         <v-col cols="6" align="center">
-                            <v-btn rounded color="yellow">알림 보내기</v-btn>
+                            <!-- <v-btn v-if="!checkName" @click="ntc" :style="{color: 'crimson'}"> -->
+                            <v-btn @click="ntc" :style="{color: '#00B9FF'}">
+                                <v-col>
+                                    <span class="material-icons-outlined"> send </span>
+                                </v-col>
+                                <v-col cols="12" md="9">
+                                    <span color="white">단체 문자</span>
+                                </v-col>
+                            </v-btn>
                         </v-col>
                     </v-row>
 
@@ -29,34 +53,38 @@
                         </v-col>
                     </v-row>
                 </v-col>
-
-                <v-col col="12" md="7">
+                <v-col cols="12" md="1" />
+                <v-col cols="12" md="6">
                     <v-row>
-                        <v-col cols="2"> 스터디 </v-col>
+                        <v-col cols="2"><h3>스터디</h3></v-col>
                         <v-col cols="10"> {{ studyInfo.name }} </v-col>
                     </v-row>
                     <v-row>
-                        <v-col cols="2"> level </v-col>
+                        <v-col cols="2"> <h3>Level</h3> </v-col>
                         <v-col cols="10"> {{ studyInfo.level }} </v-col>
                     </v-row>
                     <v-row>
-                        <v-col cols="2"> 팀장 </v-col>
+                        <v-col cols="2"> <h3>팀장</h3> </v-col>
                         <v-col cols="10"> {{ studyInfo.leader }} </v-col>
                     </v-row>
                     <v-row>
-                        <v-col cols="2"> on-off </v-col>
+                        <v-col cols="2"> <h3>on-off</h3> </v-col>
                         <v-col cols="10"> {{ studyInfo.meeting }} </v-col>
                     </v-row>
                     <v-row>
-                        <v-col cols="2"> 주제 </v-col>
+                        <v-col cols="2"> <h3>주제</h3> </v-col>
                         <v-col cols="10"> {{ studyInfo.category }} </v-col>
                     </v-row>
                     <v-row>
-                        <v-col cols="2"> Github </v-col>
+                        <v-col cols="2">
+                            <v-img :src="require('@/assets/git.png')" :style="{width: '30px'}" />
+                        </v-col>
                         <v-col cols="10"> {{ studyInfo.github }} </v-col>
                     </v-row>
                     <v-row>
-                        <v-col cols="2"> Notion </v-col>
+                        <v-col cols="2">
+                            <v-img :src="require('@/assets/notion.png')" :style="{width: '30px'}" />
+                        </v-col>
                         <v-col cols="10"> {{ studyInfo.notion }} </v-col>
                     </v-row>
                 </v-col>
@@ -64,86 +92,77 @@
 
             <!-- 구분선 -->
             <v-row>
-                <v-col>
-                    <v-divider></v-divider>
+                <v-col cols="12" md="6">
+                    <div class="card_section">
+                        <v-row :style="{padding: '4%'}">
+                            <v-row :style="{padding: '1%'}"><h2>스터디 상세 설명</h2></v-row>
+                            <v-row :style="{padding: '1%'}">
+                                {{ studyInfo.information }}
+                            </v-row>
+                        </v-row>
+                    </div>
                 </v-col>
-            </v-row>
 
-            <v-row>
-                <v-col cols="2"> Description </v-col>
-                <v-col cols="10"> {{ studyInfo.information }} </v-col>
-            </v-row>
-
-            <!-- 구분선 -->
-            <v-row><v-divider></v-divider></v-row>
-
-            <!-- 스터디 멤버 표시하는 부분 -->
-            <v-row>
-                <v-col cols="12" md="2">
-                    <v-row>
-                        <v-col cols="12" align="center">
-                            <h3 class="yellowText">멤버</h3>
-                        </v-col>
-                        <v-col cols="12" align="center">
-                            <h3>{{ studyInfo.member.length }} / {{ studyInfo.population }}</h3>
-                        </v-col>
-                    </v-row>
-                </v-col>
-                <v-col cols="12" md="1" v-for="member in studyInfo.member" :key="member.sequence">
-                    <v-avatar size="80">
-                        <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
-                    </v-avatar>
-                    <div>
-                        {{ member.nickname }}
+                <v-col cols="12" md="6">
+                    <!-- 스터디 멤버 표시하는 부분 -->
+                    <div class="card_section">
+                        <v-row justify="center" align="center">
+                            <v-col cols="12" md="3" justify="center" align="center">
+                                <h2>멤버</h2>
+                            </v-col>
+                            <v-col cols="12" md="9" align="left">
+                                <h3>{{ studyInfo.member.length }} / {{ studyInfo.population }}</h3>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col cols="12" md="2" :style="{marginTop: '2%'}">
+                                <v-row :style="{padding: '10%'}" justify="center" align="center"><v-img :src="require('@/assets/1st.png')" /></v-row>
+                                <v-row :style="{padding: '10%'}" justify="center" align="center"><v-img :src="require('@/assets/2nd.png')" /></v-row>
+                                <v-row :style="{padding: '10%'}" justify="center" align="center"><v-img :src="require('@/assets/3rd.png')" /></v-row>
+                            </v-col>
+                            <v-col cols="12" md="10">
+                                <v-row v-for="member in studyInfo.member" :key="member.sequence">
+                                    <v-col>
+                                        <div class="card_section_member">
+                                            <v-row justify="center" align="center" :style="{padding: '-12%'}">
+                                                <v-col cols="12" md="3" justify="center" align="center">
+                                                    <v-avatar size="40">
+                                                        <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
+                                                    </v-avatar>
+                                                </v-col>
+                                                <v-col cols="12" md="4" justify="center" align="center">
+                                                    <v-row>
+                                                        <div :style="{fontSize: 'large'}" justify="center" align="center">
+                                                            {{ member.nickname }}
+                                                        </div>
+                                                    </v-row>
+                                                </v-col>
+                                                <v-col cols="12" md="5" justify="center" align="center"> {{ member.badge }} 점 </v-col>
+                                            </v-row>
+                                        </div>
+                                    </v-col>
+                                </v-row>
+                            </v-col>
+                        </v-row>
                     </div>
                 </v-col>
             </v-row>
-            <v-row>
-                <v-divider></v-divider>
-            </v-row>
 
-            <!-- 스터디왕 부분 -->
-            <v-row>
-                <v-col cols="12" align="center">
-                    <h3 class="yellowText">스터디왕</h3>
-                </v-col>
-            </v-row>
-            <v-row>
-                <!-- 2등 -->
-                <v-col cols="4" align="center">
-                    <v-avatar size="100" v-if="studyInfo.member.length >= 2">
-                        <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
-                    </v-avatar>
-                    <h1 v-if="studyInfo.member.length >= 2">2위 : {{ studyInfo.member[1].nickname }}</h1>
-                    <h2 v-if="studyInfo.member.length >= 2">{{ studyInfo.member[1].badge }}</h2>
-                </v-col>
-                <!-- 1등 -->
-                <v-col cols="4" align="center">
-                    <v-avatar size="120">
-                        <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
-                    </v-avatar>
-                    <h1>1위 : {{ studyInfo.member[0].nickname }}</h1>
-                    <h2>{{ studyInfo.member[0].badge }}</h2>
-                </v-col>
-                <!-- 3등 -->
-                <v-col cols="4" align="center">
-                    <v-avatar size="80" v-if="studyInfo.member.length >= 3">
-                        <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
-                    </v-avatar>
-                    <h1 v-if="studyInfo.member.length >= 3">3위 : {{ studyInfo.member[2].nickname }}</h1>
-                    <h2 v-if="studyInfo.member.length >= 3">{{ studyInfo.member[2].badge }}</h2>
-                </v-col>
-            </v-row>
-
+            <!-- 스터디 수정하기 -->
             <v-row v-if="studyInfo.isLeader">
                 <v-col cols="12" align="end">
-                    <v-btn text @click="moveToEdit()">스터디 정보 수정하기</v-btn>
+                    <v-btn @click="moveToEdit()" :style="{color: 'green'}" depressed>
+                        <span class="material-icons-outlined"> edit_note </span>
+                    </v-btn>
                 </v-col>
             </v-row>
 
+            <!-- 스터디 탈퇴하기 -->
             <v-row v-if="studyInfo.isMember">
                 <v-col cols="12" align="end">
-                    <v-btn text @click="withdrawDialog = true">스터디 탈퇴하기</v-btn>
+                    <v-btn text @click="withdrawDialog = true" :style="{color: 'crimson'}">
+                        <span class="material-icons-outlined"> logout </span>
+                    </v-btn>
                 </v-col>
             </v-row>
 
@@ -211,6 +230,18 @@ export default {
                         nickname: '박싸피임',
                         name: '박싸피룰루',
                         badge: 546
+                    },
+                    {
+                        sequence: 4,
+                        nickname: '사싸피임',
+                        name: '사싸피룰루',
+                        badge: 246
+                    },
+                    {
+                        sequence: 5,
+                        nickname: '오싸피임',
+                        name: '오싸피룰루',
+                        badge: 146
                     }
                 ],
                 level: '초보',
@@ -224,9 +255,13 @@ export default {
                 예상 커리큘럼: Do it 리액트! 책을 순서대로 공부합니다. \n
                 개설 동기: 리액트를 너무 공부하고 싶었어요.. \n
                 주의사항: 노쇼 금지! `,
-                isLeader: true,
-                isMember: false
+                isLeader: false,
+                isMember: true
             },
+            onAir: true, // false 로 변경해야
+            person: '', // 변경 필수
+            room: '1', // 변경 필수
+
             roomOpen: false, //스터디화상룸이 열려있는지 확인하는 변수
             withdrawDialog: false //탈퇴 모달창
         };
@@ -239,12 +274,27 @@ export default {
         },
         moveToEdit() {
             window.location.href = `/study/${this.studyInfo.sequence}/edit`;
+        },
+        onAirClicked() {
+            this.onAir = !this.onAir;
+            localStorage.setItem('studyRoomPersonName', this.person);
+            localStorage.setItem('studyRoomRoomName', this.room);
+            this.$router.push('/meeting/room');
         }
     }
 };
 </script>
 
 <style scoped>
+.card_section {
+    padding: 30px;
+    /* height: 500px; */
+    margin-bottom: 5px;
+    border-style: solid;
+    border-color: #eeeeee;
+    border-radius: 30px;
+    /* border-width: thin; */
+}
 .yellowText {
     display: flex;
     align-items: center;
@@ -254,5 +304,13 @@ export default {
     background-color: #ffd200;
     border-radius: 30px;
     padding: 20px;
+}
+.card_section_member {
+    padding: 10px;
+    /* margin-bottom: 1px; */
+    border-style: solid;
+    border-color: #eeeeee;
+    border-radius: 30px;
+    /* border-width: thin; */
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <v-row :style="{marginTop: '2%'}">
+        <v-row :style="{marginTop: '0.5%'}">
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <!-- 타이머 메뉴 바 -->
