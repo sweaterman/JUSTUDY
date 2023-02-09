@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,7 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final QCommunityEntity qCommunity = communityEntity;
     private final long MAX_POPULAR_SIZE = 20;
+    private final EntityManager em;
 
 
     @Override
@@ -127,9 +129,20 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public void updateWeekLoveCount() {
+        queryFactory
+                .update(communityEntity)
+                .set(communityEntity.loveCount, communityEntity.loveCount.add(communityEntity.weekLoveCount))
+                .execute();
 
+        queryFactory
+                .update(communityEntity)
+                .set(communityEntity.weekLoveCount, 0)
+                .execute();
 
-
+        em.clear();
+    }
 
 
 
