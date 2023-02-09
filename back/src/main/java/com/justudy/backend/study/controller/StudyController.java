@@ -12,8 +12,8 @@ import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.service.FileStore;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.login.infra.SessionConst;
-import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.domain.MemberEntity;
+import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.dto.request.*;
 import com.justudy.backend.study.dto.request.community.StudyCommunityCommentCreate;
 import com.justudy.backend.study.dto.request.community.StudyCommunityCommentEdit;
@@ -502,27 +502,30 @@ public class StudyController {
     //스터디 댓글 상세보기
     //스터디 댓글 수정
     //스터디 댓글 삭제
+
     /**
      * page - default 0
      * size - default 20
-     * category
      * type - nickname, title, content
      * search - 검색 내용
      * order - view, like
      */
-    @GetMapping("/board")
-    public ListResult<List<StudyCommunityListResponse>> getList(@ModelAttribute CommunitySearch condition) {
-        return studyCommunityService.getCommunities(condition.validateNull());
+    @GetMapping("/{id}/board")
+    public ListResult<List<StudyCommunityListResponse>> getList(@PathVariable("id") Long studySequence, @ModelAttribute CommunitySearch condition, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return studyCommunityService.getCommunities(condition.validateNull(), studySequence, loginSequence);
     }
 
-    @GetMapping("/board/notices")
-    public ListResult<List<StudyCommunityListResponse>> getNotices(@PageableDefault(size = 20) Pageable pageable) {
-        return studyCommunityService.getNotices(pageable);
+    @GetMapping("/{id}/board/notices")
+    public ListResult<List<StudyCommunityListResponse>> getNotices(@PathVariable("id") Long studySequence, @PageableDefault(size = 20) Pageable pageable, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return studyCommunityService.getNotices(pageable, studySequence, loginSequence);
     }
 
-    @GetMapping("/board/popular")
-    public List<StudyCommunityListResponse> getMostPopular(@PageableDefault(size = 10) Pageable pageable) {
-        return studyCommunityService.getMostLoveCommunitiesOfWeek(pageable);
+    @GetMapping("/{id}/board/popular")
+    public List<StudyCommunityListResponse> getMostPopular(@PathVariable("id") Long studySequence, @PageableDefault(size = 10) Pageable pageable, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return studyCommunityService.getMostLoveCommunitiesOfWeek(pageable, studySequence, loginSequence);
     }
 
 
@@ -532,13 +535,13 @@ public class StudyController {
      * @param communitySequence PK
      * @return ResponseEntity<CommunityResponse> 200 OK, 커뮤니티 상세 정보
      */
-    @GetMapping("/board/{boardId}")
-    public ResponseEntity<StudyCommunityDetailResponse> readCommunityById(@PathVariable("boardId") Long communitySequence,
+    @GetMapping("/{id}/board/{boardId}")
+    public ResponseEntity<StudyCommunityDetailResponse> readCommunityById(@PathVariable("id") Long studySequence, @PathVariable("boardId") Long communitySequence,
                                                                           HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         loginSequence = nullSafeLoginSequence(loginSequence);
 
-        return ResponseEntity.status(HttpStatus.OK).body(studyCommunityService.readStudyCommunityDetail(communitySequence, loginSequence));
+        return ResponseEntity.status(HttpStatus.OK).body(studyCommunityService.readStudyCommunityDetail(communitySequence, loginSequence, studySequence));
     }
 
     /**
@@ -547,13 +550,12 @@ public class StudyController {
      * @param request 생성 정보
      * @return ResponseEntity<CommunityResponse> 201 Created, 생성된 커뮤니티 정보
      */
-    @PostMapping("/board")
-    public ResponseEntity<StudyCommunityDetailResponse> createCommunity(@RequestBody StudyCommunityCreate request, HttpSession session) {
+    @PostMapping("/{id}/board")
+    public ResponseEntity<StudyCommunityDetailResponse> createCommunity(@PathVariable("id") Long studySequence, @RequestBody StudyCommunityCreate request, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         MemberEntity findMember = memberService.getMember(loginSequence);
-        CategoryEntity category = categoryService.getCategoryEntityByKey(request.getCategory());
 
-        StudyCommunityDetailResponse response = studyCommunityService.createStudyCommunity(request, findMember, category);
+        StudyCommunityDetailResponse response = studyCommunityService.createStudyCommunity(request, findMember, studySequence);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -565,12 +567,12 @@ public class StudyController {
      * @param request           수정 정보
      * @return ResponseEntity<UserResponse> 200 OK, 수정된 커뮤니티글 정보
      */
-    @PutMapping("/board/{id}")
-    public ResponseEntity<StudyCommunityDetailResponse> updateCommunity(@PathVariable("id") Long communitySequence,
-                                                                   @RequestBody StudyCommunityEdit request,
-                                                                   HttpSession session) {
+    @PutMapping("/{id}/board/{boardid}")
+    public ResponseEntity<StudyCommunityDetailResponse> updateCommunity(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long communitySequence,
+                                                                        @RequestBody StudyCommunityEdit request,
+                                                                        HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        StudyCommunityDetailResponse response = studyCommunityService.updateCommunity(loginSequence, communitySequence, request);
+        StudyCommunityDetailResponse response = studyCommunityService.updateCommunity(loginSequence, communitySequence, request, studySequence);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -581,11 +583,11 @@ public class StudyController {
      * @param communitySequence 커뮤니티 sequence (PK)
      * @return ResponseEntity<Void> 204 No Content
      */
-    @DeleteMapping("/board/{boardId}")
-    public ResponseEntity<Void> deleteCommunity(@PathVariable("boardId") long communitySequence, HttpSession session) {
+    @DeleteMapping("/{id}/board/{boardId}")
+    public ResponseEntity<Void> deleteCommunity(@PathVariable("id") Long studySequence, @PathVariable("boardId") long communitySequence, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
-        studyCommunityService.deleteStudyCommunity(loginSequence, communitySequence);
+        studyCommunityService.deleteStudyCommunity(loginSequence, communitySequence, studySequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
@@ -597,11 +599,11 @@ public class StudyController {
      * @param communitySequence
      * @param session
      */
-    @PostMapping("/board/{id}/bookmark")
-    public ResponseEntity<Void> createBookmark(@PathVariable("id") Long communitySequence,
+    @PostMapping("/{id}/board/{boardid}/bookmark")
+    public ResponseEntity<Void> createBookmark(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long communitySequence,
                                                HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        studyCommunityBookmarkService.createBookmark(loginSequence, communitySequence);
+        studyCommunityBookmarkService.createBookmark(loginSequence, communitySequence, studySequence);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
@@ -614,11 +616,11 @@ public class StudyController {
      * 북마크는 유저기능아닌가? 매핑 바꿔야할듯
      * 복합키로 delete 어캐구현하지
      */
-    @DeleteMapping("/board/{id}/bookmark")
-    public ResponseEntity<Void> deleteBookmark(@PathVariable("id") Long communitySequence,
+    @DeleteMapping("/{id}/board/{boardid}/bookmark")
+    public ResponseEntity<Void> deleteBookmark(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long communitySequence,
                                                HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        studyCommunityBookmarkService.deleteBookmark(loginSequence, communitySequence);
+        studyCommunityBookmarkService.deleteBookmark(loginSequence, communitySequence, studySequence);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
@@ -628,11 +630,11 @@ public class StudyController {
     /**
      * 좋아요 생성 API
      */
-    @PostMapping("/board/{id}/love")
-    public ResponseEntity<Void> createLove(@PathVariable("id") Long communitySequence,
+    @PostMapping("/{id}/board/{boardid}/love")
+    public ResponseEntity<Void> createLove(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long communitySequence,
                                            HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        studyCommunityLoveService.createLove(loginSequence, communitySequence);
+        studyCommunityLoveService.createLove(loginSequence, communitySequence, studySequence);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
@@ -640,11 +642,11 @@ public class StudyController {
     /**
      * 좋아요 삭제 API
      */
-    @DeleteMapping("/board/{id}/love")
-    public ResponseEntity<Void> deleteLove(@PathVariable("id") Long communitySequence,
+    @DeleteMapping("/{id}/board/{boardid}/love")
+    public ResponseEntity<Void> deleteLove(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long communitySequence,
                                            HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        studyCommunityLoveService.deleteLove(loginSequence, communitySequence);
+        studyCommunityLoveService.deleteLove(loginSequence, communitySequence, studySequence);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
@@ -658,10 +660,10 @@ public class StudyController {
      * @param id 커뮤니티의 id
      * @return ResponseEntity<List < CommentResponse>> 200 OK, 댓글 정보 목록
      */
-    @GetMapping("/board/{id}/comments")
-    public ResponseEntity<List<StudyCommunityCommentResponse>> readAllCommentByBoard(@PathVariable("id") Long id, HttpSession session) {
+    @GetMapping("/{id}/board/{boardid}/comments")
+    public ResponseEntity<List<StudyCommunityCommentResponse>> readAllCommentByBoard(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long id, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        return ResponseEntity.status(HttpStatus.OK).body(studyCommunityCommentService.readAllComment(id, loginSequence));
+        return ResponseEntity.status(HttpStatus.OK).body(studyCommunityCommentService.readAllComment(id, loginSequence, studySequence));
     }
 
     /**
@@ -671,11 +673,11 @@ public class StudyController {
      * @param request 생성 정보 (parentSeq포함)
      * @return ResponseEntity<CommentResponse> 201 Created, 생성된 댓글 정보
      */
-    @PostMapping("/board/{id}/comments")
-    public ResponseEntity<StudyCommunityCommentResponse> createComment(@PathVariable("id") Long id, @RequestBody StudyCommunityCommentCreate request, HttpSession session) {
+    @PostMapping("/{id}/board/{boardid}/comments")
+    public ResponseEntity<StudyCommunityCommentResponse> createComment(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long id, @RequestBody StudyCommunityCommentCreate request, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         request.changeMemberSeq(loginSequence);
-        return ResponseEntity.status(HttpStatus.CREATED).body(studyCommunityCommentService.createComment(id, request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(studyCommunityCommentService.createComment(id, request, studySequence));
     }
 
     /**
@@ -685,10 +687,10 @@ public class StudyController {
      * @param commentId 댓글의 id
      * @param request   수정 정보
      */
-    @PutMapping("/board/{id}/comments/{commentid}")
-    public ResponseEntity<Void> updateComment(@PathVariable("id") Long id, @PathVariable("commentid") Long commentId, @RequestBody StudyCommunityCommentEdit request, HttpSession session) {
+    @PutMapping("/{id}/board/{boardid}/comments/{commentid}")
+    public ResponseEntity<Void> updateComment(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long id, @PathVariable("commentid") Long commentId, @RequestBody StudyCommunityCommentEdit request, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        studyCommunityCommentService.UpdateComment(id, commentId, request, loginSequence);
+        studyCommunityCommentService.UpdateComment(id, commentId, request, loginSequence, studySequence);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
@@ -699,10 +701,10 @@ public class StudyController {
      * @param commentId 댓글의 id
      * @return ResponseEntity<Object> 204 No Content
      */
-    @DeleteMapping("/board/{id}/comments/{commentid}")
-    public ResponseEntity<Void> deleteComment(@PathVariable("id") Long id, @PathVariable("commentid") Long commentId, HttpSession session) {
+    @DeleteMapping("/{id}/board/{boardid}/comments/{commentid}")
+    public ResponseEntity<Void> deleteComment(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long id, @PathVariable("commentid") Long commentId, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        studyCommunityCommentService.deleteComment(id, commentId, loginSequence);
+        studyCommunityCommentService.deleteComment(id, commentId, loginSequence, studySequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 

@@ -24,7 +24,7 @@ public class StudyCommunityLoveService {
     private final StudyCommunityRepository communityRepository;
 
     @Transactional
-    public Long createLove(Long loginSequence, Long communitySequence) {
+    public Long createLove(Long loginSequence, Long communitySequence, Long studySequence) {
         StudyCommunityEntity community = communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         StudyCommunityLoveEntity savedLove = loveRepository.findLove(loginSequence, communitySequence)
@@ -35,7 +35,7 @@ public class StudyCommunityLoveService {
     }
 
     @Transactional
-    public void deleteLove(Long loginSequence, Long communitySequence) {
+    public void deleteLove(Long loginSequence, Long communitySequence, Long studySequence) {
         StudyCommunityEntity community = communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         StudyCommunityLoveEntity findLove = loveRepository.findLove(loginSequence, communitySequence)

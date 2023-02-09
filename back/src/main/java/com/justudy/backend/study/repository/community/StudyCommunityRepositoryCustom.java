@@ -10,9 +10,9 @@ import java.util.Optional;
 
 public interface StudyCommunityRepositoryCustom {
 
-    List<StudyCommunityEntity> getAllList(CommunitySearch communitySearch);
+    List<StudyCommunityEntity> getAllList(CommunitySearch communitySearch, Long studySequence);
 
-    Long getCountOfList(CommunitySearch communitySearch);
+    Long getCountOfList(CommunitySearch communitySearch, Long studySequence);
 
     List<StudyCommunityEntity> getAllNotice(Pageable pageable);
 

@@ -9,15 +9,16 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class StudyCommunityCreate {
-    private String category;
+    private String studySeq;
     private String title;
     private String content;
+    private Boolean isHighlighted;
 
     public StudyCommunityEntity toEntity() {
         return StudyCommunityEntity.builder()
                 .title(title)
                 .content(content)
-                .isHighlighted(false)
+                .isHighlighted(isHighlighted)
                 .build();
     }
 }

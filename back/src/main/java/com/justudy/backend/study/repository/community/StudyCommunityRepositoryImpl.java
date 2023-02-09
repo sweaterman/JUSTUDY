@@ -3,6 +3,7 @@ package com.justudy.backend.study.repository.community;
 import com.justudy.backend.community.dto.request.CommunitySearch;
 import com.justudy.backend.community.dto.request.SearchOrderType;
 import com.justudy.backend.community.dto.request.SearchType;
+import com.justudy.backend.community.exception.ImportBoardFail;
 import com.justudy.backend.study.domain.community.QStudyCommunityEntity;
 import com.justudy.backend.study.domain.community.StudyCommunityEntity;
 import com.justudy.backend.util.PagingUtil;
@@ -18,8 +19,6 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
-import static com.justudy.backend.category.domain.QCategoryEntity.categoryEntity;
-import static com.justudy.backend.community.domain.QCommunityEntity.communityEntity;
 import static com.justudy.backend.member.domain.QMemberEntity.memberEntity;
 
 @Slf4j
@@ -33,7 +32,7 @@ public class StudyCommunityRepositoryImpl implements StudyCommunityRepositoryCus
 
 
     @Override
-    public List<StudyCommunityEntity> getAllList(CommunitySearch communitySearch) {
+    public List<StudyCommunityEntity> getAllList(CommunitySearch communitySearch, Long studySequence) {
         List<StudyCommunityEntity> list = queryFactory.selectFrom(qStudyCommunity)
                 .join(qStudyCommunity.member, memberEntity).fetchJoin()
                 .where(qStudyCommunity.isHighlighted.eq(true),
@@ -44,10 +43,9 @@ public class StudyCommunityRepositoryImpl implements StudyCommunityRepositoryCus
 
         List<StudyCommunityEntity> commonList = queryFactory.selectFrom(qStudyCommunity)
                 .join(qStudyCommunity.member, memberEntity).fetchJoin()
-                .join(qStudyCommunity.category, categoryEntity).fetchJoin()
                 .where(qStudyCommunity.isHighlighted.eq(false),
                         qStudyCommunity.isDeleted.eq(false),
-                        eqCategory(communitySearch.getCategory()),
+                        eqStudy(studySequence),
                         eqTypeAndSearch(communitySearch))
                 .limit(communitySearch.getSize() - list.size())
                 .offset(communitySearch.getOffsetWithNotice(list.size()))
@@ -56,16 +54,19 @@ public class StudyCommunityRepositoryImpl implements StudyCommunityRepositoryCus
         if (commonList.isEmpty()) {
             return List.of();
         }
+        if(!list.addAll(commonList)){
+            throw new ImportBoardFail();
+        }
         return list;
     }
 
     @Override
-    public Long getCountOfList(CommunitySearch communitySearch) {
+    public Long getCountOfList(CommunitySearch communitySearch, Long studySequence) {
         return queryFactory.select(qStudyCommunity.count())
                 .from(qStudyCommunity)
                 .where(qStudyCommunity.isHighlighted.eq(false),
                         qStudyCommunity.isDeleted.eq(false),
-                        eqCategory(communitySearch.getCategory()),
+                        eqStudy(studySequence),
                         eqTypeAndSearch(communitySearch))
                 .fetchFirst();
     }
@@ -107,7 +108,6 @@ public class StudyCommunityRepositoryImpl implements StudyCommunityRepositoryCus
         return Optional.ofNullable(queryFactory
                 .selectFrom(qStudyCommunity)
                 .join(qStudyCommunity.member, memberEntity).fetchJoin()
-                .join(qStudyCommunity.category, categoryEntity).fetchJoin()
                 .where(qStudyCommunity.sequence.eq(sequence),
                         qStudyCommunity.isDeleted.eq(false))
                 .fetchFirst());
@@ -122,13 +122,6 @@ public class StudyCommunityRepositoryImpl implements StudyCommunityRepositoryCus
                         qStudyCommunity.isDeleted.eq(false))
                 .fetch();
     }
-
-
-
-
-
-
-
 
 
     @Override
@@ -202,16 +195,13 @@ public class StudyCommunityRepositoryImpl implements StudyCommunityRepositoryCus
     private OrderSpecifier<?> orderByCondition(CommunitySearch communitySearch) {
         SearchOrderType orderType = communitySearch.getOrder();
         if (orderType == null) {
-            return communityEntity.sequence.desc();
+            return qStudyCommunity.sequence.desc();
         }
         return orderType.getOrderSpecifier();
     }
 
-    private BooleanExpression eqCategory(String category) {
-        if (category == null || category.isEmpty()) {
-            return null;
-        }
-        return communityEntity.category.key.eq(category);
+    private BooleanExpression eqStudy(Long studySeq) {
+        return qStudyCommunity.study.sequence.eq(studySeq);
     }
 
 

@@ -32,7 +32,7 @@ public class StudyCommunityCommentService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public StudyCommunityCommentResponse createComment(long id, StudyCommunityCommentCreate request) {
+    public StudyCommunityCommentResponse createComment(long id, StudyCommunityCommentCreate request, Long studySequence) {
         //community 탐색 후 널이면 에러
         StudyCommunityEntity communityEntity = communityRepository.findById(id)
                 .orElseThrow(CommunityNotFound::new);
@@ -121,7 +121,7 @@ public class StudyCommunityCommentService {
     }
 
     @Transactional
-    public void UpdateComment(long id, long commentId, StudyCommunityCommentEdit request, Long loginSequence) {
+    public void UpdateComment(long id, long commentId, StudyCommunityCommentEdit request, Long loginSequence, Long studySequence) {
         StudyCommunityCommentEntity communityCommentEntity = repository.findById(commentId)
                 .orElseThrow(CommentNotFound::new);
         if (loginSequence != communityCommentEntity.getMember().getSequence()) throw new InvalidRequest();
@@ -130,7 +130,7 @@ public class StudyCommunityCommentService {
     }
 
     @Transactional
-    public void deleteComment(long id, long commentId, Long loginSequence) {
+    public void deleteComment(long id, long commentId, Long loginSequence, Long studySequence) {
         StudyCommunityCommentEntity communityCommentEntity = repository.findById(commentId)
                 .orElseThrow(CommentNotFound::new);
         if (loginSequence != communityCommentEntity.getMember().getSequence()) throw new InvalidRequest();
@@ -139,7 +139,7 @@ public class StudyCommunityCommentService {
 //        repository.save(entity);
     }
 
-    public List<StudyCommunityCommentResponse> readAllComment(long id, Long loginSequence) {
+    public List<StudyCommunityCommentResponse> readAllComment(long id, Long loginSequence, Long studySequence) {
         return repository.readAllComment(id).stream().map(a -> StudyCommunityCommentResponse.makeBuilder(a, loginSequence)).collect(Collectors.toList());
     }
 

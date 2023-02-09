@@ -1,7 +1,7 @@
 package com.justudy.backend.study.domain.community;
 
-import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.member.domain.MemberEntity;
+import com.justudy.backend.study.domain.StudyEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,8 +25,8 @@ public class StudyCommunityEntity {
     private MemberEntity member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_seq")
-    private CategoryEntity category;
+    @JoinColumn(name = "study_seq")
+    private StudyEntity study;
 
     @Column(name = "study_community_title")
     private String title;
@@ -68,8 +68,8 @@ public class StudyCommunityEntity {
         this.modifiedTime = createdTime;
         this.isDeleted = false;
     }
-    public void changeCategory(CategoryEntity category) {
-        this.category = category;
+    public void changeStudy(StudyEntity study) {
+        this.study = study;
     }
 
 
@@ -94,10 +94,17 @@ public class StudyCommunityEntity {
         this.isDeleted = true;
     }
 
-    public void update(String title, String content, CategoryEntity category) {
+    public void update(String title, String content, StudyEntity study) {
         this.title = title;
         this.content = content;
-        this.category = category;
+        this.study = study;
         this.modifiedTime = LocalDateTime.now();
+    }
+    public void addMember(MemberEntity member) {
+        this.member = member;
+    }
+
+    public void addStudy(StudyEntity studyEntity) {
+        this.study=studyEntity;
     }
 }

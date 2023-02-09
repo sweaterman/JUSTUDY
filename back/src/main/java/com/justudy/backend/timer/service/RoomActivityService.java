@@ -33,9 +33,9 @@ public class RoomActivityService {
   private final StudyRoomRepository studyRoomRepository;
 
   @Transactional
-  public void saveRoomAcitivity(ActivityRequest roomActivityRequest, Long roomSeq, Date today) {
+  public void saveRoomAcitivity(ActivityRequest roomActivityRequest, Long roomSequence, Date today) {
 
-    StudyRoomEntity studyRoom = studyRoomRepository.getReferenceById(roomSeq);
+    StudyRoomEntity studyRoom = studyRoomRepository.getReferenceById(roomSequence);
     roomActivityRepository.save(RoomActivityEntity
         .builder()
         .studyRoom(studyRoom)

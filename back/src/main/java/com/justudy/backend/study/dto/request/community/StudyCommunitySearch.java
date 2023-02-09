@@ -22,7 +22,7 @@ public class StudyCommunitySearch {
 
     private Long size;
 
-    private String category;
+    private Long studySeq;
 
     private SearchType type;
 
@@ -33,13 +33,11 @@ public class StudyCommunitySearch {
     @Builder
     public StudyCommunitySearch(Long page,
                                 Long size,
-                                String category,
                                 String type,
                                 String search,
                                 String order) {
         this.page = page;
         this.size = size;
-        this.category = category;
         this.type = convertToSearchType(type);
         this.search = search;
         this.order = convertToSearchOrderType(order);

@@ -10,5 +10,5 @@ import lombok.Data;
 public class StudyCommunityEdit {
     private String title;
     private String content;
-    private String category;
+    private String studySeq;
 }

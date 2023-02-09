@@ -24,7 +24,7 @@ public class StudyCommunityBookmarkService {
     private final StudyCommunityRepository communityRepository;
 
     @Transactional
-    public Long createBookmark(Long loginSequence, Long communitySequence) {
+    public Long createBookmark(Long loginSequence, Long communitySequence, Long studySequence) {
         StudyCommunityBookmarkEntity savedBookmark = bookmarkRepository.findBookmark(loginSequence, communitySequence)
                 .orElseGet(() ->
                     bookmarkRepository.save(makeNewBookmark(loginSequence, communitySequence))
@@ -34,7 +34,7 @@ public class StudyCommunityBookmarkService {
     }
 
     @Transactional
-    public void deleteBookmark(Long loginSequence, Long communitySequence) {
+    public void deleteBookmark(Long loginSequence, Long communitySequence, Long studySequence) {
         StudyCommunityEntity community = communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         StudyCommunityBookmarkEntity findBookmark = bookmarkRepository.findBookmark(loginSequence, communitySequence)

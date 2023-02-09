@@ -14,7 +14,7 @@ public class StudyCommunityDetailResponse {
     private Long sequence;
     private Long memberSequence;
     private String nickname;
-    private CategoryResponse category;
+    private Long studySeq;
     private String title;
     private String content;
     private Integer viewCount;
@@ -31,13 +31,13 @@ public class StudyCommunityDetailResponse {
 
     @Builder
     public StudyCommunityDetailResponse(Long sequence, Long memberSequence, String nickname,
-                                        CategoryResponse category, String title, String content, Integer viewCount,
+                                        Long studySeq, String title, String content, Integer viewCount,
                                         LocalDateTime createdTime, LocalDateTime modifiedTime, Integer loveCount,
                                         boolean isWriter, boolean isBookmarked, boolean isLoved) {
         this.sequence = sequence;
         this.memberSequence = memberSequence;
         this.nickname = nickname;
-        this.category = category;
+        this.studySeq = studySeq;
         this.title = title;
         this.content = content;
         this.viewCount = viewCount;
@@ -56,7 +56,7 @@ public class StudyCommunityDetailResponse {
                 .sequence(entity.getSequence())
                 .memberSequence(entity.getMember().getSequence())
                 .nickname(entity.getMember().getNickname())
-                .category(new CategoryResponse(entity.getCategory()))
+                .studySeq(entity.getStudy().getSequence())
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .viewCount(entity.getViewCount())
