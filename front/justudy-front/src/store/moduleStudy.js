@@ -64,6 +64,7 @@ export default {
                 method: 'GET'
             })
                 .then(res => {
+                    console.log(res.data);
                     commit('GET_PROMOTIONSTUDY', res.data);
                 })
                 .catch(err => {
@@ -203,8 +204,11 @@ export default {
             await axios({
                 url: API_URL,
                 method: 'POST',
-                data: study,
-                withCredentials: true
+                data: study.formData,
+                withCredentials: true,
+                headers: {
+                    'Content-Type': ' multipart/form-data'
+                }
             })
                 .then(res => {
                     commit;

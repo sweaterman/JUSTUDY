@@ -7,9 +7,12 @@
                         <!-- 한 개의 스터디를 감싸고 있는 div -->
                         <div class="singleStudy">
                             <v-row justify="center">
-                                <img v-if="type != 'apply'" class="hover" style="width: 95%" src="@/assets/test_study.jpg" alt="study_image" @click="moveToStudy(study.sequence)" />
+                                <div v-if="type != 'apply'">
+                                    <img class="hover" style="width: 80%" :src="`${port}images/${study.imageSequence}`" alt="study_image" @click="moveToStudy(study.sequence)" />
+                                </div>
+
                                 <div v-if="type == 'apply'" class="container">
-                                    <img class="hover" style="width: 95%" src="@/assets/test_study.jpg" alt="study_image" @click="moveToStudy(study.sequence)" />
+                                    <img class="hover" style="width: 80%" :src="`${port}images/${study.imageSequence}`" alt="study_image" @click="moveToStudy(study.sequence)" />
                                     <v-btn rounded color="error" class="cancleApply" @click="deleteApply('open', study.sequence)">X</v-btn>
                                 </div>
                             </v-row>
@@ -74,6 +77,8 @@
 </template>
 
 <script>
+import port from '@/store/port';
+
 export default {
     name: 'StudyList',
     data() {
@@ -81,7 +86,8 @@ export default {
             tab: null,
             deleteModal: false,
             deleteNum: null,
-            week: null
+            week: null,
+            port: port
         };
     },
     props: ['studies', 'type'],
