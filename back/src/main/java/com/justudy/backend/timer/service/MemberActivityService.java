@@ -15,6 +15,7 @@ import com.querydsl.core.Tuple;
 import java.sql.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,14 +35,29 @@ public class MemberActivityService {
   public void saveMemberAcitivity(ActivityRequest memberActivityRequest, Long seq,
       Date today) {
     MemberEntity member = memberRepository.getReferenceById(seq);
-    memberActivityRepository.save(MemberActivityEntity
-        .builder()
-        .member(member)
-        .date(today)
-        .time(memberActivityRequest.getSecond())
-        .category(memberActivityRequest.getCategory())
-        .build()
-    );
+    Tuple storeTime = memberActivityRepository.findTodayRecord(today,memberActivityRequest.getCategory(), member);
+    if (storeTime == null) {
+      memberActivityRepository.save(MemberActivityEntity
+          .builder()
+          .member(member)
+          .date(today)
+          .time(memberActivityRequest.getSecond())
+          .category(memberActivityRequest.getCategory())
+          .build()
+      );
+    } else {
+      Long sum = memberActivityRequest.getSecond() + storeTime.get(qMemberActivity.time);
+      memberActivityRepository.save(MemberActivityEntity
+          .builder()
+              .sequence(storeTime.get(qMemberActivity.sequence))
+          .member(member)
+          .date(today)
+          .time(sum)
+          .category(memberActivityRequest.getCategory())
+          .build()
+      );
+
+    }
   }
 
   @Transactional
@@ -57,8 +73,12 @@ public class MemberActivityService {
   }
 
   @Transactional
-  public Long getSumTimeByIdAndPeriod(Date ago, Date cur, Long userSeq) {
-    MemberEntity member = memberRepository.getReferenceById(userSeq);
+  public Long getSumTimeByNickNameAndPeriod(Date ago, Date cur, String nickName) {
+    Optional<Long> userSeq = memberRepository.findSequenceByNickname(nickName);
+    if (userSeq.isEmpty()) {
+      return null;
+    }
+    MemberEntity member = memberRepository.getReferenceById(userSeq.get());
     if (member == null) {
       return null;//에러 페이지 넣기
     }
@@ -70,8 +90,12 @@ public class MemberActivityService {
   }
 
   @Transactional
-  public List<ActivitySubjectResponse> getSumTimeByIdAndCategory(Long userSeq) {
-    MemberEntity member = memberRepository.getReferenceById(userSeq);
+  public List<ActivitySubjectResponse> getSumTimeByNickNameAndCategory(String nickName) {
+    Optional<Long> userSeq = memberRepository.findSequenceByNickname(nickName);
+    if (userSeq.isEmpty()) {
+      return null;
+    }
+    MemberEntity member = memberRepository.getReferenceById(userSeq.get());
     if (member == null) {
       return null;//에러 페이지 넣기
     }
@@ -96,9 +120,13 @@ public class MemberActivityService {
 
 
   @Transactional
-  public List<ActivityCalendarResponse> getCalendarTimeById(Date ago, Date cur,
-      Long userSeq) {
-    MemberEntity member = memberRepository.getReferenceById(userSeq);
+  public List<ActivityCalendarResponse> getCalendarTimeByNickName(Date ago, Date cur,
+      String nickName) {
+    Optional<Long> userSeq = memberRepository.findSequenceByNickname(nickName);
+    if (userSeq.isEmpty()) {
+      return null;
+    }
+    MemberEntity member = memberRepository.getReferenceById(userSeq.get());
     if (member == null) {
       return null;//에러 페이지 넣기
     }
