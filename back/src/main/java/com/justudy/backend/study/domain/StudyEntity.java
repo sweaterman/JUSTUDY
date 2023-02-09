@@ -55,7 +55,7 @@ public class StudyEntity {
     private Integer population;
     @Column(name = "study_level")
     private String level;
-    @Column(name = "study_online_offline")
+    @Column(name = "study_meeting")
     private String meeting;
     @Column(name = "study_is_open", columnDefinition = "TINYINT(1)")
     private Boolean isOpen;
@@ -72,6 +72,12 @@ public class StudyEntity {
     private LocalDateTime modifiedTime;
     @Column(name = "study_start_time")
     private String startTime;
+    @Column(name = "study_on_air", columnDefinition = "TINYINT(1)")
+    private Boolean onAir;
+
+    public void changeOnAir(Boolean onAir){
+        this.onAir=onAir;
+    }
 
     public void changeImage(UploadFileEntity imageFile) {
         this.imageFile = imageFile;
@@ -131,4 +137,7 @@ public class StudyEntity {
         this.modifiedTime = LocalDateTime.now();
     }
 
+    public void changeStudyRoom(StudyRoomEntity studyRoom) {
+        this.studyRoom=studyRoom;
+    }
 }
