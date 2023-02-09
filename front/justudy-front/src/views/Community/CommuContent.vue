@@ -74,7 +74,7 @@
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <v-row>
-                    <CommuComment v-if="Data !== null" :contentId="Data.sequence" />
+                    <CommuComment :contentId="parseInt(this.$route.params.id)" />
                 </v-row>
             </v-col>
             <v-col cols="12" md="2" />
@@ -91,7 +91,7 @@ export default {
     data() {
         const index = this.$route.params.id;
         return {
-            Data: null,
+            Data: {},
             index: index,
             // writer: '돌숭이', // 작성자
             // title: '돌숭이의 꿀팁', // 글 제목
@@ -123,6 +123,7 @@ export default {
     async created() {
         await this.$store.dispatch('moduleCommunity/getCommunityContent', {id: this.$route.params.id});
         this.Data = this.$store.state.moduleCommunity.CommunityContent;
+        console.log(this.Data);
     },
     methods: {
         moveback() {
