@@ -17,7 +17,7 @@
                     </v-col>
                     <v-col cols="12" md="4" justify="center" align="center">
                         <router-link to="/timer/friend-statistics" style="text-decoration: none; color: #ffb000">
-                            <div :style="{fontWeight: 'bold', fontSize: 'x-large'}"><h2>친구 통계</h2></div>
+                            <div :style="{fontWeight: 'bold', fontSize: 'large'}"><h2>친구 통계</h2></div>
                         </router-link>
                     </v-col>
                 </v-row>

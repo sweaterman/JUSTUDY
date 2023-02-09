@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface MemberActivityRepositoryCustom {
 
+  Tuple findTodayRecord(Date date, String category, MemberEntity member);
+
   Tuple findTopTimeByYesterday(Date yesterday);
 
   Long findTimeByPeriodAndMember(Date ago, Date cur, MemberEntity member);

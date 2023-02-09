@@ -100,8 +100,8 @@ public class InitDb {
             saveStudyFrequency();
             saveStudyMember();
             saveStudyRoom();
-//            saveTimer();
-//            saveRank();
+            saveTimer();
+            saveRank();
             saveTest1();
         }
 
@@ -183,7 +183,7 @@ public class InitDb {
                 }
 
             }
-            for (long i = 130; i < 180; i++) {
+            for (long i = 240; i < 290; i++) {
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     roomActivityService.saveRoomAcitivity(

@@ -1,38 +1,60 @@
 <template>
-    <v-app>
-        <v-row>
-            <v-col cols="12" md="2"> </v-col>
-            <div style="width: 100%; position: relative">
-                <label class="form-switch" v-show="isView">
-                    <input @change="webcamOnOff" value="Computer Science" id="a" v-model="webcamSwitch" type="checkbox" />
-                    <label class="category" for="a">Computer Science</label>
-                    <br />
-                    <input @change="webcamOnOff" value="DataBase" id="b" v-model="webcamSwitch" type="checkbox" />
-                    <label class="category" for="b">DataBase</label>
-                    <br />
-                    <input @change="webcamOnOff" value="etc" id="c" v-model="webcamSwitch" type="checkbox" />
-                    <label class="category" for="c">etc</label>
-                    <br />
-                    <input @change="webcamOnOff" value="Frontend" id="d" v-model="webcamSwitch" type="checkbox" />
-                    <label class="category" for="d">Frontend</label>
-                    <br />
-                    <input @change="webcamOnOff" value="Backend" id="e" v-model="webcamSwitch" type="checkbox" />
-                    <label class="category" for="e">Backend</label>
-                    <br />
-                </label>
-            </div>
-        </v-row>
-        <v-row>
-            <v-col cols="12" md="2">
-                <div id="video-container" ref="webcamContainer" style="position: relative">
+    <v-container>
+        <v-row :style="{marginTop: '5%'}">
+            <v-col cols="12" md="2" justify="center" align="center">
+                <div id="video-container" ref="webcamContainer" style="position: relative" justify="center" align="center">
                     <video ref="webcamElement" autoplay muted playsinline></video>
                 </div>
             </v-col>
-            <v-col cols="12" md="10">
-                <h1 style="position: relative; z-index: 2">{{ timeString }}</h1>
+            <v-col cols="12" md="10" v-if="!isView">
+                <!-- 타이머 구현 -->
+                <v-row>
+                    <hr width="100%" />
+                    <v-col cols="12" md="2" justify="center" align="center">
+                        <v-img :src="require('@/assets/fire3.gif')" :style="`width: 130px; height: 130px; `" />
+                    </v-col>
+                    <v-col cols="12" md="8" justify="center" align="center" :style="`font-family: 'Digital Dismay'; font-size : 100px`">
+                        {{ timeString }}
+                    </v-col>
+                    <v-col cols="12" md="2" justify="center" align="center">
+                        <v-img :src="require('@/assets/fire3.gif')" :style="`width: 130px; height: 130px; `" />
+                    </v-col>
+                    <hr width="100%" />
+                </v-row>
+                <!-- <h1 style="position: relative; z-index: 2">{{ timeString }}</h1> -->
+            </v-col>
+
+            <v-col cols="12" md="10" v-if="isView">
+                <v-row>
+                    <v-col coks="12" md="2">
+                        <input @change="webcamOnOff" value="Computer Science" id="a" v-model="webcamSwitch" type="checkbox" />
+                        <label class="category" for="a"><div :style="{fontWeight: 'bold', fontSize: 'large'}">CS</div></label>
+                        <br />
+                    </v-col>
+                    <v-col coks="12" md="2">
+                        <input @change="webcamOnOff" value="DataBase" id="b" v-model="webcamSwitch" type="checkbox" />
+                        <label class="category" for="b">DataBase</label>
+                        <br />
+                    </v-col>
+                    <v-col coks="12" md="2">
+                        <input @change="webcamOnOff" value="etc" id="c" v-model="webcamSwitch" type="checkbox" />
+                        <label class="category" for="c">etc</label>
+                        <br />
+                    </v-col>
+                    <v-col coks="12" md="2">
+                        <input @change="webcamOnOff" value="Frontend" id="d" v-model="webcamSwitch" type="checkbox" />
+                        <label class="category" for="d">Frontend</label>
+                        <br />
+                    </v-col>
+                    <v-col coks="12" md="2">
+                        <input @change="webcamOnOff" value="Backend" id="e" v-model="webcamSwitch" type="checkbox" />
+                        <label class="category" for="e">Backend</label>
+                        <br />
+                    </v-col>
+                </v-row>
             </v-col>
         </v-row>
-    </v-app>
+    </v-container>
 </template>
 
 <script>
