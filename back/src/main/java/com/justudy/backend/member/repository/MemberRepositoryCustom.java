@@ -17,5 +17,7 @@ public interface MemberRepositoryCustom {
 
     Optional<String> findSsafyId(String ssafyId);
 
+    Optional<String> findMmId(String mmId);
+
     Optional<Long> findSequenceByNickname(String nickname);
 }

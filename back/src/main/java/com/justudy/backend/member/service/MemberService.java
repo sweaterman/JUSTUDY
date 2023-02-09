@@ -311,6 +311,8 @@ public class MemberService {
     }
 
     public ResponseEntity<?> validateMatterMost(String mmId, String mmPassword) {
+        isDuplicatedMmId(mmId);
+
         URI uri = UriComponentsBuilder
                 .fromUriString("https://meeting.ssafy.com")
                 .path("/api/v4/users/login")
@@ -330,7 +332,11 @@ public class MemberService {
         return ResponseEntity.status(200).body(response.getBody());
     }
 
-
+    public void isDuplicatedMmId(String mmId) {
+        if (memberRepository.findMmId(mmId).isPresent()) {
+            throw new ConflictRequest("mmId", "이미 가입된 MatterMostId 입니다.");
+        }
+    }
 
     public void isDuplicatedUserId(String userId) {
         if (memberRepository.findUserId(userId).isPresent()) {

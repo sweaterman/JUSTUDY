@@ -58,7 +58,6 @@ public class MemberController {
 
     @PostMapping("/matter-most")
     public ResponseEntity<?> validMatterMost(@RequestBody MMValidateRequest request) {
-        log.info("request = {}", request);
         return memberService.validateMatterMost(request.getMmId(), request.getMmPassword());
     }
 
