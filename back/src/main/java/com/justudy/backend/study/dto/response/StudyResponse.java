@@ -44,12 +44,11 @@ public class StudyResponse {
                 .orElseThrow(InvalidRequest::new)
                 .getMember().getNickname();
 
-        //todo image 추가
         return StudyResponse.builder()
                 .sequence(entity.getSequence())
                 .member(entity.getStudyMembers()
                         .stream()
-                        .map(StudyMemberEntity::getSequence)
+                        .map(studyMemberEntity -> studyMemberEntity.getMember().getSequence())
                         .collect(Collectors.toList()))
                 .frequency(entity.getFrequency()
                         .stream()

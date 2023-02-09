@@ -1,5 +1,6 @@
 package com.justudy.backend.study.controller;
 
+import com.justudy.backend.GroupCall.service.StudyRoomService;
 import com.justudy.backend.category.dto.request.CategoryResponse;
 import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.exception.InvalidRequest;
@@ -47,6 +48,7 @@ public class StudyController {
     private final StudyMemberService studyMemberService;
     private final UploadFileService uploadFileService;
     private final FileStore fileStore;
+    private final StudyRoomService studyRoomService;
 
     // ---------------------------------------------------------------스터디---------------------------------------------------------------
 
@@ -159,7 +161,9 @@ public class StudyController {
                 .studySeq(studySeq)
                 .memberSeq(loginSequence)
                 .build());
-        //todo 스터디 룸 생성
+        //스터디 룸 생성
+        studyRoomService.saveStudyRoom(studySeq);
+
 
         return ResponseEntity.status(HttpStatus.CREATED).body(studyService.readStudy(studySeq));
     }
@@ -222,7 +226,8 @@ public class StudyController {
         // 스터디 맴버 삭제
         studyMemberService.deleteStudyMemberByStudy(id);
 
-        //todo 스터디룸 삭제
+        //스터디룸 삭제
+        studyRoomService.deleteStudyRoom(id);
 
         //스터디 삭제
         studyService.deleteStudy(id);

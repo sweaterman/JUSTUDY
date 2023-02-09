@@ -32,12 +32,13 @@ public class StudyDetailResponse {
     private List<Long> resumeSeq;
     private Long leaderSeq;
     private Long imageSequence;
-
     private Boolean isApply;
     private Boolean isMember;
     private Boolean isLeader;
+    private Boolean onAir;
+    private Long roomSeq;
 
-    public static StudyDetailResponse makeBuilder(StudyEntity entity,String leaderName) {
+    public static StudyDetailResponse makeBuilder(StudyEntity entity, String leaderName) {
         return StudyDetailResponse.builder()
                 .sequence(entity.getSequence())
                 .member(entity.getStudyMembers()
@@ -70,6 +71,8 @@ public class StudyDetailResponse {
                 .isApply(false)
                 .isMember(false)
                 .isLeader(true)
+                .onAir(entity.getOnAir())
+                .roomSeq(entity.getStudyRoom().getSequence())
                 .build();
     }
 
@@ -106,6 +109,8 @@ public class StudyDetailResponse {
                 .isApply(isApply)
                 .isMember(isMember)
                 .isLeader(isLeader)
+                .onAir(entity.getOnAir())
+                .roomSeq(entity.getStudyRoom().getSequence())
                 .build();
     }
 }
