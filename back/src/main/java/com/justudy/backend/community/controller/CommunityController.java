@@ -73,6 +73,8 @@ public class CommunityController {
     public ResponseEntity<CommunityDetailResponse> readCommunityById(@PathVariable("boardId") Long communitySequence,
                                                                      HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        loginSequence = nullSafeLoginSequence(loginSequence);
+
         return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunityDetail(communitySequence, loginSequence));
     }
 
@@ -239,5 +241,13 @@ public class CommunityController {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         communityCommentService.deleteComment(id, commentId, loginSequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+
+    private Long nullSafeLoginSequence(Long loginSequence) {
+        if (loginSequence == null) {
+            return 0L;
+        }
+        return loginSequence;
     }
 }

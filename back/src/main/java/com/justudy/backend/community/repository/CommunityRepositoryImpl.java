@@ -57,6 +57,9 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
         if (commonList.isEmpty()) {
             return List.of();
         }
+        if (!list.addAll(commonList)) {
+            throw new ImportBoardFail();
+        }
         return list;
     }
 

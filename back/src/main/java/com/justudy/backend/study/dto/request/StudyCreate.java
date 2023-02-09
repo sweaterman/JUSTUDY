@@ -49,6 +49,7 @@ public class StudyCreate {
                 .notion(notion)
                 .createdTime(LocalDateTime.now())
                 .startTime(startTime)
+                .onAir(false)
                 .build();
     }
 }

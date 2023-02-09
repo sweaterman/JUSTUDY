@@ -31,6 +31,9 @@ public class MemberCreate {
     private String ssafyId;
 
     @NotBlank
+    private String mmId;
+
+    @NotBlank
     private String phone;
 
     @NotBlank
@@ -52,6 +55,7 @@ public class MemberCreate {
                         @JsonProperty("username") String username,
                         @JsonProperty("nickname") String nickname,
                         @JsonProperty("ssafyId") String ssafyId,
+                        @JsonProperty("mmId") String mmId,
                         @JsonProperty("phone") String phone,
                         @JsonProperty("email") String email,
                         @JsonProperty("region") String region,
@@ -64,6 +68,7 @@ public class MemberCreate {
         this.username = username;
         this.nickname = nickname;
         this.ssafyId = ssafyId;
+        this.mmId = mmId;
         this.phone = phone;
         this.email = email;
         this.region = region;
@@ -79,6 +84,7 @@ public class MemberCreate {
                 .username(username)
                 .nickname(nickname)
                 .ssafyId(ssafyId)
+                .mmId(mmId)
                 .phone(phone)
                 .email(email)
                 .region(Region.valueOf(region))
