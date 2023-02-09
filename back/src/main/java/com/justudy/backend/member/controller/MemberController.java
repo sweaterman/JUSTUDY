@@ -5,6 +5,7 @@ import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.login.infra.SessionConst;
+import com.justudy.backend.member.dto.request.MMValidateRequest;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
@@ -53,6 +54,12 @@ public class MemberController {
         log.info("ssafyId = {}", ssafyId);
         validateParameter(userId, nickname, ssafyId);
         return null;
+    }
+
+    @PostMapping("/matter-most")
+    public ResponseEntity<?> validMatterMost(@RequestBody MMValidateRequest request) {
+        log.info("request = {}", request);
+        return memberService.validateMatterMost(request.getMmId(), request.getMmPassword());
     }
 
     private void validateParameter(String userId, String nickname, String ssafyId) {
