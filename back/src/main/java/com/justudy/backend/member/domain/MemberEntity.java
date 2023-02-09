@@ -42,6 +42,9 @@ public class MemberEntity {
     @Column(name = "member_ssafy_id")
     private String ssafyId;
 
+    @Column(name = "member_mm_id")
+    private String mmId;
+
     @Column(name = "member_phone")
     private String phone;
 
@@ -103,7 +106,7 @@ public class MemberEntity {
     @Builder
     public MemberEntity(String userId, String password,
                         String username, String nickname,
-                        String ssafyId, String phone, String email,
+                        String ssafyId, String mmId, String phone, String email,
                         Region region, String dream, String introduction,
                         UploadFileEntity imageFile) {
         this.userId = userId;
@@ -111,6 +114,7 @@ public class MemberEntity {
         this.username = username;
         this.nickname = nickname;
         this.ssafyId = ssafyId;
+        this.mmId = mmId;
         this.phone = phone;
         this.email = email;
         this.region = region;
