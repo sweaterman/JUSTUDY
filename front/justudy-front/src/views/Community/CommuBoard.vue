@@ -22,7 +22,7 @@
 
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2" align="right">
-                        <v-btn color="yellow" @click="movetowrite(index)" :style="{height: '50px', width: '200px', fontWeight: 'bold', fontSize: 'large'}">글작성</v-btn>
+                        <v-btn color="yellow" @click="movetowrite()" :style="{height: '50px', width: '200px', fontWeight: 'bold', fontSize: 'large'}">글작성</v-btn>
                     </v-col>
                 </v-row>
             </v-col>
@@ -134,7 +134,7 @@ export default {
             //cnt: 0 // 현재 게시판의 총 글 개수
         };
     },
-    mounted() {
+    created() {
         this.updateData('');
     },
     computed: {
@@ -144,7 +144,7 @@ export default {
                 // 현재 게시판 글 갯수가 0개일때 총 페이지가 0이 되는거 방지
                 return 1;
             } else {
-                return Math.ceil(this.cnt / 10); // (글 갯수/10)한 후 올림 연산을 통해 총 페이지 계산
+                return Math.ceil(this.cnt / 20); // (글 갯수/10)한 후 올림 연산을 통해 총 페이지 계산
             }
         }
     },
@@ -160,23 +160,24 @@ export default {
         //     window.location.href = '/community/3/?page=1';
         // },
         async updateData(data, type, search, order) {
-            await this.$store.dispatch('moduleCommunity/getCommunityBoard', {number: this.$route.params.page, category: data, type: type, search: search, order: order});
+            await this.$store.dispatch('moduleCommunity/getCommunityBoard', {number: this.$route.query.page, category: data, type: type, search: search, order: order});
             this.Data = this.$store.state.moduleCommunity.CommunityBoard;
             this.category = data;
             this.type = this.searchoptionselected;
             this.search = this.searchkeyword;
+            this.cnt = this.Data.totalCount;
         },
 
         movetomain() {
             window.location.href = '/community';
         },
-        movetowrite(index) {
+        movetowrite() {
             // window.location.href = '/community/1/write';
             this.$router.push({
                 name: 'CommuWrite',
-                params: {
-                    id: index
-                },
+                // params: {
+                //     id: index
+                // },
                 query: {
                     category: this.$route.query.category
                 }
@@ -197,20 +198,47 @@ export default {
             });
             // window.location.href = window.location.pathname + '/content/' + id;
         },
-        movetopreviouspage() {
+        async movetopreviouspage() {
             if (this.$route.query.page == 1) {
                 alert('첫번째 페이지입니다!');
             } else {
                 var pp = parseInt(this.$route.query.page) - 1;
-                window.location.href = window.location.pathname + '?page=' + pp;
+                // window.location.href = '/community/' + pp;
+                await this.$store.dispatch('moduleCommunity/getCommunityBoard', {
+                    number: pp,
+                    category: this.$route.query.category,
+                    type: this.$route.query.type,
+                    search: this.$route.query.search,
+                    order: this.$route.query.order
+                });
+                this.Data = this.$store.state.moduleCommunity.CommunityBoard;
+                this.$router.push({
+                    name: 'CommuBoard',
+                    query: {page: pp, category: this.$route.query.category}
+                    // query: {page: pp, category: this.$route.query.category, type: this.$route.query.type, search: this.$route.query.search, order: this.$route.query.order}
+                });
             }
         },
-        movetonextpage() {
-            if (this.$route.query.page == Math.ceil(this.cnt / 10)) {
+        async movetonextpage() {
+            if (this.$route.query.page == Math.ceil(this.cnt / 20)) {
                 alert('마지막 페이지입니다!');
             } else {
                 var pp = parseInt(this.$route.query.page) + 1;
-                window.location.href = window.location.pathname + '?page=' + pp;
+
+                await this.$store.dispatch('moduleCommunity/getCommunityBoard', {
+                    number: pp,
+                    category: this.$route.query.category,
+                    type: this.$route.query.type,
+                    search: this.$route.query.search,
+                    order: this.$route.query.order
+                });
+                this.Data = this.$store.state.moduleCommunity.CommunityBoard;
+
+                this.$router.push({
+                    name: 'CommuBoard',
+                    query: {page: pp, category: this.$route.query.category}
+                    // query: {page: pp, category: this.$route.query.category, type: this.$route.query.type, search: this.$route.query.search, order: this.$route.query.order}
+                });
             }
         },
         searchstart() {

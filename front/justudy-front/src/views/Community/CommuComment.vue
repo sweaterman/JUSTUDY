@@ -34,7 +34,9 @@
 export default {
     name: 'CommuComment',
     props: {
-        contentId: Number
+        contentId: {
+            type: Number
+        }
     },
     data() {
         return {
@@ -49,6 +51,7 @@ export default {
     },
     methods: {
         async updateData() {
+            console.log('아아' + this.contentId);
             await this.$store.dispatch('moduleCommunity/getCommentList', {id: this.contentId});
             this.comments = this.$store.state.moduleCommunity.commentList;
             console.log(this.comments);

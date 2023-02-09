@@ -5,7 +5,7 @@
         <v-row :style="{marginTop: '3%'}">
             <v-col cols="12" md="4" />
             <v-col cols="12" md="4" justify="center" align="center">
-                <TextButton :buttonLength="100" :height="70" :fontSize="10" :content="`게시판 수정`" :standard="px" />
+                <TextButton :buttonLength="100" :height="70" :fontSize="10" :content="`게시판 수정`" standard="px" />
             </v-col>
             <v-col cols="12" md="4" />
         </v-row>
@@ -98,7 +98,8 @@ export default {
                 content: '',
                 category: this.$route.query.category,
                 isHighlighted: false
-            }
+            },
+            isFormValid: true
         };
     },
     methods: {

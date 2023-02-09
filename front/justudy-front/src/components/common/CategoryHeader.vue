@@ -7,7 +7,7 @@
             <v-row :style="{padding: '1%'}" justify="center" align="center">
                 <v-tabs color="black" v-model="tab" justify="center" align="center">
                     <v-tabs-slider color="yellow"></v-tabs-slider>
-                    <v-tab v-for="top in top_categories" :key="top">
+                    <v-tab v-for="top in top_categories" :key="top[0]">
                         <h1 v-on:click="updateData(top[1])">{{ top[0] }}</h1>
                     </v-tab>
                 </v-tabs>
@@ -25,11 +25,17 @@ export default {
         updateData(data) {
             // console.log('aaaa');
             this.$emit('click', data);
-            this.$router.push(`${this.$route.path}?category=${data}&page=1`);
+            console.log(this.$route.path);
+            if (this.$route.path.includes('/community/write') || this.$route.path.includes('/community/content')) {
+                this.$router.push(`${this.$route.path}?category=${data}`).catch(() => {});
+            } else {
+                this.$router.push(`/community?page=1&category=${data}`).catch(() => {});
+            }
         }
     },
     data() {
         return {
+            tab: '',
             top_categories: [
                 ['Front-end', 'frontend'],
                 ['Back-end', 'backend'],
