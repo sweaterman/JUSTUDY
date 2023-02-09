@@ -34,8 +34,6 @@ public class CommunityService {
     private final CommunityBookmarkService bookmarkService;
     private final CommunityLoveService loveService;
 
-    private final int MAX_PAGE_SIZE = 10;
-    private final int MAX_NOTICE_SIZE = 3;
 
 // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
