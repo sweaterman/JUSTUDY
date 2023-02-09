@@ -20,8 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -41,6 +44,8 @@ public class MemberServiceTest {
 
     private UploadFileService uploadFileService = Mockito.mock(UploadFileService.class);
 
+    private BCryptPasswordEncoder passwordEncoder = Mockito.mock(BCryptPasswordEncoder.class);
+
     private FileStore fileStore = Mockito.mock(FileStore.class);
 
     private MemberService memberService;
@@ -51,7 +56,9 @@ public class MemberServiceTest {
 
     @BeforeEach
     public void setUp() {
-        memberService = new MemberService(memberRepository, categoryRepository, uploadFileService, communityService,fileStore);
+        memberService = new MemberService(memberRepository, categoryRepository,
+                uploadFileService, communityService,
+                fileStore, passwordEncoder);
     }
 
     @Test
@@ -230,6 +237,9 @@ public class MemberServiceTest {
         BDDMockito.given(categoryRepository.findByValue("Python"))
                 .willReturn(Optional.of(python));
 
+        BDDMockito.given(passwordEncoder.encode("0123456789"))
+                .willReturn("abcdefghij");
+
         MemberEdit editRequest = MemberEdit.builder()
                 .nickname(NICKNAME)
                 .password("0123456789")
@@ -247,7 +257,7 @@ public class MemberServiceTest {
 
         //then
         assertThat(savedMember.getNickname()).isEqualTo(editRequest.getNickname());
-        assertThat(savedMember.getPassword()).isEqualTo(editRequest.getPassword());
+        assertThat(savedMember.getPassword()).isEqualTo("abcdefghij");
         assertThat(savedMember.getPhone()).isEqualTo(editRequest.getPhone());
         assertThat(savedMember.getEmail()).isEqualTo(editRequest.getEmail());
         assertThat(savedMember.getRegion()).isEqualTo(Region.valueOf(editRequest.getRegion()));
@@ -256,6 +266,52 @@ public class MemberServiceTest {
         assertThat(savedMember.getCategories().size()).isEqualTo(3);
         assertThat(savedMember.getImageFile()).isEqualTo(oldImageFile);
     }
+
+    @ParameterizedTest
+    @CsvSource(value = {"'0123456789', null", "null, '0123456789'"}, nullValues = "null")
+    @DisplayName("비밀번호, 비밀번호 확인이 하나씩 들어올 때")
+    void passwordWithoutPasswordCheck(String password, String passwordCheck) throws IOException {
+        //given
+        MemberEntity savedMember = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
+        UploadFileEntity oldImageFile = new UploadFileEntity("test", "testUuid");
+        savedMember.changeImage(oldImageFile);
+
+        CategoryEntity backend = new CategoryEntity("backend", "백엔드", 0L);
+        CategoryEntity java = new CategoryEntity("java", "Java", 1L);
+        java.addParentCategory(backend);
+        CategoryEntity spring = new CategoryEntity("spring", "Spring", 1L);
+        spring.addParentCategory(backend);
+        CategoryEntity python = new CategoryEntity("python", "Python", 1L);
+        python.addParentCategory(backend);
+
+        BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
+                .willReturn(Optional.of(savedMember));
+
+        BDDMockito.given(categoryRepository.findByValue("Java"))
+                .willReturn(Optional.of(java));
+        BDDMockito.given(categoryRepository.findByValue("Spring"))
+                .willReturn(Optional.of(spring));
+        BDDMockito.given(categoryRepository.findByValue("Python"))
+                .willReturn(Optional.of(python));
+
+        MemberEdit editRequest = MemberEdit.builder()
+                .nickname(NICKNAME)
+                .password(password)
+                .passwordCheck(passwordCheck)
+                .phone("9999999999")
+                .email("shinkwang.dev@gmail.com")
+                .region("DAEJEON")
+                .dream("그만하자")
+                .category(new String[]{"Java", "Spring", "Python"})
+                .introduction("나는 싸피생이다.")
+                .build();
+
+        //expected
+        assertThatThrownBy(() -> memberService.editMember(1L, editRequest, null))
+                .isInstanceOf(InvalidRequest.class)
+                .hasMessage("잘못된 요청입니다.");
+    }
+
 
     @Test
     @DisplayName("회원 탈퇴")

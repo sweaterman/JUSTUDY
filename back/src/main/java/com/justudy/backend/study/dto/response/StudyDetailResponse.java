@@ -37,7 +37,7 @@ public class StudyDetailResponse {
     private Boolean isMember;
     private Boolean isLeader;
 
-    public static StudyDetailResponse makeBuilder(StudyEntity entity) {
+    public static StudyDetailResponse makeBuilder(StudyEntity entity,String leaderName) {
 
 
         //todo imagefile
@@ -60,6 +60,7 @@ public class StudyDetailResponse {
                 .bottomCategory(entity.getCategory().getValue())
                 .name(entity.getName())
                 .leaderSeq(entity.getLeaderSeq())
+                .leader(leaderName)
                 .introduction(entity.getIntroduction())
                 .population(entity.getPopulation())
                 .level(entity.getLevel())
@@ -71,11 +72,11 @@ public class StudyDetailResponse {
                 .startTime(entity.getStartTime())
                 .isApply(false)
                 .isMember(false)
-                .isLeader(false)
+                .isLeader(true)
                 .build();
     }
 
-    public static StudyDetailResponse makeBuilder(StudyEntity entity, Boolean isApply, Boolean isMember, Boolean isLeader) {
+    public static StudyDetailResponse makeBuilder(StudyEntity entity, Boolean isApply, Boolean isMember, Boolean isLeader, String leaderName) {
         //todo imagefile
         return StudyDetailResponse.builder()
                 .sequence(entity.getSequence())
@@ -105,6 +106,7 @@ public class StudyDetailResponse {
                 .notion(entity.getNotion())
 //                .imageSequence(entity.getImageFile().getSequence())
                 .startTime(entity.getStartTime())
+                .leader(leaderName)
                 .isApply(isApply)
                 .isMember(isMember)
                 .isLeader(isLeader)
