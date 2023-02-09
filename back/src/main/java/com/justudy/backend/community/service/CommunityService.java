@@ -53,7 +53,7 @@ public class CommunityService {
                 .orElseThrow(CommunityNotFound::new);
         validateWriter(loginSequence, community.getMember().getSequence());
         community.deleteCommunity();
-        bookmarkService.deleteBookmarkByCommunity(communitySequence);
+        bookmarkService.deleteAllByCommunity(communitySequence);
         loveService.deleteAllByCommunity(communitySequence);
         return community.getSequence();
     }
