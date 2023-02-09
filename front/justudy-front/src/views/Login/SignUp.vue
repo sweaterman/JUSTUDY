@@ -192,7 +192,7 @@
                             <!-- 회원가입 버튼 -->
                             <v-row>
                                 <v-col cols="12" align="center">
-                                    <v-btn color="yellow" @click="signUp()">회원 가입</v-btn>
+                                    <v-btn color="yellow" @click="mmOpen()">MattertMost 인증하고 회원 가입 완료하기!</v-btn>
                                 </v-col>
                             </v-row>
                         </v-col>
@@ -205,6 +205,41 @@
                 <!-- 우측 여백 -->
                 <v-col cols="0" md="3"> </v-col>
             </v-row>
+
+            <v-dialog v-model="mmdialog" width="600">
+                <v-card>
+                    <v-card-title> MatterMost 인증</v-card-title>
+
+                    <v-card-text>
+                        <v-container>
+                            <v-row>
+                                <v-col cols="5">
+                                    <v-subheader>MatterMost ID</v-subheader>
+                                </v-col>
+                                <v-col cols="7">
+                                    <v-text-field v-model="user.mmId" dense outlined label="ID" :rule="v => !!v || '필수 입력 사항입니다.'"></v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <v-row>
+                                <v-col cols="5">
+                                    <v-subheader>MatterMost PW</v-subheader>
+                                </v-col>
+                                <v-col cols="7">
+                                    <v-text-field v-model="user.mmPw" type="password" dense outlined label="PW" :rule="v => !!v || '필수 입력 사항입니다.'"></v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <v-row>
+                                <v-col cols="12" align="center">
+                                    <v-btn @click="signUp()">회원가입</v-btn>
+                                    <v-btn @click="mmdialog = false">취소</v-btn>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
         </v-container>
     </v-app>
 </template>
@@ -218,7 +253,8 @@ export default {
         ...mapState('moduleStudy', ['bottomCategories']),
         ...mapState('moduleSignUp', ['checkId']),
         ...mapState('moduleSignUp', ['checkNickname']),
-        ...mapState('moduleSignUp', ['checkSsafyId'])
+        ...mapState('moduleSignUp', ['checkSsafyId']),
+        ...mapState('moduleSignUp', ['checkMM'])
     },
     created() {
         this.$store.dispatch('moduleStudy/getBottomCategories', '전체');
@@ -259,7 +295,9 @@ export default {
                 region: '',
                 dream: '',
                 category: '',
-                introduction: ''
+                introduction: '',
+                mmId: '',
+                mmPw: ''
             },
             checkVal: {
                 id: false,
@@ -295,7 +333,9 @@ export default {
 
                 //이메일 형식
                 email: [v => !!v || '필수 입력 사항입니다.', v => /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i.test(v) || '올바른 이메일 형식으로 입력해주세요.']
-            }
+            },
+            mmdialog: false,
+            dialogTest: false
         };
     },
 
@@ -303,16 +343,21 @@ export default {
         async check(type) {
             if (type == 'id') {
                 //id 중복체크
-                await this.$store.dispatch('moduleSignUp/checkVal', 'userid', this.user.userId);
+                await this.$store.dispatch('moduleSignUp/checkVal', {
+                    type: 'userId',
+                    content: this.user.userId
+                });
                 if (this.checkId == true) {
                     this.checkVal.id = true;
                 } else {
-                    alert('이미 사용 중인 아이디입니다.');
                     this.checkVal.id = false;
                 }
             } else if (type == 'nickname') {
                 //닉네임 중복체크
-                await this.$store.dispatch('moduleSignUp/checkVal', 'nickname', this.user.nickname);
+                await this.$store.dispatch('moduleSignUp/checkVal', {
+                    type: 'nickname',
+                    content: this.user.nickname
+                });
                 if (this.checkNickname == true) {
                     this.checkVal.nickname = true;
                 } else {
@@ -320,7 +365,10 @@ export default {
                 }
             } else {
                 //싸피 학번 중복체크
-                await this.$store.dispatch('moduleSignUp/checkVal', 'ssafyId', this.user.ssafyId);
+                await this.$store.dispatch('moduleSignUp/checkVal', {
+                    type: 'ssafyId',
+                    content: this.user.ssafyId
+                });
                 if (this.checkSsafyId == true) {
                     this.checkVal.ssafyId = true;
                 } else {
@@ -328,11 +376,21 @@ export default {
                 }
             }
         },
-        async signUp() {
+        async mmOpen() {
             const validate = this.$refs.form.validate();
             if (!validate || this.user.region == '' || this.checkVal.id == false || this.checkVal.nickname == false || this.checkVal.ssafyId == false) {
                 alert('필수 항목을 다시 확인해주세요.');
             } else {
+                this.mmdialog = true;
+            }
+        },
+        async signUp() {
+            //MM 확인
+            await this.$store.dispatch('moduleSignUp/sendMMAPI', {
+                mmId: this.user.mmId,
+                mmPassword: this.user.mmPw
+            });
+            if (this.checkMM) {
                 if (this.user.category == '') {
                     await this.$store.dispatch('moduleSignUp/signUp', {
                         userId: this.user.userId,
@@ -345,8 +403,9 @@ export default {
                         email: this.user.email,
                         region: this.user.region.key,
                         dream: this.user.dream,
-                        category: '',
-                        introduction: this.user.introduction
+                        category: [],
+                        introduction: this.user.introduction,
+                        mmId: this.user.mmId
                     });
                 } else {
                     await this.$store.dispatch('moduleSignUp/signUp', {
@@ -361,9 +420,12 @@ export default {
                         region: this.user.region.key,
                         dream: this.user.dream,
                         category: this.user.category.map(row => row.key),
-                        introduction: this.user.introduction
+                        introduction: this.user.introduction,
+                        mmId: this.user.mmId
                     });
                 }
+            } else {
+                alert('올바른 MatterMost ID와 비밀번호를 입력해주세요!');
             }
         }
     }
