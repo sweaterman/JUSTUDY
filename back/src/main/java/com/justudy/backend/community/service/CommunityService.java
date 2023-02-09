@@ -16,6 +16,7 @@ import com.justudy.backend.member.domain.MemberEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,6 +119,12 @@ public class CommunityService {
         return communityRepository.getListBySequences(sequences).stream()
                 .map(CommunityListResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Scheduled(zone = "Asia/Seoul", cron = "0 0 4 * * MON")
+    void updateWeekLoveCount() {
+        communityRepository.updateWeekLoveCount();
     }
 
     private void validateWriter(Long loginSequence, Long writerSequence) {
