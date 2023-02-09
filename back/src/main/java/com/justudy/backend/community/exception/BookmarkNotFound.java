@@ -10,8 +10,8 @@ public class BookmarkNotFound extends CustomException {
         super(MESSAGE);
     }
 
-    public BookmarkNotFound(String message) {
-        super(message);
+    public BookmarkNotFound(String message, Throwable cause) {
+        super(message, cause);
     }
 
     @Override

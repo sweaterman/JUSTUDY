@@ -7,18 +7,19 @@ import com.justudy.backend.timer.dto.response.MemberActivityBeforeRank;
 import com.querydsl.core.Tuple;
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface MemberActivityRepositoryCustom {
 
-  Tuple findTodayRecord(Date date, String category, MemberEntity member);
+  Optional<Tuple> findTodayRecord(Date date, String category, MemberEntity member);
 
-  Tuple findTopTimeByYesterday(Date yesterday);
+  Optional<Tuple> findTopTimeByYesterday(Date yesterday);
 
-  Long findTimeByPeriodAndMember(Date ago, Date cur, MemberEntity member);
+  Optional<Long> findTimeByPeriodAndMember(Date ago, Date cur, MemberEntity member);
 
   List<ActivitySubjectResponse> findTimeByCategoryAndMember(MemberEntity member);
 
-  Tuple findAllTimeByPeriod(Date ago, Date cur);
+  Optional<Tuple> findAllTimeByPeriod(Date ago, Date cur);
 
   List<ActivityCalendarResponse> findCalendarById(Date ago, Date cur, MemberEntity member);
 
