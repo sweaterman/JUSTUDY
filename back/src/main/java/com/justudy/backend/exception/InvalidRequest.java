@@ -1,7 +1,5 @@
 package com.justudy.backend.exception;
 
-import com.justudy.backend.exception.CustomException;
-
 public class InvalidRequest extends CustomException {
 
     private static final String MESSAGE = "잘못된 요청입니다.";

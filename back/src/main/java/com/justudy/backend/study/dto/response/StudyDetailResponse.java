@@ -32,15 +32,13 @@ public class StudyDetailResponse {
     private List<Long> resumeSeq;
     private Long leaderSeq;
     private Long imageSequence;
-
     private Boolean isApply;
     private Boolean isMember;
     private Boolean isLeader;
+    private Boolean onAir;
+    private Long roomSeq;
 
-    public static StudyDetailResponse makeBuilder(StudyEntity entity,String leaderName) {
-
-
-        //todo imagefile
+    public static StudyDetailResponse makeBuilder(StudyEntity entity, String leaderName) {
         return StudyDetailResponse.builder()
                 .sequence(entity.getSequence())
                 .member(entity.getStudyMembers()
@@ -68,16 +66,17 @@ public class StudyDetailResponse {
                 .isOpen(entity.getIsOpen())
                 .github(entity.getGithub())
                 .notion(entity.getNotion())
-//                .imageSequence(entity.getImageFile().getSequence())
+                .imageSequence(entity.getImageFile().getSequence())
                 .startTime(entity.getStartTime())
                 .isApply(false)
                 .isMember(false)
                 .isLeader(true)
+                .onAir(entity.getOnAir())
+                .roomSeq(entity.getStudyRoom().getSequence())
                 .build();
     }
 
     public static StudyDetailResponse makeBuilder(StudyEntity entity, Boolean isApply, Boolean isMember, Boolean isLeader, String leaderName) {
-        //todo imagefile
         return StudyDetailResponse.builder()
                 .sequence(entity.getSequence())
                 .member(entity.getStudyMembers()
@@ -104,12 +103,14 @@ public class StudyDetailResponse {
                 .isOpen(entity.getIsOpen())
                 .github(entity.getGithub())
                 .notion(entity.getNotion())
-//                .imageSequence(entity.getImageFile().getSequence())
+                .imageSequence(entity.getImageFile().getSequence())
                 .startTime(entity.getStartTime())
                 .leader(leaderName)
                 .isApply(isApply)
                 .isMember(isMember)
                 .isLeader(isLeader)
+                .onAir(entity.getOnAir())
+                .roomSeq(entity.getStudyRoom().getSequence())
                 .build();
     }
 }

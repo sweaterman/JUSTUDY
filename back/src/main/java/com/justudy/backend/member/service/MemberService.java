@@ -19,6 +19,8 @@ import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.domain.MemberRole;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
+import com.justudy.backend.member.dto.request.MatterMostRequest;
+import com.justudy.backend.member.dto.response.MatterMostResponse;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
 import com.justudy.backend.member.dto.response.ProfileResponse;
@@ -26,13 +28,18 @@ import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -206,6 +213,7 @@ public class MemberService {
     }
 
     private void addCategory(MemberCreate request, MemberEntity member) {
+        log.info("request.getCategory.length = ", request.getCategory().length);
         List<CategoryEntity> categories = Arrays.stream(request.getCategory())
                 .map(category -> (categoryRepository.findByValue(category)
                         .orElseThrow(CategoryNotFound::new)))
@@ -300,6 +308,34 @@ public class MemberService {
             return null;
         }
         return passwordEncoder.encode(password);
+    }
+
+    public ResponseEntity<?> validateMatterMost(String mmId, String mmPassword) {
+        isDuplicatedMmId(mmId);
+
+        URI uri = UriComponentsBuilder
+                .fromUriString("https://meeting.ssafy.com")
+                .path("/api/v4/users/login")
+                .encode()
+                .build()
+                .toUri();
+
+        MatterMostRequest matterMostRequest = new MatterMostRequest(mmId, mmPassword);
+        RequestEntity<MatterMostRequest> requestEntity = RequestEntity
+                .post(uri)
+                .header("host", "meeting.ssafy.com")
+                .header("origin", "https://meeting.ssafy.com")
+                .body(matterMostRequest);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<MatterMostResponse> response = restTemplate.exchange(requestEntity, MatterMostResponse.class);
+        return ResponseEntity.status(200).body(response.getBody());
+    }
+
+    public void isDuplicatedMmId(String mmId) {
+        if (memberRepository.findMmId(mmId).isPresent()) {
+            throw new ConflictRequest("mmId", "이미 가입된 MatterMostId 입니다.");
+        }
     }
 
     public void isDuplicatedUserId(String userId) {
