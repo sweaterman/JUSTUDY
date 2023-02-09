@@ -1,19 +1,47 @@
 <template>
     <v-app>
         <v-container>
-            <v-row>
+            <v-row :style="{padding: '1%'}">
                 <!-- 왼쪽 여백 -->
-                <v-col col="0" md="2"></v-col>
 
                 <!-- 본문 -->
-                <v-col col="12" md="8">
-                    <router-link :to="`/study/${studySeq}/info`">INFO</router-link> | <router-link :to="`/study/${studySeq}/board`">BOARD</router-link> |
-                    <router-link :to="`/study/${studySeq}/calender`">CALENDER</router-link>
-                    <router-view></router-view>
+                <v-col cols="12" md="2" />
+
+                <v-col cols="12" md="8">
+                    <v-row>
+                        <v-col cols="12" md="1">
+                            <router-link :to="`/study/${studySeq}/info`">
+                                <v-btn @click="needtochange" :style="{color: 'blue'}">
+                                    <span class="material-icons-outlined"> info </span>
+                                </v-btn>
+                            </router-link>
+                        </v-col>
+
+                        <v-col cols="12" md="1">
+                            <router-link :to="`/study/${studySeq}/board`">
+                                <v-btn @click="needtochange" :style="{color: 'blue'}">
+                                    <span class="material-icons-outlined"> article </span>
+                                </v-btn>
+                            </router-link>
+                        </v-col>
+
+                        <v-col cols="12" md="4" />
+                        <v-col cols="12" md="2" justify="center" align="center">
+                            <router-link :to="`/study/${studySeq}/calender`">
+                                CALENDER
+                                <!-- <v-btn @click="needtochange" color="white" depressed>
+                            <span class="material-icons-outlined"> cancle </span>
+                        </v-btn> -->
+                            </router-link>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <router-view></router-view>
+                    </v-row>
                 </v-col>
 
                 <!-- 오른쪽 여백 -->
-                <v-col col="0" md="2"></v-col>
+                <v-col cols="12" md="2" />
             </v-row>
         </v-container>
     </v-app>
@@ -26,6 +54,11 @@ export default {
         return {
             studySeq: 1
         };
+    },
+    methods: {
+        moveToEdit() {
+            window.location.href = `/study/${this.studyInfo.sequence}/edit`;
+        }
     }
 };
 </script>

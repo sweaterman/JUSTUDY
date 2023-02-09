@@ -1,23 +1,20 @@
 <template>
     <v-app>
-        <v-row :style="{marginTop: '2%'}">
+        <v-row :style="{marginTop: '0.5%'}">
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <!-- 타이머 메뉴 바 -->
                 <v-row justify="center" align="center">
-                    <v-col cols="12" md="4" justify="center" align="center">
-                        <router-link to="/timer/my-statistics" style="text-decoration: none; color: black">
-                            <div>나의 통계</div>
-                        </router-link>
-                    </v-col>
-                    <v-col cols="12" md="4" justify="center" align="center">
+                    <v-col cols="12" md="6" justify="center" align="center">
                         <router-link to="/timer/study-start" style="text-decoration: none; color: black">
-                            <div>공부 시작</div>
+                            <span class="material-icons-outlined"> timer </span>
+                            <div>타이머</div>
                         </router-link>
                     </v-col>
-                    <v-col cols="12" md="4" justify="center" align="center">
+                    <v-col cols="12" md="6" justify="center" align="center">
                         <router-link to="/timer/friend-statistics" style="text-decoration: none; color: #ffb000">
-                            <div :style="{fontWeight: 'bold', fontSize: 'large'}"><h2>친구 통계</h2></div>
+                            <span class="material-icons-outlined"> show_chart </span>
+                            <div>통계</div>
                         </router-link>
                     </v-col>
                 </v-row>

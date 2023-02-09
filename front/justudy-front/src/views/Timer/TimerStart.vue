@@ -1,23 +1,22 @@
 <template>
     <v-app>
-        <v-row :style="{marginTop: '1%'}">
+        <v-row :style="{marginTop: '0.5%'}">
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
+                <!-- <TimerHeader /> -->
+
                 <!-- 타이머 메뉴 바 -->
                 <v-row justify="center" align="center">
-                    <v-col cols="12" md="4" justify="center" align="center">
-                        <router-link to="/timer/my-statistics" style="text-decoration: none; color: black">
-                            <div>나의 통계</div>
-                        </router-link>
-                    </v-col>
-                    <v-col cols="12" md="4" justify="center" align="center">
+                    <v-col cols="12" md="6" justify="center" align="center">
                         <router-link to="/timer/study-start" style="text-decoration: none; color: #ffb000">
-                            <div :style="{fontWeight: 'bold', fontSize: 'large'}"><h2>공부 시작</h2></div>
+                            <span class="material-icons-outlined"> timer </span>
+                            <div>타이머</div>
                         </router-link>
                     </v-col>
-                    <v-col cols="12" md="4" justify="center" align="center">
+                    <v-col cols="12" md="6" justify="center" align="center">
                         <router-link to="/timer/friend-statistics" style="text-decoration: none; color: black">
-                            <div>친구 통계</div>
+                            <span class="material-icons-outlined"> show_chart </span>
+                            <div>통계</div>
                         </router-link>
                     </v-col>
                 </v-row>
@@ -26,7 +25,7 @@
                 <TimerCamera />
 
                 <!-- 기록 내용 -->
-                <v-row :style="{marginTop: '2%', marginBottom: '10%'}">
+                <v-row>
                     <!-- 캠프파이어 -->
                     <!-- <v-col cols="12" md="2" justify="center" align="center">
                         <v-img :src="require('@/assets/campfire.gif')" max-height="160px" max-width="160px" />
@@ -103,33 +102,17 @@
                     </v-col>
                 </v-row>
 
+                <!-- 나의 공부 시간 -->
                 <v-row>
-                    <!-- 내용 - 오늘 접속자 -->
                     <v-col cols="12" md="6">
-                        <div class="card_section">
-                            <v-row>
-                                <v-img :src="require('@/assets/people.gif')" max-height="30" max-width="30" />
-                            </v-row>
-                            <v-row>
-                                <div :style="{fontWeight: 'bold', fontSize: 'large'}">
-                                    <h2>
-                                        <span style="color: black">지금 공부 중인 </span>
-                                        <span style="color: #ffb000">SSAFY</span>
-                                        <span style="color: black">교육생</span>
-                                    </h2>
-                                </div>
-                            </v-row>
-                            <v-row>
-                                <div :style="{fontWeight: 'bold', fontSize: 'large'}">
-                                    <h1>
-                                        <span style="color: #ffb000">254</span>
-                                        <span style="color: black">명</span>
-                                    </h1>
-                                </div>
-                            </v-row>
-                        </div>
+                        <DigitalClockPerDate content="이번주 공부 시간" :allTime="weekTime" />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                        <DigitalClockPerDate content="이번달 공부 시간" :allTime="monthTime" />
                     </v-col>
                 </v-row>
+
+                <v-row> </v-row>
             </v-col>
 
             <v-col cols="12" md="2" />
@@ -137,7 +120,10 @@
     </v-app>
 </template>
 <script>
+// import TimerHeader from '../../components/timer/TimerHeader.vue';
 import TimerCamera from '../../components/timer/TimerCamera.vue';
+import DigitalClockPerDate from '@/components/timer/DigitalClockPerDate.vue';
+// import DigitalClockAverage from '@/components/timer/DigitalClockAverage.vue';
 export default {
     name: 'StudyStart',
     data() {
@@ -147,14 +133,46 @@ export default {
             allTimeMe: 0,
             allTimeFirst: 9000,
             today: '',
-            firstYesterday: this.$store.state.moduleTimer.firstYesterday
+            firstYesterday: this.$store.state.moduleTimer.firstYesterday,
+
+            //my statics
+            weekTime: 0,
+            monthTime: 0,
+            averageWeekTime: 0,
+            averageMonthTime: 0,
+            studyCategory: [],
+            studyCalendar: []
         };
     },
 
     components: {
+        // DigitalClockAverage,
+        // TimerHeader,
+        DigitalClockPerDate,
         TimerCamera
     },
     async created() {
+        // 타이머 정보 부분
+        await this.$store.dispatch('moduleTimer/getStudyTimeWeek', {seq: 50});
+        this.weekTime = this.$store.state.moduleTimer.studyTimeWeek.time;
+        await this.$store.dispatch('moduleTimer/getStudyTimeMonth', {seq: 50});
+        this.monthTime = this.$store.state.moduleTimer.studyTimeMonth.time;
+        await this.$store.dispatch('moduleTimer/getAverageMembersWeek');
+        this.averageWeekTime = this.$store.state.moduleTimer.averageMemberWeek.time;
+        await this.$store.dispatch('moduleTimer/getAverageMembersMonth');
+        this.averageMonthTime = this.$store.state.moduleTimer.averageMemberMonth.time;
+        await this.$store.dispatch('moduleTimer/getStudyCategory', {seq: 50});
+        this.studyCategory = this.$store.state.moduleTimer.studyCategory;
+        await this.$store.dispatch('moduleTimer/getStudyCalendar', {seq: 50, year: 2023, month: 1});
+
+        let studyCalendar = new Array(32).fill(0);
+        let data = this.$store.state.moduleTimer.studyCalendar;
+        for (let i = 0; i < data.length; i++) {
+            studyCalendar[parseInt(data[i].day)] = data[i].second;
+        }
+
+        this.studyCalendar = studyCalendar;
+
         // API 받기
         await this.$store.dispatch('moduleTimer/getFirstYesterday');
         this.firstYesterday = this.$store.state.moduleTimer.firstYesterday;
@@ -177,6 +195,7 @@ export default {
 <style scoped>
 .card_section {
     padding: 10px;
+    height: 170px;
     margin-bottom: 20px;
     border-style: solid;
     border-color: #eeeeee;

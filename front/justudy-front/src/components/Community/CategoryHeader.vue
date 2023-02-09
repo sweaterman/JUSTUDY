@@ -2,9 +2,9 @@
 <template>
     <v-row>
         <v-col cols="12" md="2" />
-        <v-col cols="12" md="8">
+        <v-col cols="12" md="8" justify="center" align="center">
             <!-- 카테고리 지정 -->
-            <v-row style="margin-top: 2%; margin-bottom: 2%; padding: 3%" justify="center" align="center">
+            <v-row :style="{padding: '1%'}" justify="center" align="center">
                 <v-tabs color="black" v-model="tab" justify="center" align="center">
                     <v-tabs-slider color="yellow"></v-tabs-slider>
                     <v-tab v-for="top in top_categories" :key="top">
