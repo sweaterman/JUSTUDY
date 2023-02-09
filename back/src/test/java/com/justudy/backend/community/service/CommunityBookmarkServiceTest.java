@@ -112,7 +112,7 @@ class CommunityBookmarkServiceTest {
                 .given(bookmarkRepository).deleteAllByCommunity(1001L);
 
         //when
-        bookmarkService.deleteBookmarkByCommunity(COMMUNITY_SEQUENCE);
+        bookmarkService.deleteAllByCommunity(COMMUNITY_SEQUENCE);
 
         //then
         BDDMockito.then(bookmarkRepository).should(only()).deleteAllByCommunity(COMMUNITY_SEQUENCE);
