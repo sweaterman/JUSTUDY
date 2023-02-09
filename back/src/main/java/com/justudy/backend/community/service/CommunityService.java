@@ -16,6 +16,7 @@ import com.justudy.backend.member.domain.MemberEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +34,6 @@ public class CommunityService {
     private final CommunityBookmarkService bookmarkService;
     private final CommunityLoveService loveService;
 
-    private final int MAX_PAGE_SIZE = 10;
-    private final int MAX_NOTICE_SIZE = 3;
 
 // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
@@ -54,7 +53,7 @@ public class CommunityService {
                 .orElseThrow(CommunityNotFound::new);
         validateWriter(loginSequence, community.getMember().getSequence());
         community.deleteCommunity();
-        bookmarkService.deleteBookmarkByCommunity(communitySequence);
+        bookmarkService.deleteAllByCommunity(communitySequence);
         loveService.deleteAllByCommunity(communitySequence);
         return community.getSequence();
     }
@@ -118,6 +117,12 @@ public class CommunityService {
         return communityRepository.getListBySequences(sequences).stream()
                 .map(CommunityListResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Scheduled(zone = "Asia/Seoul", cron = "0 0 4 * * MON")
+    void updateWeekLoveCount() {
+        communityRepository.updateWeekLoveCount();
     }
 
     private void validateWriter(Long loginSequence, Long writerSequence) {
