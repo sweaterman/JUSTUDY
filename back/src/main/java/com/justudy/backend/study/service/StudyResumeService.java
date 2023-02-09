@@ -30,12 +30,11 @@ public class StudyResumeService {
     private final StudyResumeRepository studyResumeRepository;
 
     @Transactional
-    public Long createStudyResume(Long studySequence, StudyResumeCreate request) {
-        StudyEntity studyEntity = studyRepository.findById(studySequence)
+    public Long createStudyResume(StudyResumeCreate request) {
+        StudyEntity studyEntity = studyRepository.findById(request.getStudySeq())
                 .orElseThrow(StudyNotFound::new);
         MemberEntity memberEntity = memberRepository.findById(request.getMemberSeq())
                 .orElseThrow(MemberNotFound::new);
-        //todo 같은 스터디 이미 신청했는지 확인
 
         StudyResumeEntity studyResumeEntity = studyResumeRepository.save(request.toEntity(studyEntity, memberEntity));
         studyEntity.addStudyResume(studyResumeEntity);
@@ -43,12 +42,21 @@ public class StudyResumeService {
     }
 
     @Transactional
-    public void deleteStudyResume(Long id) {
-        StudyResumeEntity studyResumeEntity = studyResumeRepository.findById(id).orElseThrow(InvalidRequest::new);
-        StudyEntity studyEntity = studyRepository.findById(studyResumeEntity.getStudy().getSequence())
+    public void deleteStudyResume(Long id, Long loginSequence) {
+        StudyEntity studyEntity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
+
+        StudyResumeEntity studyResumeEntity = studyEntity.getResumes()
+                .stream()
+//                .map(studyResumeEntity1 -> studyResumeEntity1)
+                .filter(memberEntity -> memberEntity.getMember().getSequence() == loginSequence)
+                .findFirst()
+                .orElseThrow(StudyResumeNotFound::new);
+
+        if (studyResumeEntity.getMember().getSequence() != loginSequence)
+            throw new InvalidRequest();
         studyEntity.removeStudyResume(studyResumeEntity);
-        studyResumeRepository.deleteById(id);
+        studyResumeRepository.deleteById(studyResumeEntity.getSequence());
     }
 
     public StudyResumeResponse readStudyResume(Long resumeSeq) {
@@ -58,9 +66,11 @@ public class StudyResumeService {
     }
 
 
-    public List<StudyResumeResponse> readAllStudyResumeByStudy(Long id) {
-        studyRepository.findById(id)
+    public List<StudyResumeResponse> readAllStudyResumeByStudy(Long id, Long loginSequence) {
+        StudyEntity studyEntity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
+        if (loginSequence != studyEntity.getLeaderSeq()) throw new InvalidRequest();
+
         return studyResumeRepository.readAllStudyResumeByStudy(id)
                 .stream()
                 .map(StudyResumeResponse::makeBuilder)
@@ -73,6 +83,10 @@ public class StudyResumeService {
                 .map(StudyResumeEntity::getStudy)
                 .map(StudyResponse::makeBuilder)
                 .collect(Collectors.toList());
+    }
+
+    public void deleteById(Long id) {
+        studyResumeRepository.deleteById(id);
     }
 }
 

@@ -22,10 +22,18 @@ public class CommunityDetailResponse {
     private LocalDateTime modifiedTime;
     private Integer loveCount;
 
+    private boolean isWriter;
+
+    private boolean isBookmarked;
+
+    private boolean isLoved;
+
+
     @Builder
     public CommunityDetailResponse(Long sequence, Long memberSequence, String nickname,
                                    CategoryResponse category, String title, String content, Integer viewCount,
-                                   LocalDateTime createdTime, LocalDateTime modifiedTime, Integer loveCount) {
+                                   LocalDateTime createdTime, LocalDateTime modifiedTime, Integer loveCount,
+                                   boolean isWriter, boolean isBookmarked, boolean isLoved) {
         this.sequence = sequence;
         this.memberSequence = memberSequence;
         this.nickname = nickname;
@@ -36,11 +44,14 @@ public class CommunityDetailResponse {
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
         this.loveCount = loveCount;
+
+        this.isWriter = isWriter;
+        this.isBookmarked = isBookmarked;
+        this.isLoved = isLoved;
     }
-    public static CommunityDetailResponse makeBuilder(CommunityEntity entity) {
-        return makeBuilder(entity,0);
-    }
-    public static CommunityDetailResponse makeBuilder(CommunityEntity entity, Integer loveCount) {
+
+    public static CommunityDetailResponse makeBuilder(CommunityEntity entity,
+                                                      boolean isWriter, boolean isBookmarked, boolean isLoved) {
         return CommunityDetailResponse.builder()
                 .sequence(entity.getSequence())
                 .memberSequence(entity.getMember().getSequence())
@@ -51,7 +62,10 @@ public class CommunityDetailResponse {
                 .viewCount(entity.getViewCount())
                 .createdTime(entity.getCreatedTime())
                 .modifiedTime(entity.getModifiedTime())
-                .loveCount(loveCount)
+                .loveCount(entity.getLoveCount() + entity.getWeekLoveCount())
+                .isWriter(isWriter)
+                .isBookmarked(isBookmarked)
+                .isLoved(isLoved)
                 .build();
     }
 }

@@ -6,10 +6,26 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CommunityRepositoryCustom {
 
     List<CommunityEntity> getAllList(CommunitySearch communitySearch);
+
+    Long getCountOfList(CommunitySearch communitySearch);
+
+    List<CommunityEntity> getAllNotice(Pageable pageable);
+
+    Long getCountOfNotices();
+
+    List<CommunityEntity> getMostLoveListOfWeek(Pageable pageable);
+
+    Optional<CommunityEntity> findBySequence(Long sequence);
+
+    List<CommunityEntity> getListBySequences(List<Long> sequences);
+
+
+
 
 
     Page<CommunityEntity> findAllByNotice(Pageable pageable);

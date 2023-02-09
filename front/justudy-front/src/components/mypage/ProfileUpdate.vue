@@ -66,6 +66,8 @@ export default {
             this.$emit('dialogChangeFromChild');
         },
         onFileSelected(event) {
+            // console.log(event);
+
             var input = event.target;
             if (input.files && input.files[0]) {
                 var reader = new FileReader();

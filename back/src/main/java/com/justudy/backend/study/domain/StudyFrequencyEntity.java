@@ -21,7 +21,8 @@ public class StudyFrequencyEntity {
     @JoinColumn(name = "study_seq")
     private StudyEntity study;
     @Column(name = "study_frequency_week")
-    private String week;
+    @Enumerated(EnumType.STRING)
+    private StudyFrequencyWeek week;
     @Temporal(TemporalType.TIME)
     @Column(name = "study_frequency_start_time")
     private Date startTime;
@@ -39,7 +40,7 @@ public class StudyFrequencyEntity {
 //            studyEntity.getFrequency().add(this);
     }
 
-    public void update(StudyEntity study, String week, Date startTime, Date endTime) {
+    public void update(StudyEntity study, StudyFrequencyWeek week, Date startTime, Date endTime) {
         this.study = study;
         this.week = week;
         this.startTime = startTime;

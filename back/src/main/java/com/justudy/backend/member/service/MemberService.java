@@ -4,6 +4,8 @@ import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.exception.CategoryNotFound;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.community.dto.response.CommunityListResponse;
+import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.exception.ConflictRequest;
 import com.justudy.backend.exception.ForbiddenRequest;
 import com.justudy.backend.exception.InvalidRequest;
@@ -24,6 +26,7 @@ import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -47,13 +50,18 @@ public class MemberService {
 
     private final UploadFileService uploadFileService;
 
+    private final CommunityService communityService;
+
     private final FileStore fileStore;
+
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
     public Long saveMember(MemberCreate request, UploadFileEntity basicImage) {
         validateCreateRequest(request);
 
-        MemberEntity member = request.toEntity();
+        String encodePassword = passwordEncoder.encode(request.getPassword());
+        MemberEntity member = request.toEntity(encodePassword);
         member.changeImage(basicImage);
         addCategory(request, member);
 
@@ -66,6 +74,16 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFound());
 
         return createMypageResponse(findMember);
+    }
+
+    public List<CommunityListResponse> getMyBookmarks(Long loginSequence) {
+        List<CommunityListResponse> myBookmarks = communityService.getMyBookmarks(loginSequence);
+        log.info("[getMyBookmarks] myBookmarks = {}", myBookmarks);
+        return myBookmarks;
+    }
+
+    public List<CommunityListResponse> getMyLoves(Long loginSequence) {
+        return communityService.getMyLoves(loginSequence);
     }
 
     public ModifyPageResponse getModifyPage(Long loginSequence) {
@@ -113,7 +131,7 @@ public class MemberService {
 
         MemberEditor memberEditor = editorBuilder
                 .nickname(editRequest.getNickname())
-                .password(editRequest.getPassword())
+                .password(encodePassword(editRequest.getPassword()))
                 .phone(editRequest.getPhone())
                 .email(editRequest.getEmail())
                 .region(Region.valueOf(editRequest.getRegion()))
@@ -125,13 +143,7 @@ public class MemberService {
         List<MemberCategoryEntity> newCategories = createNewMemberCategories(editRequest);
         findMember.changeMemberCategory(newCategories);
 
-        UploadFileEntity oldImageFile = findMember.getImageFile();
         findMember.edit(memberEditor);
-        UploadFileEntity newImageFile = findMember.getImageFile();
-
-        if (validateImageFile(oldImageFile.getSequence(), newImageFile.getSequence())) {
-            uploadFileService.saveUploadFile(newImageFile);
-        }
 
         return findMember.getSequence();
     }
@@ -278,31 +290,38 @@ public class MemberService {
         String newPassword = editRequest.getPassword();
         String newPasswordCheck = editRequest.getPasswordCheck();
         if (StringUtils.hasText(newPassword)
-                && StringUtils.hasText(newPasswordCheck)) {
+                || StringUtils.hasText(newPasswordCheck)) {
             isNotEqualPassword(newPassword, newPasswordCheck);
         }
     }
 
-    private void isDuplicatedUserId(String userId) {
+    private String encodePassword(String password) {
+        if (password == null) {
+            return null;
+        }
+        return passwordEncoder.encode(password);
+    }
+
+    public void isDuplicatedUserId(String userId) {
         if (memberRepository.findUserId(userId).isPresent()) {
             throw new ConflictRequest("userId", "이미 가입된 아이디입니다.");
         }
     }
 
-    private void isDuplicatedNickname(String nickname) {
+    public void isDuplicatedNickname(String nickname) {
         if (memberRepository.findNickname(nickname).isPresent()) {
             throw new ConflictRequest("nickname", "이미 가입된 닉네임입니다.");
         }
     }
 
-    private void isDuplicatedSsafyId(String ssafyId) {
+    public void isDuplicatedSsafyId(String ssafyId) {
         if (memberRepository.findSsafyId(ssafyId).isPresent()) {
             throw new ConflictRequest("ssafyId", "이미 가입된 SSAFY학번입니다.");
         }
     }
 
     private void isNotEqualPassword(String password, String passwordCheck) {
-        if (!password.equals(passwordCheck)) {
+        if (password == null || !password.equals(passwordCheck)) {
             throw new InvalidRequest("password", "비밀번호와 비밀번호확인이 다릅니다.");
         }
     }
