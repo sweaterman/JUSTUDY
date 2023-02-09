@@ -153,17 +153,17 @@ export default {
     },
     async created() {
         // 타이머 정보 부분
-        await this.$store.dispatch('moduleTimer/getStudyTimeWeek', {seq: 50});
+        await this.$store.dispatch('moduleTimer/getStudyTimeWeek', {nickName: '테스트 봇1'});
         this.weekTime = this.$store.state.moduleTimer.studyTimeWeek.time;
-        await this.$store.dispatch('moduleTimer/getStudyTimeMonth', {seq: 50});
+        await this.$store.dispatch('moduleTimer/getStudyTimeMonth', {nickName: '테스트 봇2'});
         this.monthTime = this.$store.state.moduleTimer.studyTimeMonth.time;
         await this.$store.dispatch('moduleTimer/getAverageMembersWeek');
         this.averageWeekTime = this.$store.state.moduleTimer.averageMemberWeek.time;
         await this.$store.dispatch('moduleTimer/getAverageMembersMonth');
         this.averageMonthTime = this.$store.state.moduleTimer.averageMemberMonth.time;
-        await this.$store.dispatch('moduleTimer/getStudyCategory', {seq: 50});
+        await this.$store.dispatch('moduleTimer/getStudyCategory', {nickName: '테스트 봇1'});
         this.studyCategory = this.$store.state.moduleTimer.studyCategory;
-        await this.$store.dispatch('moduleTimer/getStudyCalendar', {seq: 50, year: 2023, month: 1});
+        await this.$store.dispatch('moduleTimer/getStudyCalendar', {nickName: '테스트 봇1', year: 2023, month: 1});
 
         let studyCalendar = new Array(32).fill(0);
         let data = this.$store.state.moduleTimer.studyCalendar;
