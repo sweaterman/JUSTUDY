@@ -23,6 +23,17 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
 
 
   @Override
+  public Tuple findTodayRecord(Date date, String category, MemberEntity member) {
+
+    return queryFactory
+        .select(qMemberActivity.time, qMemberActivity.sequence)
+        .from(qMemberActivity)
+        .where(qMemberActivity.date.eq(date), qMemberActivity.member.eq(member),
+            qMemberActivity.category.eq(category))
+        .fetchOne();
+  }
+
+  @Override
   public Tuple findTopTimeByYesterday(Date yesterday) {
     return queryFactory
         .select(qMemberActivity.member, qMemberActivity.time.sum())
@@ -36,7 +47,7 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
 
   @Override
   public Long findTimeByPeriodAndMember(Date ago, Date cur, MemberEntity member) {
-    return  (long)queryFactory
+    return (long) queryFactory
         .select(qMemberActivity.time.sum())
         .from(qMemberActivity)
         .where(qMemberActivity.member.eq(member), qMemberActivity.date.gt(ago),
@@ -71,7 +82,7 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
       MemberEntity member) {
     return queryFactory
         .select(
-            Projections.constructor(ActivityCalendarResponse.class,fromDateToDay(qMemberActivity),
+            Projections.constructor(ActivityCalendarResponse.class, fromDateToDay(qMemberActivity),
                 qMemberActivity.time.sum()))
         .from(qMemberActivity)
         .where(qMemberActivity.member.eq(member), qMemberActivity.date.goe(ago),
@@ -92,7 +103,8 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
         .limit(10)
         .fetch();
   }
-  private DateTemplate fromDateToDay(QMemberActivityEntity qMemberActivity){
+
+  private DateTemplate fromDateToDay(QMemberActivityEntity qMemberActivity) {
     return Expressions.dateTemplate(
         String.class,
         "DATE_FORMAT({0},{1})",

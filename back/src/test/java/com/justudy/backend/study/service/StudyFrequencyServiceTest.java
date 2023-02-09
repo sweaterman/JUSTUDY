@@ -222,9 +222,9 @@ class StudyFrequencyServiceTest {
         return StudyFrequencyCreate
                 .builder()
                 .studySeq(study)
-                .week(1L)
-                .startTime(date)
-                .endTime(date)
+                .week("월")
+                .startTime(date.toString())
+                .endTime(date.toString())
                 .build();
     }
 
@@ -295,7 +295,6 @@ class StudyFrequencyServiceTest {
                 .ssafyId("08" + number)
                 .phone(String.valueOf(number))
                 .email("testEmail" + number + "@ssafy.com")
-                .mmId(number + "test")
                 .region("SEOUL")
                 .category(new String[]{"java", "Spring"})
                 .introduction("테스트 봇" + number + " 입니다.")

@@ -136,9 +136,9 @@ class StudyServiceTest {
         StudyCreate create = makeRequest(findMember);
         Long id = service.createStudy(create, basicImage);
         List<StudyFrequencyCreate> studyFrequencycreates = new ArrayList<>();
-        studyFrequencycreates.add(StudyFrequencyCreate.builder().studySeq(id).week(1L).build());
-        studyFrequencycreates.add(StudyFrequencyCreate.builder().studySeq(id).week(2L).build());
-        studyFrequencycreates.add(StudyFrequencyCreate.builder().studySeq(id).week(3L).build());
+        studyFrequencycreates.add(StudyFrequencyCreate.builder().studySeq(id).week("월").build());
+        studyFrequencycreates.add(StudyFrequencyCreate.builder().studySeq(id).week("화").build());
+        studyFrequencycreates.add(StudyFrequencyCreate.builder().studySeq(id).week("수").build());
         StudyEdit edit = makeRequest(id, findMember, studyFrequencycreates);
 
         // When
@@ -271,7 +271,6 @@ class StudyServiceTest {
                 .ssafyId("08" + number)
                 .phone(String.valueOf(number))
                 .email("testEmail" + number + "@ssafy.com")
-                .mmId(number + "test")
                 .region("SEOUL")
                 .category(new String[]{"java", "Spring"})
                 .introduction("테스트 봇" + number + " 입니다.")

@@ -36,9 +36,6 @@ public class MemberCreate {
     @NotBlank
     private String email;
 
-    @NotBlank
-    private String mmId;
-
     private String region;
 
     private String dream;
@@ -57,7 +54,6 @@ public class MemberCreate {
                         @JsonProperty("ssafyId") String ssafyId,
                         @JsonProperty("phone") String phone,
                         @JsonProperty("email") String email,
-                        @JsonProperty("mmId") String mmId,
                         @JsonProperty("region") String region,
                         @JsonProperty("dream") String dream,
                         @JsonProperty("category") String[] category,
@@ -70,7 +66,6 @@ public class MemberCreate {
         this.ssafyId = ssafyId;
         this.phone = phone;
         this.email = email;
-        this.mmId = mmId;
         this.region = region;
         this.dream = dream;
         this.category = category;
@@ -89,7 +84,6 @@ public class MemberCreate {
                 .region(Region.valueOf(region))
                 .dream(dream)
                 .introduction(introduction)
-                .mmId(mmId)
                 .build();
     }
 }
