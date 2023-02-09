@@ -3,6 +3,7 @@ package com.justudy.backend.member.domain;
 
 import com.justudy.backend.common.enum_util.Level;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.exception.ForbiddenRequest;
 import lombok.*;
@@ -78,11 +79,8 @@ public class MemberEntity {
             orphanRemoval = true)
     List<MemberCategoryEntity> categories = new ArrayList<>();
 
-    @Column(name = "member_mm_id")
-    private String mmId;
-
-    @Column(name = "member_mm_valid")
-    private boolean isMMValid;
+    @OneToMany(mappedBy = "member")
+    List<CommunityEntity> boards = new ArrayList<>();
 
     @Column(name = "member_badge_count")
     private Integer badgeCount;
@@ -92,6 +90,9 @@ public class MemberEntity {
 
     @Column(name = "member_is_banned")
     private boolean isBanned;
+
+    @Column(name = "member_valid")
+    private boolean isValid;
 
     @Column(name = "member_created_time")
     private LocalDateTime createdTime;
@@ -104,8 +105,7 @@ public class MemberEntity {
                         String username, String nickname,
                         String ssafyId, String phone, String email,
                         Region region, String dream, String introduction,
-                        UploadFileEntity imageFile,
-                        String mmId, boolean isMMValid) {
+                        UploadFileEntity imageFile) {
         this.userId = userId;
         this.password = password;
         this.username = username;
@@ -117,9 +117,8 @@ public class MemberEntity {
         this.dream = dream;
         this.introduction = introduction;
 
-        this.mmId = mmId;
-        this.isMMValid = false;
 
+        this.isValid = false;
         this.imageFile = imageFile;
 
         this.role = MemberRole.USER;
@@ -184,6 +183,11 @@ public class MemberEntity {
         this.categories.add(memberCategory);
         memberCategory.addMember(this);
     }
+
+    public void addBoard(CommunityEntity board) {
+        this.boards.add(board);
+    }
+
 
     public void changeMemberCategory(List<MemberCategoryEntity> categories) {
         for (MemberCategoryEntity category : categories) {

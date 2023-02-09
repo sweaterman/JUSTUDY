@@ -105,8 +105,7 @@ export default {
             }
         };
     },
-    mounted(){
-    },
+    mounted() {},
     methods: {
         moveback() {
             window.history.back(); // window.history.back()을 통해 뒤로가기

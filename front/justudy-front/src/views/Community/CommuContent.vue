@@ -74,7 +74,7 @@
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <v-row>
-                    <CommuComment v-if="Data !==null " :contentId="Data.sequence" />
+                    <CommuComment v-if="Data !== null" :contentId="Data.sequence" />
                 </v-row>
             </v-col>
             <v-col cols="12" md="2" />
@@ -158,7 +158,7 @@ export default {
                 name: 'CommuUpdate',
                 path: this.$route.path + 'update',
                 query: {
-                    category: this.Data.category
+                    category: this.Data.category.key
                 }
             });
         },

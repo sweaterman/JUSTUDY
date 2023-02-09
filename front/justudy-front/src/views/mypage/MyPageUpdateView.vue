@@ -77,7 +77,7 @@ export default {
             };
 
             const formData = new FormData();
-            formData.append('multipartFile', this.file);
+            formData.append('file', this.file);
             formData.append(
                 'request',
                 new Blob([JSON.stringify(this.result)], {

@@ -9,8 +9,7 @@ export default {
         CommunityContent: {},
         bookMarkList: [],
 
-        commentList:[],
-
+        commentList: []
     },
     getters: {},
     mutations: {
@@ -30,21 +29,17 @@ export default {
             state.bookMarkList = payload;
         },
 
-        GET_COMMENTLIST(state,payload){
-            state.commentList=payload;
+        GET_COMMENTLIST(state, payload) {
+            state.commentList = payload;
         }
     },
     actions: {
-        async getCommunityBoard({commit}, {number, category,type,search,order}) {
-            
+        async getCommunityBoard({commit}, {number, category, type, search, order}) {
             let API_URL = `${port}community/board?page=${number}&category=${category}`;
-            
-            if(!(typeof type == "undefined" || type==null || type==""))
-                API_URL += `&type=${type}`
-            if(!(typeof search == "undefined" || search==null || search==""))
-                API_URL += `&search=${search}`
-            if(!(typeof order == "undefined" || order==null ||order ==""))
-                API_URL += `&order=${order}`
+
+            if (!(typeof type == 'undefined' || type == null || type == '')) API_URL += `&type=${type}`;
+            if (!(typeof search == 'undefined' || search == null || search == '')) API_URL += `&search=${search}`;
+            if (!(typeof order == 'undefined' || order == null || order == '')) API_URL += `&order=${order}`;
 
             await axios({
                 url: API_URL,
@@ -54,7 +49,7 @@ export default {
                     commit('GET_COMMUNITYBOARD', res.data);
                 })
                 .catch(err => {
-                    commit('GET_COMMUNITYBOARD',null);
+                    commit('GET_COMMUNITYBOARD', null);
                     console.log(err);
                 });
         },
@@ -62,7 +57,8 @@ export default {
             const API_URL = `${port}community/board/${id}`;
             await axios({
                 url: API_URL,
-                method: 'GET'
+                method: 'GET',
+                withCredentials: true
             })
                 .then(res => {
                     commit('GET_COMMUNITYCONTENT', res.data);
@@ -106,19 +102,20 @@ export default {
         //한민 작업
         //북마크 생성
         //reload 필요?
-        async createBookMark({commit}, {id,bookMark}) {
+        async createBookMark({commit}, {id, bookMark}) {
             const API_URL = `${port}community/board/${id}/bookmark`;
             await axios({
                 url: API_URL,
                 method: 'POST',
                 data: bookMark,
                 withCredentials: true
-            }).then(() => {
-                commit;
             })
-            .catch(err => {
-                console.log(err);
-            });
+                .then(() => {
+                    commit;
+                })
+                .catch(err => {
+                    console.log(err);
+                });
         },
         //북마크 삭제
         //reload 필요?
@@ -128,7 +125,8 @@ export default {
                 url: API_URL,
                 method: 'DELETE',
                 withCredentials: true
-            }).then(() => {
+            })
+                .then(() => {
                     commit;
                 })
                 .catch(err => {
@@ -165,19 +163,20 @@ export default {
         },
         //좋아요 생성
         //reload 필요?
-        async createLove({commit}, {id,love}) {
+        async createLove({commit}, {id, love}) {
             const API_URL = `${port}community/board/${id}/love`;
             await axios({
                 url: API_URL,
                 method: 'POST',
                 data: love,
                 withCredentials: true
-            }).then(() => {
-                commit;
             })
-            .catch(err => {
-                console.log(err);
-            });
+                .then(() => {
+                    commit;
+                })
+                .catch(err => {
+                    console.log(err);
+                });
         },
         //좋아요 삭제
         //reload 필요?
@@ -187,7 +186,8 @@ export default {
                 url: API_URL,
                 method: 'DELETE',
                 withCredentials: true
-            }).then(() => {
+            })
+                .then(() => {
                     commit;
                 })
                 .catch(err => {
@@ -196,7 +196,7 @@ export default {
         },
 
         //게시글 별 댓글 불러오기
-        async getCommentList({commit},{id}) {
+        async getCommentList({commit}, {id}) {
             const API_URL = `${port}community/board/${id}/comments`;
             await axios({
                 url: API_URL,
@@ -212,30 +212,32 @@ export default {
         },
         //댓글 생성
         //reload 필요?
-        async createComment({commit}, {id,comment}) {
+        async createComment({commit}, {id, comment}) {
             const API_URL = `${port}community/board/${id}/comments`;
             await axios({
                 url: API_URL,
                 method: 'POST',
                 data: comment,
                 withCredentials: true
-            }).then(() => {
-                commit;
-                window.location.reload();
             })
-            .catch(err => {
-                console.log(err);
-            });
+                .then(() => {
+                    commit;
+                    window.location.reload();
+                })
+                .catch(err => {
+                    console.log(err);
+                });
         },
-        //댓글 삭제        
+        //댓글 삭제
         //reload 필요?
-        async deleteComment({commit}, {id,commentid}) {
+        async deleteComment({commit}, {id, commentid}) {
             const API_URL = `${port}community/board/${id}/comments/${commentid}`;
             await axios({
                 url: API_URL,
                 method: 'DELETE',
                 withCredentials: true
-            }).then(() => {
+            })
+                .then(() => {
                     commit;
                     window.location.reload();
                 })
@@ -245,23 +247,24 @@ export default {
         },
         //댓글 수정
         //reload 필요?
-        async updateComment({commit}, {id,commentid,comment}) {
+        async updateComment({commit}, {id, commentid, comment}) {
             const API_URL = `${port}community/board/${id}/comments/${commentid}`;
             await axios({
                 url: API_URL,
                 method: 'PUT',
                 data: comment,
                 withCredentials: true
-            }).then(() => {
+            })
+                .then(() => {
                     commit;
                     window.location.reload();
                 })
                 .catch(err => {
                     console.log(err);
                 });
-        },
+        }
 
-        //인기글 불러오기 메인 페이지 기능 
+        //인기글 불러오기 메인 페이지 기능
         // async getPopularCommunityBoard({commit}, {number}) {
         //     const API_URL = `${port}community/board/popular?page=${number}`;
         //     await axios({
@@ -283,6 +286,5 @@ export default {
         //         commit('getBookMarkList', res.data);
         //     });
         // },
-
     }
 };

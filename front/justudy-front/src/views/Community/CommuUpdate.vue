@@ -25,7 +25,7 @@
                                 <v-btn depressed color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '20%', marginLeft: '15%'}">작성자</v-btn>
                             </v-col>
                             <v-col cols="12" md="10">
-                                <v-text-field v-model="writer" solo readonly outlined depressed style="width: 80%; height: 20px; margin-right: 10%; margin-left: 5%; margin-top: 4%"></v-text-field>
+                                <v-text-field v-model="nickname" solo readonly outlined depressed style="width: 80%; height: 20px; margin-right: 10%; margin-left: 5%; margin-top: 4%"></v-text-field>
                                 <v-btn color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '3%', marginLeft: '10%'}"></v-btn>
                             </v-col>
                         </v-row> -->
@@ -37,13 +37,12 @@
                             </v-col>
                             <v-col cols="12" md="10">
                                 <v-text-field
-                                    v-model="study.title"
+                                    v-model="board.title"
                                     outlined
                                     label="제목을 입력하세요"
                                     style="width: 80%; margin-right: 10%; margin-left: 5%"
                                     :rules="[v => (!!(v.length > 0) && !(v.length >= 30)) || '제목 글자수를 지켜주세요.']"
                                 >
-                                    {{ study.title }}
                                 </v-text-field>
                             </v-col>
                         </v-row>
@@ -80,6 +79,7 @@
             </v-col>
             <v-col cols="12" md="2" />
         </v-row>
+        아제발
     </v-app>
 </template>
 
@@ -115,7 +115,7 @@ export default {
             //     content: this.content,
             //     writer: this.writer
             // });
-            this.board.category = this.$route.query.category.key;
+            this.board.category = this.$route.query.category;
             this.board.isHighlighted = false;
             console.log(this.board);
             await this.$store.dispatch('moduleCommunity/getCommunityContentUpdate', {id: this.Data.sequence, board: this.board});

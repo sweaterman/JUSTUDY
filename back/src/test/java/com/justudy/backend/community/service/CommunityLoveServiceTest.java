@@ -1,9 +1,9 @@
 package com.justudy.backend.community.service;
 
 import com.justudy.backend.community.domain.CommunityLoveEntity;
-import com.justudy.backend.community.exception.BookmarkNotFound;
 import com.justudy.backend.community.exception.LoveNotFound;
 import com.justudy.backend.community.repository.CommunityLoveRepository;
+import com.justudy.backend.community.repository.CommunityRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,8 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 class CommunityLoveServiceTest {
@@ -29,9 +31,11 @@ class CommunityLoveServiceTest {
 
     private CommunityLoveRepository loveRepository = mock(CommunityLoveRepository.class);
 
+    private CommunityRepository communityRepository = mock(CommunityRepository.class);
+
     @BeforeEach
     void setUp() {
-        loveService = new CommunityLoveService(loveRepository);
+        loveService = new CommunityLoveService(loveRepository, communityRepository);
     }
 
     @Transactional
