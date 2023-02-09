@@ -13,46 +13,44 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCustom {
-
   private final JPAQueryFactory queryFactory;
   private final QMemberActivityEntity qMemberActivity = QMemberActivityEntity.memberActivityEntity;
 
-
   @Override
-  public Tuple findTodayRecord(Date date, String category, MemberEntity member) {
-
-    return queryFactory
+  public Optional<Tuple> findTodayRecord(Date date, String category, MemberEntity member) {
+    return Optional.ofNullable(queryFactory
         .select(qMemberActivity.time, qMemberActivity.sequence)
         .from(qMemberActivity)
         .where(qMemberActivity.date.eq(date), qMemberActivity.member.eq(member),
             qMemberActivity.category.eq(category))
-        .fetchOne();
+        .fetchOne());
   }
 
   @Override
-  public Tuple findTopTimeByYesterday(Date yesterday) {
-    return queryFactory
+  public Optional<Tuple> findTopTimeByYesterday(Date yesterday) {
+    return Optional.ofNullable(queryFactory
         .select(qMemberActivity.member, qMemberActivity.time.sum())
         .from(qMemberActivity)
         .where(qMemberActivity.date.eq(yesterday))
         .groupBy(qMemberActivity.member)
         .orderBy(qMemberActivity.time.sum().desc())
-        .limit(1).fetchOne();
+        .limit(1).fetchOne());
 
   }
 
   @Override
-  public Long findTimeByPeriodAndMember(Date ago, Date cur, MemberEntity member) {
-    return (long) queryFactory
+  public Optional<Long> findTimeByPeriodAndMember(Date ago, Date cur, MemberEntity member) {
+    return Optional.ofNullable(queryFactory
         .select(qMemberActivity.time.sum())
         .from(qMemberActivity)
         .where(qMemberActivity.member.eq(member), qMemberActivity.date.gt(ago),
             qMemberActivity.date.loe(cur))
-        .groupBy(qMemberActivity.member).fetchOne();
+        .groupBy(qMemberActivity.member).fetchOne());
   }
 
   @Override
@@ -68,13 +66,13 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
   }
 
   @Override
-  public Tuple findAllTimeByPeriod(Date ago, Date cur) {
+  public Optional<Tuple> findAllTimeByPeriod(Date ago, Date cur) {
 
-    return queryFactory
+    return Optional.ofNullable(queryFactory
         .select(qMemberActivity.member.countDistinct(), qMemberActivity.time.sum())
         .from(qMemberActivity)
         .where(qMemberActivity.date.gt(ago), qMemberActivity.date.loe(cur))
-        .fetchOne();
+        .fetchOne());
   }
 
   @Override
