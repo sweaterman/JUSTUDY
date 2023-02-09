@@ -15,10 +15,10 @@ import com.justudy.backend.timer.exception.YesterdayNoData;
 import com.justudy.backend.timer.repository.MemberActivityRepository;
 import com.querydsl.core.Tuple;
 import java.sql.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalLong;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,8 @@ public class MemberActivityService {
   public void saveMemberAcitivity(ActivityRequest memberActivityRequest, Long seq,
       Date today) {
     MemberEntity member = memberRepository.getReferenceById(seq);
-    Optional<Tuple> storeTime = memberActivityRepository.findTodayRecord(today,memberActivityRequest.getCategory(), member);
+    Optional<Tuple> storeTime = memberActivityRepository.findTodayRecord(today,
+        memberActivityRequest.getCategory(), member);
 
     if (storeTime.isEmpty()) {
       memberActivityRepository.save(MemberActivityEntity
@@ -53,7 +54,7 @@ public class MemberActivityService {
       Long sum = memberActivityRequest.getSecond() + storeTime.get().get(qMemberActivity.time);
       memberActivityRepository.save(MemberActivityEntity
           .builder()
-              .sequence(storeTime.get().get(qMemberActivity.sequence))
+          .sequence(storeTime.get().get(qMemberActivity.sequence))
           .member(member)
           .date(today)
           .time(sum)
@@ -66,7 +67,8 @@ public class MemberActivityService {
 
   @Transactional
   public MemberActivityYesterdayResponse getMemberActivityYesterdayTop(Date yesterday) {
-    Tuple ret = memberActivityRepository.findTopTimeByYesterday(yesterday).orElseThrow(() -> new YesterdayNoData());
+    Tuple ret = memberActivityRepository.findTopTimeByYesterday(yesterday)
+        .orElseThrow(() -> new YesterdayNoData());
     MemberEntity member = ret.get(qMemberActivity.member);
     Long second = ret.get(qMemberActivity.time.sum());
 
@@ -75,7 +77,8 @@ public class MemberActivityService {
 
   @Transactional
   public Long getSumTimeByNickNameAndPeriod(Date ago, Date cur, String nickName) {
-    Long userSeq = memberRepository.findSequenceByNickname(nickName).orElseThrow(() -> new NicknameNotFound());
+    Long userSeq = memberRepository.findSequenceByNickname(nickName)
+        .orElseThrow(() -> new NicknameNotFound());
     MemberEntity member = memberRepository.getReferenceById(userSeq);
     if (member == null) {
       throw new NicknameNotFound();
@@ -86,7 +89,8 @@ public class MemberActivityService {
 
   @Transactional
   public List<ActivitySubjectResponse> getSumTimeByNickNameAndCategory(String nickName) {
-    Long userSeq = memberRepository.findSequenceByNickname(nickName).orElseThrow(() -> new NicknameNotFound());
+    Long userSeq = memberRepository.findSequenceByNickname(nickName)
+        .orElseThrow(() -> new NicknameNotFound());
     MemberEntity member = memberRepository.getReferenceById(userSeq);
     if (member == null) {
       throw new NicknameNotFound();
@@ -99,8 +103,9 @@ public class MemberActivityService {
   @Transactional
   public Long getAvgTimeByPeriod(Date ago, Date cur) {
     Optional<Tuple> result = memberActivityRepository.findAllTimeByPeriod(ago, cur);
-    if(result.isEmpty())
+    if (result.isEmpty()) {
       return 0l;
+    }
 
     Long count = result.get().get(qMemberActivity.member.countDistinct());
     Long sum = result.get().get(qMemberActivity.time.sum());
@@ -114,7 +119,8 @@ public class MemberActivityService {
   @Transactional
   public List<ActivityCalendarResponse> getCalendarTimeByNickName(Date ago, Date cur,
       String nickName) {
-    Long userSeq = memberRepository.findSequenceByNickname(nickName).orElseThrow(() -> new NicknameNotFound());
+    Long userSeq = memberRepository.findSequenceByNickname(nickName)
+        .orElseThrow(() -> new NicknameNotFound());
     MemberEntity member = memberRepository.getReferenceById(userSeq);
     if (member == null) {
       throw new NicknameNotFound();
@@ -127,18 +133,19 @@ public class MemberActivityService {
   @Transactional
   public List<ActivityToRank> getSumTimeByPeriod(Date ago, Date before) {
     List<MemberActivityBeforeRank> mabrList = memberActivityRepository.sumTimeByPeriod(ago, before);
-    List<ActivityToRank> ret = new LinkedList<ActivityToRank>();
+    List<ActivityToRank> ret = IntStream.range(0, mabrList.size())
+        .mapToObj(index -> dataConvert(index, mabrList.get(index))).collect(
+            Collectors.toList());
 
-    for (int index = 0; index < mabrList.size(); index++) {
-      MemberActivityBeforeRank mabr = mabrList.get(index);
-
-      Long image = mabr.getMember().getImageFile().getSequence();
-      Integer order = index + 1;
-      String name = mabr.getMember().getNickname();
-      Long sumTime = mabr.getSecond();
-
-      ret.add(new ActivityToRank(order, sumTime, name, image));
-    }
     return ret;
+  }
+
+
+  private ActivityToRank dataConvert(int index, MemberActivityBeforeRank memberActivityBeforeRank) {
+    MemberEntity member = memberActivityBeforeRank.getMember();
+
+    Long image = member.getImageFile().getSequence();
+    String name = member.getNickname();
+    return new ActivityToRank(index + 1, memberActivityBeforeRank.getSecond(), name, image);
   }
 }
