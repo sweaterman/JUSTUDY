@@ -53,7 +53,10 @@ public class StudyService {
 
         StudyEntity study = request.toEntity(categoryEntity);
 
+        log.info("llooo1{}",basicImage.getSequence());
         study.changeImage(basicImage);
+        log.info("llooo2{}",basicImage.getStoreFileName());
+        log.info("llooo2{}",basicImage.getUploadFileName());
         return studyRepository.save(study).getSequence();
     }
 
