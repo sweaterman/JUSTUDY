@@ -18,13 +18,13 @@ public class CommunityLoveEntity implements Serializable {
     @Column(name = "love_seq")
     private Long sequence;
 
-    @Column(name = "member_sequence")
+    @Column(name = "member_seq")
     private Long memberSequence;
 
-    @Column(name = "community_sequence")
+    @Column(name = "community_seq")
     private Long communitySequence;
 
-    @Column
+    @Column(name = "love_created_time")
     private LocalDateTime createdTime;
 
     public CommunityLoveEntity(Long memberSequence, Long communitySequence) {

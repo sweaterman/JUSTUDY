@@ -1,7 +1,9 @@
 package com.justudy.backend.community.domain;
 
-import com.justudy.backend.member.domain.MemberEntity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -18,13 +20,13 @@ public class CommunityBookmarkEntity implements Serializable {
     @Column(name = "bookmark_seq")
     private Long sequence;
 
-    @Column(name = "member_sequence")
+    @Column(name = "member_seqe")
     private Long memberSequence;
 
-    @Column(name = "community_sequence")
+    @Column(name = "community_seq")
     private Long communitySequence;
 
-    @Column
+    @Column(name = "bookmark_created_time")
     private LocalDateTime createdTime;
 
     @Builder
