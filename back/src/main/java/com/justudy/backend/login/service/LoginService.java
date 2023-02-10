@@ -1,14 +1,12 @@
 package com.justudy.backend.login.service;
 
-import com.justudy.backend.login.dto.request.LoginRequest;
 import com.justudy.backend.exception.InvalidRequest;
+import com.justudy.backend.login.dto.request.LoginRequest;
+import com.justudy.backend.login.dto.request.LoginResponse;
 import com.justudy.backend.member.repository.MemberRepository;
-import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import static com.justudy.backend.member.domain.QMemberEntity.*;
 
 @RequiredArgsConstructor
 @Service
@@ -18,13 +16,13 @@ public class LoginService {
     private final BCryptPasswordEncoder passwordEncoder;
 
 
-    public Long loginProcess(LoginRequest loginRequest) {
-        Tuple tuple = memberRepository.findPasswordByUserId(loginRequest.getUserId())
+    public LoginResponse loginProcess(LoginRequest loginRequest) {
+        LoginResponse loginInfo = memberRepository.findLoginInfoByUserId(loginRequest.getUserId())
                 .orElseThrow(() -> new InvalidRequest("userId", "잘못된 아이디입니다."));
-        String originPassword = tuple.get(memberEntity.password);
+        String originPassword = loginInfo.getPassword();
         validatePassword(loginRequest, originPassword);
 
-        return tuple.get(memberEntity.sequence);
+        return loginInfo;
     }
 
 

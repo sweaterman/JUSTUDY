@@ -149,7 +149,7 @@ class CommunityControllerTest {
         BDDMockito.given(memberService.getMember(anyLong()))
                 .willReturn(mockMember);
 
-        CategoryEntity mockCategory = new CategoryEntity(CATEGORY_KEY, CATEGORY_VALUE, 0L);
+        CategoryEntity mockCategory = new CategoryEntity(CATEGORY_KEY, CATEGORY_VALUE, 0L, null);
         ReflectionTestUtils.setField(mockCategory, "sequence", 7L);
         BDDMockito.given(categoryService.getCategoryEntityByKey("backend"))
                 .willReturn(mockCategory);

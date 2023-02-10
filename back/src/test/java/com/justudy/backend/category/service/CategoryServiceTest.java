@@ -19,11 +19,11 @@ import static org.mockito.Mockito.*;
 
 class CategoryServiceTest {
 
-    private final CategoryEntity JAVA = new CategoryEntity("java", "Java", 1L);
-    private final CategoryEntity SPRING = new CategoryEntity("spring", "Spring", 1L);
-    private final CategoryEntity PYTHON = new CategoryEntity("python", "Python", 1L);
-    private final CategoryEntity DATABASE = new CategoryEntity("database", "데이터베이스", 0L);
-    private final CategoryEntity BACKEND = new CategoryEntity("backend", "백엔드", 0L);
+    private final CategoryEntity JAVA = new CategoryEntity("java", "Java", 1L, null);
+    private final CategoryEntity SPRING = new CategoryEntity("spring", "Spring", 1L, null);
+    private final CategoryEntity PYTHON = new CategoryEntity("python", "Python", 1L, null);
+    private final CategoryEntity DATABASE = new CategoryEntity("database", "데이터베이스", 0L, null);
+    private final CategoryEntity BACKEND = new CategoryEntity("backend", "백엔드", 0L, null);
 
     private CategoryRepository categoryRepository = mock(CategoryRepository.class);
 
