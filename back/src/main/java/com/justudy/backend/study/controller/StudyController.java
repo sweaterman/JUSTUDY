@@ -199,6 +199,7 @@ public class StudyController {
         studyFrequencyService.deleteStudyFrequencyByStudy(id);
         studyFrequencyService.createStudyFrequencies(id, request.getFrequency());
 
+
         //스터디 수정
         Long studySeq = studyService.updateStudy(id, request, uploadImage);
 
