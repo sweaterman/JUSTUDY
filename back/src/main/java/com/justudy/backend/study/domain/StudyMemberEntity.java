@@ -21,7 +21,7 @@ public class StudyMemberEntity {
     @JoinColumn(name = "member_seq")
     private MemberEntity member;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_member_study_seq")
+    @JoinColumn(name = "study_seq")
     private StudyEntity study;
     @Column(name = "study_member_alarm", columnDefinition = "TINYINT(1)")
     private Boolean alarm;
