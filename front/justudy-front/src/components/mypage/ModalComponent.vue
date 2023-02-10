@@ -2,12 +2,13 @@
     <div :v-model="dialog" v-if="dialog" id="all" @click="close(true)">
         <div id="modal" @click="close(false)">
             <div class="d-flex justify-center">
-                <ProfilePicture :diameter="200" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" :src="require('@/assets/juniorClass.png')" />
+                <ProfilePicture :diameter="200" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" :src="src" />
+                <!-- <v-img :src="src" style="width: 200px; height: 200px; border-radius: 100px" /> -->
                 <div class="d-flex flex-column pa-12">
                     <div v-for="item in 3" v-bind:key="item">
                         <div class="d-flex justify-space-around">
                             <p>닉네임</p>
-                            <h1>박싸피</h1>
+                            <h1>{{ data.nickname }}</h1>
                         </div>
 
                         <hr />
@@ -30,6 +31,7 @@
 import ProfilePicture from './ProfilePicture.vue';
 
 import RadarChart from '@/components/common/RadarChart.vue';
+import port from '@/store/port';
 export default {
     name: 'ModalComponent',
     components: {
@@ -38,13 +40,20 @@ export default {
     },
     data() {
         return {
-            block: false
+            block: false,
+            profile: {},
+            port: port
         };
     },
     props: {
         dialog: {
             type: Boolean
-        }
+        },
+        id: {
+            type: Number
+        },
+        data: {},
+        src: {}
     },
     methods: {
         close(e) {
@@ -58,6 +67,10 @@ export default {
                 }
             }
         }
+    },
+    async created() {
+        await this.$store.dispatch('moduleMyPage/getProfile', {id: this.id});
+        this.profile = this.$store.state.moduleMyPage.profile;
     }
 };
 </script>

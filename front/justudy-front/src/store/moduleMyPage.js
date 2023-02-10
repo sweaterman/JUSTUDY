@@ -6,7 +6,8 @@ export default {
     state: {
         user: {},
         modifyUser: {},
-        bookMarkList: []
+        bookMarkList: [],
+        profile: {}
     },
     getters: {
         // dataComputed : function(state){
@@ -22,6 +23,9 @@ export default {
         },
         getBookMarkList(state, payload) {
             state.bookMarkList = payload;
+        },
+        getProfile(state, payload) {
+            state.profile = payload;
         }
     },
     actions: {
@@ -62,6 +66,12 @@ export default {
                 headers: {
                     'Content-Type': ' multipart/form-data'
                 }
+            });
+        },
+
+        getProfile({commit}, {id}) {
+            axios.get(port + 'member/profiles/' + id).then(res => {
+                commit('getProfile', res.data);
             });
         }
     }

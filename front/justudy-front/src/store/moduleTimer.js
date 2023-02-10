@@ -10,7 +10,9 @@ export default {
         averageMemberWeek: {},
         averageMemberMonth: {},
         studyCategory: [],
-        studyCalendar: []
+        studyCalendar: [],
+        follow: [],
+        follower: []
     },
     getters: {},
     mutations: {
@@ -34,6 +36,12 @@ export default {
         },
         getStudyCalendar(state, payload) {
             state.studyCalendar = payload;
+        },
+        getFollow(state, payload) {
+            state.follow = payload;
+        },
+        getFollower(state, payload) {
+            state.follower = payload;
         }
     },
     actions: {
@@ -80,6 +88,24 @@ export default {
                 })
                 .then(res => {
                     commit('getStudyCalendar', res.data);
+                });
+        },
+        async getFollow({commit}) {
+            await axios
+                .get(port + 'follow/my-follow', {
+                    withCredentials: true
+                })
+                .then(res => {
+                    commit('getFollow', res.data);
+                });
+        },
+        async getFollower({commit}) {
+            await axios
+                .get(port + 'follow/my-follower', {
+                    withCredentials: true
+                })
+                .then(res => {
+                    commit('getFollower', res.data);
                 });
         }
     }
