@@ -10,6 +10,7 @@ import StudyBoard from '@/views/StudyOne/StudyBoard';
 import StudyInfo from '@/views/StudyOne/StudyInfo';
 import StudyCalender from '@/views/StudyOne/StudyCalender';
 import StudyEdit from '@/views/StudyOne/StudyEdit';
+import StudyMemberManage from '@/views/StudyOne/StudyMemberManage';
 
 export default [
     {
@@ -76,6 +77,11 @@ export default [
                 path: 'edit',
                 name: 'StudyEdit',
                 component: StudyEdit
+            },
+            {
+                path: 'memberManage',
+                name: 'StudyMemberManage',
+                component: StudyMemberManage
             }
         ]
     }

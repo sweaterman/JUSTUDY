@@ -12,7 +12,8 @@ export default {
         applyStudies: [], //내가 지원한 스터디 목록
         myStudies: [], // 내가 가입한 스터디 목록
         studyInfo: {}, //스터디 상세 정보
-        nameCheck: false
+        nameCheck: false,
+        applyList: [] //내가 방장일 때 지원목록 확인
     },
     getters: {},
     mutations: {
@@ -45,6 +46,9 @@ export default {
         },
         CHECK_NAME(state, payload) {
             state.nameCheck = payload;
+        },
+        GET_APPLYLIST(state, payload) {
+            state.applyList = payload;
         }
     },
     actions: {
@@ -260,6 +264,43 @@ export default {
                 .then(() => {
                     commit;
                     window.location.reload();
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //내가 방장일 때 지원한 스터디 목록 받아오기
+        async getApplyList({commit}, seq) {
+            const API_URL = `${port}study/${seq}/members/apply`;
+            await axios({
+                url: API_URL,
+                method: 'GET',
+                withCredentials: true
+            })
+                .then(res => {
+                    console.log(res.data);
+                    commit('GET_APPLYLIST', res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디 방장이 수정하기
+        async modifyStudy({commit}, study) {
+            const API_URL = `${port}study/${study.seq}`;
+            await axios({
+                url: API_URL,
+                method: 'PUT',
+                data: study.formData,
+                withCredentials: true,
+                headers: {
+                    'Content-Type': ' multipart/form-data'
+                }
+            })
+                .then(res => {
+                    console.log('받은 내용', res.data);
+                    commit;
+                    window.location.replace(`/study/${study.seq}/info`);
                 })
                 .catch(err => {
                     console.log(err);
