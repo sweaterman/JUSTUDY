@@ -1,6 +1,7 @@
 package com.justudy.backend.login.controller;
 
 import com.justudy.backend.login.dto.request.LoginRequest;
+import com.justudy.backend.login.dto.response.LoginResponse;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.login.service.LoginService;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,11 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody @Validated LoginRequest request, HttpSession session) {
-        Long loginSequence = loginService.loginProcess(request);
-        session.setAttribute(SessionConst.LOGIN_USER, loginSequence);
+    public ResponseEntity<LoginResponse> login(@RequestBody @Validated LoginRequest request, HttpSession session) {
+        LoginResponse loginInfo = loginService.loginProcess(request);
+        session.setAttribute(SessionConst.LOGIN_USER, loginInfo.getLoginSequence());
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(new LoginResponse(loginInfo.getNickname()));
     }
 
     @PostMapping("/logout")
