@@ -4,7 +4,10 @@ import router from './router';
 import store from './store';
 import vuetify from './plugins/vuetify';
 import '@/assets/styles/icons.css';
+import VueApexCharts from 'vue-apexcharts'
+Vue.use(VueApexCharts)
 
+Vue.component('ApexChart', VueApexCharts)
 Vue.config.productionTip = false;
 
 router.beforeEach((to, from, next) => {
