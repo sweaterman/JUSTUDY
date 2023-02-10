@@ -20,7 +20,7 @@ public class CommunityBookmarkEntity implements Serializable {
     @Column(name = "bookmark_seq")
     private Long sequence;
 
-    @Column(name = "member_seqe")
+    @Column(name = "member_seq")
     private Long memberSequence;
 
     @Column(name = "community_seq")
