@@ -9,7 +9,7 @@
             </v-row>
         </v-card>
         <div :key="item.sequence" v-for="(item, index) in this.comments">
-            <v-row>
+            <v-row :style="`background-color: ${getColor(item.parentSeq)}`">
                 <v-col>
                     {{ item.parentSeq != 0 ? 'ㄴㄴㄴ' : '' }}
                 </v-col>
@@ -50,6 +50,13 @@ export default {
         };
     },
     methods: {
+        getColor(parentSeq) {
+            if (parentSeq == 0) {
+                return 'white';
+            } else {
+                return 'yellow';
+            }
+        },
         async updateData() {
             console.log('아아' + this.contentId);
             await this.$store.dispatch('moduleCommunity/getCommentList', {id: this.contentId});
