@@ -46,14 +46,15 @@
                 </v-row>
 
                 <v-row v-for="cr in Math.ceil((firstDayOfWeek + monthDate[month]) / 7)" :key="cr" class="d-flex justify-center">
-                    <v-col v-for="cc in 7" v-bind:key="cc" id="td">
+                    <v-col v-for="cc in 7" v-bind:key="cc" id="td" :style="`background-color : ${greenValue(cr, cc, firstDayOfWeek)}`">
                         <!-- </v-col>:style="`background-color: ${cc > 4 ? '#006400' : '#008000'}`"> -->
+
                         <!-- 날짜별 숫자 -->
-                        <v-row :style="{marginTop: '1%', marginLeft: '1%'}">
+                        <v-row :style="{marginTop: '1%', marginLeft: '1%', color: letter(cr, cc, firstDayOfWeek)}">
                             <div v-if="7 * (cr - 1) + cc - firstDayOfWeek > 0 && 7 * (cr - 1) + cc - firstDayOfWeek <= monthDate[month]">{{ 7 * (cr - 1) + cc - firstDayOfWeek }}</div>
                         </v-row>
                         <!-- 날짜별 시간 -->
-                        <v-row :style="{marginTop: '15%', marginLeft: '15%'}">
+                        <v-row :style="{marginTop: '15%', marginLeft: '15%', color: letter(cr, cc, firstDayOfWeek)}">
                             <div style="font-size: 100%" v-if="7 * (cr - 1) + cc - firstDayOfWeek > 0 && 7 * (cr - 1) + cc - firstDayOfWeek <= monthDate[month]">
                                 {{ hourMinSecond(studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek]) }}
                             </div>
@@ -86,6 +87,32 @@ export default {
         studyCalendar: {}
     },
     methods: {
+        greenValue(cr, cc, firstDayOfWeek) {
+            if (7 * (cr - 1) + cc - firstDayOfWeek <= 0 || 7 * (cr - 1) + cc - firstDayOfWeek > this.monthDate[this.month]) {
+                return 'white';
+            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] == 0) {
+                return 'white';
+            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 40) {
+                return '#00CC00';
+            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 70) {
+                return '#009900';
+            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 100) {
+                return '#006600';
+            } else {
+                return '#003300';
+            }
+        },
+        letter(cr, cc, firstDayOfWeek) {
+            if (7 * (cr - 1) + cc - firstDayOfWeek <= 0 || 7 * (cr - 1) + cc - firstDayOfWeek > this.monthDate[this.month]) {
+                return 'white';
+            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] == 0) {
+                return 'black';
+            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 40) {
+                return 'white';
+            } else {
+                return 'white';
+            }
+        },
         monthBefore() {
             if (this.month == 0) {
                 this.year -= 1;
