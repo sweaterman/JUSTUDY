@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 public class StudyMemberEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_member_seq")
     private Long sequence;
     @ManyToOne(fetch = FetchType.LAZY)

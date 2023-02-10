@@ -15,7 +15,7 @@ import static javax.persistence.FetchType.*;
 @Entity
 public class MemberCategoryEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_category_seq")
     private Long sequence;
 

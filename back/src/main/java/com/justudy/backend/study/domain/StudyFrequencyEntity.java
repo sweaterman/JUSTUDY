@@ -14,7 +14,7 @@ import java.util.Date;
 @Entity
 public class StudyFrequencyEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_frequency_seq")
     private Long sequence;
     @ManyToOne(fetch = FetchType.LAZY)

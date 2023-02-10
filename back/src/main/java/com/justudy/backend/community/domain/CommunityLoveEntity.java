@@ -1,7 +1,8 @@
 package com.justudy.backend.community.domain;
 
-import com.justudy.backend.member.domain.MemberEntity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 public class CommunityLoveEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "love_seq")
     private Long sequence;
 

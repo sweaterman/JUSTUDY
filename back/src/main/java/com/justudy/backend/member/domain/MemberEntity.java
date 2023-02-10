@@ -23,7 +23,7 @@ import static javax.persistence.FetchType.*;
 public class MemberEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_seq")
     private Long sequence;
 

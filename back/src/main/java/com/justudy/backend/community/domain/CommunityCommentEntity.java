@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 public class CommunityCommentEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_seq")
     private Long sequence;
     @OneToOne(fetch = FetchType.LAZY)

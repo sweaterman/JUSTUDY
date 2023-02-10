@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class CommunityBookmarkEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bookmark_seq")
     private Long sequence;
 

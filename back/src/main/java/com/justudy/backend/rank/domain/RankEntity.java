@@ -2,10 +2,12 @@ package com.justudy.backend.rank.domain;
 
 import com.justudy.backend.rank.common.RankGroup;
 import com.justudy.backend.rank.common.RankType;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Time;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -13,7 +15,7 @@ import java.sql.Time;
 @Table(name = "ranking")
 public class RankEntity {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "rank_seq")
   private Long sequence;
   @Column(name = "rank_group")

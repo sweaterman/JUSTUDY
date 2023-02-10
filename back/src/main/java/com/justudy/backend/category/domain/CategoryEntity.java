@@ -20,7 +20,7 @@ import static javax.persistence.FetchType.*;
 public class CategoryEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_seq")
     private Long sequence;
 

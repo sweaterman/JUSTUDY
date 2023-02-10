@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 public class MemberFollow {
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "follow_seq")
     private Long sequence;
 
