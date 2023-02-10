@@ -11,7 +11,9 @@
         `"
             v-on:click="dialogChange()"
         />
-
+        <div>
+            <ModalComponent :dialog="dialog" @closeModal="close" :id="id" :src="src" :data="data" />
+        </div>
         <!-- <v-img
             :src="require('@/assets/redHeart.png')"
             :style="`
@@ -25,10 +27,15 @@
     </div>
 </template>
 <script>
+import ModalComponent from '../mypage/ModalComponent.vue';
 export default {
     name: 'ProfilePicture',
+    components: {
+        ModalComponent
+    },
     data() {
         return {
+            dialog: false,
             aaa: 150
         };
     },
@@ -39,11 +46,21 @@ export default {
         standard: {
             type: String
         },
-        src: {}
+        src: {},
+        data: {},
+        seq: {
+            type: Number
+        }
     },
     methods: {
-        dialogChange() {
+        async dialogChange() {
+            this.dialog = true;
             this.$emit('dialogChangeFromChild');
+        },
+        close(status) {
+            if (status) {
+                this.dialog = false;
+            }
         }
     }
 };
