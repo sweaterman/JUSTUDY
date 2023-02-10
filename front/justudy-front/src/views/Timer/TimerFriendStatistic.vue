@@ -20,53 +20,63 @@
                 </v-row>
 
                 <!-- 달력 -->
-                <Follow buttonContent="팔로잉" />
-                <Follow buttonContent="팔로우" />
-
-                <!-- 나의 공부 시간 -->
-                <v-row :style="{marginTop: '5%', marginBottom: '1%'}">
-                    <v-col cols="12" md="4" align="left">
-                        <h1>나의 공부 시간</h1>
-                        <hr />
-                    </v-col>
-                </v-row>
                 <v-row>
                     <v-col cols="12" md="6">
-                        <DigitalClockPerDate content="THIS WEEK" :allTime="weekTime" />
+                        <div class="card_section">
+                            <Follow buttonContent="팔로잉" />
+                        </div>
                     </v-col>
                     <v-col cols="12" md="6">
-                        <DigitalClockPerDate content="THIS MONTH" :allTime="monthTime" />
+                        <div class="card_section">
+                            <Follow buttonContent="팔로우" />
+                        </div>
                     </v-col>
                 </v-row>
 
-                <!-- 나의 평균 비교 -->
-                <v-row :style="{marginTop: '5%', marginBottom: '1%'}">
-                    <v-col cols="12" md="4" align="left">
-                        <h1>SSAFY 공부 시간 비교</h1>
-                        <hr />
-                    </v-col>
-                </v-row>
                 <v-row>
-                    <v-col>
-                        <DigitalClockAverage content="THIS WEEK" :studyTime="weekTime - averageWeekTime" :averageTime="averageWeekTime" />
+                    <!-- 해당 친구 프로필 -->
+                    <v-col cols="12" md="4">
+                        <div class="card_section">
+                            <v-img :src="require('@/assets/juniorClass.png')" :style="{width: '200px', height: '200px'}" rounded v-on:click="dialogChange()" />
+                            <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="require('@/assets/juniorClass.png')" />
+                            이싸피
+                            <img src="../../assets/redHeart.png" />
+                        </div>
                     </v-col>
-                    <v-col>
-                        <DigitalClockAverage content="THIS MONTH" :studyTime="monthTime - averageMonthTime" :averageTime="averageMonthTime" />
+                    <!-- 나의 공부 시간 -->
+                    <v-col cols="12" md="4">
+                        <v-row>
+                            <v-col>
+                                <DigitalClockPerDate content="이번주 공부 시간" :allTime="weekTime" />
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col>
+                                <DigitalClockPerDate content="이번달 공부 시간" :allTime="monthTime" />
+                            </v-col>
+                        </v-row>
+                    </v-col>
+                    <!-- 나의 평균 비교 -->
+                    <v-col cols="12" md="4">
+                        <v-row>
+                            <v-col>
+                                <DigitalClockAverage content="THIS WEEK" :studyTime="weekTime - averageWeekTime" :averageTime="averageWeekTime" />
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col>
+                                <DigitalClockAverage content="THIS MONTH" :studyTime="monthTime - averageMonthTime" :averageTime="averageMonthTime" />
+                            </v-col>
+                        </v-row>
                     </v-col>
                 </v-row>
 
                 <!-- 나의 과목 비교 -->
-                <v-row :style="{marginTop: '5%', marginBottom: '1%'}">
-                    <v-col cols="12" md="4" align="left">
-                        <h1>공부 진행도</h1>
-                        <hr />
-                    </v-col>
-                </v-row>
-                <v-row>
+                <!-- <v-row>
                     <v-col cols="12" md="4">
                         <TimeAndRadarChart :studyCategory="studyCategory" />
                     </v-col>
-                </v-row>
+                </v-row> -->
             </v-col>
             <v-col cols="12" md="2" />
         </v-row>
@@ -74,7 +84,7 @@
 </template>
 <script>
 import Follow from '@/components/common/Follow.vue';
-import TimeAndRadarChart from '@/components/timer/TimeAndRadarChart.vue';
+import Profile from '@/components/mypage/Profile.vue';
 import DigitalClockPerDate from '@/components/timer/DigitalClockPerDate.vue';
 import DigitalClockAverage from '@/components/timer/DigitalClockAverage.vue';
 export default {
@@ -91,7 +101,7 @@ export default {
     },
     components: {
         Follow,
-        TimeAndRadarChart,
+        Profile,
         DigitalClockPerDate,
         DigitalClockAverage
     },
@@ -118,3 +128,13 @@ export default {
     }
 };
 </script>
+<style scoped>
+.card_section {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-style: solid;
+    border-color: #eeeeee;
+    border-radius: 30px;
+    /* border-width: thin; */
+}
+</style>
