@@ -62,9 +62,9 @@ public class GroupCallService {
     UserSession user = registry.getBySession(session);
 
     if (user != null) {
-      log.info("Incoming message from user '{}': {}", user.getName(), jsonMessage);
+      log.debug("Incoming message from user '{}': {}", user.getName(), jsonMessage);
     } else {
-      log.info("Incoming message from new user: {}", jsonMessage);
+      log.debug("Incoming message from new user: {}", jsonMessage);
     }
 
     switch (jsonMessage.get("id").getAsString()) {
@@ -196,26 +196,29 @@ public class GroupCallService {
 
   @OnOpen
   public void afterConnectionEstablished() throws Exception {
-    log.info("afterConnectionEstablished...........................");
+    log.debug("afterConnectionEstablished...........................");
 
   }
 
   @OnClose
   public void afterConnectionClosed(Session session) throws Exception {
+    log.debug("afterConnectionClosed");
     UserSession user = registry.removeBySession(session);
     if (user == null) {
-      log.info("......duplicate eror");
+      log.debug("......duplicate eror");
       return;
     }
-    log.info("user getRoomName : {}", user.getRoomName());
-    roomManager.getRoom(user.getRoomName()).leave(user);
+    log.debug("user getRoomName : {}", user.getRoomName());
+    if (roomManager.getRoomState(user.getRoomName()) != null) {
+      roomManager.getRoom(user.getRoomName()).leave(user);
+    }
   }
 
   private void joinRoom(JsonObject params, Session session) throws IOException {
     final String roomName = params.get("room").getAsString();
     String name = params.get("name").getAsString();
 
-    log.info("PARTICIPANT {}: trying to join room {}", name, roomName);
+    log.debug("PARTICIPANT {}: trying to join room {}", name, roomName);
 
     Room room = roomManager.getRoom(roomName);
 
@@ -232,7 +235,8 @@ public class GroupCallService {
     if (existCheck) {//같은 이름 존재하면 발생
       String changName = name;
       while (existCheck) {//이름이 같지 않을 때까지 이름 섞기
-        changName = new StringBuilder(name).append((char)((int)(Math.random()*26)+65)).toString();
+        changName = new StringBuilder(name).append((char) ((int) (Math.random() * 26) + 65))
+            .toString();
         boolean reCheck = false;
 
         for (UserSession userSession : room.getParticipants()) {
@@ -242,8 +246,9 @@ public class GroupCallService {
           }
         }
         existCheck = reCheck;
-        if(retryNum++>30)
+        if (retryNum++ > 30) {
           break;
+        }
       }
       name = changName;
       //새로운 이름을 할당해서 전달해줌
