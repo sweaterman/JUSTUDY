@@ -423,13 +423,13 @@ export default {
             }
             this.setIsViewExitDiv(false);
         },
-        // onLadder() {
-        //     this.setIsLadder(true);
-        // },
-        // onChat() {
-        //     this.setIsChat(true);
-        //     this.setIsNewChat(false);
-        // },
+        onLadder() {
+            this.setIsLadder(true);
+        },
+        onChat() {
+            this.setIsChat(true);
+            this.setIsNewChat(false);
+        },
         unLoadEvent() {
             let start = new Date();
             let end = new Date();
@@ -462,17 +462,17 @@ export default {
     height: 800px;
     z-index: 2;
 }
-#ladderCSS {
-    /* margin-left: 55%;
+/* #ladderCSS { */
+/* margin-left: 55%;
     margin-top: 30%; */
-    /* width: 33%;
+/* width: 33%;
     float: right; */
-    /* position: absolute; */
-    /* z-index: 1;
+/* position: absolute; */
+/* z-index: 1;
     top: 30px;
     /* width: 100%; */
-    /* background-color: rgb(222, 222, 222); */
-}
+/* background-color: rgb(222, 222, 222); */
+/* } */
 #chatCSS {
     /* margin-right: 15%;
     margin-bottom: 25%;
