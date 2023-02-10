@@ -1,8 +1,7 @@
 package com.justudy.backend.member.repository;
 
-import com.justudy.backend.login.dto.request.LoginResponse;
+import com.justudy.backend.login.dto.response.LoginResponse;
 import com.justudy.backend.member.domain.MemberEntity;
-import com.querydsl.core.Tuple;
 
 import java.util.Optional;
 

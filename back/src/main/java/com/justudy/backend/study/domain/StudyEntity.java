@@ -21,7 +21,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 public class StudyEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_seq")
     private Long sequence;
     @Builder.Default

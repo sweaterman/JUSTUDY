@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class MemberActivityEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "member_activity_seq")
   private Long sequence;
 

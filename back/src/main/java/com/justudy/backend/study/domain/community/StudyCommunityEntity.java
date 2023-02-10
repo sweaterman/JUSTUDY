@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Entity
 public class StudyCommunityEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_community_seq")
     private Long sequence;
 
