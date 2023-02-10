@@ -32,8 +32,6 @@ public interface StudyCommunityRepositoryCustom {
 
     Page<StudyCommunityEntity> findAllBySearchOption(Pageable pageable, String name, String title, String content);
 
-    Page<StudyCommunityEntity> findAll(Pageable pageable,String category);
-
     Long noticeCount();
 
     List<StudyCommunityEntity> findPopularCommunity();

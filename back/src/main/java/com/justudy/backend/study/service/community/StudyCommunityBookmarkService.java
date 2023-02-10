@@ -3,7 +3,6 @@ package com.justudy.backend.study.service.community;
 import com.justudy.backend.community.exception.BookmarkNotFound;
 import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.study.domain.community.StudyCommunityBookmarkEntity;
-import com.justudy.backend.study.domain.community.StudyCommunityEntity;
 import com.justudy.backend.study.repository.community.StudyCommunityBookmarkRepository;
 import com.justudy.backend.study.repository.community.StudyCommunityRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +28,12 @@ public class StudyCommunityBookmarkService {
                 .orElseGet(() ->
                     bookmarkRepository.save(makeNewBookmark(loginSequence, communitySequence))
                 );
-
         return savedBookmark.getSequence();
     }
 
     @Transactional
     public void deleteBookmark(Long loginSequence, Long communitySequence, Long studySequence) {
-        StudyCommunityEntity community = communityRepository.findById(communitySequence)
+        communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         StudyCommunityBookmarkEntity findBookmark = bookmarkRepository.findBookmark(loginSequence, communitySequence)
                 .orElseThrow(BookmarkNotFound::new);
