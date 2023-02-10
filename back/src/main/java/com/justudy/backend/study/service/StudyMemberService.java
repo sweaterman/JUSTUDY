@@ -1,6 +1,5 @@
 package com.justudy.backend.study.service;
 
-import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
@@ -97,10 +96,6 @@ public class StudyMemberService {
             iterator.remove();
         }
         studyMemberRepository.deleteStudyMemberByStudy(studySequence);
-    }
-
-    private boolean checkLeader(Long leaderSeq, Long memberId) {
-        return leaderSeq.longValue() == memberId.longValue();
     }
 
     private StudyMemberEntity checkStudyMember(List<StudyMemberEntity> studyMembers, Long memberId) {

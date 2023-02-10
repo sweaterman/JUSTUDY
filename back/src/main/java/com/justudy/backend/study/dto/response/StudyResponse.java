@@ -2,7 +2,6 @@ package com.justudy.backend.study.dto.response;
 
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.study.domain.StudyEntity;
-import com.justudy.backend.study.domain.StudyMemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

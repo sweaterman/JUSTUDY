@@ -2,14 +2,19 @@ package com.justudy.backend.study.service.community;
 
 import com.justudy.backend.community.exception.CommentNotFound;
 import com.justudy.backend.community.exception.CommunityNotFound;
+import com.justudy.backend.exception.ForbiddenRequest;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.repository.MemberRepository;
+import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.domain.community.StudyCommunityCommentEntity;
 import com.justudy.backend.study.domain.community.StudyCommunityEntity;
 import com.justudy.backend.study.dto.request.community.StudyCommunityCommentCreate;
 import com.justudy.backend.study.dto.request.community.StudyCommunityCommentEdit;
 import com.justudy.backend.study.dto.response.community.StudyCommunityCommentResponse;
+import com.justudy.backend.study.exception.StudyMemberNotFound;
+import com.justudy.backend.study.exception.StudyNotFound;
+import com.justudy.backend.study.repository.StudyRepository;
 import com.justudy.backend.study.repository.community.StudyCommunityCommentRepository;
 import com.justudy.backend.study.repository.community.StudyCommunityRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,10 +34,15 @@ public class StudyCommunityCommentService {
     private final StudyCommunityCommentRepository repository;
 
     private final StudyCommunityRepository communityRepository;
+    private final StudyRepository studyRepository;
     private final MemberRepository memberRepository;
 
     @Transactional
     public StudyCommunityCommentResponse createComment(long id, StudyCommunityCommentCreate request, Long studySequence) {
+        //스터디원인지 체크
+        StudyEntity studyEntity = studyRepository.findById(studySequence).orElseThrow(StudyNotFound::new);
+        isStudyMember(studyEntity, request.getMemberSeq());
+
         //community 탐색 후 널이면 에러
         StudyCommunityEntity communityEntity = communityRepository.findById(id)
                 .orElseThrow(CommunityNotFound::new);
@@ -59,18 +69,11 @@ public class StudyCommunityCommentService {
                     .childNumber(0)
                     .build());
             return StudyCommunityCommentResponse.makeBuilder(savedComment, request.getMemberSeq());
-//            return CommunityCommentResponse.makeBuilder(repository.save(request.toEntity(communityEntity, memberEntity, commentGroup + 1, 0, 0L, 0)));
-
         } else {//대댓글 작성
             //댓글이 없음 에러
             StudyCommunityCommentEntity parentComment = repository.findById(request.getParentSeq())
                     .orElseThrow(CommentNotFound::new);
-
             Integer orderResult = orderAndUpdate(parentComment);
-
-            //null 이면 대댓글 작성 오류
-            if (orderResult == null)
-                return null;
             //대댓글 저장
             StudyCommunityCommentEntity savedComment = repository.save(StudyCommunityCommentEntity.builder()
                     .member(memberEntity)
@@ -85,8 +88,6 @@ public class StudyCommunityCommentService {
                     .step(parentComment.getStep() + 1)
                     .childNumber(0)
                     .build());
-//            CommunityCommentEntity savedComment = repository.save(request.toEntity(communityEntity, memberEntity, parentComment.getGroup(), orderResult, request.getParentSeq(), parentComment.getStep()));
-
             //부모의 자식 수 업데이트
             repository.updateChildNumber(parentComment.getSequence(), parentComment.getChildNumber());
             return StudyCommunityCommentResponse.makeBuilder(savedComment, request.getMemberSeq());
@@ -95,7 +96,7 @@ public class StudyCommunityCommentService {
 
     @Transactional
     private Integer orderAndUpdate(StudyCommunityCommentEntity parentComment) {
-        Integer step = parentComment.getStep() + 1;
+        int step = parentComment.getStep() + 1;
         Integer order = parentComment.getOrder();
         Integer childNumber = parentComment.getChildNumber();
         Integer group = parentComment.getGroup();
@@ -108,39 +109,57 @@ public class StudyCommunityCommentService {
         else if (step == maxStep) {
             repository.updateOrderPlus(group, order + childNumber);
             return order + childNumber + 1;
-        } else if (step > maxStep) {
+        } else {
             repository.updateOrderPlus(group, order);
             return order + 1;
         }
-        return null;
     }
 
     //한건의 댓글 읽기
     public StudyCommunityCommentResponse readComment(Long id, Long loginSequence) {
+
         return StudyCommunityCommentResponse.makeBuilder(repository.findById(id).orElseThrow(CommentNotFound::new), loginSequence);
     }
 
     @Transactional
     public void UpdateComment(long id, long commentId, StudyCommunityCommentEdit request, Long loginSequence, Long studySequence) {
+        //스터디원인지 체크
+        StudyEntity studyEntity = studyRepository.findById(studySequence).orElseThrow(StudyNotFound::new);
+        isStudyMember(studyEntity, loginSequence);
+
         StudyCommunityCommentEntity communityCommentEntity = repository.findById(commentId)
                 .orElseThrow(CommentNotFound::new);
-        if (loginSequence != communityCommentEntity.getMember().getSequence()) throw new InvalidRequest();
+        if (loginSequence.longValue() != communityCommentEntity.getMember().getSequence().longValue()) throw new InvalidRequest();
         communityCommentEntity.update(request.getContent());
 //        repository.save(request.toEntity(commentId));
     }
 
     @Transactional
     public void deleteComment(long id, long commentId, Long loginSequence, Long studySequence) {
+        //스터디원인지 체크
+        StudyEntity studyEntity = studyRepository.findById(studySequence).orElseThrow(StudyNotFound::new);
+        isStudyMember(studyEntity, loginSequence);
+
         StudyCommunityCommentEntity communityCommentEntity = repository.findById(commentId)
                 .orElseThrow(CommentNotFound::new);
-        if (loginSequence != communityCommentEntity.getMember().getSequence()) throw new InvalidRequest();
+        if (loginSequence.longValue() != communityCommentEntity.getMember().getSequence().longValue()) throw new InvalidRequest();
         //isDelete true로 변환
         communityCommentEntity.changeIsDeleted(true);
-//        repository.save(entity);
     }
 
     public List<StudyCommunityCommentResponse> readAllComment(long id, Long loginSequence, Long studySequence) {
+        //스터디원인지 체크
+        StudyEntity studyEntity = studyRepository.findById(studySequence).orElseThrow(StudyNotFound::new);
+        isStudyMember(studyEntity, loginSequence);
+
         return repository.readAllComment(id).stream().map(a -> StudyCommunityCommentResponse.makeBuilder(a, loginSequence)).collect(Collectors.toList());
     }
-
+    private void isStudyMember(StudyEntity studyEntity, Long sequence) {
+        studyEntity.getStudyMembers()
+                .stream()
+                .map(studyMemberEntity -> studyMemberEntity.getMember().getSequence())
+                .filter(memberSequence -> memberSequence.longValue() == sequence.longValue())
+                .findFirst()
+                .orElseThrow(ForbiddenRequest::new);
+    }
 }

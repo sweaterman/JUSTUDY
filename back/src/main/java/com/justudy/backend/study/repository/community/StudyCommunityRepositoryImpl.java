@@ -28,7 +28,6 @@ public class StudyCommunityRepositoryImpl implements StudyCommunityRepositoryCus
     private final PagingUtil pagingUtil;
     private final JPAQueryFactory queryFactory;
     private final QStudyCommunityEntity qStudyCommunity = QStudyCommunityEntity.studyCommunityEntity;
-    private final long MAX_POPULAR_SIZE = 20;
 
 
     @Override
@@ -54,7 +53,7 @@ public class StudyCommunityRepositoryImpl implements StudyCommunityRepositoryCus
         if (commonList.isEmpty()) {
             return List.of();
         }
-        if(!list.addAll(commonList)){
+        if (!list.addAll(commonList)) {
             throw new ImportBoardFail();
         }
         return list;
@@ -148,18 +147,6 @@ public class StudyCommunityRepositoryImpl implements StudyCommunityRepositoryCus
                 .where(eqNickname(name), eqTitle(title), eqContent(content));
         return pagingUtil.getPageImpl(pageable, query, qStudyCommunity.getClass());
     }
-
-    @Override
-    public Page<StudyCommunityEntity> findAll(Pageable pageable, String category) {
-
-        return null;
-//        JPQLQuery<CommunityEntity> query = queryFactory
-//                .selectFrom(qCommunity)
-//                .where(qCommunity.category_seq.eq(Long.valueOf(category)));
-//
-//        return pagingUtil.getPageImpl(pageable, query, qCommunity.getClass());
-    }
-
     @Override
     public Long noticeCount() {
         return queryFactory
@@ -171,6 +158,7 @@ public class StudyCommunityRepositoryImpl implements StudyCommunityRepositoryCus
 
     @Override
     public List<StudyCommunityEntity> findPopularCommunity() {
+        long MAX_POPULAR_SIZE = 20;
         return queryFactory
                 .selectFrom(qStudyCommunity)
                 .orderBy(qStudyCommunity.weekLoveCount.desc())
@@ -206,26 +194,23 @@ public class StudyCommunityRepositoryImpl implements StudyCommunityRepositoryCus
 
 
     private BooleanExpression eqNickname(String name) {
-        QStudyCommunityEntity entity = qStudyCommunity;
         if (name == null || name.isEmpty()) {
             return null;
         }
-        return entity.member.nickname.containsIgnoreCase(name);
+        return qStudyCommunity.member.nickname.containsIgnoreCase(name);
     }
 
     private BooleanExpression eqTitle(String title) {
-        QStudyCommunityEntity entity = qStudyCommunity;
         if (title == null || title.isEmpty()) {
             return null;
         }
-        return entity.title.containsIgnoreCase(title);
+        return qStudyCommunity.title.containsIgnoreCase(title);
     }
 
     private BooleanExpression eqContent(String content) {
-        QStudyCommunityEntity entity = qStudyCommunity;
         if (content == null || content.isEmpty()) {
             return null;
         }
-        return entity.content.containsIgnoreCase(content);
+        return qStudyCommunity.content.containsIgnoreCase(content);
     }
 }

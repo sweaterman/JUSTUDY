@@ -1,7 +1,6 @@
 package com.justudy.backend.study.dto.response;
 
 import com.justudy.backend.study.domain.StudyEntity;
-import com.justudy.backend.study.domain.StudyResumeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
