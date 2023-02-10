@@ -110,7 +110,7 @@
                                 <v-subheader>시작예정일</v-subheader>
                             </v-col>
                             <v-col cols="7" align-self="center">
-                                {{ applyStudyInfo.start_time }}
+                                {{ applyStudyInfo.startTime }}
                             </v-col>
                         </v-row>
 

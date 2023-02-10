@@ -10,7 +10,9 @@ export default {
         averageMemberWeek: {},
         averageMemberMonth: {},
         studyCategory: [],
-        studyCalendar: []
+        studyCalendar: [],
+        follow: [],
+        follower: []
     },
     getters: {},
     mutations: {
@@ -34,6 +36,12 @@ export default {
         },
         getStudyCalendar(state, payload) {
             state.studyCalendar = payload;
+        },
+        getFollow(state, payload) {
+            state.follow = payload;
+        },
+        getFollower(state, payload) {
+            state.follower = payload;
         }
     },
     actions: {
@@ -45,18 +53,18 @@ export default {
                 commit('getFirstYesterday', res.data);
             });
         },
-        async getStudyTimeWeek({commit}, {seq}) {
-            await axios.get(port + `timer/member/week?seq=${seq}`).then(res => {
+        async getStudyTimeWeek({commit}, {nickName}) {
+            await axios.get(port + `timer/member/week?nickName=${nickName}`).then(res => {
                 commit('getStudyTimeWeek', res.data);
             });
         },
-        async getStudyTimeMonth({commit}, {seq}) {
-            await axios.get(port + `timer/member/month?seq=${seq}`).then(res => {
+        async getStudyTimeMonth({commit}, {nickName}) {
+            await axios.get(port + `timer/member/month?nickName=${nickName}`).then(res => {
                 commit('getStudyTimeMonth', res.data);
             });
         },
-        async getStudyCategory({commit}, {seq}) {
-            await axios.get(port + `timer/member/category?seq=${seq}`).then(res => {
+        async getStudyCategory({commit}, {nickName}) {
+            await axios.get(port + `timer/member/category?nickName=${nickName}`).then(res => {
                 commit('getStudyCategory', res.data);
             });
         },
@@ -71,15 +79,33 @@ export default {
                 commit('getAverageMembersMonth', res.data);
             });
         },
-        async getStudyCalendar({commit}, {seq, year, month}) {
+        async getStudyCalendar({commit}, {nickName, year, month}) {
             await axios
                 .post(port + `timer/member-calendar`, {
-                    seq: seq,
+                    nickName: nickName,
                     year: year,
                     month: month
                 })
                 .then(res => {
                     commit('getStudyCalendar', res.data);
+                });
+        },
+        async getFollow({commit}) {
+            await axios
+                .get(port + 'follow/my-follow', {
+                    withCredentials: true
+                })
+                .then(res => {
+                    commit('getFollow', res.data);
+                });
+        },
+        async getFollower({commit}) {
+            await axios
+                .get(port + 'follow/my-follower', {
+                    withCredentials: true
+                })
+                .then(res => {
+                    commit('getFollower', res.data);
                 });
         }
     }
