@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 public class StudyCommunityCommentEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_comment_seq")
     private Long sequence;
     @OneToOne(fetch = FetchType.LAZY)

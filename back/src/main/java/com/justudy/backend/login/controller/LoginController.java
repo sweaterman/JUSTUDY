@@ -1,7 +1,7 @@
 package com.justudy.backend.login.controller;
 
 import com.justudy.backend.login.dto.request.LoginRequest;
-import com.justudy.backend.login.dto.request.LoginResponse;
+import com.justudy.backend.login.dto.response.LoginResponse;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.login.service.LoginService;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package com.justudy.backend.login.service;
 
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.login.dto.request.LoginRequest;
-import com.justudy.backend.login.dto.request.LoginResponse;
+import com.justudy.backend.login.dto.response.LoginResponse;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
