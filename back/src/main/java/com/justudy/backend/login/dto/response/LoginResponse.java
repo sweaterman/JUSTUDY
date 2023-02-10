@@ -1,4 +1,4 @@
-package com.justudy.backend.login.dto.request;
+package com.justudy.backend.login.dto.response;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
