@@ -120,15 +120,16 @@ export default {
                 // console.log(data);
                 this.ladderResult.push(data);
             }
-            console.log(this.ladderResult);
-        },
-        ladderTransfer() {
-            if (this.ladderResult.length < 1) {
-                console.log('사다리 돌리기를 먼저해주세요');
-                return;
-            }
             this.sendLadderResult(this.ladderResult);
+            console.log(this.ladderResult);
         }
+        // ladderTransfer() {
+        //     if (this.ladderResult.length < 1) {
+        //         console.log('사다리 돌리기를 먼저해주세요');
+        //         return;
+        //     }
+        //     this.sendLadderResult(this.ladderResult);
+        // }
     }
 };
 </script>

@@ -6,9 +6,7 @@
             <div :style="`margin-left : ${bannerPosition}px ; transition: 0.5s`"></div>
             <div v-for="item in 50" v-bind:key="item" style="margin: 1%; transition: 0.5s">
                 <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="require('@/assets/juniorClass.png')" />
-
                 이싸피
-
                 <img src="../../assets/redHeart.png" />
             </div>
         </div>
