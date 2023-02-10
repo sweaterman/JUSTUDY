@@ -134,8 +134,8 @@ export default {
             //cnt: 0 // 현재 게시판의 총 글 개수
         };
     },
-    created() {
-        this.updateData('');
+    async created() {
+        this.updateData('frontend');
     },
     computed: {
         // // computed는 계산 목적으로 사용된다고 보면 됨
