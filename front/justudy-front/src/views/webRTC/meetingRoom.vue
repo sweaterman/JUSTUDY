@@ -232,8 +232,8 @@ export default {
         this.setMainParents(this.$refs.main);
         this.setSource('webcam');
         const data = {
-            // url: 'wss://i8a104.p.ssafy.io/groupcall',
-            url: 'ws://localhost:8080/groupcall',
+            url: 'wss://i8a104.p.ssafy.io/groupcall',
+            // url: 'ws://localhost:8080/groupcall',
             person: this.getPersonName,
             room: this.getRoomName
         };
@@ -335,7 +335,8 @@ export default {
         shareScreen() {
             this.shareon = !this.shareon;
             const data = {
-                url: 'ws://localhost:8080/groupcall',
+                url: 'wss://i8a104.p.ssafy.io/groupcall',
+                // url: 'ws://localhost:8080/groupcall',
                 person: this.getPersonName,
                 room: this.getRoomName
             };
