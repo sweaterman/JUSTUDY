@@ -11,10 +11,10 @@
                         <div align="left" :style="{fontSize: 'xx-large'}">자유 게시판</div>
                     </v-col>
                     <v-col cols="12" md="2" align="right">
-                        <v-select :items="searchoption" v-model="searchoptionselected" :style="{width: '150px'}" />
+                        <v-select :items="searchoption" item-text="value" item-value="key" v-model="searchoptionselected" label="항목선택" :style="{width: '150px'}" />
                     </v-col>
                     <v-col cols="12" md="4">
-                        <v-text-field v-model="searchkeyword" dense outlined label="검색키워드" full-width />
+                        <v-text-field v-model="searchkeyword" dense outlined label="검색키워드" full-width @keyup.enter="searchstart" />
                     </v-col>
                     <v-col cols="12" md="1">
                         <v-btn @click="searchstart">검색</v-btn>
@@ -22,7 +22,7 @@
 
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2" align="right">
-                        <v-btn color="yellow" @click="movetowrite(index)" :style="{height: '50px', width: '200px', fontWeight: 'bold', fontSize: 'large'}">글작성</v-btn>
+                        <v-btn color="yellow" @click="movetowrite()" :style="{height: '50px', width: '200px', fontWeight: 'bold', fontSize: 'large'}">글작성</v-btn>
                     </v-col>
                 </v-row>
             </v-col>
@@ -35,6 +35,10 @@
             <v-col cols="12" md="8">
                 <v-row>
                     <v-simple-table style="width: 100%">
+                        <!-- 
+                                    정렬 클릭시 updateData(category,type,search,order) 실행하면 됩니다
+                                    order에 ""값이면 번호, "like" 면 좋아요 "view"면 조회수
+                                -->
                         <thead>
                             <tr style="font-weight: bolder">
                                 <td style="width: 15%; font-size: x-large">No</td>
@@ -46,7 +50,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(value, index) in Data" :key="index" @click="movetocontent(value.sequence)">
+                            <tr v-for="(value, index) in Data.communityList" :key="index" @click="movetocontent(value.sequence)">
                                 <td>{{ index + 1 }}</td>
                                 <td>
                                     <div class="line_limit">
@@ -107,22 +111,31 @@
 <script>
 import CategoryHeader from '../../components/common/CategoryHeader.vue';
 // import {mapState} from 'vuex';
-import CommunityData from '@/data/CommunityData';
 
 export default {
     name: 'CommuBoard',
     components: {CategoryHeader},
-    async created() {
-        await this.$store.dispatch('moduleCommunity/getCommunityBoard', {number: this.$route.params.page - 1, category: this.$route.query.category});
-        this.Data = this.$store.state.moduleCommunity.CommunityBoard;
-    },
     data() {
         return {
             Data: [],
-            cnt: CommunityData.length
+            cnt: 0,
+            // searchoption : [{key :"작성자",value :"title"},{key :"작성자",value :"title"},{key :"작성자",value :"title"}],
+            searchoption: [
+                {key: 'nickname', value: '작성자'},
+                {key: 'title', value: '제목'},
+                {key: 'content', value: '내용'}
+            ],
+            searchoptionselected: '',
+            searchkeyword: '',
+            category: '',
+            type: '',
+            search: ''
             //contentlist: [], // 현재 게시판과 페이지에 맞는 글 리스트들
             //cnt: 0 // 현재 게시판의 총 글 개수
         };
+    },
+    async created() {
+        this.updateData('frontend');
     },
     computed: {
         // // computed는 계산 목적으로 사용된다고 보면 됨
@@ -131,7 +144,7 @@ export default {
                 // 현재 게시판 글 갯수가 0개일때 총 페이지가 0이 되는거 방지
                 return 1;
             } else {
-                return Math.ceil(this.cnt / 10); // (글 갯수/10)한 후 올림 연산을 통해 총 페이지 계산
+                return Math.ceil(this.cnt / 20); // (글 갯수/10)한 후 올림 연산을 통해 총 페이지 계산
             }
         }
     },
@@ -146,21 +159,25 @@ export default {
         // movetoboard3() {
         //     window.location.href = '/community/3/?page=1';
         // },
-        async updateData(data) {
-            await this.$store.dispatch('moduleCommunity/getCommunityBoard', {number: this.$route.params.page - 1, category: data});
+        async updateData(data, type, search, order) {
+            await this.$store.dispatch('moduleCommunity/getCommunityBoard', {number: this.$route.query.page, category: data, type: type, search: search, order: order});
             this.Data = this.$store.state.moduleCommunity.CommunityBoard;
+            this.category = data;
+            this.type = this.searchoptionselected;
+            this.search = this.searchkeyword;
+            this.cnt = this.Data.totalCount;
         },
 
         movetomain() {
             window.location.href = '/community';
         },
-        movetowrite(index) {
+        movetowrite() {
             // window.location.href = '/community/1/write';
             this.$router.push({
                 name: 'CommuWrite',
-                params: {
-                    id: index
-                },
+                // params: {
+                //     id: index
+                // },
                 query: {
                     category: this.$route.query.category
                 }
@@ -181,21 +198,51 @@ export default {
             });
             // window.location.href = window.location.pathname + '/content/' + id;
         },
-        movetopreviouspage() {
+        async movetopreviouspage() {
             if (this.$route.query.page == 1) {
                 alert('첫번째 페이지입니다!');
             } else {
                 var pp = parseInt(this.$route.query.page) - 1;
-                window.location.href = window.location.pathname + '?page=' + pp;
+                // window.location.href = '/community/' + pp;
+                await this.$store.dispatch('moduleCommunity/getCommunityBoard', {
+                    number: pp,
+                    category: this.$route.query.category,
+                    type: this.$route.query.type,
+                    search: this.$route.query.search,
+                    order: this.$route.query.order
+                });
+                this.Data = this.$store.state.moduleCommunity.CommunityBoard;
+                this.$router.push({
+                    name: 'CommuBoard',
+                    query: {page: pp, category: this.$route.query.category}
+                    // query: {page: pp, category: this.$route.query.category, type: this.$route.query.type, search: this.$route.query.search, order: this.$route.query.order}
+                });
             }
         },
-        movetonextpage() {
-            if (this.$route.query.page == Math.ceil(this.cnt / 10)) {
+        async movetonextpage() {
+            if (this.$route.query.page == Math.ceil(this.cnt / 20)) {
                 alert('마지막 페이지입니다!');
             } else {
                 var pp = parseInt(this.$route.query.page) + 1;
-                window.location.href = window.location.pathname + '?page=' + pp;
+
+                await this.$store.dispatch('moduleCommunity/getCommunityBoard', {
+                    number: pp,
+                    category: this.$route.query.category,
+                    type: this.$route.query.type,
+                    search: this.$route.query.search,
+                    order: this.$route.query.order
+                });
+                this.Data = this.$store.state.moduleCommunity.CommunityBoard;
+
+                this.$router.push({
+                    name: 'CommuBoard',
+                    query: {page: pp, category: this.$route.query.category}
+                    // query: {page: pp, category: this.$route.query.category, type: this.$route.query.type, search: this.$route.query.search, order: this.$route.query.order}
+                });
             }
+        },
+        searchstart() {
+            this.updateData(this.category, this.searchoptionselected, this.searchkeyword);
         }
     }
 };

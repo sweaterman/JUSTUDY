@@ -1,19 +1,14 @@
 <template>
     <div>
         <BasicButton :buttonLength="150" :height="60" :fontSize="36" :content="`${buttonContent}`" standard="px" />
-
+        {{ follow }}
         <!-- 여기에 사진들 배너 .... -->
         <div class="d-flex align-center" style="width: 90%; margin-left: 5%; margin-right: 5%; overflow: hidden">
             <div :style="`margin-left : ${bannerPosition}px ; transition: 0.5s`"></div>
-
-            <div v-for="item in follow" v-bind:key="item" style="margin: 1%; transition: 0.5s">
-                <ProfileFollow :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="`${port}images/${item.imageSequence}`" :data="item" />
+            <div v-for="item in follower" v-bind:key="item" style="margin: 1%; transition: 0.5s">
+                <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="`${port}images/${item.imageSequence}`" />
 
                 {{ item.nickname }}
-
-                <!-- <div v-for="item in 50" v-bind:key="item" style="margin: 1%; transition: 0.5s">
-                <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="require('@/assets/juniorClass.png')" />
-                이싸피 -->
 
                 <img src="../../assets/redHeart.png" />
             </div>
@@ -26,19 +21,20 @@
 </template>
 <script>
 import BasicButton from '@/components/common/BasicButton.vue';
-import ProfileFollow from '@/components/common/ProfileFollow.vue';
+import Profile from '@/components/mypage/Profile.vue';
 import port from '@/store/port';
 export default {
     name: 'FollowFollowing',
+
     components: {
         BasicButton,
-        ProfileFollow
+        Profile
     },
     data() {
         return {
             bannerPosition: 0,
             port: port,
-            follow: []
+            follower: []
         };
     },
     props: {
@@ -59,8 +55,8 @@ export default {
         }
     },
     async created() {
-        await this.$store.dispatch('moduleTimer/getFollow');
-        this.follow = this.$store.state.moduleTimer.follow;
+        await this.$store.dispatch('moduleTimer/getFollower');
+        this.follower = this.$store.state.moduleTimer.follower;
     }
 };
 </script>

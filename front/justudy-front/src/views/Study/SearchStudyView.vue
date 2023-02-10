@@ -41,7 +41,7 @@
                             <div class="btnGroup" v-for="bot in bottomCategories" :key="bot.key">
                                 <v-btn outlined class="btnBot" rounded x-large @click="doSearch('category', bot.key)">
                                     <!-- 추후 SVG 아이콘으로 수정예정 -->
-                                    <v-avatar size="50"><img src="@/assets/icon_70x70.png" alt="stackIcon" /></v-avatar>
+                                    <v-avatar size="50"><img :src="`${port}images/${bot.imageSequence}`" alt="stackIcon" /></v-avatar>
                                     {{ bot.value }}
                                 </v-btn>
                             </div>
@@ -97,6 +97,7 @@
 <script>
 import StudyList from '@/components/study/StudyList.vue';
 import {mapState} from 'vuex';
+import port from '@/store/port';
 
 export default {
     name: 'SearchStudyView',
@@ -134,7 +135,8 @@ export default {
             promotion: 'promotion',
             items: ['스터디명', '스터디장'],
             checkMore: true,
-            checkAll: false
+            checkAll: false,
+            port: port
         };
     },
     methods: {
@@ -150,7 +152,6 @@ export default {
                     } else {
                         this.searchSend = 'leader';
                     }
-
                     //데이터 검색하고 받아오기.
                     this.pageNum = 1;
                     await this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: this.searchSend, content: this.searchContent});

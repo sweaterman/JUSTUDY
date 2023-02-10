@@ -1,7 +1,7 @@
 <template>
-    <v-container>
+    <v-app>
         <!-- 년도와 월 -->
-        <v-row justify="center" align="center">
+        <v-row :style="{marginTop: '2%'}" justify="center" align="center">
             <v-col cols="12" md="2" />
             <v-col cols="12" md="2" justify="center" align="center">
                 <v-btn icon class="ma-2" @click="monthBefore()">
@@ -10,18 +10,18 @@
             </v-col>
             <v-col cols="12" md="2" justify="center" align="center">
                 <div :style="{fontWeight: 'bold', fontSize: 'x-large'}">
-                    <h4>
+                    <h1>
                         <span style="color: #ffb000">{{ year }}</span>
                         <span style="color: black"> 년 </span>
-                    </h4>
+                    </h1>
                 </div>
             </v-col>
             <v-col cols="12" md="2" justify="center" align="center">
                 <div :style="{fontWeight: 'bold', fontSize: 'x-large'}">
-                    <h4>
+                    <h1>
                         <span style="color: #ffb000">{{ month + 1 }}</span>
                         <span style="color: black"> 월</span>
-                    </h4>
+                    </h1>
                 </div>
             </v-col>
             <v-col cols="12" md="2" justify="center" align="center">
@@ -33,7 +33,7 @@
         </v-row>
 
         <!-- 날짜 -->
-        <v-row justify="center" align="center">
+        <v-row :style="{marginTop: '2%', marginBottom: '2%'}" justify="center" align="center">
             <v-container id="container">
                 <v-row id="thead" justify="center" align="center">
                     <v-col style="color: tomato" justify="center" align="center">일</v-col>
@@ -48,12 +48,13 @@
                 <v-row v-for="cr in Math.ceil((firstDayOfWeek + monthDate[month]) / 7)" :key="cr" class="d-flex justify-center">
                     <v-col v-for="cc in 7" v-bind:key="cc" id="td" :style="`background-color : ${greenValue(cr, cc, firstDayOfWeek)}`">
                         <!-- </v-col>:style="`background-color: ${cc > 4 ? '#006400' : '#008000'}`"> -->
+
                         <!-- 날짜별 숫자 -->
-                        <v-row :style="{fontWeight: 'bold'}">
+                        <v-row :style="{marginTop: '1%', marginLeft: '1%', color: letter(cr, cc, firstDayOfWeek)}">
                             <div v-if="7 * (cr - 1) + cc - firstDayOfWeek > 0 && 7 * (cr - 1) + cc - firstDayOfWeek <= monthDate[month]">{{ 7 * (cr - 1) + cc - firstDayOfWeek }}</div>
                         </v-row>
                         <!-- 날짜별 시간 -->
-                        <v-row :style="{marginTop: '10%', marginLeft: '15%'}">
+                        <v-row :style="{marginTop: '15%', marginLeft: '15%', color: letter(cr, cc, firstDayOfWeek)}">
                             <div style="font-size: 100%" v-if="7 * (cr - 1) + cc - firstDayOfWeek > 0 && 7 * (cr - 1) + cc - firstDayOfWeek <= monthDate[month]">
                                 {{ hourMinSecond(studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek]) }}
                             </div>
@@ -62,7 +63,7 @@
                 </v-row>
             </v-container>
         </v-row>
-    </v-container>
+    </v-app>
 </template>
 <script>
 import CalendarData from '@/data/CalendarData';
@@ -90,28 +91,28 @@ export default {
             if (7 * (cr - 1) + cc - firstDayOfWeek <= 0 || 7 * (cr - 1) + cc - firstDayOfWeek > this.monthDate[this.month]) {
                 return 'white';
             } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] == 0) {
-                return '#FFFFF4';
+                return 'white';
             } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 40) {
-                return '#FFF9E3';
+                return '#00CC00';
             } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 70) {
-                return '#FAF0DD';
+                return '#009900';
             } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 100) {
-                return '#FFE4B5';
+                return '#006600';
             } else {
-                return '#FFDAB9';
+                return '#003300';
             }
         },
-        // letter(cr, cc, firstDayOfWeek) {
-        //     if (7 * (cr - 1) + cc - firstDayOfWeek <= 0 || 7 * (cr - 1) + cc - firstDayOfWeek > this.monthDate[this.month]) {
-        //         return 'white';
-        //     } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] == 0) {
-        //         return 'black';
-        //     } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 40) {
-        //         return 'white';
-        //     } else {
-        //         return 'white';
-        //     }
-        // },
+        letter(cr, cc, firstDayOfWeek) {
+            if (7 * (cr - 1) + cc - firstDayOfWeek <= 0 || 7 * (cr - 1) + cc - firstDayOfWeek > this.monthDate[this.month]) {
+                return 'white';
+            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] == 0) {
+                return 'black';
+            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 40) {
+                return 'white';
+            } else {
+                return 'white';
+            }
+        },
         monthBefore() {
             if (this.month == 0) {
                 this.year -= 1;
@@ -168,6 +169,7 @@ export default {
 
 #td {
     border: 0.2px solid rgb(230, 230, 230);
-    height: 70px;
+
+    height: 130px;
 }
 </style>

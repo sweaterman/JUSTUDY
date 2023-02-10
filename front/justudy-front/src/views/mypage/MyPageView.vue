@@ -111,6 +111,7 @@
         <!-- 북마크한 글 파트 -->
         <v-row :style="{marginBottom: '5%'}">
             <BoardList boardtitle="북마크한 글" :bookMarkList="bookMarkList" />
+            <!-- {{ bookMarkList }} -->
         </v-row>
 
         <!-- 달력 파트 -->
@@ -186,8 +187,8 @@ export default {
         let studyCalendar = new Array(32).fill('🟡18:00');
         this.studyCalendar = studyCalendar;
         console.log(studyCalendar);
-        await this.$store.dispatch('moduleCommunity/getBookMarkList', {id: 50});
-        this.bookMarkList = this.$store.state.moduleCommunity.bookMarkList;
+        await this.$store.dispatch('moduleMyPage/getBookMarkList');
+        this.bookMarkList = this.$store.state.moduleMyPage.bookMarkList;
         // 팔로잉
         // this.$store.dispatch("user/following");
         // 팔로우
