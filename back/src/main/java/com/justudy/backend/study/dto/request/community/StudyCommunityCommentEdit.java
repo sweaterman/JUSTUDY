@@ -20,8 +20,6 @@ public class StudyCommunityCommentEdit {
 
     public StudyCommunityCommentEntity toEntity() {
         return StudyCommunityCommentEntity.builder()
-//                .member(memberSeq)
-//                .community(communitySeq)
                 .content(content)
                 .parentSeq(parentSeq)
                 .createdTime(LocalDateTime.now())
@@ -30,9 +28,6 @@ public class StudyCommunityCommentEdit {
 
     public StudyCommunityCommentEntity toEntity(Long sequence) {
         return StudyCommunityCommentEntity.builder()
-                .sequence(sequence)
-//                .member(memberSeq)
-//                .community(communitySeq)
                 .content(content)
                 .parentSeq(parentSeq)
                 .createdTime(LocalDateTime.now())

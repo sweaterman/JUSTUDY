@@ -97,8 +97,6 @@ public class StudyFrequencyService {
             studyFrequencyEntities.add(studyFrequencyCreate.toEntity(studyEntity));
         }
         studyFrequencyRepository.saveAll(studyFrequencyEntities).forEach(studyEntity::addStudyFrequency);
-        studyFrequencyEntities.stream().map(StudyFrequencyEntity::getSequence).collect(Collectors.toList());
-
     }
 }
 

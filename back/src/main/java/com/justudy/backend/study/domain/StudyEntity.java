@@ -26,10 +26,8 @@ public class StudyEntity {
     private Long sequence;
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyMemberEntity> studyMembers = new ArrayList<>();
     @Builder.Default
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
     private List<StudyResumeEntity> resumes = new ArrayList<>();
     @Builder.Default
@@ -37,13 +35,11 @@ public class StudyEntity {
     private List<StudyCommunityEntity> communities = new ArrayList<>();
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyFrequencyEntity> frequency = new ArrayList<>();
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_category_seq")
     private CategoryEntity category;
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "studyEntity")
-//    @JoinColumn(name = "study_room_seq")
     private StudyRoomEntity studyRoom;
     @Column(name = "study_name")
     private String name;

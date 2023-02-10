@@ -1,7 +1,7 @@
 package com.justudy.backend.study.dto.response.community;
 
-import com.justudy.backend.category.dto.request.CategoryResponse;
 import com.justudy.backend.study.domain.community.StudyCommunityEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class StudyCommunityDetailResponse {
     private Long sequence;
     private Long memberSequence;
@@ -27,29 +29,6 @@ public class StudyCommunityDetailResponse {
     private boolean isBookmarked;
 
     private boolean isLoved;
-
-
-    @Builder
-    public StudyCommunityDetailResponse(Long sequence, Long memberSequence, String nickname,
-                                        Long studySeq, String title, String content, Integer viewCount,
-                                        LocalDateTime createdTime, LocalDateTime modifiedTime, Integer loveCount,
-                                        boolean isWriter, boolean isBookmarked, boolean isLoved) {
-        this.sequence = sequence;
-        this.memberSequence = memberSequence;
-        this.nickname = nickname;
-        this.studySeq = studySeq;
-        this.title = title;
-        this.content = content;
-        this.viewCount = viewCount;
-        this.createdTime = createdTime;
-        this.modifiedTime = modifiedTime;
-        this.loveCount = loveCount;
-
-        this.isWriter = isWriter;
-        this.isBookmarked = isBookmarked;
-        this.isLoved = isLoved;
-    }
-
     public static StudyCommunityDetailResponse makeBuilder(StudyCommunityEntity entity,
                                                            boolean isWriter, boolean isBookmarked, boolean isLoved) {
         return StudyCommunityDetailResponse.builder()

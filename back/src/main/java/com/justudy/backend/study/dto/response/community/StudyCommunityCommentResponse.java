@@ -31,18 +31,14 @@ public class StudyCommunityCommentResponse {
         MemberEntity memberEntity = entity.getMember();
         String comment = entity.getContent();
         String memberNickName = memberEntity.getNickname();
-        Boolean isWriter = false;
-
         //댓글 작성자면 true
-        if (loginSequence.longValue() == memberEntity.getSequence().longValue())
-            isWriter = true;
+        boolean isWriter = loginSequence.longValue() == memberEntity.getSequence().longValue();
 
         if (entity.getIsDeleted()) {
             comment = "삭제된 댓글입니다.";
             memberNickName = "";
             isWriter = false;
         }
-
         return StudyCommunityCommentResponse.builder()
                 .sequence(entity.getSequence())
                 .memberNickName(memberNickName)

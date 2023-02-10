@@ -35,9 +35,6 @@ public class StudyCommunityService {
     private final StudyCommunityBookmarkService bookmarkService;
     private final StudyCommunityLoveService loveService;
 
-    private final int MAX_PAGE_SIZE = 10;
-    private final int MAX_NOTICE_SIZE = 3;
-
 // ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
     @Transactional
@@ -56,7 +53,7 @@ public class StudyCommunityService {
 
 
     @Transactional
-    public Long deleteStudyCommunity(Long loginSequence, Long communitySequence, Long studySequence) {
+    public void deleteStudyCommunity(Long loginSequence, Long communitySequence, Long studySequence) {
         //스터디원인지 체크
         StudyEntity studyEntity = studyRepository.findById(studySequence).orElseThrow(StudyNotFound::new);
         isStudyMember(studyEntity, loginSequence);
@@ -67,7 +64,6 @@ public class StudyCommunityService {
         community.deleteCommunity();
         bookmarkService.deleteBookmarkByCommunity(communitySequence);
         loveService.deleteAllByCommunity(communitySequence);
-        return community.getSequence();
     }
 
     @Transactional
@@ -78,7 +74,7 @@ public class StudyCommunityService {
 
         StudyCommunityEntity community = communityRepository.findBySequence(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
-        boolean isWriter = community.getMember().getSequence() == loginSequence;
+        boolean isWriter = community.getMember().getSequence().longValue() == loginSequence.longValue();
         boolean isBookmarked = bookmarkService.findBookmark(loginSequence, communitySequence).isPresent();
         boolean isLoved = loveService.findLove(loginSequence, communitySequence).isPresent();
 
@@ -137,7 +133,6 @@ public class StudyCommunityService {
 
     public List<StudyCommunityListResponse> getMyBookmarks(Long loginSequence) {
         List<Long> sequences = bookmarkService.getMyBookmarks(loginSequence);
-        log.info("[getMyBookmarks] sequences = {}", sequences);
         return communityRepository.getListBySequences(sequences).stream()
                 .map(StudyCommunityListResponse::new)
                 .collect(Collectors.toList());
@@ -151,7 +146,7 @@ public class StudyCommunityService {
     }
 
     private void validateWriter(Long loginSequence, Long writerSequence) {
-        if (loginSequence != writerSequence) {
+        if (loginSequence.longValue() != writerSequence.longValue()) {
             throw new ForbiddenRequest();
         }
     }
@@ -162,6 +157,6 @@ public class StudyCommunityService {
                 .map(studyMemberEntity -> studyMemberEntity.getMember().getSequence())
                 .filter(memberSequence -> memberSequence.longValue() == sequence.longValue())
                 .findFirst()
-                .orElseThrow(StudyMemberNotFound::new);
+                .orElseThrow(ForbiddenRequest::new);
     }
 }

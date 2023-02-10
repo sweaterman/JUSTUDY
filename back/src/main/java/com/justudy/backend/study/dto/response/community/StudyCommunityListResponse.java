@@ -1,12 +1,17 @@
 package com.justudy.backend.study.dto.response.community;
 
 import com.justudy.backend.study.domain.community.StudyCommunityEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StudyCommunityListResponse {
 
     private Long sequence;
@@ -23,18 +28,6 @@ public class StudyCommunityListResponse {
 
     private Integer loveCount;
 
-    @Builder
-    public StudyCommunityListResponse(Long sequence, String title, String nickname,
-                                      LocalDateTime createdTime, boolean isHighlighted,
-                                      Integer viewCount, Integer loveCount) {
-        this.sequence = sequence;
-        this.title = title;
-        this.nickname = nickname;
-        this.createdTime = createdTime;
-        this.isHighlighted = isHighlighted;
-        this.viewCount = viewCount;
-        this.loveCount = loveCount;
-    }
 
     public StudyCommunityListResponse(StudyCommunityEntity communityEntity) {
         this.sequence = communityEntity.getSequence();
