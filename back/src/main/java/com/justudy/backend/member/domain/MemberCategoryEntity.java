@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.*;
 public class MemberCategoryEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "member_category_seq")
     private Long sequence;
 
     @ManyToOne(fetch = LAZY)
