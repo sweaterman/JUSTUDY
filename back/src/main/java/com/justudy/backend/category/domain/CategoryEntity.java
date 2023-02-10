@@ -1,5 +1,6 @@
 package com.justudy.backend.category.domain;
 
+import com.justudy.backend.file.domain.UploadFileEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,20 +33,29 @@ public class CategoryEntity {
     @Column(name = "category_level")
     private Long categoryLevel;
 
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "image_seq")
+    UploadFileEntity imageFile;
 
     /** 셀프 양방향 연관 관계 */
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "parent_id")
+    @JoinColumn(name = "parent_seq")
     CategoryEntity parentCategory;
 
     @OneToMany(mappedBy = "parentCategory")
     private List<CategoryEntity> children = new ArrayList<>();
 
     @Builder
-    public CategoryEntity(String key, String value,Long categoryLevel) {
+    public CategoryEntity(String key, String value,Long categoryLevel, UploadFileEntity imageFile) {
         this.key = key;
         this.value = value;
         this.categoryLevel = categoryLevel;
+        this.imageFile = imageFile;
+    }
+
+    /** 연관관계 편의 메소드 */
+    public void addImage(UploadFileEntity imageFile) {
+        this.imageFile = imageFile;
     }
 
     /** 셀프 양방향 연관관계 편의 메소드 */

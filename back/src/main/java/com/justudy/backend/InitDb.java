@@ -24,7 +24,6 @@ import com.justudy.backend.study.service.StudyMemberService;
 import com.justudy.backend.study.service.StudyResumeService;
 import com.justudy.backend.study.service.StudyService;
 import com.justudy.backend.timer.dto.request.ActivityRequest;
-import com.justudy.backend.timer.dto.request.ActivityRequest;
 import com.justudy.backend.timer.service.MemberActivityService;
 import com.justudy.backend.timer.service.RoomActivityService;
 
@@ -36,10 +35,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 
 @RequiredArgsConstructor
 @Component
@@ -53,7 +50,7 @@ public class InitDb {
                 .password("1234")
                 .passwordCheck("1234")
                 .username("테스트" + number)
-                .nickname("테스트 봇" + number)
+                .nickname("봇" + number)
                 .region("SEOUL")
                 .category(new String[]{"Java", "Spring"})
                 .ssafyId("08" + number)
@@ -92,8 +89,8 @@ public class InitDb {
 
 
         public void init() throws ParseException {
-            saveCategory();
             saveImageFile();
+            saveCategory();
             saveMember();
             saveCommunity();
             saveStudy();
@@ -268,8 +265,10 @@ public class InitDb {
             uploadFileRepository.save(basicFrontEndImage);
             UploadFileEntity basicBackEndImage = new UploadFileEntity("basic_backend.png", "basic_backend.png");
             uploadFileRepository.save(basicBackEndImage);
-            UploadFileEntity basicAlgorithmImage = new UploadFileEntity("basic_algorithm.png", "basic_algorithm.png");
-            uploadFileRepository.save(basicAlgorithmImage);
+            UploadFileEntity vuejsImage = new UploadFileEntity("vuejs.svg", "vuejs.png");
+            uploadFileRepository.save(vuejsImage);
+            UploadFileEntity figmaImage = new UploadFileEntity("figma.svg", "figma.png");
+            uploadFileRepository.save(figmaImage);
         }
 
         private void saveCategory() {
@@ -301,7 +300,7 @@ public class InitDb {
 
         private void makeEctSubCategory(CategoryEntity etc) {
             categoryRepository.save(createSubCategory("git", "Git", 1L, etc));
-            categoryRepository.save(createSubCategory("figma", "Figma", 1L, etc));
+            categoryRepository.save(createSubCategoryWithImage("figma", "Figma", 1L, etc, 5L));
         }
 
         private void makeComputerScienceSubCategory(CategoryEntity computerScience) {
@@ -323,7 +322,7 @@ public class InitDb {
             categoryRepository.save(createSubCategory("swift", "Swift", 1L, mobile));
             categoryRepository.save(createSubCategory("kotlinMobile", "Kotlin", 1L, mobile));
             categoryRepository.save(createSubCategory("react-native", "ReactNative", 1L, mobile));
-            categoryRepository.save(createSubCategory("unity", "Unity", 1L, mobile));
+//            categoryRepository.save(createSubCategory("unity", "Unity", 1L, mobile));
         }
 
         private void makeBackSubCategory(CategoryEntity backend) {
@@ -352,7 +351,7 @@ public class InitDb {
             categoryRepository.save(createSubCategory("javascript", "JavaScript", 1L, frontend));
             categoryRepository.save(createSubCategory("typescript", "TypeScript", 1L, frontend));
             categoryRepository.save(createSubCategory("react", "React", 1L, frontend));
-            categoryRepository.save(createSubCategory("vue", "Vue", 1L, frontend));
+            categoryRepository.save(createSubCategoryWithImage("vue", "Vue", 1L, frontend, 4L));
             categoryRepository.save(createSubCategory("nextjs", "NextJs", 1L, frontend));
             categoryRepository.save(createSubCategory("svelte", "Svelte", 1L, frontend));
         }
@@ -362,6 +361,19 @@ public class InitDb {
                     .key(key)
                     .value(value)
                     .categoryLevel(level)
+                    .build();
+            subCategory.addParentCategory(parent);
+            return subCategory;
+        }
+
+        private CategoryEntity createSubCategoryWithImage(String key, String value, Long level, CategoryEntity parent, Long imageSequence) {
+            UploadFileEntity imageFile = uploadFileRepository.findById(imageSequence)
+                    .orElseThrow(UploadFileNotFound::new);
+            CategoryEntity subCategory = CategoryEntity.builder()
+                    .key(key)
+                    .value(value)
+                    .categoryLevel(level)
+                    .imageFile(imageFile)
                     .build();
             subCategory.addParentCategory(parent);
             return subCategory;
