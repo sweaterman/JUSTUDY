@@ -23,9 +23,9 @@ public class StudyMemberResponse {
     public static StudyMemberResponse makeBuilder(StudyMemberEntity entity) {
         return StudyMemberResponse.builder()
                 .sequence(entity.getSequence())
-                .memberSeq(entity.getMember().getSequence())
-                .studySeq(entity.getStudy().getSequence())
-                .alarm(entity.getAlarm())
+//                .memberSeq(entity.getMember().getSequence())
+//                .studySeq(entity.getStudy().getSequence())
+//                .alarm(entity.getAlarm())
                 .badge(entity.getBadge())
                 .name(entity.getMember().getUsername())
                 .nickName(entity.getMember().getNickname())

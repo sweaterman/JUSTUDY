@@ -123,13 +123,13 @@ public class StudyEntity {
         entity.changeStudy(null);
     }
 
-    public void update(String name, String introduction, Integer population, String level, String onlineOffline,
+    public void update(String name, String introduction, Integer population, String level, String meeting,
                        Boolean isOpen, String github, String notion, String startTime) {
         this.name = name;
         this.introduction = introduction;
         this.population = population;
         this.level = level;
-        this.meeting = onlineOffline;
+        this.meeting = meeting;
         this.isOpen = isOpen;
         this.github = github;
         this.notion = notion;
