@@ -136,4 +136,8 @@ public class StudyEntity {
     public void changeStudyRoom(StudyRoomEntity studyRoom) {
         this.studyRoom=studyRoom;
     }
+
+    public void changeCategory(CategoryEntity categoryEntity) {
+        this.category=categoryEntity;
+    }
 }
