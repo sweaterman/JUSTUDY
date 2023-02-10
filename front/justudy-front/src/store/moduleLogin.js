@@ -27,8 +27,11 @@ export default {
                         withCredentials: true
                     }
                 )
-                .then(() => {
-                    commit('SET_ISLOGIN', {loginCheck: true});
+                .then(res => {
+                    commit('SET_ISLOGIN', {
+                        loginCheck: true
+                    });
+                    localStorage.setItem('nickname', res.data.nickname);
                     window.location.href = '/';
                 })
                 .catch(err => {
@@ -44,7 +47,10 @@ export default {
                 withCredentials: true
             })
                 .then(() => {
-                    commit('SET_ISLOGIN', {loginCheck: false});
+                    commit('SET_ISLOGIN', {
+                        loginCheck: false
+                    });
+                    localStorage.removeItem('nickname');
                     window.location.href = '/';
                 })
                 .catch(err => {
