@@ -63,7 +63,7 @@ public class Room implements Closeable {
   public Room(String roomName, MediaPipeline pipeline) {
     this.name = roomName;
     this.pipeline = pipeline;
-    log.info("ROOM {} has been created", roomName);
+    log.debug("ROOM {} has been created", roomName);
     startTime = LocalDateTime.now();
   }
 
@@ -78,7 +78,7 @@ public class Room implements Closeable {
   }
 
   public UserSession join(String userName, Session session) throws IOException {
-    log.info("ROOM {}: adding participant {}", this.name, userName);
+    log.debug("ROOM {}: adding participant {}", this.name, userName);
     UserSession participant = new UserSession(userName, this.name, session, this.pipeline);
 
     joinRoom(participant);

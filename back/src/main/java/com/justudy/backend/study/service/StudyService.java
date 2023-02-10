@@ -18,6 +18,8 @@ import com.justudy.backend.study.exception.StudyNotFound;
 import com.justudy.backend.study.repository.StudyFrequencyRepository;
 import com.justudy.backend.study.repository.StudyRepository;
 import com.justudy.backend.study.repository.StudyResumeRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.PageRequest;
@@ -154,5 +156,12 @@ public class StudyService {
     public Long getStudyLeader(Long id) {
         return studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new).getLeaderSeq();
+    }
+
+    @Transactional
+    public void updateStudyOnAir(Long seq,boolean state){
+        StudyEntity studyEntity = studyRepository.findById(seq).orElseThrow(StudyNotFound::new);;
+        studyEntity.changeOnAir(state);
+        studyRepository.save(studyEntity);
     }
 }
