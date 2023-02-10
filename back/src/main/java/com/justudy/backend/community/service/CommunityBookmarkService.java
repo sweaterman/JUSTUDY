@@ -44,7 +44,7 @@ public class CommunityBookmarkService {
     }
 
     @Transactional
-    public void deleteBookmarkByCommunity(Long communitySequence) {
+    public void deleteAllByCommunity(Long communitySequence) {
         bookmarkRepository.deleteAllByCommunity(communitySequence);
     }
 

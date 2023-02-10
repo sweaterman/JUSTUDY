@@ -7,7 +7,6 @@ import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.service.FileStore;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.member.repository.MemberRepository;
-import com.justudy.backend.member.service.MemberService;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
 import com.justudy.backend.study.dto.request.StudyEdit;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -109,7 +107,7 @@ public class StudyService {
         entity.changeImage(uploadImage);
 
         entity.update(request.getName(), request.getIntroduction(), request.getPopulation(),
-                request.getLevel(), request.getOnlineOffline(), request.getIsOpen(), request.getGithub(),
+                request.getLevel(), request.getMeeting(), request.getIsOpen(), request.getGithub(),
                 request.getNotion(), request.getStartTime());
         return id;
     }

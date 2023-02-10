@@ -24,6 +24,8 @@ public interface CommunityRepositoryCustom {
 
     List<CommunityEntity> getListBySequences(List<Long> sequences);
 
+    void updateWeekLoveCount();
+
 
 
 

@@ -153,7 +153,7 @@ class CommunityServiceTest {
                 .build();
 
         MemberEntity mockMember = makeTestMember("test", "test", "test");
-        CategoryEntity mockCategory = new CategoryEntity(CATEGORY_KEY, CATEGORY_VALUE, 0L);
+        CategoryEntity mockCategory = new CategoryEntity(CATEGORY_KEY, CATEGORY_VALUE, 0L, null);
 
 
         CommunityEntity community = request.toEntity();
@@ -275,7 +275,7 @@ class CommunityServiceTest {
         BDDMockito.given(communityRepository.findBySequence(ArgumentMatchers.anyLong()))
                 .willReturn(Optional.of(community));
         BDDMockito.given(categoryService.getCategoryEntityByKey(NEW_CATEGORY_KEY))
-                .willReturn(new CategoryEntity(NEW_CATEGORY_KEY, NEW_CATEGORY_VALUE, 0L));
+                .willReturn(new CategoryEntity(NEW_CATEGORY_KEY, NEW_CATEGORY_VALUE, 0L, null));
 //        BDDMockito.given(loveRepository.readLoveCountByCommunity(ArgumentMatchers.anyLong()))
 //                .willReturn(10);
 
@@ -311,7 +311,7 @@ class CommunityServiceTest {
         BDDMockito.given(communityRepository.findBySequence(ArgumentMatchers.anyLong()))
                 .willReturn(Optional.of(community));
         BDDMockito.given(categoryService.getCategoryEntityByKey(NEW_CATEGORY_KEY))
-                .willReturn(new CategoryEntity(NEW_CATEGORY_KEY, NEW_CATEGORY_VALUE, 0L));
+                .willReturn(new CategoryEntity(NEW_CATEGORY_KEY, NEW_CATEGORY_VALUE, 0L, null));
 //        BDDMockito.given(loveRepository.readLoveCountByCommunity(ArgumentMatchers.anyLong()))
 //                .willReturn(10);
 
