@@ -31,7 +31,7 @@ public class StudyEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
     private List<StudyResumeEntity> resumes = new ArrayList<>();
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
     private List<StudyCommunityEntity> communities = new ArrayList<>();
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
