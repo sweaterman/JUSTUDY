@@ -5,7 +5,8 @@ export default {
     namespaced: true,
     state: {
         user: {},
-        modifyUser: {}
+        modifyUser: {},
+        bookMarkList: []
     },
     getters: {
         // dataComputed : function(state){
@@ -18,9 +19,23 @@ export default {
         },
         getModifyUser(state, payload) {
             state.modifyUser = payload;
+        },
+        getBookMarkList(state, payload) {
+            state.bookMarkList = payload;
         }
     },
     actions: {
+        //북마크 리스트 커뮤니티쪽 작업 아닌듯
+        async getBookMarkList({commit}) {
+            const API_URL = `${port}member/bookmarks`;
+            await axios
+                .get(API_URL, {
+                    withCredentials: true
+                })
+                .then(res => {
+                    commit('getBookMarkList', res.data);
+                });
+        },
         async getMyPageUser({commit}) {
             await axios
                 .get(port + 'member/mypage', {
