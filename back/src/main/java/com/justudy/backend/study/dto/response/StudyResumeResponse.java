@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class StudyResumeResponse {
     private Long sequence;
+    private Long memberSeq;
     private Long studySeq;
     private String content;
     private LocalDateTime createdTime;
@@ -23,6 +24,7 @@ public class StudyResumeResponse {
         MemberEntity memberEntity = entity.getMember();
         return StudyResumeResponse.builder()
                 .sequence(entity.getSequence())
+                .memberSeq(entity.getMember().getSequence())
                 .studySeq(entity.getStudy().getSequence())
                 .content(entity.getContent())
                 .createdTime(entity.getCreatedTime())
