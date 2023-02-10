@@ -8,6 +8,9 @@
                 <v-col @click="moveTo('/admin')">대시보드</v-col>
             </v-row>
             <v-row>
+                <v-col @click="moveTo('/admin/report/1')">신고 게시판</v-col>
+            </v-row>
+            <v-row>
                 <v-col @click="moveTo('/admin/user/1')">사용자 관리</v-col>
             </v-row>
             <v-row>

@@ -5,6 +5,7 @@ import AdminStudy from '../views/Admin/AdminStudy.vue';
 import AdminStudyUpdate from '../views/Admin/AdminStudyUpdate.vue';
 import AdminCommunity from '../views/Admin/AdminCommunity.vue';
 import AdminCommunityUpdate from '../views/Admin/AdminCommunityUpdate.vue';
+import AdminReport from '../views/Admin/AdminReport.vue';
 
 export default [
     {
@@ -41,5 +42,10 @@ export default [
         path: 'admin/community/:idx/update',
         name: 'AdminCommunityUpdate',
         component: AdminCommunityUpdate
-    }
+    },
+    {
+        path: '/admin/report/:idx',
+        name: 'AdminReport',
+        component: AdminReport
+    },
 ];
