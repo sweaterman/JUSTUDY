@@ -93,6 +93,9 @@ public class StudyService {
 
         entity.changeImage(uploadImage);
 
+        CategoryEntity categoryEntity = categoryRepository.findByKey(request.getBottomCategory()).orElseThrow(InvalidRequest::new);
+        entity.changeCategory(categoryEntity);
+
         entity.update(request.getName(), request.getIntroduction(), request.getPopulation(),
                 request.getLevel(), request.getMeeting(), request.getIsOpen(), request.getGithub(),
                 request.getNotion(), request.getStartTime());
