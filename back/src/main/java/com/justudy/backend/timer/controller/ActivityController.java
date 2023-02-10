@@ -38,7 +38,6 @@ public class ActivityController {
   public ResponseEntity<Void> registerPersonalTime(HttpSession session,
       @RequestBody ActivityRequest memberActivityRequest) {
 
-    log.info("registerPersonalTime {} ", memberActivityRequest);
     Long seq = (Long) session.getAttribute(SessionConst.LOGIN_USER);
     Date todayDate = Date.valueOf(LocalDate.now());
 
