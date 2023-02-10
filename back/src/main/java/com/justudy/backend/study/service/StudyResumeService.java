@@ -48,12 +48,11 @@ public class StudyResumeService {
 
         StudyResumeEntity studyResumeEntity = studyEntity.getResumes()
                 .stream()
-//                .map(studyResumeEntity1 -> studyResumeEntity1)
-                .filter(memberEntity -> memberEntity.getMember().getSequence() == loginSequence)
+                .filter(memberEntity -> memberEntity.getMember().getSequence().longValue() == loginSequence.longValue())
                 .findFirst()
                 .orElseThrow(StudyResumeNotFound::new);
 
-        if (studyResumeEntity.getMember().getSequence() != loginSequence)
+        if (studyResumeEntity.getMember().getSequence().longValue() != loginSequence.longValue())
             throw new InvalidRequest();
         studyEntity.removeStudyResume(studyResumeEntity);
         studyResumeRepository.deleteById(studyResumeEntity.getSequence());
@@ -69,7 +68,7 @@ public class StudyResumeService {
     public List<StudyResumeResponse> readAllStudyResumeByStudy(Long id, Long loginSequence) {
         StudyEntity studyEntity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
-        if (loginSequence != studyEntity.getLeaderSeq()) throw new InvalidRequest();
+        if (loginSequence.longValue() != studyEntity.getLeaderSeq().longValue()) throw new InvalidRequest();
 
         return studyResumeRepository.readAllStudyResumeByStudy(id)
                 .stream()

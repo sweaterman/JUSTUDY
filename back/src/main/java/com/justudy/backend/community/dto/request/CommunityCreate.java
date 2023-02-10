@@ -12,12 +12,13 @@ public class CommunityCreate {
     private String category;
     private String title;
     private String content;
+    private Boolean isHighlighted;
 
     public CommunityEntity toEntity() {
         return CommunityEntity.builder()
                 .title(title)
                 .content(content)
-                .isHighlighted(false)
+                .isHighlighted(isHighlighted)
                 .build();
     }
 }

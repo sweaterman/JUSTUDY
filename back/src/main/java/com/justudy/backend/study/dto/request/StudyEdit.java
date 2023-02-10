@@ -11,17 +11,14 @@ import java.util.List;
 @Builder
 public class StudyEdit {
     private Long sequence;
-    private List<Long> member;
-    private List<Long> resume;
     private List<StudyFrequencyCreate> frequency;
     private String topCategory;
     private String bottomCategory;
     private String name;
-    private Long leaderSeq;
     private String introduction;
     private Integer population;
     private String level;
-    private String onlineOffline;
+    private String meeting;
     private Boolean isOpen;
     private String github;
     private String notion;

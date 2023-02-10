@@ -24,7 +24,6 @@ import com.justudy.backend.study.service.StudyMemberService;
 import com.justudy.backend.study.service.StudyResumeService;
 import com.justudy.backend.study.service.StudyService;
 import com.justudy.backend.timer.dto.request.ActivityRequest;
-import com.justudy.backend.timer.dto.request.ActivityRequest;
 import com.justudy.backend.timer.service.MemberActivityService;
 import com.justudy.backend.timer.service.RoomActivityService;
 
@@ -36,10 +35,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 
 @RequiredArgsConstructor
 @Component
@@ -53,10 +50,28 @@ public class InitDb {
                 .password("1234")
                 .passwordCheck("1234")
                 .username("테스트" + number)
-                .nickname("테스트 봇" + number)
+                .nickname("봇" + number)
                 .region("SEOUL")
                 .category(new String[]{"Java", "Spring"})
                 .ssafyId("08" + number)
+                .mmId("mmTest" + number)
+                .phone(String.valueOf(number))
+                .email("testEmail" + number + "@ssafy.com")
+                .build();
+        return request;
+    }
+
+    private static MemberCreate makeMemberCreate(int number, String[] category) {
+        MemberCreate request = MemberCreate.builder()
+                .userId("test" + number)
+                .password("1234")
+                .passwordCheck("1234")
+                .username("테스트" + number)
+                .nickname("봇" + number)
+                .region("SEOUL")
+                .category(category)
+                .ssafyId("08" + number)
+                .mmId("mmTest" + number)
                 .phone(String.valueOf(number))
                 .email("testEmail" + number + "@ssafy.com")
                 .build();
@@ -92,17 +107,17 @@ public class InitDb {
 
 
         public void init() throws ParseException {
-            saveCategory();
             saveImageFile();
+            saveCategory();
             saveMember();
             saveCommunity();
-            saveStudy();
-            saveStudyFrequency();
-            saveStudyMember();
-            saveStudyRoom();
-            saveTimer();
-            saveRank();
-            saveTest1();
+//            saveStudy();
+//            saveStudyFrequency();
+//            saveStudyMember();
+//            saveStudyRoom();
+//            saveTimer();
+//            saveRank();
+//            saveTest1();
         }
 
         private void saveTest1() {
@@ -201,30 +216,42 @@ public class InitDb {
         }
 
         private void saveCommunity() {
-            CategoryEntity category = categoryRepository.findByKey("backend")
+            CategoryEntity backend = categoryRepository.findByKey("backend")
                     .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
-
-            for (int i = 0; i < 10; i++) {
-                long memberSequence = 50 + (3 * i);
+            for (int i = 1; i <= 10; i++) {
+                long memberSequence = i;
                 MemberEntity findMember = memberService.getMember(memberSequence);
                 for (int count = 1; count <= 5; count++)
-                    communityService.createCommunity(makeBoard(count), findMember, category);
+                    communityService.createCommunity(makeBoard(count), findMember, backend);
+            }
+
+            CategoryEntity frontend = categoryRepository.findByKey("frontend")
+                    .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
+            for (int i = 11; i <= 20; i++) {
+                long memberSequence = i;
+                MemberEntity findMember = memberService.getMember(memberSequence);
+                for (int count = 1; count <= 5; count++)
+                    communityService.createCommunity(makeBoard(count), findMember, frontend);
             }
         }
 
         private CommunityCreate makeBoard(int number) {
             return CommunityCreate.builder()
-                    .title("제목 " + number)
-                    .content("내용 " + number)
+                    .title("제목" + number)
+                    .content("내용" + number)
+                    .isHighlighted(false)
                     .build();
         }
 
         private void saveMember() {
             UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
                     .orElseThrow(UploadFileNotFound::new);
-
             for (int i = 1; i <= 10; i++) {
-                MemberCreate request = makeMemberCreate(i);
+                MemberCreate request = makeMemberCreate(i, new String[]{"Java", "Spring"});
+                memberService.saveMember(request, basicImage);
+            }
+            for (int i = 11; i <= 20; i++) {
+                MemberCreate request = makeMemberCreate(i, new String[]{"React", "Vue"});
                 memberService.saveMember(request, basicImage);
             }
         }
@@ -261,17 +288,6 @@ public class InitDb {
                 studyRoomService.saveStudyRoom(i);
         }
 
-        private void saveImageFile() {
-            UploadFileEntity basicMemberImage = new UploadFileEntity("basic_member.png", "basic_member.png");
-            uploadFileRepository.save(basicMemberImage);
-            UploadFileEntity basicFrontEndImage = new UploadFileEntity("basic_frontend.jpg", "basic_frontend.jpg");
-            uploadFileRepository.save(basicFrontEndImage);
-            UploadFileEntity basicBackEndImage = new UploadFileEntity("basic_backend.png", "basic_backend.png");
-            uploadFileRepository.save(basicBackEndImage);
-            UploadFileEntity basicAlgorithmImage = new UploadFileEntity("basic_algorithm.png", "basic_algorithm.png");
-            uploadFileRepository.save(basicAlgorithmImage);
-        }
-
         private void saveCategory() {
             CategoryEntity frontend = createMainCategory("frontend", "FRONT-END", 0L);
             categoryRepository.save(frontend);
@@ -296,12 +312,17 @@ public class InitDb {
             makeMobileSubCategory(mobile);
             makeAlgorithmSubCategory(algorithm);
             makeComputerScienceSubCategory(computerScience);
+            makeProjectSubCategory(project);
             makeEctSubCategory(etc);
         }
 
         private void makeEctSubCategory(CategoryEntity etc) {
             categoryRepository.save(createSubCategory("git", "Git", 1L, etc));
-            categoryRepository.save(createSubCategory("figma", "Figma", 1L, etc));
+            categoryRepository.save(createSubCategoryWithImage("figma", "Figma", 1L, etc, 5L));
+        }
+
+        private void makeProjectSubCategory(CategoryEntity project) {
+            categoryRepository.save(createSubCategory("project", "Project", 1L, project));
         }
 
         private void makeComputerScienceSubCategory(CategoryEntity computerScience) {
@@ -352,16 +373,43 @@ public class InitDb {
             categoryRepository.save(createSubCategory("javascript", "JavaScript", 1L, frontend));
             categoryRepository.save(createSubCategory("typescript", "TypeScript", 1L, frontend));
             categoryRepository.save(createSubCategory("react", "React", 1L, frontend));
-            categoryRepository.save(createSubCategory("vue", "Vue", 1L, frontend));
+            categoryRepository.save(createSubCategoryWithImage("vue", "Vue", 1L, frontend, 4L));
             categoryRepository.save(createSubCategory("nextjs", "NextJs", 1L, frontend));
             categoryRepository.save(createSubCategory("svelte", "Svelte", 1L, frontend));
         }
+
+        private void saveImageFile() {
+            UploadFileEntity basicMemberImage = new UploadFileEntity("basic_member.png", "basic_member.png");
+            uploadFileRepository.save(basicMemberImage);
+            UploadFileEntity basicFrontEndImage = new UploadFileEntity("basic_frontend.jpg", "basic_frontend.jpg");
+            uploadFileRepository.save(basicFrontEndImage);
+            UploadFileEntity basicBackEndImage = new UploadFileEntity("basic_backend.png", "basic_backend.png");
+            uploadFileRepository.save(basicBackEndImage);
+            UploadFileEntity vuejsImage = new UploadFileEntity("vuejs.svg", "vuejs.svg");
+            uploadFileRepository.save(vuejsImage);
+            UploadFileEntity figmaImage = new UploadFileEntity("figma.svg", "figma.svg");
+            uploadFileRepository.save(figmaImage);
+        }
+
 
         private CategoryEntity createSubCategory(String key, String value, Long level, CategoryEntity parent) {
             CategoryEntity subCategory = CategoryEntity.builder()
                     .key(key)
                     .value(value)
                     .categoryLevel(level)
+                    .build();
+            subCategory.addParentCategory(parent);
+            return subCategory;
+        }
+
+        private CategoryEntity createSubCategoryWithImage(String key, String value, Long level, CategoryEntity parent, Long imageSequence) {
+            UploadFileEntity imageFile = uploadFileRepository.findById(imageSequence)
+                    .orElseThrow(UploadFileNotFound::new);
+            CategoryEntity subCategory = CategoryEntity.builder()
+                    .key(key)
+                    .value(value)
+                    .categoryLevel(level)
+                    .imageFile(imageFile)
                     .build();
             subCategory.addParentCategory(parent);
             return subCategory;

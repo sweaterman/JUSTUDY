@@ -16,7 +16,6 @@ import com.justudy.backend.study.dto.request.StudyEdit;
 import com.justudy.backend.study.dto.request.StudyFrequencyCreate;
 import com.justudy.backend.study.dto.request.StudyMemberCreate;
 import com.justudy.backend.study.dto.response.StudyDetailResponse;
-import com.justudy.backend.study.dto.response.StudySearchResponse;
 import com.justudy.backend.study.repository.StudyFrequencyRepository;
 import com.justudy.backend.study.repository.StudyMemberRepository;
 import com.justudy.backend.study.repository.StudyRepository;
@@ -244,16 +243,14 @@ class StudyServiceTest {
         return StudyEdit
                 .builder()
                 .sequence(id)
-                .member(null)
-                .resume(null)
                 .frequency(studyFrequencyCreates)
                 .bottomCategory("java")
                 .name("test study2")
-                .leaderSeq(findMember.getSequence())
+//                .leaderSeq(findMember.getSequence())
                 .introduction("소개입니당2")
                 .population(10)
                 .level("초보")
-                .onlineOffline("온라인")
+                .meeting("온라인")
                 .isOpen(true)
                 .github("git")
                 .notion("notiono")
