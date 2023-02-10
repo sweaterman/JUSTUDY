@@ -32,11 +32,6 @@ public class StudyResponse {
 
 
     public static StudyResponse makeBuilder(StudyEntity entity) {
-        log.info("슬라이드5 {}",entity.getStudyMembers().size());
-        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info1 : {}", entity.getLeaderSeq()));
-        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info2 : {}", studyMember.getMember().getSequence()));
-        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info3 : {}", studyMember.getMember().getNickname()));
-
         String leader = entity.getStudyMembers()
                 .stream()
                 .filter(studyMemberEntity -> entity.getLeaderSeq().longValue() == studyMemberEntity.getMember().getSequence().longValue())
