@@ -164,12 +164,12 @@ public class MemberServiceTest {
         UploadFileEntity oldImageFile = new UploadFileEntity("test", "testUuid");
         savedMember.changeImage(oldImageFile);
 
-        CategoryEntity backend = new CategoryEntity("backend", "백엔드", 0L);
-        CategoryEntity java = new CategoryEntity("java", "Java", 1L);
+        CategoryEntity backend = new CategoryEntity("backend", "백엔드", 0L, null);
+        CategoryEntity java = new CategoryEntity("java", "Java", 1L, null);
         java.addParentCategory(backend);
-        CategoryEntity spring = new CategoryEntity("spring", "Spring", 1L);
+        CategoryEntity spring = new CategoryEntity("spring", "Spring", 1L, null);
         spring.addParentCategory(backend);
-        CategoryEntity python = new CategoryEntity("python", "Python", 1L);
+        CategoryEntity python = new CategoryEntity("python", "Python", 1L, null);
         python.addParentCategory(backend);
 
         BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
@@ -217,12 +217,12 @@ public class MemberServiceTest {
         UploadFileEntity oldImageFile = new UploadFileEntity("test", "testUuid");
         savedMember.changeImage(oldImageFile);
 
-        CategoryEntity backend = new CategoryEntity("backend", "백엔드", 0L);
-        CategoryEntity java = new CategoryEntity("java", "Java", 1L);
+        CategoryEntity backend = new CategoryEntity("backend", "백엔드", 0L, null);
+        CategoryEntity java = new CategoryEntity("java", "Java", 1L, null);
         java.addParentCategory(backend);
-        CategoryEntity spring = new CategoryEntity("spring", "Spring", 1L);
+        CategoryEntity spring = new CategoryEntity("spring", "Spring", 1L, null);
         spring.addParentCategory(backend);
-        CategoryEntity python = new CategoryEntity("python", "Python", 1L);
+        CategoryEntity python = new CategoryEntity("python", "Python", 1L, null);
         python.addParentCategory(backend);
 
         BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
@@ -276,12 +276,12 @@ public class MemberServiceTest {
         UploadFileEntity oldImageFile = new UploadFileEntity("test", "testUuid");
         savedMember.changeImage(oldImageFile);
 
-        CategoryEntity backend = new CategoryEntity("backend", "백엔드", 0L);
-        CategoryEntity java = new CategoryEntity("java", "Java", 1L);
+        CategoryEntity backend = new CategoryEntity("backend", "백엔드", 0L, null);
+        CategoryEntity java = new CategoryEntity("java", "Java", 1L, null);
         java.addParentCategory(backend);
-        CategoryEntity spring = new CategoryEntity("spring", "Spring", 1L);
+        CategoryEntity spring = new CategoryEntity("spring", "Spring", 1L, null);
         spring.addParentCategory(backend);
-        CategoryEntity python = new CategoryEntity("python", "Python", 1L);
+        CategoryEntity python = new CategoryEntity("python", "Python", 1L, null);
         python.addParentCategory(backend);
 
         BDDMockito.given(memberRepository.findBySequenceWithJoin(1L))
