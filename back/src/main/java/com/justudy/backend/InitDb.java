@@ -44,7 +44,7 @@ public class InitDb {
 
     private final InitService initService;
 
-    private static MemberCreate makeMemberCreate(int number) {
+    private static MemberCreate makeMemberCreate(int number, String[] category) {
         MemberCreate request = MemberCreate.builder()
                 .userId("test" + number)
                 .password("1234")
@@ -52,8 +52,9 @@ public class InitDb {
                 .username("테스트" + number)
                 .nickname("봇" + number)
                 .region("SEOUL")
-                .category(new String[]{"Java", "Spring"})
+                .category(category)
                 .ssafyId("08" + number)
+                .mmId("mmTest" + number)
                 .phone(String.valueOf(number))
                 .email("testEmail" + number + "@ssafy.com")
                 .build();
@@ -89,17 +90,15 @@ public class InitDb {
 
 
         public void init() throws ParseException {
-            saveImageFile();
-            saveCategory();
             saveMember();
             saveCommunity();
             saveStudy();
-            saveStudyFrequency();
-            saveStudyMember();
-            saveStudyRoom();
-            saveTimer();
-            saveRank();
-            saveTest1();
+//            saveStudyFrequency();
+//            saveStudyMember();
+//            saveStudyRoom();
+//            saveTimer();
+//            saveRank();
+//            saveTest1();
         }
 
         private void saveTest1() {
@@ -198,30 +197,42 @@ public class InitDb {
         }
 
         private void saveCommunity() {
-            CategoryEntity category = categoryRepository.findByKey("backend")
+            CategoryEntity backend = categoryRepository.findByKey("backend")
                     .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
-
-            for (int i = 0; i < 10; i++) {
-                long memberSequence = 50 + (3 * i);
+            for (int i = 1; i <= 10; i++) {
+                long memberSequence = i;
                 MemberEntity findMember = memberService.getMember(memberSequence);
                 for (int count = 1; count <= 5; count++)
-                    communityService.createCommunity(makeBoard(count), findMember, category);
+                    communityService.createCommunity(makeBoard(count), findMember, backend);
+            }
+
+            CategoryEntity frontend = categoryRepository.findByKey("frontend")
+                    .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
+            for (int i = 11; i <= 20; i++) {
+                long memberSequence = i;
+                MemberEntity findMember = memberService.getMember(memberSequence);
+                for (int count = 1; count <= 5; count++)
+                    communityService.createCommunity(makeBoard(count), findMember, frontend);
             }
         }
 
         private CommunityCreate makeBoard(int number) {
             return CommunityCreate.builder()
-                    .title("제목 " + number)
-                    .content("내용 " + number)
+                    .title("제목" + number)
+                    .content("내용" + number)
+                    .isHighlighted(false)
                     .build();
         }
 
         private void saveMember() {
             UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
                     .orElseThrow(UploadFileNotFound::new);
-
             for (int i = 1; i <= 10; i++) {
-                MemberCreate request = makeMemberCreate(i);
+                MemberCreate request = makeMemberCreate(i, new String[]{"Java", "Spring"});
+                memberService.saveMember(request, basicImage);
+            }
+            for (int i = 11; i <= 20; i++) {
+                MemberCreate request = makeMemberCreate(i, new String[]{"React", "Vue"});
                 memberService.saveMember(request, basicImage);
             }
         }
@@ -256,135 +267,6 @@ public class InitDb {
         public void saveStudyRoom() {
             for (long i = 130; i < 230; i += 2)
                 studyRoomService.saveStudyRoom(i);
-        }
-
-        private void saveImageFile() {
-            UploadFileEntity basicMemberImage = new UploadFileEntity("basic_member.png", "basic_member.png");
-            uploadFileRepository.save(basicMemberImage);
-            UploadFileEntity basicFrontEndImage = new UploadFileEntity("basic_frontend.jpg", "basic_frontend.jpg");
-            uploadFileRepository.save(basicFrontEndImage);
-            UploadFileEntity basicBackEndImage = new UploadFileEntity("basic_backend.png", "basic_backend.png");
-            uploadFileRepository.save(basicBackEndImage);
-            UploadFileEntity vuejsImage = new UploadFileEntity("vuejs.svg", "vuejs.png");
-            uploadFileRepository.save(vuejsImage);
-            UploadFileEntity figmaImage = new UploadFileEntity("figma.svg", "figma.png");
-            uploadFileRepository.save(figmaImage);
-        }
-
-        private void saveCategory() {
-            CategoryEntity frontend = createMainCategory("frontend", "FRONT-END", 0L);
-            categoryRepository.save(frontend);
-            CategoryEntity backend = createMainCategory("backend", "BACK-END", 0L);
-            categoryRepository.save(backend);
-            CategoryEntity infra = createMainCategory("infra", "INFRA", 0L);
-            categoryRepository.save(infra);
-            CategoryEntity mobile = createMainCategory("mobile", "MOBILE", 0L);
-            categoryRepository.save(mobile);
-            CategoryEntity algorithm = createMainCategory("algorithm", "ALGORITHM", 0L);
-            categoryRepository.save(algorithm);
-            CategoryEntity computerScience = createMainCategory("computer-science", "CS", 0L);
-            categoryRepository.save(computerScience);
-            CategoryEntity project = createMainCategory("project", "PROJECT", 0L);
-            categoryRepository.save(project);
-            CategoryEntity etc = createMainCategory("etc", "ETC", 0L);
-            categoryRepository.save(etc);
-
-            makeFrontSubCategory(frontend);
-            makeBackSubCategory(backend);
-            makeInfraSubCategory(infra);
-            makeMobileSubCategory(mobile);
-            makeAlgorithmSubCategory(algorithm);
-            makeComputerScienceSubCategory(computerScience);
-            makeEctSubCategory(etc);
-        }
-
-        private void makeEctSubCategory(CategoryEntity etc) {
-            categoryRepository.save(createSubCategory("git", "Git", 1L, etc));
-            categoryRepository.save(createSubCategoryWithImage("figma", "Figma", 1L, etc, 5L));
-        }
-
-        private void makeComputerScienceSubCategory(CategoryEntity computerScience) {
-            categoryRepository.save(createSubCategory("dataStructure", "자료구조", 1L, computerScience));
-            categoryRepository.save(createSubCategory("operatingSystem", "운영체제", 1L, computerScience));
-            categoryRepository.save(createSubCategory("network", "네트워크", 1L, computerScience));
-            categoryRepository.save(createSubCategory("computer-architecture", "컴퓨터구조", 1L, computerScience));
-        }
-
-        private void makeAlgorithmSubCategory(CategoryEntity algorithm) {
-            categoryRepository.save(createSubCategory("bronze", "Bronze", 1L, algorithm));
-            categoryRepository.save(createSubCategory("silver", "Silver", 1L, algorithm));
-            categoryRepository.save(createSubCategory("gold", "Gold", 1L, algorithm));
-            categoryRepository.save(createSubCategory("platinum", "Platinum", 1L, algorithm));
-        }
-
-        private void makeMobileSubCategory(CategoryEntity mobile) {
-            categoryRepository.save(createSubCategory("flutter", "Flutter", 1L, mobile));
-            categoryRepository.save(createSubCategory("swift", "Swift", 1L, mobile));
-            categoryRepository.save(createSubCategory("kotlinMobile", "Kotlin", 1L, mobile));
-            categoryRepository.save(createSubCategory("react-native", "ReactNative", 1L, mobile));
-//            categoryRepository.save(createSubCategory("unity", "Unity", 1L, mobile));
-        }
-
-        private void makeBackSubCategory(CategoryEntity backend) {
-            categoryRepository.save(createSubCategory("java", "Java", 1L, backend));
-            categoryRepository.save(createSubCategory("spring", "Spring", 1L, backend));
-            categoryRepository.save(createSubCategory("nodejs", "NodeJs", 1L, backend));
-            categoryRepository.save(createSubCategory("nestjs", "NestJs", 1L, backend));
-            categoryRepository.save(createSubCategory("go", "Go", 1L, backend));
-            categoryRepository.save(createSubCategory("kotlinBackend", "Kotlin", 1L, backend));
-            categoryRepository.save(createSubCategory("express", "Express", 1L, backend));
-            categoryRepository.save(createSubCategory("python", "Python", 1L, backend));
-            categoryRepository.save(createSubCategory("django", "Django", 1L, backend));
-            categoryRepository.save(createSubCategory("php", "php", 1L, backend));
-            categoryRepository.save(createSubCategory("mysql", "MySql", 1L, backend));
-            categoryRepository.save(createSubCategory("mongodb", "MongoDB", 1L, backend));
-        }
-
-        private void makeInfraSubCategory(CategoryEntity infra) {
-            categoryRepository.save(createSubCategory("docker", "Docker", 1L, infra));
-            categoryRepository.save(createSubCategory("kubernetes", "Kubernetes", 1L, infra));
-            categoryRepository.save(createSubCategory("aws", "AWS", 1L, infra));
-            categoryRepository.save(createSubCategory("jenkins", "Jenkins", 1L, infra));
-        }
-
-        private void makeFrontSubCategory(CategoryEntity frontend) {
-            categoryRepository.save(createSubCategory("javascript", "JavaScript", 1L, frontend));
-            categoryRepository.save(createSubCategory("typescript", "TypeScript", 1L, frontend));
-            categoryRepository.save(createSubCategory("react", "React", 1L, frontend));
-            categoryRepository.save(createSubCategoryWithImage("vue", "Vue", 1L, frontend, 4L));
-            categoryRepository.save(createSubCategory("nextjs", "NextJs", 1L, frontend));
-            categoryRepository.save(createSubCategory("svelte", "Svelte", 1L, frontend));
-        }
-
-        private CategoryEntity createSubCategory(String key, String value, Long level, CategoryEntity parent) {
-            CategoryEntity subCategory = CategoryEntity.builder()
-                    .key(key)
-                    .value(value)
-                    .categoryLevel(level)
-                    .build();
-            subCategory.addParentCategory(parent);
-            return subCategory;
-        }
-
-        private CategoryEntity createSubCategoryWithImage(String key, String value, Long level, CategoryEntity parent, Long imageSequence) {
-            UploadFileEntity imageFile = uploadFileRepository.findById(imageSequence)
-                    .orElseThrow(UploadFileNotFound::new);
-            CategoryEntity subCategory = CategoryEntity.builder()
-                    .key(key)
-                    .value(value)
-                    .categoryLevel(level)
-                    .imageFile(imageFile)
-                    .build();
-            subCategory.addParentCategory(parent);
-            return subCategory;
-        }
-
-        private CategoryEntity createMainCategory(String key, String value, Long level) {
-            return CategoryEntity.builder()
-                    .key(key)
-                    .value(value)
-                    .categoryLevel(level)
-                    .build();
         }
     }
 }
