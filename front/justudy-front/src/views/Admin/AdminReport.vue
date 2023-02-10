@@ -20,9 +20,6 @@
                     </v-col>
 
                     <v-col cols="12" md="1" />
-                    <v-col cols="12" md="2" align="right">
-                        <v-btn color="yellow" @click="movetowrite" :style="{height: '50px', width: '200px', fontWeight: 'bold', fontSize: 'large'}">글작성</v-btn>
-                    </v-col>
                 </v-row>
             </v-col>
 
@@ -48,9 +45,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="item in contentlist" :key="item.id" @click="movetocontent(item.id)">
-                                <td>{{ item.writer }}</td>
-                                <td>{{ item.title }}</td>
+                            <tr v-for="(item, index) in contentlist" :key="item.id" @click="movetocontent(item.id)">
+                                <td>{{ index+1 }}</td>
+                                <td>{{ item.reporter }}</td>
+                                <td>{{ item.reported }}</td>
+                                <td>{{ item.reason }}</td>
+                                <td>{{ item.type }}</td>
+                                <td>{{ item.sequence }}</td>
                                 <td>{{ item.createdAt.split('T')[0] }}</td>
                                 <!-- Sequelize의 createdAt, updatedAt의 날짜 형식이 '2021-12-10T12:38:52.000Z' 이런 식이여서 
                                split('T')[0]을 통해 날짜만 표시 -->
@@ -102,7 +103,6 @@ export default {
         return {
             contentlist: [], // 현재 게시판과 페이지에 맞는 글 리스트들
             cnt: 0, // 현재 게시판의 총 글 개수
-            //신고자 피신고자 신고이유 종류
             searchoption: [
                 {key: 'reporter', value: '신고자'},
                 {key: 'reported', value: '피신고자'},
@@ -126,13 +126,12 @@ export default {
         // }
     },
     methods: {
-        async updateData(data, type, search) {
-            await this.$store.dispatch('moduleCommunity/getCommunityBoard', {number: this.$route.query.page, category: data, type: type, search: search});
-            this.Data = this.$store.state.moduleCommunity.CommunityBoard;
-            this.category = data;
+        async updateData(type, search) {
+            await this.$store.dispatch('moduleAdmin/getReportList', {number: this.$route.query.page, type: type, search: search});
+            this.contentlist = this.$store.state.moduleCommunity.CommunityBoard;
             this.type = this.searchoptionselected;
             this.search = this.searchkeyword;
-            this.cnt = this.Data.totalCount;
+            this.cnt = this.contentlist.totalCount;
         },
         movetomain() {
             window.location.href = 'admin/user';
