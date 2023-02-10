@@ -10,7 +10,7 @@
                         <div align="left" :style="{fontSize: 'xx-large'}">신고 관리</div>
                     </v-col>
                     <v-col cols="12" md="2" align="right">
-                        <v-select :items="searchoption" v-model="searchoptionselected" :style="{width: '150px'}" />
+                        <v-select :items="searchoption" item-text="value" item-value="key" v-model="searchoptionselected" label="항목선택" :style="{width: '150px'}" />
                     </v-col>
                     <v-col cols="12" md="4">
                         <v-text-field v-model="searchkeyword" dense outlined label="검색키워드" full-width />
@@ -40,10 +40,11 @@
                                 <td style="width: 10%; font-size: x-large">No</td>
                                 <td style="width: 10%; font-size: x-large">신고자</td>
                                 <td style="width: 10%; font-size: x-large">피신고자</td>
-                                <td style="width: 30%; font-size: x-large">신고이유</td>
+                                <td style="width: 25%; font-size: x-large">신고이유</td>
                                 <td style="width: 10%; font-size: x-large">종류</td>
                                 <td style="width: 10%; font-size: x-large">식별ID</td>
-                                <td style="width: 10%; font-size: x-large">신고시간</td>
+                                <td style="width: 15%; font-size: x-large">신고시간</td>
+                                <td style="width: 10%; font-size: x-large">바로가기</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -100,7 +101,17 @@ export default {
     data() {
         return {
             contentlist: [], // 현재 게시판과 페이지에 맞는 글 리스트들
-            cnt: 0 // 현재 게시판의 총 글 개수
+            cnt: 0, // 현재 게시판의 총 글 개수
+            //신고자 피신고자 신고이유 종류
+            searchoption: [
+                {key: 'reporter', value: '신고자'},
+                {key: 'reported', value: '피신고자'},
+                {key: 'reason', value: '신고이유'},
+                {key: 'type', value: '종류'}
+            ],
+            searchoptionselected: '',
+            searchkeyword: '',
+            type: '',
         };
     },
     computed: {
@@ -115,24 +126,16 @@ export default {
         // }
     },
     methods: {
-        // 페이지 이동시 params로 게시판 구분, query로 페이지 구분
-        movetoboard1() {
-            window.location.href = 'admin/user/1/?page=1';
-        },
-        movetoboard2() {
-            window.location.href = 'admin/user/1/?page=1';
-        },
-        movetoboard3() {
-            window.location.href = 'admin/user/1/?page=1';
+        async updateData(data, type, search) {
+            await this.$store.dispatch('moduleCommunity/getCommunityBoard', {number: this.$route.query.page, category: data, type: type, search: search});
+            this.Data = this.$store.state.moduleCommunity.CommunityBoard;
+            this.category = data;
+            this.type = this.searchoptionselected;
+            this.search = this.searchkeyword;
+            this.cnt = this.Data.totalCount;
         },
         movetomain() {
             window.location.href = 'admin/user';
-        },
-        movetowrite() {
-            window.location.href = 'admin/user/1/write';
-            // window.location.href = window.location.pathname + 'write';
-            // window.location.pathname이 현재 주소를 의미
-            // 여기다 write를 붙여주면 글 작성 페이지로 라우팅 되게 됨
         },
         movetocontent(id) {
             // 클릭된 글의 id를 받아와야 라우팅할때 보낼 수 있음
