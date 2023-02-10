@@ -85,11 +85,6 @@ public class CommunityEntity {
         this.viewCount += 1;
     }
 
-    public void mergeLoveCountWithWeek() {
-        this.loveCount += weekLoveCount;
-        weekLoveCount = 0;
-    }
-
     public void addWeekLoveCount() {
         this.weekLoveCount += 1;
     }
