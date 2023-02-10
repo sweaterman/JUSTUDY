@@ -16,7 +16,7 @@
                         <!-- 바로 참여하기 -->
                         <v-col cols="6" align="center">
                             <!-- <v-btn v-if="!checkName" @click="ntc" :style="{color: 'crimson'}"> -->
-                            <v-btn v-if="!onAir" disabled :style="{color: 'black'}">
+                            <v-btn v-if="!studyInfo.onAir" disabled :style="{color: 'black'}">
                                 <v-col>
                                     <span class="material-icons-outlined"> radio_button_checked </span>
                                 </v-col>
@@ -24,7 +24,7 @@
                                     <span color="white">지금 참여하기</span>
                                 </v-col>
                             </v-btn>
-                            <v-btn v-if="onAir" @click="onAirClicked('on')" :style="{color: 'crimson'}">
+                            <v-btn v-if="studyInfo.onAir" @click="onAirClicked('on')" :style="{color: 'crimson'}">
                                 <v-col>
                                     <span class="material-icons-outlined"> radio_button_checked </span>
                                 </v-col>
@@ -256,10 +256,12 @@ export default {
                 개설 동기: 리액트를 너무 공부하고 싶었어요.. \n
                 주의사항: 노쇼 금지! `,
                 isLeader: false,
-                isMember: true
+                isMember: true,
+                onAir: true, // false 로 변경해야
+                roomSequence: '1'
             },
-            onAir: true, // false 로 변경해야
-            person: '', // 변경 필수
+
+            person: '', // 변경 필수 (내닉네임)
             room: '1', // 변경 필수
 
             roomOpen: false, //스터디화상룸이 열려있는지 확인하는 변수
@@ -276,9 +278,10 @@ export default {
             window.location.href = `/study/${this.studyInfo.sequence}/edit`;
         },
         onAirClicked() {
-            this.onAir = !this.onAir;
+            this.studyInfo.onAir = !this.studyInfo.onAir;
             localStorage.setItem('studyRoomPersonName', this.person);
-            localStorage.setItem('studyRoomRoomName', this.room);
+            // this.person 변경 //////////////////////////////////////////////////////////////////
+            localStorage.setItem('studyRoomRoomName', this.studyInfo.roomSequence);
             this.$router.push('/meeting/room');
         }
     }
