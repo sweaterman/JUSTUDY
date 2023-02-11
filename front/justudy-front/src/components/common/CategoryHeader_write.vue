@@ -39,7 +39,6 @@ export default {
         return {
             tab: '',
             top_categories: [
-                ['All', 'all'],
                 ['Front-end', 'frontend'],
                 ['Back-end', 'backend'],
                 ['Infra', 'infra'],
