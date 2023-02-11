@@ -1,9 +1,9 @@
 <template>
-    <v-app>
+    <v-container>
         <CategoryHeader @click="updateData" />
 
         <!-- 자유게시판 / 검색 기능 / 글쓰기 -->
-        <v-row>
+        <v-row :style="{marginTop: '1%'}">
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <v-row>
@@ -30,7 +30,7 @@
         </v-row>
 
         <!-- 글목록 -->
-        <v-row :style="{marginTop: '1%'}">
+        <v-row>
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <v-row>
@@ -106,7 +106,7 @@
             </v-col>
             <v-col cols="12" md="1" />
         </v-row>
-    </v-app>
+    </v-container>
 </template>
 <script>
 import CategoryHeader from '../../components/common/CategoryHeader.vue';

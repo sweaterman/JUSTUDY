@@ -10,7 +10,7 @@
                         </a>
                     </v-col>
                     <v-col class="nav" @click="moveTo('/study/search')" cols="3" md="2"><div class="hover">스터디</div></v-col>
-                    <v-col class="nav" @click="moveTo('/community?page=1&category=backend')" cols="3" md="2"><div class="hover">커뮤니티</div></v-col>
+                    <v-col class="nav" @click="moveTo('/community?page=1&category=all')" cols="3" md="2"><div class="hover">커뮤니티</div></v-col>
                     <v-col class="nav" @click="moveTo('/timer/study-start')" cols="3" md="2"><div class="hover">타이머</div></v-col>
                     <v-col class="nav" @click="moveTo('/ranking/my-ranking')" cols="3" md="2"><div class="hover">랭킹</div></v-col>
                     <v-col class="nav" @click="moveTo('/meeting')" cols="3" md="2"><div class="hover">**RTC 임시**</div></v-col>
