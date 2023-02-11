@@ -1,34 +1,36 @@
 <template>
-    <v-app>
+    <v-container>
         <v-card>
             <v-row>
                 <v-col cols="12" md="10">
                     <v-textarea v-model="content" label="생성"></v-textarea>
+                </v-col>
+                <v-col cols="12" md="2">
                     <v-btn @click="createComment" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">생성</v-btn>
+                    <div :key="item.sequence" v-for="(item, index) in this.comments">
+                        <v-row :style="`background-color: ${getColor(item.parentSeq)}`">
+                            <v-col>
+                                {{ item.parentSeq != 0 ? 'ㄴㄴㄴ' : '' }}
+                            </v-col>
+                            <v-col>
+                                {{ item.memberSeq }}
+                                <v-textarea v-model="item.content" label="내용"></v-textarea>
+                                {{ item.createdTime }}
+                                <br />
+                                <v-btn v-if="item.isWriter" @click="updateComment(item)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정</v-btn>
+                                <v-btn v-if="item.isWriter" @click="deleteComment(item.sequence)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">삭제</v-btn>
+                            </v-col>
+                            <v-col v-if="item.parentSeq == 0">
+                                <v-textarea v-model="item.inputValue" label="답글생성"></v-textarea>
+
+                                <v-btn @click="createReply(item.sequence, index)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">답글생성</v-btn>
+                            </v-col>
+                        </v-row>
+                    </div>
                 </v-col>
             </v-row>
         </v-card>
-        <div :key="item.sequence" v-for="(item, index) in this.comments">
-            <v-row :style="`background-color: ${getColor(item.parentSeq)}`">
-                <v-col>
-                    {{ item.parentSeq != 0 ? 'ㄴㄴㄴ' : '' }}
-                </v-col>
-                <v-col>
-                    {{ item.memberSeq }}
-                    <v-textarea v-model="item.content" label="내용"></v-textarea>
-                    {{ item.createdTime }}
-                    <br />
-                    <v-btn v-if="item.isWriter" @click="updateComment(item)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정</v-btn>
-                    <v-btn v-if="item.isWriter" @click="deleteComment(item.sequence)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">삭제</v-btn>
-                </v-col>
-                <v-col v-if="item.parentSeq == 0">
-                    <v-textarea v-model="item.inputValue" label="답글생성"></v-textarea>
-
-                    <v-btn @click="createReply(item.sequence, index)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">답글생성</v-btn>
-                </v-col>
-            </v-row>
-        </div>
-    </v-app>
+    </v-container>
 </template>
 <script>
 export default {

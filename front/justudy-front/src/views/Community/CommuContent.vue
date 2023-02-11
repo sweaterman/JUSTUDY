@@ -7,11 +7,9 @@
                 <v-form ref="form" @submit.prevent="onSubmitForm">
                     <!-- 제목 -->
                     <v-row>
-                        <!-- <v-btn depressed color="white" :style="{height: '65px', width: '165px', fontWeight: 'bold', fontSize: 'large', marginTop: '20%'}">글쓴이</v-btn> -->
                         <div style="margin-left: 9%; margin-top: 1%">
                             <h1>{{ Data.title }}</h1>
                         </div>
-                        <!-- <v-text-field v-model="title" solo readonly depressed outlined label="제목" style="width: 80%; margin-right: 10%; margin-top: 0.5%"></v-text-field> -->
                     </v-row>
                     <v-row>
                         <hr style="margin-left: 9%; margin-top: 1%; width: 100%" />
@@ -22,14 +20,11 @@
                         <div style="width: 300px; margin-left: 9%; margin-top: 1.7%; margin-bottom: 0.5%">
                             <h3>작성자 : {{ Data.nickname }}</h3>
                         </div>
-                        <!-- <v-text-field v-model="writer" solo readonly outlined depressed label="글쓴이" style="width: 80%; height: 20px; margin-right: 10%; margin-top: 4%"></v-text-field> -->
-                        <!-- <v-btn color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '3%', marginLeft: '10%'}"></v-btn> -->
                     </v-row>
 
                     <!-- 작성일 -->
                     <v-row>
                         <div style="width: 300px; margin-left: 9%; padding-top: 4px; padding-bottom: 25px">작성일 : {{ Data.createdTime }}</div>
-                        <!-- <v-text-field v-model="createdAt" solo readonly depressed outlined label="작성일" style="width: 80%; margin-right: 15%"></v-text-field> -->
                     </v-row>
                     <!-- 수정일 기능 -->
                     <!-- <v-row>
@@ -73,9 +68,7 @@
         <v-row>
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
-                <v-row>
-                    <CommuComment :contentId="parseInt(this.$route.params.id)" />
-                </v-row>
+                <CommuComment :contentId="parseInt(this.$route.params.id)" />
             </v-col>
             <v-col cols="12" md="2" />
         </v-row>
