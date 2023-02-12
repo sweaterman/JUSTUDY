@@ -1,7 +1,7 @@
 package com.justudy.backend.member.repository;
 
+import com.justudy.backend.login.dto.response.LoginResponse;
 import com.justudy.backend.member.domain.MemberEntity;
-import com.querydsl.core.Tuple;
 
 import java.util.Optional;
 
@@ -9,7 +9,7 @@ public interface MemberRepositoryCustom {
 
     Optional<MemberEntity> findBySequenceWithJoin(Long sequence);
 
-    Optional<Tuple> findPasswordByUserId(String userId);
+    Optional<LoginResponse> findLoginInfoByUserId(String userId);
 
     Optional<String> findUserId(String userId);
 

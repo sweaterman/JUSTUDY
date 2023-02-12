@@ -8,17 +8,37 @@
                         <div class="singleStudy">
                             <v-row justify="center">
                                 <div v-if="type != 'apply'">
-                                    <img class="hover" style="width: 80%" :src="`${port}images/${study.imageSequence}`" alt="study_image" @click="moveToStudy(study.sequence)" />
+                                    <img
+                                        class="hover"
+                                        style="width: 80%"
+                                        :src="`${port}images/${study.imageSequence}`"
+                                        alt="study_image"
+                                        @click="moveToStudy(study.sequence)"
+                                    />
                                 </div>
 
                                 <div v-if="type == 'apply'" class="container">
-                                    <img class="hover" style="width: 80%" :src="`${port}images/${study.imageSequence}`" alt="study_image" @click="moveToStudy(study.sequence)" />
-                                    <v-btn rounded color="error" class="cancleApply" @click="deleteApply('open', study.sequence)">X</v-btn>
+                                    <img
+                                        class="hover"
+                                        style="width: 80%"
+                                        :src="`${port}images/${study.imageSequence}`"
+                                        alt="study_image"
+                                        @click="moveToStudy(study.sequence)"
+                                    />
+                                    <v-btn
+                                        rounded
+                                        color="error"
+                                        class="cancleApply"
+                                        @click="deleteApply('open', study.sequence)"
+                                    >X</v-btn>
                                 </div>
                             </v-row>
                             <v-row style="margin-bottom: 5px">
                                 <v-col cols="12">
-                                    <h3 class="hover" @click="moveToStudy(study.sequence)">{{ study.name }}</h3>
+                                    <h3
+                                        class="hover"
+                                        @click="moveToStudy(study.sequence)"
+                                    >{{ study.name }}</h3>
                                 </v-col>
                             </v-row>
 
@@ -26,31 +46,34 @@
                                 <v-col cols="4">
                                     <v-subheader style="height: fit-content; padding: 0px">모집 현황</v-subheader>
                                 </v-col>
-                                <v-col cols="8" v-if="checkPersonnel(study.member.length, study.population)" style="color: #ff0000; font-weight: bold">
-                                    {{ study.member.length }} / {{ study.population }}
-                                </v-col>
-                                <v-col cols="8" v-if="!checkPersonnel(study.member.length, study.population)" style="color: #3edf23; font-weight: bold">
-                                    {{ study.member.length }} / {{ study.population }}
-                                </v-col>
+                                <v-col
+                                    cols="8"
+                                    v-if="checkPersonnel(study.member.length, study.population)"
+                                    style="color: #ff0000; font-weight: bold"
+                                >{{ study.member.length }} / {{ study.population }}</v-col>
+                                <v-col
+                                    cols="8"
+                                    v-if="!checkPersonnel(study.member.length, study.population)"
+                                    style="color: #3edf23; font-weight: bold"
+                                >{{ study.member.length }} / {{ study.population }}</v-col>
                             </v-row>
                             <v-row no-gutters align="center">
                                 <v-col cols="4">
                                     <v-subheader style="height: fit-content; padding: 0px">시작 예정일</v-subheader>
                                 </v-col>
-                                <v-col cols="8">
-                                    {{ study.start_time }}
-                                </v-col>
+                                <v-col cols="8">{{ study.startTime }}</v-col>
                             </v-row>
                             <v-row no-gutters align="center">
                                 <v-col cols="4">
                                     <v-subheader style="height: fit-content; padding: 0px">스터디장</v-subheader>
                                 </v-col>
-                                <v-col cols="8">
-                                    {{ study.leader }}
-                                </v-col>
+                                <v-col cols="8">{{ study.leader }}</v-col>
                             </v-row>
                             <v-row dense>
-                                <v-chip class="chip" color="yellow lighten-4">{{ study.frequency.map(row => row.week).join() }}</v-chip>
+                                <v-chip
+                                    class="chip"
+                                    color="yellow lighten-4"
+                                >{{ study.frequency.map(row => row.week).join() }}</v-chip>
                                 <v-chip class="chip" color="yellow lighten-4">{{ study.meeting }}</v-chip>
                                 <v-chip class="chip" color="yellow lighten-4">{{ study.level }}</v-chip>
                             </v-row>
@@ -63,13 +86,13 @@
         <!-- 지원취소 모달 -->
         <v-dialog v-model="deleteModal" width="500">
             <v-card>
-                <v-card-title class="text-h5 grey lighten-2"> 지원 취소 </v-card-title>
-                <v-card-text> 지원을 취소하시면, 스터디장에게 간 메세지가 사라집니다. 정말로 취소하시겠습니까? </v-card-text>
+                <v-card-title class="text-h5 grey lighten-2">지원 취소</v-card-title>
+                <v-card-text>지원을 취소하시면, 스터디장에게 간 메세지가 사라집니다. 정말로 취소하시겠습니까?</v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="deleteApply('T', 0)"> 확인 </v-btn>
-                    <v-btn color="primary" text @click="deleteApply('F', 0)"> 취소 </v-btn>
+                    <v-btn color="primary" text @click="deleteApply('T', 0)">확인</v-btn>
+                    <v-btn color="primary" text @click="deleteApply('F', 0)">취소</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>

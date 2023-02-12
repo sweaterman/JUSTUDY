@@ -17,9 +17,6 @@ import javax.servlet.http.HttpSession;
 @RequiredArgsConstructor
 public class LoginCheckInterceptor implements HandlerInterceptor {
 
-    @Value("${vue.loginUrl}")
-    private String loginUrl;
-
     private final MemberRepository memberRepository;
 
     @Override
@@ -37,10 +34,8 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             log.debug("If request method is options, return true");
             return true;
         }
-
-        response.sendRedirect(loginUrl);
         log.info("LoginCheckInterceptor return false");
-        return false;
+        throw new NotLogin();
     }
 
     private boolean isLoggedIn(Long loginSequence) {
