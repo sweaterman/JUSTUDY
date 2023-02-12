@@ -51,7 +51,7 @@
                                         :fontSize="32"
                                         content="LV"
                                         standard="px"
-                                        :src="require('@/assets/banner.jpg')"
+                                        :src="`${port}images/${rankStudyYesterday[0].img}`"
                                         style="padding: 5%"
                                         justify="center"
                                         align="center"
@@ -84,7 +84,7 @@
                         <v-col cols="12" md="8" justify="center" align="center" :style="{paddingLeft: '5%'}">
                             <v-simple-table style="width: 1500px">
                                 <tbody>
-                                    <tr :key="index" v-for="(value, index) in data">
+                                    <tr :key="index" v-for="(value, index) in rankStudyYesterday">
                                         <td style="width: 10px">
                                             <div class="line_limit">
                                                 {{ value.order }}
@@ -138,7 +138,7 @@
                                         :fontSize="32"
                                         content="LV"
                                         standard="px"
-                                        :src="require('@/assets/banner.jpg')"
+                                        :src="`${port}images/${rankStudyWeek[0].img}`"
                                         style="padding: 5%"
                                         justify="center"
                                         align="center"
@@ -171,7 +171,7 @@
                         <v-col cols="12" md="8" justify="center" align="center" :style="{paddingLeft: '5%'}">
                             <v-simple-table style="width: 1500px">
                                 <tbody>
-                                    <tr :key="index" v-for="(value, index) in data">
+                                    <tr :key="index" v-for="(value, index) in rankStudyWeek">
                                         <td style="width: 10px">
                                             <div class="line_limit">
                                                 {{ value.order }}
@@ -224,7 +224,7 @@
                                         :fontSize="32"
                                         content="LV"
                                         standard="px"
-                                        :src="require('@/assets/banner.jpg')"
+                                        :src="`${port}images/${rankStudyMonth[0].img}`"
                                         style="padding: 5%"
                                         justify="center"
                                         align="center"
@@ -236,7 +236,7 @@
                                 <v-col cols="12" md="8" align="left">
                                     <div :style="{fontWeight: 'bold', fontSize: 'large'}">
                                         <h1>
-                                            <span style="color: #ffb000" class="line_limit">{{ data[0].nickName }}</span>
+                                            <span style="color: #ffb000" class="line_limit">{{ rankStudyMonth[0].nickName }}</span>
                                         </h1>
                                     </div>
                                 </v-col>
@@ -249,7 +249,7 @@
                                 </v-col>
                             </v-row>
                             <v-row justify="center" align="center" :style="{marginTop: '-12%'}">
-                                <DigitalClock :allTime="340" :fontSize="100" />
+                                <DigitalClock :allTime="rankStudyMonth[0].time" :fontSize="100" />
                             </v-row>
                         </v-col>
 
@@ -257,7 +257,7 @@
                         <v-col cols="12" md="8" justify="center" align="center" :style="{paddingLeft: '5%'}">
                             <v-simple-table style="width: 1500px">
                                 <tbody>
-                                    <tr :key="index" v-for="(value, index) in data">
+                                    <tr :key="index" v-for="(value, index) in rankStudyMonth">
                                         <td style="width: 10px">
                                             <div class="line_limit">
                                                 {{ value.order }}
@@ -283,6 +283,7 @@
     </v-app>
 </template>
 <script>
+import port from '@/store/port';
 import MyRankingData from '@/data/MyRankingData';
 import ProfilePicture from '@/components/mypage/ProfilePicture.vue';
 import DigitalClock from '@/components/timer/DigitalClock.vue';
@@ -294,7 +295,8 @@ export default {
             data: MyRankingData,
             rankStudyYesterday: [],
             rankStudyWeek: [],
-            rankStudyMonth: []
+            rankStudyMonth: [],
+            port: port
         };
     },
 
