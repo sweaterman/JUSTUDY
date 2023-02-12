@@ -66,13 +66,15 @@
             <v-col cols="12" md="8">
                 <v-row>
                     <v-col cols="12" md="1">
-                        <v-btn @click="moveback" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">취소</v-btn>
+                        <v-btn outlined text @click="moveback">
+                            <span class="material-icons-outlined"> arrow_back </span>
+                        </v-btn>
                     </v-col>
                     <v-col cols="12" md="9"></v-col>
                     <v-col cols="12" md="2" align="right">
-                        <v-btn :disabled="board.title.length >= 30 || board.title.length < 1" @click="write()" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}"
-                            >작성</v-btn
-                        >
+                        <v-btn :style="{color: 'green'}" outlined text :disabled="board.title.length >= 30 || board.title.length < 1" @click="write()">
+                            <span class="material-icons-outlined"> done </span>
+                        </v-btn>
                     </v-col>
                 </v-row>
             </v-col>

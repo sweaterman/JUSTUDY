@@ -21,8 +21,11 @@
                     </v-col>
 
                     <v-col cols="12" md="1" />
-                    <v-col cols="12" md="2" align="right">
-                        <v-btn color="yellow" @click="movetowrite()" :style="{height: '50px', width: '200px', fontWeight: 'bold', fontSize: 'large'}">글작성</v-btn>
+                    <v-col cols="12" md="2" justify="center" align="center">
+                        <v-btn text @click="movetowrite()" :style="{fontSize: 'large'}">
+                            <span class="material-icons-outlined"> edit_note </span>
+                            <div>글쓰기</div>
+                        </v-btn>
                     </v-col>
                 </v-row>
             </v-col>
@@ -76,16 +79,16 @@
         </v-row>
 
         <!-- 페이지네이션 -->
-        <v-row style="padding-top: 10%">
+        <v-row>
             <v-col cols="12" md="1" />
             <v-col cols="12" md="10">
                 <v-row>
                     <v-col cols="12" md="4" />
 
                     <v-col cols="12" md="1" align="right">
-                        <v-btn width="5px" @click="movetopreviouspage">
+                        <v-btn outlined text width="5px" @click="movetopreviouspage">
                             <!-- 이전페이지로 이동 -->
-                            <v-icon color="black" small> mdi-arrow-left-bold-outline </v-icon>
+                            <span class="material-icons-outlined"> arrow_back </span>
                         </v-btn>
                     </v-col>
 
@@ -95,9 +98,9 @@
                     </v-col>
 
                     <v-col cols="12" md="1" align="left">
-                        <v-btn width="5px" @click="movetonextpage">
+                        <v-btn outlined text width="5px" @click="movetonextpage">
                             <!-- 다음페이지로 이동 -->
-                            <v-icon color="black" small> mdi-arrow-right-bold-outline </v-icon>
+                            <span class="material-icons-outlined"> arrow_forward </span>
                         </v-btn>
                     </v-col>
 
