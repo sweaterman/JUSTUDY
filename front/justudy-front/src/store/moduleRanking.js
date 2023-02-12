@@ -23,29 +23,29 @@ export default {
             state.rankMemberMonth = payload;
         },
         getRankStudyYesterday(state, payload) {
-            state.averageMemberWeek = payload;
+            state.rankStudyYesterday = payload;
         },
         getRankStudyWeek(state, payload) {
-            state.averageMemberMonth = payload;
+            state.rankStudyWeek = payload;
         },
         getRankStudyMonth(state, payload) {
-            state.studyCategory = payload;
+            state.rankStudyMonth = payload;
         }
     },
     actions: {
         async getRankMemberYesterday({commit}) {
-            await axios.get(`${port}rank/member/yesterday`).then(res => {
+            await axios.get(`${port}rank/members/yesterday`).then(res => {
                 commit('getRankMemberYesterday', res.data);
             });
         },
 
         async getRankMemberWeek({commit}) {
-            await axios.get(`${port}rank/member/week`).then(res => {
+            await axios.get(`${port}rank/members/week`).then(res => {
                 commit('getRankMemberWeek', res.data);
             });
         },
         async getRankMemberMonth({commit}) {
-            await axios.get(`${port}rank/member/month`).then(res => {
+            await axios.get(`${port}rank/members/month`).then(res => {
                 commit('getRankMemberMonth', res.data);
             });
         },

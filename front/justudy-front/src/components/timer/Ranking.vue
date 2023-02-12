@@ -9,7 +9,7 @@
             </v-col>
             <v-col>
                 <BasicButton :buttonLength="300" :height="60" :fontSize="36" :content="`${contentRight}`" standard="px" />
-                <v-row v-for="item in 9" v-bind:key="item" align="center">
+                <v-row v-for="item in data" v-bind:key="item" align="center">
                     <v-col cols="2"
                         ><h2>{{ item + 1 }}</h2></v-col
                     >
@@ -19,6 +19,7 @@
             </v-col>
         </v-row>
         <hr />
+        {{ data }}
     </div>
 </template>
 <script>
@@ -39,7 +40,8 @@ export default {
         },
         contentRight: {
             type: String
-        }
+        },
+        data: {}
     }
 };
 </script>
