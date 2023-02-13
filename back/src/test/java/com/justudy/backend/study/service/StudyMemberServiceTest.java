@@ -253,7 +253,6 @@ class StudyMemberServiceTest {
                 .ssafyId("08" + number)
                 .phone(String.valueOf(number))
                 .email("testEmail" + number + "@ssafy.com")
-                .mmId(number + "test")
                 .region("SEOUL")
                 .category(new String[]{"java", "Spring"})
                 .introduction("테스트 봇" + number + " 입니다.")

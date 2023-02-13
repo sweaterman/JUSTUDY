@@ -9,7 +9,7 @@
                 <v-col align="center" justify="center" cols="12" md="5">
                     <v-row>
                         <v-col cols="12">
-                            <img class="hover" style="width: 95%" src="@/assets/test_study.jpg" alt="study_image" />
+                            <img class="hover" style="width: 95%" :src="`${port}images/${applyStudyInfo.imageSequence}`" alt="study_image" />
                         </v-col>
                     </v-row>
 
@@ -110,7 +110,7 @@
                                 <v-subheader>시작예정일</v-subheader>
                             </v-col>
                             <v-col cols="7" align-self="center">
-                                {{ applyStudyInfo.start_time }}
+                                {{ applyStudyInfo.startTime }}
                             </v-col>
                         </v-row>
 
@@ -151,6 +151,7 @@
 </template>
 
 <script>
+import port from '@/store/port';
 import {mapState} from 'vuex';
 
 export default {
@@ -159,23 +160,26 @@ export default {
         ...mapState('moduleStudy', ['applyStudyInfo']),
         ...mapState('moduleLogin', ['isLogin'])
     },
-    created() {
-        const pathName = new URL(document.location).pathname.split('/');
-        const studySeq = pathName[pathName.length - 1];
-        this.$store.dispatch('moduleStudy/getApplyStudyInfo', studySeq);
+    async created() {
+        const studySeq = this.$route.params.studySeq;
+        await this.$store.dispatch('moduleStudy/getApplyStudyInfo', studySeq);
         this.sendData.studySeq = studySeq;
+
         //스터디 멤버에 내가 포함되어있거나 지원을 완료한 상태라면? applyDisplay 바꿔야함
+        if (this.applyStudyInfo.isApply == true || this.applyStudyInfo.isMember == true || this.applyStudyInfo.isLeader == true) {
+            this.applyDisplay = false;
+        }
     },
     data() {
         return {
             message_rules: [value => !!value || '보낼 메시지를 입력해주세요.'],
             sendData: {
                 studySeq: null,
-                memberSeq: 0,
                 content: null
             },
             applyData: false, //모달창
-            applyDisplay: true //이미 보냈거나 가입했는지 확인
+            applyDisplay: true, //이미 보냈거나 가입했는지 확인
+            port: port
         };
     },
 
@@ -189,7 +193,7 @@ export default {
                 }
             } else if (check == 'T') {
                 //지원을한다. -> 마이스터디페이지로 이동함.
-                this.$store.dispatch('moduleStudy/applyStudy', this.applyStudyInfo.sequence, this.sendData);
+                this.$store.dispatch('moduleStudy/applyStudy', this.sendData);
                 if (this.sendData.content == '') {
                     alert('보낼 메시지를 입력해주세요!');
                 } else {

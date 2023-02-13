@@ -11,6 +11,7 @@
         `"
             v-on:click="dialogChange()"
         />
+
         <!-- <v-img
             :src="require('@/assets/redHeart.png')"
             :style="`

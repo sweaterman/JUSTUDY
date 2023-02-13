@@ -1,7 +1,8 @@
 package com.justudy.backend.member.repository;
 
+import com.justudy.backend.login.dto.response.LoginResponse;
 import com.justudy.backend.member.domain.MemberEntity;
-import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -27,9 +28,12 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public Optional<Tuple> findPasswordByUserId(String userId) {
+    public Optional<LoginResponse> findLoginInfoByUserId(String userId) {
         return Optional.ofNullable(queryFactory
-                .select(memberEntity.sequence, memberEntity.password)
+                .select(Projections.fields(LoginResponse.class,
+                        memberEntity.sequence.as("loginSequence"),
+                        memberEntity.password,
+                        memberEntity.nickname))
                 .from(memberEntity)
                 .where(memberEntity.userId.eq(userId))
                 .fetchOne());
@@ -63,6 +67,17 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                 .where(memberEntity.ssafyId.eq(ssafyId))
                 .fetchOne()
         );
+    }
+
+    @Override
+    public Optional<String> findMmId(String mmId) {
+        return Optional.ofNullable(queryFactory
+                .select(memberEntity.mmId)
+                .from(memberEntity)
+                .where(memberEntity.isDeleted.eq(false),
+                        memberEntity.isBanned.eq(false),
+                        memberEntity.mmId.eq(mmId))
+                .fetchOne());
     }
 
     @Override

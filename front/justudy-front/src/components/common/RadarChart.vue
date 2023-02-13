@@ -2,6 +2,7 @@
     <v-row>
         <v-row>
             <v-col>
+                {{ category }}
                 <Radar
                     :chart-options="chartOptions"
                     :chart-data="chartData"
@@ -20,10 +21,11 @@
 <script>
 import {Radar} from 'vue-chartjs';
 import {Chart as ChartJS, Title, Tooltip, Legend, PointElement, LineElement, RadialLinearScale, registerables} from 'chart.js';
-
 ChartJS.register(Title, Tooltip, Legend, PointElement, RadialLinearScale, LineElement, ...registerables);
+
 export default {
     name: 'RadarChart',
+
     components: {
         Radar
     },
@@ -65,12 +67,15 @@ export default {
         },
         buttonContent: {
             type: String
-        }
+        },
+        category: {}
     },
     data() {
         // 함수형태
         return {
             title: "Hello it's function !",
+            user: {},
+
             chartData: {
                 labels: ['CS', 'Algorithm', 'Frontend', 'Backend', 'Database', 'etc'],
                 datasets: [
@@ -107,14 +112,31 @@ export default {
             }
         };
     },
-    created() {
-        console.log(this.chartData.datasets[0].data);
-        this.chartData.datasets[0].data[0] = 4;
-        this.chartData.datasets[0].data[1] = 6;
-        this.chartData.datasets[0].data[2] = 6;
-        this.chartData.datasets[0].data[3] = 6;
-        this.chartData.datasets[0].data[4] = 6;
-        this.chartData.datasets[0].data[5] = 6;
+    async created() {
+        console.log('아아아' + this.category);
+        // console.log(this.chartData.datasets[0].data);
+        for (let i = 0; i < 5; i++) {
+            // this.chartData.datasets[0].data[i] = this.category[i].second;
+            this.chartData.datasets[0].data[i] = 300;
+        }
+    },
+    async beforeUpdate() {
+        // await this.$store.dispatch('moduleMyPage/getMyPageUser');
+
+        // this.user = this.$store.state.moduleMyPage.user;
+
+        console.log('아아아' + this.category);
+        // console.log(this.chartData.datasets[0].data);
+        for (let i = 0; i < this.category.length; i++) {
+            this.chartData.datasets[0].data[i] = this.category[i].second;
+            // this.chartData.datasets[0].data[i] = 300;
+        }
+        // this.chartData.datasets[0].data[0] = this.category[0] ? this.category[0]?.second : 0;
+        // this.chartData.datasets[0].data[1] = this.category[1] ? this.category[1]?.second : 0;
+        // this.chartData.datasets[0].data[2] = this.category[2] ? this.category[2]?.second : 0;
+        // this.chartData.datasets[0].data[3] = this.category[3] ? this.category[3]?.second : 0;
+        // this.chartData.datasets[0].data[4] = this.category[4] ? this.category[4]?.second : 0;
+        // this.chartData.datasets[0].data[5] = this.category[5] ? this.category[5]?.second : 0;
     }
 };
 </script>

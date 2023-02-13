@@ -8,6 +8,13 @@ import StudyCommuWrite from '@/views/Study/StudyCommuWrite';
 import StudyMain from '@/views/StudyOne/StudyMain';
 import StudyBoard from '@/views/StudyOne/StudyBoard';
 import StudyInfo from '@/views/StudyOne/StudyInfo';
+import StudyCalender from '@/views/StudyOne/StudyCalender';
+import StudyEdit from '@/views/StudyOne/StudyEdit';
+import StudyMemberManage from '@/views/StudyOne/StudyMemberManage';
+import StudyBoardDetail from '@/views/StudyOne/StudyBoardDetail';
+import StudyBoardWrite from '@/views/StudyOne/StudyBoardWrite';
+import StudyBoardUpdate from '@/views/StudyOne/StudyBoardUpdate';
+import StudyBoardMain from '@/views/StudyOne/StudyBoardMain';
 
 export default [
     {
@@ -62,8 +69,45 @@ export default [
             },
             {
                 path: 'board',
-                name: 'StudyBoard',
-                component: StudyBoard
+                name: 'StudyBoardMain',
+                component: StudyBoardMain,
+                children: [
+                    {
+                        path: 'main',
+                        name: 'StudyBoard',
+                        component: StudyBoard
+                    },
+                    {
+                        path: 'detail/:boardSeq',
+                        name: 'StudyBoardDetail',
+                        component: StudyBoardDetail
+                    },
+                    {
+                        path: 'update/:boardSeq',
+                        name: 'StudyBoardUpdate',
+                        component: StudyBoardUpdate
+                    },
+                    {
+                        path: 'write',
+                        name: 'StudyBoardWrite',
+                        component: StudyBoardWrite
+                    }
+                ]
+            },
+            {
+                path: 'calender',
+                name: 'StudyCalender',
+                component: StudyCalender
+            },
+            {
+                path: 'edit',
+                name: 'StudyEdit',
+                component: StudyEdit
+            },
+            {
+                path: 'memberManage',
+                name: 'StudyMemberManage',
+                component: StudyMemberManage
             }
         ]
     }

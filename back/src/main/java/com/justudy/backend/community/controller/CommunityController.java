@@ -6,6 +6,7 @@ import com.justudy.backend.community.dto.request.*;
 import com.justudy.backend.community.dto.response.CommunityCommentResponse;
 import com.justudy.backend.community.dto.response.CommunityDetailResponse;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
+import com.justudy.backend.community.dto.response.CommunityListResult;
 import com.justudy.backend.community.service.CommunityBookmarkService;
 import com.justudy.backend.community.service.CommunityCommentService;
 import com.justudy.backend.community.service.CommunityLoveService;
@@ -46,12 +47,12 @@ public class CommunityController {
      * order - view, like
      */
     @GetMapping("/board")
-    public List<CommunityListResponse> getList(@ModelAttribute CommunitySearch condition) {
+    public CommunityListResult<List<CommunityListResponse>> getList(@ModelAttribute CommunitySearch condition) {
         return communityService.getCommunities(condition.validateNull());
     }
 
     @GetMapping("/board/notices")
-    public List<CommunityListResponse> getNotices(@PageableDefault(size = 20) Pageable pageable) {
+    public CommunityListResult<List<CommunityListResponse>> getNotices(@PageableDefault(size = 20) Pageable pageable) {
         return communityService.getNotices(pageable);
     }
 
@@ -68,8 +69,12 @@ public class CommunityController {
      * @return ResponseEntity<CommunityResponse> 200 OK, 커뮤니티 상세 정보
      */
     @GetMapping("/board/{boardId}")
-    public ResponseEntity<CommunityDetailResponse> readCommunityById(@PathVariable("boardId") Long communitySequence) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunityDetail(communitySequence));
+    public ResponseEntity<CommunityDetailResponse> readCommunityById(@PathVariable("boardId") Long communitySequence,
+                                                                     HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        loginSequence = nullSafeLoginSequence(loginSequence);
+
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.readCommunityDetail(communitySequence, loginSequence));
     }
 
     /**
@@ -92,8 +97,8 @@ public class CommunityController {
     /**
      * 커뮤니티 수정 API
      *
-     * @param communitySequence      커뮤니티 sequence (PK)
-     * @param request 수정 정보
+     * @param communitySequence 커뮤니티 sequence (PK)
+     * @param request           수정 정보
      * @return ResponseEntity<UserResponse> 200 OK, 수정된 커뮤니티글 정보
      */
     @PutMapping("/board/{id}")
@@ -124,6 +129,7 @@ public class CommunityController {
 
     /**
      * 북마크 생성 API - DONE
+     *
      * @param communitySequence
      * @param session
      */
@@ -189,8 +195,9 @@ public class CommunityController {
      * @return ResponseEntity<List < CommentResponse>> 200 OK, 댓글 정보 목록
      */
     @GetMapping("/board/{id}/comments")
-    public ResponseEntity<List<CommunityCommentResponse>> readAllCommentByBoard(@PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityCommentService.readAllComment(id));
+    public ResponseEntity<List<CommunityCommentResponse>> readAllCommentByBoard(@PathVariable("id") Long id, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return ResponseEntity.status(HttpStatus.OK).body(communityCommentService.readAllComment(id, loginSequence));
     }
 
     /**
@@ -201,7 +208,9 @@ public class CommunityController {
      * @return ResponseEntity<CommentResponse> 201 Created, 생성된 댓글 정보
      */
     @PostMapping("/board/{id}/comments")
-    public ResponseEntity<CommunityCommentResponse> createComment(@PathVariable("id") long id, @RequestBody CommunityCommentCreate request) {
+    public ResponseEntity<CommunityCommentResponse> createComment(@PathVariable("id") Long id, @RequestBody CommunityCommentCreate request, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        request.changeMemberSeq(loginSequence);
         return ResponseEntity.status(HttpStatus.CREATED).body(communityCommentService.createComment(id, request));
     }
 
@@ -212,9 +221,10 @@ public class CommunityController {
      * @param commentId 댓글의 id
      * @param request   수정 정보
      */
-    @PutMapping("/board/{id}/comments/{comment_id}")
-    public ResponseEntity<Void> updateComment(@PathVariable("id") long id, @PathVariable("commentId") long commentId, @RequestBody CommunityCommentEdit request) {
-        communityCommentService.UpdateComment(id, commentId, request);
+    @PutMapping("/board/{id}/comments/{commentid}")
+    public ResponseEntity<Void> updateComment(@PathVariable("id") Long id, @PathVariable("commentid") Long commentId, @RequestBody CommunityCommentEdit request, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        communityCommentService.UpdateComment(id, commentId, request, loginSequence);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
@@ -225,45 +235,18 @@ public class CommunityController {
      * @param commentId 댓글의 id
      * @return ResponseEntity<Object> 204 No Content
      */
-    @DeleteMapping("/board/{id}/comments/{comment_id}")
-    public ResponseEntity<Void> deleteComment(@PathVariable("id") long id, @PathVariable("commentId") long commentId) {
-        communityCommentService.deleteComment(id, commentId);
+    @DeleteMapping("/board/{id}/comments/{commentid}")
+    public ResponseEntity<Void> deleteComment(@PathVariable("id") Long id, @PathVariable("commentid") Long commentId, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        communityCommentService.deleteComment(id, commentId, loginSequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
 
-
-
-    /**
-     * 모든 검색 정보를 가져오는 API
-     *
-     * @param page   페이지 넘버
-     * @param type   검색 분류(아이디, 제목, 내용)
-     * @param search 검색할 값
-     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
-     */
-//    @GetMapping("/board/search")
-    public ResponseEntity<List<CommunityDetailResponse>> readAllCommunityBySearch(@RequestParam("page") int page, @RequestParam("type") String type, @RequestParam("saerch") String search) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.search(page, type, search));
-    }
-    /**
-     * 일주일간 좋아요 많은 커뮤니티 정보를 가져오는 API
-     *
-     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 정보 목록
-     */
-//    @GetMapping("/board/love")
-    public ResponseEntity<List<CommunityDetailResponse>> readPopularCommunity() {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readPopularCommunity());
-    }
-
-    /**
-     * 커뮤니티 공지 정보를 가져오는 API
-     *
-     * @param page 페이지 넘버
-     * @return ResponseEntity<List < CommunityResponse>> 200 OK, 커뮤니티 공지 정보 목록
-     */
-//    @GetMapping("/board/notice")
-    public ResponseEntity<List<CommunityDetailResponse>> readAllNoticeCommunity(@RequestParam("page") int page) {
-        return ResponseEntity.status(HttpStatus.OK).body(communityService.readAllNoticeCommunity(page));
+    private Long nullSafeLoginSequence(Long loginSequence) {
+        if (loginSequence == null) {
+            return 0L;
+        }
+        return loginSequence;
     }
 }

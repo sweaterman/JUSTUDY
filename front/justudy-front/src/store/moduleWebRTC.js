@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////constructor 세팅 시작///////////////////////////////////////////////////////////////////////////////////////////
-function Participant(parents, name, receiveCallback, iceCallback, recovery) {
+function Participant(parents, name, receiveCallback, iceCallback) {
     console.log('Participant 생성');
 
     this.name = name;
@@ -11,8 +11,29 @@ function Participant(parents, name, receiveCallback, iceCallback, recovery) {
     video.autoplay = true;
     video.controls = false;
     video.muted = false;
-    video.style = 'display:inline-block;max-width:600px;';
-    parents.appendChild(video);
+    // video.style = 'display:inline-block;max-width:600px;';
+    video.style = 'display:inline-block;width:20%;';
+    parents.append(video);
+    video.value = true;
+    video.addEventListener('click', () => {
+        if (video.value) {
+            ///키울 때
+            video.style = 'display:block;width:100%;';
+            video.value = false;
+            parents.childNodes.forEach(item => {
+                if (item != video) {
+                    item.style = 'display:inline-block;width:20%;';
+                    item.value = true;
+                }
+            });
+            parents.removeChild(video);
+            parents.append(video);
+        } else {
+            ///축소 시킬 때
+            video.style = 'display:inline-block;width:20%;';
+            video.value = true;
+        }
+    });
 
     this.getVideoElement = function () {
         return video;
@@ -28,7 +49,6 @@ function Participant(parents, name, receiveCallback, iceCallback, recovery) {
         this.rtcPeer.dispose();
         parents.removeChild(video);
         //사용한 엘리먼트 => 다시 사용할 수 있게 반환
-        recovery();
     };
 }
 //////////////////////////////////////////////////constructor 세팅 시작///////////////////////////////////////////////////////////////////////////////////////////
@@ -43,8 +63,9 @@ const moduleWebRTC = {
         isViewAlarmDiv: false,
         isViewExitDiv: false,
         isViewMuteDiv: false,
-        availableEl: [],
-        unAvailableEl: [],
+        isViewBanDiv: false,
+        // availableEl: [],
+        // unAvailableEl: [],
         chatData: [],
         exitURL: '/',
         webSockUrl: '',
@@ -52,8 +73,8 @@ const moduleWebRTC = {
         screenState: true,
         mainParents: null,
         webSock: null,
-        personName: 'UNKNOWN',
-        roomName: 'UNKNOWN',
+        personName: 'UNKNOWN' + Math.random().toString(36).substring(2, 12),
+        roomName: 'UNKNOWN' + Math.random().toString(36).substring(2, 12),
         participants: {},
         settingValue: {
             maxWidth: 640,
@@ -65,7 +86,10 @@ const moduleWebRTC = {
         alarmDivText: '',
         muteDivText: '',
         exitDivText: '',
+        banDivText: '',
         requestMuteParticipant: '',
+        requestBanParticipant: '',
+        banCnt: 0,
         muteCnt: 0,
         exitCnt: 0,
         remainTime: 0,
@@ -90,6 +114,9 @@ const moduleWebRTC = {
         getMuteDivText(state) {
             return state.muteDivText;
         },
+        getBanDivText(state) {
+            return state.banDivText;
+        },
         getExitDivText(state) {
             return state.exitDivText;
         },
@@ -101,6 +128,9 @@ const moduleWebRTC = {
         },
         getIsViewMuteDiv(state) {
             return state.isViewMuteDiv;
+        },
+        getIsViewBanDiv(state) {
+            return state.isViewBanDiv;
         },
         getPersonName(state) {
             return state.personName;
@@ -135,14 +165,14 @@ const moduleWebRTC = {
     },
     mutations: {
         SET_INIT(state) {
-            state.availableEl = [];
-            state.unAvailableEl = [];
+            // state.availableEl = [];
+            // state.unAvailableEl = [];
             state.audioState = true;
             state.screenState = true;
-            state.mainParents = null;
+            // state.mainParents = null;
             state.webSock = null;
-            state.personName = 'UNKNOWN';
-            state.roomName = 'UNKNOWN';
+            state.personName = 'UNKNOWN' + Math.random().toString(36).substring(2, 12);
+            state.roomName = 'UNKNOWN' + Math.random().toString(36).substring(2, 12);
             state.participants = {};
             state.settingValue = {
                 maxWidth: 640,
@@ -203,17 +233,20 @@ const moduleWebRTC = {
         SET_MAIN_PARENTS(state, el) {
             state.mainParents = el;
         },
-        ADD_INIT_EL(state, els) {
-            state.availableEl = els;
-        },
-        ADD_EL(state, el) {
-            state.availableEl.push(el);
-        },
-        SUB_EL(state, el) {
-            state.unAvailableEl.push(el);
-        },
+        // ADD_INIT_EL(state, els) {
+        //     state.availableEl = els;
+        // },
+        // ADD_EL(state, el) {
+        //     state.availableEl.push(el);
+        // },
+        // SUB_EL(state, el) {
+        //     state.unAvailableEl.push(el);
+        // },
         SET_ALARM_VIEW(state, on) {
             state.isViewAlarmDiv = on;
+        },
+        ADD_BAN_CNT(state) {
+            state.banCnt += 1;
         },
         ADD_MUTE_CNT(state) {
             state.muteCnt += 1;
@@ -224,6 +257,9 @@ const moduleWebRTC = {
         SET_MUTE_VIEW(state, on) {
             state.isViewMuteDiv = on;
         },
+        SET_BAN_VIEW(state, on) {
+            state.isViewBanDiv = on;
+        },
         SET_EXIT_VIEW(state, on) {
             state.isViewExitDiv = on;
         },
@@ -232,6 +268,9 @@ const moduleWebRTC = {
         },
         SET_MUTE_TEXT(state, text) {
             state.muteDivText = text;
+        },
+        SET_BAN_TEXT(state, text) {
+            state.banDivText = text;
         },
         SET_EXIT_TEXT(state, text) {
             state.exitDivText = text;
@@ -260,7 +299,7 @@ const moduleWebRTC = {
         //////////////기능 제어 관련 시작///////////////
         //화면을 세팅할 엘리먼트 추가할 수 있는 부분
         addInitEl({commit}, el) {
-            commit('ADD_INIT_EL', el);
+            commit('SET_MAIN_PARENTS', el);
         },
         //뮤트 기능
         isSetAudio({commit}, on) {
@@ -312,6 +351,12 @@ const moduleWebRTC = {
                 };
                 dispatch('sendMessage', message);
             };
+            state.webSock.onclose = async (e) => {
+                console.log('Socket is closed. Reconnect will be attempted in 1.5 second.', e);
+                setTimeout(function() {
+                    dispatch('reset',{url, person, room});
+                  }, 1500)
+            }
         },
 
         setEnvironment({commit}, {maxWidth, maxFrameRate, minFrameRate}) {
@@ -363,10 +408,10 @@ const moduleWebRTC = {
             dispatch('open', data);
         },
         //상대 밴 보내기
-        ban({state, dispatch}, personName) {
+        ban({state, dispatch}) {
             let message = {
                 id: 'ban',
-                name: personName,
+                name: state.requestBanParticipant,
                 room: state.roomName
             };
             dispatch('sendMessage', message);
@@ -383,6 +428,14 @@ const moduleWebRTC = {
         exit({state, dispatch}) {
             let message = {
                 id: 'exit',
+                room: state.roomName
+            };
+            dispatch('sendMessage', message);
+        },
+        requestBanSend({state, dispatch}, target) {
+            let message = {
+                id: 'requestBan',
+                name: target,
                 room: state.roomName
             };
             dispatch('sendMessage', message);
@@ -445,15 +498,15 @@ const moduleWebRTC = {
                 dispatch('sendMessage', message);
             };
 
-            let pEl = state.availableEl.pop();
-            commit('SUB_EL', pEl);
+            // let pEl = state.availableEl.pop();
+            // commit('SUB_EL', pEl);
 
-            const recovery = function () {
-                commit('ADD_EL', pEl);
-                state.availableEl.splice(pEl, 1);
-            };
+            // const recovery = function () {
+            //     commit('ADD_EL', pEl);
+            //     state.availableEl.splice(pEl, 1);
+            // };
 
-            let participant = new Participant(pEl, sender, receiveCallback, iceCallback, recovery);
+            let participant = new Participant(state.mainParents, sender, receiveCallback, iceCallback);
             // state.participants[sender] = participant;
             commit('SET_PARTICIPANTS', {key: sender, participants: participant}); // key, participants
             let video = participant.getVideoElement();
@@ -507,6 +560,9 @@ const moduleWebRTC = {
                     case 'receiveVideoAnswer':
                         dispatch('receiveVideoResponse', parsedMessage);
                         break;
+                    case 'requestBanVote':
+                        dispatch('requestBanVote', parsedMessage);
+                        break;
                     case 'requestMuteVote':
                         dispatch('requestMuteVote', parsedMessage);
                         break;
@@ -538,6 +594,9 @@ const moduleWebRTC = {
                         break;
                     case 'exit':
                         dispatch('onExit');
+                        break;
+                    case 'changeName':
+                        dispatch('changeName', parsedMessage);
                         break;
                     default:
                         console.error('Unrecognized message', parsedMessage);
@@ -577,15 +636,15 @@ const moduleWebRTC = {
             };
             console.log(state.personName + ' registered in room ' + state.roomName);
 
-            let pEl = state.availableEl.pop();
-            commit('SUB_EL', pEl);
+            // let pEl = state.availableEl.pop();
+            // commit('SUB_EL', pEl);
 
-            const recovery = function () {
-                commit('ADD_EL', pEl);
-                state.availableEl.splice(pEl, 1);
-            };
+            // const recovery = function () {
+            //     commit('ADD_EL', pEl);
+            //     state.availableEl.splice(pEl, 1);
+            // };
 
-            let participant = new Participant(pEl, state.personName, receiveCallback, iceCallback, recovery);
+            let participant = new Participant(state.mainParents, state.personName, receiveCallback, iceCallback);
             state.participants[state.personName] = participant;
             let video = participant.getVideoElement();
 
@@ -642,15 +701,15 @@ const moduleWebRTC = {
                     dispatch('sendMessage', message);
                 };
 
-                let pEl2 = state.availableEl.pop();
-                commit('SUB_EL', pEl2);
+                // let pEl2 = state.availableEl.pop();
+                // commit('SUB_EL', pEl2);
 
-                const recovery2 = function () {
-                    commit('ADD_EL', pEl2);
-                    state.availableEl.splice(pEl2, 1);
-                };
+                // const recovery2 = function () {
+                //     commit('ADD_EL', pEl2);
+                //     state.availableEl.splice(pEl2, 1);
+                // };
 
-                let participant = new Participant(pEl, sender, receiveCallback2, iceCallback2, recovery2);
+                let participant = new Participant(state.mainParents, sender, receiveCallback2, iceCallback2);
                 // state.participants[sender] = participant;
                 commit('SET_PARTICIPANTS', {key: sender, participants: participant}); //// key, participants
                 let video = participant.getVideoElement();
@@ -696,6 +755,30 @@ const moduleWebRTC = {
             state.participants[result.name].rtcPeer.processAnswer(result.sdpAnswer, function (error) {
                 if (error) return console.error(error);
             });
+        },
+        requestBanVote({state, commit, dispatch}, result) {
+            state.requestBanParticipant = result.name;
+            state.banCnt = 0;
+            commit('SET_BAN_TEXT', '[' + result.name + ']님을 강제 퇴장 하시겠습니까?');
+            setTimeout(() => {
+                state.isViewBanDiv = true;
+            }, 1000); //1초뒤에 투표화면  보여짐... because muteCnt 초기화 시간이 필요...Backend에서 할 경우, thread가 많아져서 서버 터질 확률 높음
+
+            state.remainTime = 6000;
+            let timerId = setInterval(() => {
+                state.remainTime = state.remainTime - 10;
+            }, 10); //10ms마다 반복
+
+            const voteResult = () => {
+                const participantNum = Object.keys(state.participants).length;
+                state.isViewBanDiv = false; //timeout 투표 시간 지났을 경우, 화면을 끄기 위함
+                if (state.banCnt > participantNum / 2) {
+                    dispatch('leave');
+                }
+                clearInterval(timerId);
+            };
+
+            setTimeout(voteResult, 6000);
         },
         requestMuteVote({state, commit, dispatch}, result) {
             state.requestMuteParticipant = result.name;
@@ -768,9 +851,10 @@ const moduleWebRTC = {
             if (!state.isChat) commit('SET_NEW_CHAT', true);
         },
         //다른 사람이 나를 ban했을 때
-        onBan({state, dispatch}, request) {
+        onBan({state, commit}, request) {
             if (request.name == state.personName) {
-                dispatch('leave');
+                console.log('ban');
+                commit('ADD_BAN_CNT');
             }
         },
         //다른 사람이 나를 mute했을 때
@@ -784,6 +868,10 @@ const moduleWebRTC = {
             console.log('exit');
             commit('ADD_EXIT_CNT');
         },
+        changeName({commit}, request) {
+            console.log('changeName');
+            commit('SET_PERSON_NAME', request.name);
+        },
         //isViewMuteDiv
         setIsViewMuteDiv({commit}, on) {
             commit('SET_MUTE_VIEW', on);
@@ -791,6 +879,9 @@ const moduleWebRTC = {
         //isViewMuteDiv
         setIsViewExitDiv({commit}, on) {
             commit('SET_EXIT_VIEW', on);
+        },
+        setIsViewBanDiv({commit}, on) {
+            commit('SET_BAN_VIEW', on);
         },
         //////////////시그널링 서버에서 메세지 수신 관련 끝///////////////
 
@@ -806,26 +897,28 @@ const moduleWebRTC = {
             commit('SET_MAIN_PARENTS', el);
         },
         // 메인화면 엘리먼트로 video 화면 복사(지속적으로 복사)
-        makeMainScreen({commit, state}, main) {
+        makeMainScreen({commit}, main) {
             // state.mainParents 제거 부분
-            while (state.mainParents.hasChildNodes()) {
-                state.mainParents.removeChild(state.mainParents.firstChild);
-            }
+            // while (state.mainParents.hasChildNodes()) {
+            //     state.mainParents.removeChild(state.mainParents.firstChild);
+            // }
 
-            let canvas = document.createElement('canvas');
-            let context = canvas.getContext('2d');
-            let videoEl = main.getVideoElement();
+            // let canvas = document.createElement('canvas');
+            // let context = canvas.getContext('2d');
+            // let videoEl = main.getVideoElement();
 
-            canvas.style = 'width:100%';
-            state.mainParents.appendChild(canvas);
+            // canvas.style = 'width:100%';
+            // state.mainParents.appendChild(canvas);
 
-            function updateCanvas() {
-                context.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+            // function updateCanvas() {
+            //     context.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
 
-                window.requestAnimationFrame(updateCanvas);
-            }
+            //     window.requestAnimationFrame(updateCanvas);
+            // }
 
-            requestAnimationFrame(updateCanvas);
+            // requestAnimationFrame(updateCanvas);
+            // //videoEl -> newVideo
+
             commit('SET_ME', main.rtcPeer);
         }
 

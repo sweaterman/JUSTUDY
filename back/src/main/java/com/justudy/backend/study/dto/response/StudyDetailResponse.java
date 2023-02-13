@@ -32,15 +32,13 @@ public class StudyDetailResponse {
     private List<Long> resumeSeq;
     private Long leaderSeq;
     private Long imageSequence;
-
     private Boolean isApply;
     private Boolean isMember;
     private Boolean isLeader;
+    private Boolean onAir;
+    private Long roomSequence;
 
-    public static StudyDetailResponse makeBuilder(StudyEntity entity) {
-
-
-        //todo imagefile
+    public static StudyDetailResponse makeBuilder(StudyEntity entity, String leaderName) {
         return StudyDetailResponse.builder()
                 .sequence(entity.getSequence())
                 .member(entity.getStudyMembers()
@@ -60,6 +58,7 @@ public class StudyDetailResponse {
                 .bottomCategory(entity.getCategory().getValue())
                 .name(entity.getName())
                 .leaderSeq(entity.getLeaderSeq())
+                .leader(leaderName)
                 .introduction(entity.getIntroduction())
                 .population(entity.getPopulation())
                 .level(entity.getLevel())
@@ -67,16 +66,17 @@ public class StudyDetailResponse {
                 .isOpen(entity.getIsOpen())
                 .github(entity.getGithub())
                 .notion(entity.getNotion())
-//                .imageSequence(entity.getImageFile().getSequence())
+                .imageSequence(entity.getImageFile().getSequence())
                 .startTime(entity.getStartTime())
                 .isApply(false)
                 .isMember(false)
-                .isLeader(false)
+                .isLeader(true)
+                .onAir(entity.getOnAir())
+                .roomSequence(entity.getStudyRoom().getSequence())
                 .build();
     }
 
-    public static StudyDetailResponse makeBuilder(StudyEntity entity, Boolean isApply, Boolean isMember, Boolean isLeader) {
-        //todo imagefile
+    public static StudyDetailResponse makeBuilder(StudyEntity entity, Boolean isApply, Boolean isMember, Boolean isLeader, String leaderName) {
         return StudyDetailResponse.builder()
                 .sequence(entity.getSequence())
                 .member(entity.getStudyMembers()
@@ -84,10 +84,10 @@ public class StudyDetailResponse {
                         .map(StudyMemberResponse::makeBuilder)
                         .sorted(Comparator.comparing(StudyMemberResponse::getBadge).reversed())
                         .collect(Collectors.toList()))
-                .resumeSeq(entity.getResumes()
-                        .stream()
-                        .map(StudyResumeEntity::getSequence)
-                        .collect(Collectors.toList()))
+//                .resumeSeq(entity.getResumes()
+//                        .stream()
+//                        .map(StudyResumeEntity::getSequence)
+//                        .collect(Collectors.toList()))
                 .frequency(entity.getFrequency()
                         .stream()
                         .map(StudyFrequencyResponse::makeBuilder)
@@ -103,11 +103,14 @@ public class StudyDetailResponse {
                 .isOpen(entity.getIsOpen())
                 .github(entity.getGithub())
                 .notion(entity.getNotion())
-//                .imageSequence(entity.getImageFile().getSequence())
+                .imageSequence(entity.getImageFile().getSequence())
                 .startTime(entity.getStartTime())
+                .leader(leaderName)
                 .isApply(isApply)
                 .isMember(isMember)
                 .isLeader(isLeader)
+                .onAir(entity.getOnAir())
+                .roomSequence(entity.getStudyRoom().getSequence())
                 .build();
     }
 }

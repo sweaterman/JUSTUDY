@@ -5,6 +5,7 @@ import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.login.infra.SessionConst;
+import com.justudy.backend.member.dto.request.MMValidateRequest;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
@@ -42,13 +43,43 @@ public class MemberController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @GetMapping("/check")
+    public ResponseEntity<Void> validateMember(@RequestParam(name = "userid", required = false) String userId,
+                                               @RequestParam(name = "nickname", required = false) String nickname,
+                                               @RequestParam(name = "ssafyid", required = false) String ssafyId
+                                               ) {
+
+        log.info("userId = {}", userId);
+        log.info("nickname = {}", nickname);
+        log.info("ssafyId = {}", ssafyId);
+        validateParameter(userId, nickname, ssafyId);
+        return null;
+    }
+
+    @PostMapping("/matter-most")
+    public ResponseEntity<?> validMatterMost(@RequestBody MMValidateRequest request) {
+        return memberService.validateMatterMost(request.getMmId(), request.getMmPassword());
+    }
+
+    private void validateParameter(String userId, String nickname, String ssafyId) {
+        if (userId != null) {
+            memberService.isDuplicatedUserId(userId);
+        }
+        if (nickname != null) {
+            memberService.isDuplicatedNickname(nickname);
+        }
+        if (ssafyId != null) {
+            memberService.isDuplicatedSsafyId(ssafyId);
+        }
+    }
+
     /**
      * 마이페이지 멤버 정보 API
      * @param session session에서 memberSequence를 찾기 위해
      * @return MypageRespoonse 마이페이지 멤버 응답 객체
      */
     @GetMapping("/mypage")
-    public MypageResponse getMypageInfomation(HttpSession session) {
+    public MypageResponse getMypageInformation(HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
         return memberService.getMypage(loginSequence);
@@ -94,22 +125,6 @@ public class MemberController {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
         memberService.deleteMember(loginSequence);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-
-    /**
-     * ADMIN 유저의 회원 삭제 API
-     * @param memberSequence - Target Member Sequence
-     * @param session
-     *
-     */
-    @DeleteMapping("/admin/members/{memberSequence}")
-    public ResponseEntity<Void> banMember(@PathVariable Long memberSequence, HttpSession session) {
-        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-
-        memberService.banMember(loginSequence, memberSequence);
-
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

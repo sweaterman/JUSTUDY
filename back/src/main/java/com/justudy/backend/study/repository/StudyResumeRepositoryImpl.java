@@ -53,4 +53,12 @@ public class StudyResumeRepositoryImpl implements StudyResumeRepositorySupport {
                 .where(qStudyResume.study.sequence.eq(sequence), qStudyResume.member.sequence.eq(loginSequence))
                 .fetchFirst());
     }
+
+    @Override
+    public void deleteStudyResumeByStudy(Long id) {
+        queryFactory
+                .delete(qStudyResume)
+                .where(qStudyResume.study.sequence.eq(id))
+                .execute();
+    }
 }
