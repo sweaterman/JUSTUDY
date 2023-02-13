@@ -1,22 +1,22 @@
 <template>
     <v-app>
-        <v-row :style="{marginTop: '2%', marginBottom: '5%'}">
+        <v-row>
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <!-- 랭킹 메뉴 바 -->
-                <v-row justify="center" align="center">
-                    <v-col cols="12" md="3" />
-                    <v-col cols="12" md="3" justify="center" align="center">
+                <v-row :style="{padding: '2%'}">
+                    <v-col cols="12" md="6" justify="center" align="center">
                         <router-link to="/ranking/my-ranking" style="text-decoration: none; color: black">
-                            <div><h2>개인 랭킹</h2></div>
+                            <span class="material-icons-outlined"> person </span>
+                            <div>개인 랭킹</div>
                         </router-link>
                     </v-col>
-                    <v-col cols="12" md="3" justify="center" align="center">
+                    <v-col cols="12" md="6" justify="center" align="center">
                         <router-link to="/ranking/study-ranking" style="text-decoration: none; color: #ffb000">
-                            <div :style="{fontWeight: 'bold', fontSize: 'x-large'}"><h2>스터디 랭킹</h2></div>
+                            <span class="material-icons-outlined"> group </span>
+                            <div>스터디 랭킹</div>
                         </router-link>
                     </v-col>
-                    <v-col cols="12" md="3" />
                 </v-row>
 
                 <!-- 전날? 오늘? 버닝 -->

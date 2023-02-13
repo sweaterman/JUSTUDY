@@ -38,7 +38,7 @@
                                     <v-subheader style="height: fit-content; padding: 0px">시작 예정일</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    {{ study.start_time }}
+                                    {{ study.startTime }}
                                 </v-col>
                             </v-row>
                             <v-row no-gutters align="center">
