@@ -35,7 +35,7 @@ public class StudyMemberService {
         StudyEntity studyEntity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
         //스터디원인지 확인
-        checkStudyMember(studyEntity.getStudyMembers(), memberId);
+        StudyMemberEntity studyMemberEntity = checkStudyMember(studyEntity.getStudyMembers(), memberId);
         //스터디 리더 변경
         studyEntity.changeLeader(memberId);
     }
@@ -61,7 +61,7 @@ public class StudyMemberService {
 
         //스터디원 추방
         studyEntity.removeStudyMember(memberEntity);
-        studyMemberRepository.deleteStudyMember(id, memberId);
+        studyMemberRepository.deleteById(memberEntity.getSequence());
     }
 
     @Transactional
@@ -98,6 +98,8 @@ public class StudyMemberService {
         studyMemberRepository.deleteStudyMemberByStudy(studySequence);
     }
 
+
+
     private StudyMemberEntity checkStudyMember(List<StudyMemberEntity> studyMembers, Long memberId) {
         return studyMembers
                 .stream()
@@ -105,5 +107,4 @@ public class StudyMemberService {
                 .findFirst()
                 .orElseThrow(StudyMemberNotFound::new);
     }
-
 }

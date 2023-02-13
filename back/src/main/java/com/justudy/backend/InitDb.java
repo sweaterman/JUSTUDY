@@ -111,13 +111,13 @@ public class InitDb {
             saveCategory();
             saveMember();
             saveCommunity();
-//            saveStudy();
-//            saveStudyFrequency();
-//            saveStudyMember();
-//            saveStudyRoom();
-//            saveTimer();
-//            saveRank();
-//            saveTest1();
+            saveStudy();
+            saveStudyFrequency();
+            saveStudyMember();
+            saveStudyRoom();
+            saveTimer();
+            saveRank();
+            saveTest1();
         }
 
         private void saveTest1() {
@@ -126,17 +126,17 @@ public class InitDb {
             UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
                     .orElseThrow(UploadFileNotFound::new);
             // 리더인 스터디 130
-            MemberEntity member = memberService.getMember(50L);
-            StudyEntity study = studyService.getStudyByLeader(50L);
+            MemberEntity member = memberService.getMember(1L);
+            StudyEntity study = studyService.getStudyByLeader(1L);
             //리더가 아닌 가입 스터디
-            final Long studyNotLeader = 228L;
+            final Long studyNotLeader = 50L;
             studyMemberService.createStudyMember(StudyMemberCreate.builder().memberSeq(member.getSequence()).studySeq(studyNotLeader).build());
             //팀장 아닐때 지원한 스터디
-            final Long studyNotLeader2 = 226L;
+            final Long studyNotLeader2 = 49L;
             studyResumeService.createStudyResume(StudyResumeCreate.builder().memberSeq(member.getSequence()).studySeq(studyNotLeader2).content("지원할까말까").build());
 
             //지원안한 스터디
-            final Long studyNotApply = 177L;
+            final Long studyNotApply = 48L;
 
         }
 
@@ -155,8 +155,8 @@ public class InitDb {
         private void saveStudyFrequency() throws ParseException {
             SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
             java.util.Date date = formatter.parse("18:00");
-            for (int i = 0; i < 10; i++) {
-                long memberSequence = 50 + (3 * i);
+            for (int i = 1; i <= 10; i++) {
+                long memberSequence = i;
                 MemberEntity findmember = memberService.getMember(memberSequence);
                 StudyEntity findStudy = studyService.getStudyByLeader(findmember.getSequence());
 
@@ -182,8 +182,8 @@ public class InitDb {
         }
 
         private void saveTimer() {
-            for (int i = 0; i < 10; i++) {
-                long memberSequence = 50 + (3 * i);
+            for (int i = 1; i <= 10; i++) {
+                long memberSequence = i;
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
@@ -198,7 +198,7 @@ public class InitDb {
                 }
 
             }
-            for (long i = 240; i < 290; i++) {
+            for (long i = 1; i < 51; i++) {
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     roomActivityService.saveRoomAcitivity(
@@ -259,8 +259,8 @@ public class InitDb {
         private void saveStudy() {
             UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
                     .orElseThrow(UploadFileNotFound::new);
-            for (int i = 0; i < 10; i++) {
-                long memberSequence = 50 + (3 * i);
+            for (int i = 1; i <= 10; i++) {
+                long memberSequence = (i);
                 MemberEntity findmember = memberService.getMember(memberSequence);
                 for (int count = 1; count <= 5; count++) {
                     if (count % 2 == 0) {
@@ -284,7 +284,7 @@ public class InitDb {
         }
 
         public void saveStudyRoom() {
-            for (long i = 130; i < 230; i += 2)
+            for (long i = 1; i <= 50; i ++)
                 studyRoomService.saveStudyRoom(i);
         }
 
