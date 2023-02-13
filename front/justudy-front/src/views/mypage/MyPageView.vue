@@ -76,7 +76,7 @@
 
                 <v-row>
                     <v-col cols="12" md="5" justify="center" align="center">
-                        <RadarChart buttonContent="학습 진행도" :hasButton="true" />
+                        <RadarChart buttonContent="학습 진행도" :hasButton="true" :category="category" />
                         <v-row justify="center" align="center">
                             <v-btn color="yellow" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'x-large', marginTop: '30%'}">학습 진행도</v-btn>
                         </v-row>
@@ -151,7 +151,9 @@ export default {
             bookMark: [],
             studyCalendar: [],
             user: {},
-            bookMarkList: []
+            bookMarkList: [],
+            timeCategoryData: [],
+            category: []
         };
     },
     computed: {
@@ -189,6 +191,9 @@ export default {
         console.log(studyCalendar);
         await this.$store.dispatch('moduleMyPage/getBookMarkList');
         this.bookMarkList = this.$store.state.moduleMyPage.bookMarkList;
+        //ff
+        await this.$store.dispatch('moduleTimer/getStudyCategory', {nickName: '테스트 봇1'});
+        this.category = this.$store.state.moduleTimer.studyCategory;
         // 팔로잉
         // this.$store.dispatch("user/following");
         // 팔로우

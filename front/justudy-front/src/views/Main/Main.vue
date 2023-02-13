@@ -112,7 +112,7 @@ export default {
             }
         }
     },
-    created() {
+    async created() {
         //  최신 스터디 3개를 뽑아서 보여주기
         // this.$store.dispatch("study/new")
         // 핫한글 (좋아요 기준)
