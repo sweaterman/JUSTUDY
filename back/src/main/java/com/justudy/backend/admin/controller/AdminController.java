@@ -53,6 +53,11 @@ public class AdminController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/week/signup")
+    public Long getWeekSignup() {
+        return adminService.getWeekSignup();
+    }
+
     @GetMapping("/community")
     public CommunityListResult<CommunityListResponse> getCommunities(@ModelAttribute CommunitySearch communitySearch) {
         return adminService.getCommunities(communitySearch);

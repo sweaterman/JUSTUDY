@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.justudy.backend.community.domain.QCommunityEntity.communityEntity;
@@ -58,6 +59,15 @@ public class AdminRepository {
                 .where(eqCommunityTypeAndSearch(communitySearch))
                 .fetchFirst();
     }
+
+    public Long countSignupByTime(LocalDateTime startDate, LocalDateTime endDate) {
+        return queryFactory.select(memberEntity.count())
+                .from(memberEntity)
+                .where(memberEntity.createdTime.between(startDate, endDate))
+                .fetchOne();
+    }
+
+
 
     // todo 리팩토링 해야함.....
     private BooleanExpression eqCommunityTypeAndSearch(CommunitySearch communitySearch) {
