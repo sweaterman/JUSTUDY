@@ -38,6 +38,8 @@ public class AdminService {
 
     private final MemberRepository memberRepository;
 
+    private final CommunityRepository communityRepository;
+
     public Long getCountOfMembers() {
         return adminRepository.getCountOfMembers();
     }
@@ -72,5 +74,34 @@ public class AdminService {
                 .collect(Collectors.toList());
         Long totalCount = adminRepository.getCountCommunitiesBySearch(communitySearch);
         return new CommunityListResult<>(communityResponses, totalCount);
+    }
+
+    @Transactional
+    public Long deleteCommunity(Long loginSequence, Long communitySequence) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+
+        Validation.validateUserRole(findMember, MemberRole.ADMIN);
+        CommunityEntity findCommunity = communityRepository.findById(communitySequence)
+                .orElseThrow(CommunityNotFound::new);
+        findCommunity.deleteCommunity();
+        return findCommunity.getSequence();
+    }
+
+    public Long geCountOfCommunityByWeek() {
+        LocalDateTime startDateTime = getStartDateTime();
+        LocalDateTime endDateTime = getEndDateTime();
+
+        return adminRepository.countCommunityByTime(startDateTime, endDateTime);
+    }
+
+
+    private LocalDateTime getStartDateTime() {
+        LocalDate now = LocalDate.now();
+        return now.with(DayOfWeek.MONDAY).atStartOfDay();
+    }
+    private LocalDateTime getEndDateTime() {
+        LocalDate now = LocalDate.now();
+        return now.with(DayOfWeek.SUNDAY).atTime(LocalTime.MAX);
     }
 }

@@ -67,7 +67,12 @@ public class AdminRepository {
                 .fetchOne();
     }
 
-
+    public Long countCommunityByTime(LocalDateTime startDate, LocalDateTime endDate) {
+        return queryFactory.select(communityEntity.count())
+                .from(communityEntity)
+                .where(communityEntity.createdTime.between(startDate, endDate))
+                .fetchOne();
+    }
 
     // todo 리팩토링 해야함.....
     private BooleanExpression eqCommunityTypeAndSearch(CommunitySearch communitySearch) {

@@ -7,8 +7,10 @@ import com.justudy.backend.admin.dto.response.MemberListResult;
 import com.justudy.backend.admin.dto.response.TotalResult;
 import com.justudy.backend.admin.service.AdminService;
 import com.justudy.backend.community.dto.request.CommunitySearch;
+import com.justudy.backend.community.dto.response.CommunityDetailResponse;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
 import com.justudy.backend.community.dto.response.CommunityListResult;
+import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,8 @@ public class AdminController {
     private final AdminService adminService;
 
     private final MemberService memberService;
+
+    private final CommunityService communityService;
 
     @GetMapping("/total-member")
     public TotalResult getTotalMember() {
@@ -61,5 +65,23 @@ public class AdminController {
     @GetMapping("/community")
     public CommunityListResult<CommunityListResponse> getCommunities(@ModelAttribute CommunitySearch communitySearch) {
         return adminService.getCommunities(communitySearch);
+    }
+
+    @GetMapping("/community/{communitySequence}")
+    public CommunityDetailResponse getCommunityDetail(@PathVariable Long communitySequence) {
+        return communityService.getCommunityDetailByAdmin(communitySequence);
+    }
+
+    @DeleteMapping("/community/{communitySequence}")
+    public ResponseEntity<Void> deleteCommunity(@PathVariable Long communitySequence,
+                                                HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        adminService.deleteCommunity(loginSequence, communitySequence);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @GetMapping("/week/community")
+    public Long geCountOfCommunityByWeek() {
+        return adminService.geCountOfCommunityByWeek();
     }
 }
