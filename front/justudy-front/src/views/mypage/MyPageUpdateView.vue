@@ -1,269 +1,216 @@
 <template>
     <v-app>
-        <v-container>
-            <v-row>
-                <!-- 좌측 여백 -->
-                <v-col cols="12" md="2" />
+        <!-- 제목............................................................. -->
+        <v-row :style="{padding: '1%'}">
+            <v-col justify="center" align="center">
+                <h2>회원 정보 수정</h2>
+            </v-col>
+        </v-row>
 
-                <!-- 본문 -->
-                <v-col cols="12" md="3">
-                    <ProfilePictureUpdate
-                        :diameter="300"
-                        :buttonLength="200"
-                        :height="70"
-                        :fontSize="32"
-                        content="LV"
-                        standard="px"
-                        :src="`${port}images/${user.imageSequence}`"
-                        @sendData="showData"
-                    />
-                </v-col>
-                <v-col cols="12" md="7">
-                    <!-- 제목 -->
+        <!-- 윗줄............................................................. -->
+        <v-row :style="{padding: '1%'}">
+            <v-col cols="12" md="3" />
+            <v-col class="card_section_profile" cols="12" md="2" :style="{marginLeft: '4%'}">
+                <!-- <ProfilePictureUpdate :diameter="300" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" :src="`${port}images/${user.imageSequence}`" @sendData="showData" /> -->
+                <!-- <ProfilePictureUpdate :diameter="300" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" :src="require('@/assets/justudy.png')" @sendData="showData" /> -->
+                <!-- <div class="card_section_profile"> -->
+                <v-row>
+                    <v-col cols="12" md="1" />
+                    <v-col cols="12" md="2" :style="{marginLeft: '10%'}">
+                        <ProfilePicture :diameter="180" :height="180" :fontSize="32" content="LV" standard="px" :src="require('@/assets/justudy.png')" />
+                    </v-col>
+                    <v-col cols="12" md="8"> </v-col>
+                    <v-col cols="12" md="1" />
+                </v-row>
+                <!-- 프로필 사진 변경 -->
+                <v-row :style="{marginTop: '5%'}" justify="center" align="center">
+                    <v-btn outlined text v-on:click="dialogChange()">
+                        <span class="material-icons-outlined"> edit </span>
+                        <div>프로필 이미지 변경</div>
+                    </v-btn>
+                </v-row>
+                <!-- 아이디 -->
+                <v-row>
+                    <v-col cols="12" md="5">
+                        <v-subheader>아이디</v-subheader>
+                    </v-col>
+                    <v-col cols="12" md="1" />
+                    <v-col cols="12" md="6" :style="{marginTop: '4%'}">
+                        <div>{{ user.userId }}</div>
+                    </v-col>
+                </v-row>
+                <!-- 이름 -->
+                <v-row dense>
+                    <v-col cols="12" md="5">
+                        <v-subheader>이름</v-subheader>
+                    </v-col>
+                    <v-col cols="12" md="1" />
+                    <v-col cols="12" md="6" :style="{marginTop: '4%'}">
+                        <div>{{ user.username }}</div>
+                    </v-col>
+                </v-row>
+                <!-- 싸피 학번 -->
+                <v-row dense>
+                    <v-col cols="12" md="5">
+                        <v-subheader>SSAFY 학번</v-subheader>
+                    </v-col>
+                    <v-col cols="12" md="1" />
+                    <v-col cols="12" md="6" :style="{marginTop: '4%'}">
+                        <div>{{ user.ssafyId }}</div>
+                    </v-col>
+                </v-row>
+            </v-col>
+            <v-col cols="12" md="4">
+                <!-- 제목 -->
+                <v-form ref="form" lazy-validation>
                     <v-row>
-                        <v-col cols="12" align="center">
-                            <h2>회원 정보 수정</h2>
+                        <v-col>
+                            <!-- 닉네임 -->
+                            <v-row dense>
+                                <v-col cols="12" md="3">
+                                    <v-subheader>닉네임</v-subheader>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-text-field v-model="user.nickname" dense outlined label="닉네임" @input="checkVal.nickname = false" :rules="rules.nickname"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="3">
+                                    <v-btn color="yellow" rounded @click="check('nickname')"
+                                        >중복확인
+                                        <v-icon v-if="checkVal.nickname" right> mdi-check-bold </v-icon>
+                                        <v-icon v-if="!checkVal.nickname" right> mdi-alert-circle-outline </v-icon>
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
+
+                            <!-- 비밀번호 -->
+                            <v-row dense>
+                                <v-col cols="12" md="3">
+                                    <v-subheader>비밀번호</v-subheader>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-text-field type="password" v-model="user.password" dense outlined label="비밀번호" :rules="rules.pwd"></v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <!-- 비밀번호 확인 -->
+                            <v-row dense>
+                                <v-col cols="12" md="3">
+                                    <v-subheader>비밀번호 확인</v-subheader>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-text-field type="password" v-model="user.passwordCheck" dense outlined label="비밀번호 확인" :rules="rules.pwdCheck"></v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <!-- 전화번호 -->
+                            <v-row dense>
+                                <v-col cols="12" md="3">
+                                    <v-subheader>전화 번호</v-subheader>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-text-field v-model="user.phone" dense outlined label="전화번호" :rules="rules.phone"></v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <!-- 이메일 -->
+                            <v-row dense>
+                                <v-col cols="12" md="3">
+                                    <v-subheader>이메일</v-subheader>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-text-field v-model="user.email" dense outlined label="이메일" :rules="rules.email"></v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <!-- 지역 -->
+                            <v-row dense>
+                                <v-col cols="12" md="3">
+                                    <v-subheader>지역</v-subheader>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-combobox v-model="user.region" :items="regionList" item-text="value" item-value="key" label="지역 선택"></v-combobox>
+                                </v-col>
+                            </v-row>
                         </v-col>
                     </v-row>
+                </v-form>
+            </v-col>
+            <v-col cols="12" md="3" />
+        </v-row>
 
-                    <v-form ref="form" lazy-validation>
-                        <!-- 필수 입력 내용 -->
-                        <v-row>
-                            <!-- 좌측 여백 -->
-                            <v-col cols="0" md="2"> </v-col>
+        <!-- 밑줄 .................................................................... -->
+        <v-row :style="{marginTop: '-1%'}">
+            <v-col cols="12" md="3" />
+            <v-col cols="12" md="6">
+                <!-- 선택입력 -->
+                <v-row>
+                    <!-- 좌측 여백 -->
+                    <v-col cols="0" md="1"></v-col>
 
-                            <v-col cols="12" md="8">
-                                <v-row>
-                                    <v-col cols="12">
-                                        <h4>필수 입력란</h4>
-                                        <v-divider></v-divider>
-                                    </v-col>
-                                </v-row>
-
-                                <!-- 아이디 -->
-                                <v-row dense>
-                                    <v-col cols="12" md="3">
-                                        <v-subheader>아이디</v-subheader>
-                                    </v-col>
-                                    <v-col cols="12" md="6">
-                                        <v-text-field v-model="user.userId" dense outlined label="ID" @input="checkVal.id = false" :rules="rules.id"> </v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" md="3">
-                                        <v-btn color="yellow" rounded @click="check('id')"
-                                            >중복확인
-                                            <v-icon v-if="checkVal.id" right> mdi-check-bold </v-icon>
-                                            <v-icon v-if="!checkVal.id" right> mdi-alert-circle-outline </v-icon>
-                                        </v-btn>
-                                    </v-col>
-                                </v-row>
-
-                                <!-- 비밀번호 -->
-                                <v-row dense>
-                                    <v-col cols="12" md="3">
-                                        <v-subheader>비밀번호</v-subheader>
-                                    </v-col>
-                                    <v-col cols="12" md="6">
-                                        <v-text-field type="password" v-model="user.password" dense outlined label="비밀번호" :rules="rules.pwd"></v-text-field>
-                                    </v-col>
-                                </v-row>
-
-                                <!-- 비밀번호 확인 -->
-                                <v-row dense>
-                                    <v-col cols="12" md="3">
-                                        <v-subheader>비밀번호 확인</v-subheader>
-                                    </v-col>
-                                    <v-col cols="12" md="6">
-                                        <v-text-field type="password" v-model="user.passwordCheck" dense outlined label="비밀번호 확인" :rules="rules.pwdCheck"></v-text-field>
-                                    </v-col>
-                                </v-row>
-
-                                <!-- 이름 -->
-                                <v-row dense>
-                                    <v-col cols="12" md="3">
-                                        <v-subheader>이름</v-subheader>
-                                    </v-col>
-                                    <v-col cols="12" md="6">
-                                        <v-text-field v-model="user.username" dense outlined label="이름" :rules="rules.name"></v-text-field>
-                                    </v-col>
-                                </v-row>
-
-                                <!-- 닉네임 -->
-                                <v-row dense>
-                                    <v-col cols="12" md="3">
-                                        <v-subheader>닉네임</v-subheader>
-                                    </v-col>
-                                    <v-col cols="12" md="6">
-                                        <v-text-field v-model="user.nickname" dense outlined label="닉네임" @input="checkVal.nickname = false" :rules="rules.nickname"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" md="3">
-                                        <v-btn color="yellow" rounded @click="check('nickname')"
-                                            >중복확인
-                                            <v-icon v-if="checkVal.nickname" right> mdi-check-bold </v-icon>
-                                            <v-icon v-if="!checkVal.nickname" right> mdi-alert-circle-outline </v-icon>
-                                        </v-btn>
-                                    </v-col>
-                                </v-row>
-
-                                <!-- 싸피 학번 -->
-                                <v-row dense>
-                                    <v-col cols="12" md="3">
-                                        <v-subheader>SSAFY 학번</v-subheader>
-                                    </v-col>
-                                    <v-col cols="12" md="6">
-                                        <v-text-field v-model="user.ssafyId" dense outlined label="SSAFY 학번" @input="checkVal.ssafyId = false" :rules="rules.ssafyId"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" md="3">
-                                        <v-btn color="yellow" rounded @click="check('ssafyId')"
-                                            >중복확인
-                                            <v-icon v-if="checkVal.ssafyId" right> mdi-check-bold </v-icon>
-                                            <v-icon v-if="!checkVal.ssafyId" right> mdi-alert-circle-outline </v-icon>
-                                        </v-btn>
-                                    </v-col>
-                                </v-row>
-
-                                <!-- 전화번호 -->
-                                <v-row dense>
-                                    <v-col cols="12" md="3">
-                                        <v-subheader>전화 번호</v-subheader>
-                                    </v-col>
-                                    <v-col cols="12" md="6">
-                                        <v-text-field v-model="user.phone" dense outlined label="전화번호" :rules="rules.phone"></v-text-field>
-                                    </v-col>
-                                </v-row>
-
-                                <!-- 이메일 -->
-                                <v-row dense>
-                                    <v-col cols="12" md="3">
-                                        <v-subheader>이메일</v-subheader>
-                                    </v-col>
-                                    <v-col cols="12" md="6">
-                                        <v-text-field v-model="user.email" dense outlined label="이메일" :rules="rules.email"></v-text-field>
-                                    </v-col>
-                                </v-row>
-
-                                <!-- 지역 -->
-                                <v-row dense>
-                                    <v-col cols="12" md="3">
-                                        <v-subheader>지역</v-subheader>
-                                    </v-col>
-                                    <v-col cols="12" md="6">
-                                        <v-combobox v-model="user.region" :items="regionList" item-text="value" item-value="key" label="지역 선택"></v-combobox>
-                                    </v-col>
-                                </v-row>
-                            </v-col>
-
-                            <!-- 우측여백 -->
-                            <v-col cols="0" md="2"> </v-col>
+                    <!-- 본문 -->
+                    <v-col cols="0" md="10">
+                        <v-row :style="{padding: '3%'}">
+                            <v-divider></v-divider>
                         </v-row>
-                    </v-form>
-                </v-col>
 
-                <!-- 우측 여백 -->
-                <v-col cols="12" md="2"> </v-col>
-            </v-row>
+                        <!-- 희망진로 -->
+                        <v-row>
+                            <v-col cols="12" md="3">
+                                <v-subheader>희망 진로</v-subheader>
+                            </v-col>
+                            <v-col cols="12" md="9">
+                                <v-text-field v-model="user.dream" dense outlined label="희망 진로 입력" hint="ex) 백엔드 개발자"></v-text-field>
+                            </v-col>
+                        </v-row>
 
-            <v-row>
-                <v-col cols="12" md="2" />
-                <v-col cols="12" md="8">
-                    <!-- 선택입력 -->
-                    <v-row>
-                        <!-- 좌측 여백 -->
-                        <v-col cols="0" md="1"></v-col>
+                        <!-- 기술 스택 -->
+                        <v-row :style="{marginTop: '-3%'}">
+                            <v-col cols="12" md="3">
+                                <v-subheader>관심있는 기술 스택</v-subheader>
+                            </v-col>
+                            <v-col cols="12" md="9">
+                                <v-combobox v-model="tempCategory" :items="bottomCategories" item-text="value" item-value="key" label="관심 기술" multiple></v-combobox>
+                            </v-col>
+                        </v-row>
 
-                        <!-- 본문 -->
-                        <v-col cols="0" md="10">
-                            <v-row>
-                                <v-col cols="12">
-                                    <h4>선택 입력란</h4>
-                                    <v-divider></v-divider>
-                                </v-col>
-                            </v-row>
+                        <!-- 자기 소개 -->
+                        <v-row>
+                            <v-col cols="12" md="3">
+                                <v-subheader>자기 소개</v-subheader>
+                            </v-col>
+                            <v-col cols="12" md="9">
+                                <v-textarea no-resize v-model="user.introduction" label="자기 소개를 해주세요!" outlined rows="13"></v-textarea>
+                            </v-col>
+                        </v-row>
+                    </v-col>
 
-                            <!-- 희망진로 -->
-                            <v-row>
-                                <v-col cols="12" md="3">
-                                    <v-subheader>희망 진로</v-subheader>
-                                </v-col>
-                                <v-col cols="12" md="9">
-                                    <v-text-field v-model="user.dream" dense outlined label="희망 진로 입력" hint="ex) 백엔드 개발자"></v-text-field>
-                                </v-col>
-                            </v-row>
+                    <!-- 우측여백 -->
+                    <v-col cols="0" md="1"> </v-col>
+                </v-row>
+            </v-col>
+            <v-col cols="12" md="3" />
+        </v-row>
 
-                            <!-- 기술 스택 -->
-                            <v-row>
-                                <v-col cols="12" md="3">
-                                    <v-subheader>관심있는 기술 스택</v-subheader>
-                                </v-col>
-                                <v-col cols="12" md="9">
-                                    <v-combobox v-model="user.category" :items="bottomCategories" item-text="value" item-value="key" label="관심 기술" multiple></v-combobox>
-                                </v-col>
-                            </v-row>
-
-                            <!-- 자기 소개 -->
-                            <v-row>
-                                <v-col cols="12" md="3">
-                                    <v-subheader>자기 소개</v-subheader>
-                                </v-col>
-                                <v-col cols="12" md="9">
-                                    <v-textarea no-resize v-model="user.introduction" label="자기 소개를 해주세요!" outlined rows="13"></v-textarea>
-                                </v-col>
-                            </v-row>
-
-                            <!-- 회원가입 버튼 -->
-                            <v-row>
-                                <v-col cols="12" align="center">
-                                    <v-btn color="yellow" @click="update()">수정 완료하기</v-btn>
-                                </v-col>
-                            </v-row>
-                        </v-col>
-
-                        <!-- 우측여백 -->
-                        <v-col cols="0" md="1"> </v-col>
-                    </v-row>
-                </v-col>
-                <v-col cols="12" md="2" />
-            </v-row>
-
-            <!-- <v-dialog v-model="mmdialog" width="600">
-                <v-card>
-                    <v-card-title> MatterMost 인증</v-card-title>
-
-                    <v-card-text>
-                        <v-container>
-                            <v-row>
-                                <v-col cols="5">
-                                    <v-subheader>MatterMost ID</v-subheader>
-                                </v-col>
-                                <v-col cols="7">
-                                    <v-text-field v-model="user.mmId" dense outlined label="ID" :rule="v => !!v || '필수 입력 사항입니다.'"></v-text-field>
-                                </v-col>
-                            </v-row>
-
-                            <v-row>
-                                <v-col cols="5">
-                                    <v-subheader>MatterMost PW</v-subheader>
-                                </v-col>
-                                <v-col cols="7">
-                                    <v-text-field v-model="user.mmPw" type="password" dense outlined label="PW" :rule="v => !!v || '필수 입력 사항입니다.'"></v-text-field>
-                                </v-col>
-                            </v-row>
-
-                            <v-row>
-                                <v-col cols="12" align="center">
-                                    <v-btn @click="update()">회원가입</v-btn>
-                                    <v-btn @click="mmdialog = false">취소</v-btn>
-                                </v-col>
-                            </v-row>
-                        </v-container>
-                    </v-card-text>
-                </v-card>
-            </v-dialog> -->
-        </v-container>
+        <!-- 회원가입 버튼 -->
+        <v-row>
+            <v-col cols="12" md="4" align="right">
+                <v-btn text @click="moveback" :style="{color: 'crimson'}">
+                    <span class="material-icons-outlined"> backspace </span>
+                </v-btn>
+            </v-col>
+            <v-col cols="12" md="2" />
+            <v-col cols="12" md="2" />
+            <v-col cols="12" md="4" align="left">
+                <v-btn text @click="update()" :style="{color: 'green'}">
+                    <span class="material-icons-outlined"> check_circle </span>
+                </v-btn>
+            </v-col>
+        </v-row>
     </v-app>
 </template>
 
 <script>
-import ProfilePictureUpdate from '@/components/mypage/ProfilePictureUpdate.vue';
+import ProfilePicture from '@/components/mypage/ProfilePicture.vue';
 import port from '@/store/port';
 import {mapState} from 'vuex';
 export default {
@@ -276,7 +223,7 @@ export default {
         ...mapState('moduleSignUp', ['checkMM'])
     },
     components: {
-        ProfilePictureUpdate
+        ProfilePicture
     },
     // created() {
     //     this.$store.dispatch('moduleStudy/getBottomCategories', '전체');
@@ -284,10 +231,27 @@ export default {
     async created() {
         //  회원정보와 관련된 것 get으로 가져와서 default 에 넣어놓기
         await this.$store.dispatch('moduleMyPage/getModifyUser');
+        await this.$store.dispatch('moduleStudy/getBottomCategories', '전체');
+
         this.user = this.$store.state.moduleMyPage.modifyUser;
+        for (let i = 0; i < this.user.category.length; ++i) {
+            for (let j = 0; j < this.bottomCategories.length; ++j) {
+                this.bottomCategories[j].checked = false;
+                if (this.bottomCategories[j].value == this.user.category[i]) {
+                    this.bottomCategories[j].checked = true;
+                    this.tempCategory.push(this.bottomCategories[j]);
+                }
+            }
+        }
+        this.user.category = [];
+        for (let i = 0; i < this.cat.length; ++i) {
+            this.user.category.push(this.tempCategory[i].value);
+        }
+        console.log(this.user);
     },
     data() {
         return {
+            tempCategory: [],
             // 기존 업데이트 ///////////////////////////////////////////////////////
             port: port,
             // user 데이터
@@ -377,14 +341,20 @@ export default {
     },
 
     methods: {
+        dialogChange() {
+            this.$emit('dialogChangeFromChild');
+        },
+        moveback() {
+            window.history.back(); // window.history.back()을 통해 뒤로가기
+        },
         // 업데이트 발 ///////////////////////////////////////////////////////
         update() {
             // 일괄 수정 API
             console.log(this.file);
             this.result = {
-                nickname: this.user.username,
+                nickname: this.user.nickname,
                 password: this.user.password,
-                passwordCheck: this.user.rePassword,
+                passwordCheck: this.user.passwordCheck,
                 phone: this.user.phone,
                 email: this.user.email,
                 region: 'SEOUL',
@@ -500,3 +470,12 @@ export default {
     }
 };
 </script>
+<style scoped>
+.card_section_profile {
+    padding: 1%;
+    border-style: solid;
+    border-color: #eeeeee;
+    border-radius: 30px;
+    /* border-width: thin; */
+}
+</style>
