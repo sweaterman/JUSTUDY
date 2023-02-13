@@ -4,7 +4,7 @@ import com.justudy.backend.GroupCall.service.StudyRoomService;
 import com.justudy.backend.category.dto.request.CategoryResponse;
 import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.community.dto.request.CommunitySearch;
-import com.justudy.backend.community.dto.response.ListResult;
+import com.justudy.backend.community.dto.response.CommunityListResult;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
@@ -501,13 +501,14 @@ public class StudyController {
      * order - view, like
      */
     @GetMapping("/{id}/board")
-    public ListResult<List<StudyCommunityListResponse>> getList(@PathVariable("id") Long studySequence, @ModelAttribute CommunitySearch condition, HttpSession session) {
+    public CommunityListResult<List<StudyCommunityListResponse>> getList(@PathVariable("id") Long studySequence, @ModelAttribute CommunitySearch condition, HttpSession session) {
+        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> communitySearch = {}", condition);
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         return studyCommunityService.getCommunities(condition.validateNull(), studySequence, loginSequence);
     }
 
     @GetMapping("/{id}/board/notices")
-    public ListResult<List<StudyCommunityListResponse>> getNotices(@PathVariable("id") Long studySequence, @PageableDefault(size = 20) Pageable pageable, HttpSession session) {
+    public CommunityListResult<List<StudyCommunityListResponse>> getNotices(@PathVariable("id") Long studySequence, @PageableDefault(size = 20) Pageable pageable, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         return studyCommunityService.getNotices(pageable, studySequence, loginSequence);
     }

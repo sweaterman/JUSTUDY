@@ -6,7 +6,7 @@ import com.justudy.backend.community.dto.request.*;
 import com.justudy.backend.community.dto.response.CommunityCommentResponse;
 import com.justudy.backend.community.dto.response.CommunityDetailResponse;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
-import com.justudy.backend.community.dto.response.ListResult;
+import com.justudy.backend.community.dto.response.CommunityListResult;
 import com.justudy.backend.community.service.CommunityBookmarkService;
 import com.justudy.backend.community.service.CommunityCommentService;
 import com.justudy.backend.community.service.CommunityLoveService;
@@ -14,7 +14,6 @@ import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.service.MemberService;
-import com.sun.net.httpserver.HttpsServer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -48,12 +47,12 @@ public class CommunityController {
      * order - view, like
      */
     @GetMapping("/board")
-    public ListResult<List<CommunityListResponse>> getList(@ModelAttribute CommunitySearch condition) {
+    public CommunityListResult<List<CommunityListResponse>> getList(@ModelAttribute CommunitySearch condition) {
         return communityService.getCommunities(condition.validateNull());
     }
 
     @GetMapping("/board/notices")
-    public ListResult<List<CommunityListResponse>> getNotices(@PageableDefault(size = 20) Pageable pageable) {
+    public CommunityListResult<List<CommunityListResponse>> getNotices(@PageableDefault(size = 20) Pageable pageable) {
         return communityService.getNotices(pageable);
     }
 

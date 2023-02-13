@@ -4,10 +4,10 @@ import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.exception.CategoryNotFound;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.common.validate.Validation;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
 import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.exception.ConflictRequest;
-import com.justudy.backend.exception.ForbiddenRequest;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
@@ -17,9 +17,9 @@ import com.justudy.backend.member.domain.MemberCategoryEntity;
 import com.justudy.backend.member.domain.MemberEditor;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.domain.MemberRole;
+import com.justudy.backend.member.dto.request.MatterMostRequest;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
-import com.justudy.backend.member.dto.request.MatterMostRequest;
 import com.justudy.backend.member.dto.response.MatterMostResponse;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
@@ -40,6 +40,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -109,7 +110,9 @@ public class MemberService {
 
     @Transactional
     public Long banMember(Long loginSequence, Long memberSequence) {
-        validateSessionUser(loginSequence, MemberRole.ADMIN);
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+        Validation.validateUserRole(findMember, MemberRole.ADMIN);
 
         MemberEntity targetMember = memberRepository.findById(memberSequence)
                 .orElseThrow(() -> new MemberNotFound());
@@ -151,6 +154,7 @@ public class MemberService {
         findMember.changeMemberCategory(newCategories);
 
         findMember.edit(memberEditor);
+        findMember.changeModifiedTime(LocalDateTime.now());
 
         return findMember.getSequence();
     }
@@ -224,14 +228,14 @@ public class MemberService {
         }
     }
 
-    private void validateSessionUser(Long loginSequence, MemberRole role) {
-        MemberEntity findMember = memberRepository.findById(loginSequence)
-                .orElseThrow(() -> new MemberNotFound());
-
-        if (!findMember.getRole().equals(role)) {
-            throw new ForbiddenRequest();
-        }
-    }
+//    private void validateSessionUser(Long loginSequence, MemberRole role) {
+//        MemberEntity findMember = memberRepository.findById(loginSequence)
+//                .orElseThrow(() -> new MemberNotFound());
+//
+//        if (!findMember.getRole().equals(role)) {
+//            throw new ForbiddenRequest();
+//        }
+//    }
 
     private ProfileResponse createProfileResponse(MemberEntity member) {
         return ProfileResponse.builder()
