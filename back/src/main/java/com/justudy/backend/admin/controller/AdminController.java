@@ -1,6 +1,7 @@
 package com.justudy.backend.admin.controller;
 
 import com.justudy.backend.admin.dto.request.MemberSearch;
+import com.justudy.backend.admin.dto.response.AdminMemberDetail;
 import com.justudy.backend.admin.dto.response.MemberListResponse;
 import com.justudy.backend.admin.dto.response.MemberListResult;
 import com.justudy.backend.admin.dto.response.TotalResult;
@@ -37,6 +38,11 @@ public class AdminController {
     @GetMapping("/member")
     public MemberListResult<List<MemberListResponse>> getMembers(@ModelAttribute MemberSearch memberSearch) {
         return adminService.getMembers(memberSearch.validateNull());
+    }
+
+    @GetMapping("/member/{memberSequence}")
+    public AdminMemberDetail getMemberDetail(@PathVariable Long memberSequence) {
+        return adminService.getMemberDetail(memberSequence);
     }
 
     @DeleteMapping("/member/{memberSequence}")
