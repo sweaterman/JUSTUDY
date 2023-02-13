@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 @Slf4j
 @Data
+@Log4j2
 public class CommunitySearch {
 
     private static final Long DEFAULT_PAGE = 0L;
@@ -60,6 +61,7 @@ public class CommunitySearch {
         if (type == null || !StringUtils.hasText(type)) {
             return null;
         }
+        log.info("로그 {}", type);
         return Arrays.stream(SearchType.values())
                 .filter(searchType -> searchType.getValue().equals(type))
                 .findFirst()

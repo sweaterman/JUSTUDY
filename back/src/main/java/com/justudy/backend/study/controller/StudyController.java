@@ -232,6 +232,10 @@ public class StudyController {
         //스터디룸 삭제
         studyRoomService.deleteStudyRoom(id);
 
+        //스터디 지원서 삭제
+        studyResumeService.deleteStudyResumeByStudy(id);
+
+
         //스터디 삭제
         studyService.deleteStudy(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -441,14 +445,16 @@ public class StudyController {
      * @param request isAccept
      * @return ResponseEntity<Void> 200 OK
      */
-    @PutMapping("/study/{id}/members/apply/{applyid}")
+    @PutMapping("/{id}/members/apply/{applyid}")
     public ResponseEntity<Void> acceptStudyResume(@PathVariable("id") Long id, @PathVariable("applyid") Long applyId, @RequestBody StudyResumeApply request, HttpSession session) {
         //session 과 leader id 체크
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        if (loginSequence.longValue() == studyService.getStudyLeader(id).longValue()) throw new InvalidRequest();
+
+        if (loginSequence.longValue() != studyService.getStudyLeader(id).longValue()) throw new InvalidRequest();
 
         StudyDetailResponse studyEntity = studyService.readStudy(id);
         //지원서 체크
+
         Long resumeSeq = studyEntity.getResumeSeq()
                 .stream()
                 .filter(resume -> resume.longValue() == applyId.longValue())
@@ -471,7 +477,7 @@ public class StudyController {
         }
 
         //지원서 삭제
-        studyResumeService.deleteById(resumeSeq);
+        studyResumeService.deleteById(id,resumeSeq);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 

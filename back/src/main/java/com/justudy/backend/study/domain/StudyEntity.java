@@ -31,7 +31,7 @@ public class StudyEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
     private List<StudyResumeEntity> resumes = new ArrayList<>();
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study",cascade = CascadeType.ALL)
     private List<StudyCommunityEntity> communities = new ArrayList<>();
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
@@ -71,8 +71,8 @@ public class StudyEntity {
     @Column(name = "study_on_air", columnDefinition = "TINYINT(1)")
     private Boolean onAir;
 
-    public void changeOnAir(Boolean onAir){
-        this.onAir=onAir;
+    public void changeOnAir(Boolean onAir) {
+        this.onAir = onAir;
     }
 
     public void changeImage(UploadFileEntity imageFile) {
@@ -134,10 +134,10 @@ public class StudyEntity {
     }
 
     public void changeStudyRoom(StudyRoomEntity studyRoom) {
-        this.studyRoom=studyRoom;
+        this.studyRoom = studyRoom;
     }
 
     public void changeCategory(CategoryEntity categoryEntity) {
-        this.category=categoryEntity;
+        this.category = categoryEntity;
     }
 }
