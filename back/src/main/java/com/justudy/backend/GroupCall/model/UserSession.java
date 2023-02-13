@@ -24,10 +24,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import javax.websocket.Session;
 import org.kurento.client.Continuation;
+import org.kurento.client.DataChannelClosedEvent;
+import org.kurento.client.ErrorEvent;
 import org.kurento.client.EventListener;
 import org.kurento.client.IceCandidate;
 import org.kurento.client.IceCandidateFoundEvent;
 import org.kurento.client.MediaPipeline;
+import org.kurento.client.OnDataChannelClosedEvent;
 import org.kurento.client.WebRtcEndpoint;
 import org.kurento.jsonrpc.JsonUtils;
 import org.slf4j.Logger;
@@ -83,6 +86,29 @@ public class UserSession implements Closeable {
       }
     });
 
+    this.outgoingMedia.addErrorListener(new EventListener<ErrorEvent>() {
+      @Override
+      public void onEvent(ErrorEvent event) {
+        log.info("addErrorListener.......................................");
+        log.info(event.getDescription());
+      }
+    });
+    this.outgoingMedia.addDataChannelClosedListener(new EventListener<DataChannelClosedEvent>() {
+      @Override
+      public void onEvent(DataChannelClosedEvent event) {
+        log.info("addDataChannelClosedListener.......................................");
+        log.info(event.toString());
+      }
+    });
+
+    this.outgoingMedia.addOnDataChannelClosedListener(
+        new EventListener<OnDataChannelClosedEvent>() {
+          @Override
+          public void onEvent(OnDataChannelClosedEvent event) {
+            log.info("OnDataChannelClosedEvent.......................................");
+            log.info(event.toString());
+          }
+        });
 
   }
 
@@ -127,7 +153,7 @@ public class UserSession implements Closeable {
 
     log.trace("USER {}: SdpAnswer for {} is {}", this.name, sender.getName(), ipSdpAnswer);
     this.sendMessage(scParams);
-    log.info("gather candidates");
+    log.info("gather candidates ");
     this.getEndpointForUser(sender).gatherCandidates();
   }
 
@@ -154,7 +180,11 @@ public class UserSession implements Closeable {
           response.add("candidate", JsonUtils.toJsonObject(event.getCandidate()));
           try {
             synchronized (session) {
-              session.getBasicRemote().sendText(response.toString());
+              if (session.isOpen()) {
+                session.getBasicRemote().sendText(response.toString());
+              }else{
+                log.info("session not open!!!!!!!!!!");
+              }
             }
           } catch (IOException e) {
             log.info(e.getMessage());
@@ -276,6 +306,7 @@ public class UserSession implements Closeable {
     sender.addProperty("id", "exit");
     this.sendMessage(sender);
   }
+
   public void transferRequestBan(String personName) throws IOException {
     final JsonObject sender = new JsonObject();
     sender.addProperty("id", "requestBanVote");

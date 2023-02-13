@@ -27,6 +27,7 @@ import com.justudy.backend.GroupCall.model.UserRegistry;
 import com.justudy.backend.GroupCall.model.UserSession;
 import java.io.IOException;
 import javax.websocket.OnClose;
+import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
@@ -206,6 +207,21 @@ public class GroupCallService {
     UserSession user = registry.removeBySession(session);
     if (user == null) {
       log.info("......duplicate eror");
+      return;
+    }
+    log.info("user getRoomName : {}", user.getRoomName());
+    if (roomManager.getRoomState(user.getRoomName()) != null) {
+      roomManager.getRoom(user.getRoomName()).leave(user);
+    }
+  }
+
+
+  @OnError
+  public void getErrorMessage(Throwable t, Session session) throws Exception {
+    log.info("getErrorMessage : {}", t.getMessage());
+    UserSession user = registry.removeBySession(session);
+    if (user == null) {
+      log.info("......eror");
       return;
     }
     log.info("user getRoomName : {}", user.getRoomName());
