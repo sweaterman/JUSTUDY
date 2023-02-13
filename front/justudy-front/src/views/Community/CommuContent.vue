@@ -7,11 +7,9 @@
                 <v-form ref="form" @submit.prevent="onSubmitForm">
                     <!-- 제목 -->
                     <v-row>
-                        <!-- <v-btn depressed color="white" :style="{height: '65px', width: '165px', fontWeight: 'bold', fontSize: 'large', marginTop: '20%'}">글쓴이</v-btn> -->
                         <div style="margin-left: 9%; margin-top: 1%">
                             <h1>{{ Data.title }}</h1>
                         </div>
-                        <!-- <v-text-field v-model="title" solo readonly depressed outlined label="제목" style="width: 80%; margin-right: 10%; margin-top: 0.5%"></v-text-field> -->
                     </v-row>
                     <v-row>
                         <hr style="margin-left: 9%; margin-top: 1%; width: 100%" />
@@ -19,17 +17,33 @@
 
                     <!-- 글쓴이 -->
                     <v-row>
-                        <div style="width: 300px; margin-left: 9%; margin-top: 1.7%; margin-bottom: 0.5%">
-                            <h3>작성자 : {{ Data.nickname }}</h3>
-                        </div>
-                        <!-- <v-text-field v-model="writer" solo readonly outlined depressed label="글쓴이" style="width: 80%; height: 20px; margin-right: 10%; margin-top: 4%"></v-text-field> -->
-                        <!-- <v-btn color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '3%', marginLeft: '10%'}"></v-btn> -->
+                        <v-col cols="12" md="6">
+                            <div style="width: 300px; margin-left: 17%; margin-top: 1.7%; margin-bottom: 0.5%">
+                                <h3>작성자 : {{ Data.nickname }}</h3>
+                            </div>
+                        </v-col>
+                        <v-col cols="12" md="2" />
+                        <v-col cols="12" md="2" align="right">
+                            <v-btn v-if="like" outlined text @click="clickLike('liked')" :style="{color: 'red'}">
+                                <span class="material-icons-outlined"> favorite </span>
+                            </v-btn>
+                            <v-btn v-if="!like" outlined text @click="clickLike('notliked')">
+                                <span class="material-icons-outlined"> favorite </span>
+                            </v-btn>
+                        </v-col>
+                        <v-col cols="12" md="2" align="left">
+                            <v-btn v-if="bookmark" outlined text @click="clickMark('marked')" :style="{color: 'gold'}">
+                                <span class="material-icons-outlined"> bookmark </span>
+                            </v-btn>
+                            <v-btn v-if="!bookmark" outlined text @click="clickMark('notmarked')">
+                                <span class="material-icons-outlined"> bookmark </span>
+                            </v-btn>
+                        </v-col>
                     </v-row>
 
                     <!-- 작성일 -->
                     <v-row>
                         <div style="width: 300px; margin-left: 9%; padding-top: 4px; padding-bottom: 25px">작성일 : {{ Data.createdTime }}</div>
-                        <!-- <v-text-field v-model="createdAt" solo readonly depressed outlined label="작성일" style="width: 80%; margin-right: 15%"></v-text-field> -->
                     </v-row>
                     <!-- 수정일 기능 -->
                     <!-- <v-row>
@@ -52,15 +66,20 @@
             <v-col cols="12" md="8">
                 <v-row>
                     <v-col cols="12" md="2" align="right">
-                        <v-btn @click="moveback" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large', marginLeft: '55%'}">뒤로가기</v-btn>
+                        <v-btn outlined text @click="moveback">
+                            <span class="material-icons-outlined"> arrow_back </span>
+                        </v-btn>
                     </v-col>
                     <v-col cols="12" md="6"> </v-col>
                     <v-col cols="12" md="2" align="right">
-                        <v-btn @click="editcontent" v-if="editable == false" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정</v-btn>
-                        <!-- <v-btn @click="editcontentfinish" v-if="editable === true" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정완료</v-btn> -->
+                        <v-btn outlined text @click="editcontent" v-if="editable == false">
+                            <span class="material-icons-outlined"> edit </span>
+                        </v-btn>
                     </v-col>
                     <v-col cols="12" md="2">
-                        <v-btn @click="deletecontent" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">삭제</v-btn>
+                        <v-btn outlined text @click="deletecontent" color="red">
+                            <span class="material-icons-outlined"> delete </span>
+                        </v-btn>
                     </v-col>
                 </v-row>
                 <v-row>
@@ -70,15 +89,7 @@
             <v-col cols="12" md="2" />
         </v-row>
 
-        <v-row>
-            <v-col cols="12" md="2" />
-            <v-col cols="12" md="8">
-                <v-row>
-                    <CommuComment :contentId="parseInt(this.$route.params.id)" />
-                </v-row>
-            </v-col>
-            <v-col cols="12" md="2" />
-        </v-row>
+        <CommuComment :contentId="parseInt(this.$route.params.id)" />
     </v-app>
 </template>
 
@@ -93,6 +104,8 @@ export default {
         return {
             Data: {},
             index: index,
+            like: false,
+            bookmark: false,
             // writer: '돌숭이', // 작성자
             // title: '돌숭이의 꿀팁', // 글 제목
             // createdAt: '2023/01/18', // 작성일
@@ -126,6 +139,20 @@ export default {
         console.log(this.Data);
     },
     methods: {
+        clickLike(check) {
+            if (check != 'liked') {
+                this.like = true;
+            } else {
+                this.like = false;
+            }
+        },
+        clickMark(check) {
+            if (check != 'marked') {
+                this.bookmark = true;
+            } else {
+                this.bookmark = false;
+            }
+        },
         moveback() {
             window.history.back(); // window.history.back()을 통해 뒤로가기
         },

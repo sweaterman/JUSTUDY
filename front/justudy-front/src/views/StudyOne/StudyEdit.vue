@@ -218,6 +218,30 @@
                         </v-btn>
                     </v-col>
                 </v-row>
+
+                <!-- 스터디 삭제하기 -->
+                <v-row>
+                    <v-col cols="12" align="end">
+                        <v-btn text @click="deleteStudy = true" :style="{color: 'crimson'}">
+                            스터디 삭제하기
+                            <span class="material-icons-outlined">logout</span>
+                        </v-btn>
+                    </v-col>
+                </v-row>
+
+                <!-- 스터디 삭제하기 모달 -->
+                <v-dialog v-model="deleteStudy" width="800">
+                    <v-card>
+                        <v-card-title>스터디 삭제</v-card-title>
+                        <v-card-text>스터디 삭제 시, 돌이킬 수 없습니다. 정말로 스터디를 삭제하시겠습니까?</v-card-text>
+                        <v-divider></v-divider>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="primary" text @click="deleteMyStudy()">삭제</v-btn>
+                            <v-btn color="primary" text @click="deleteStudy = false">취소</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
             </v-col>
         </v-row>
     </v-container>
@@ -235,8 +259,7 @@ export default {
         ...mapState('moduleStudy', ['bottomCategories'])
     },
     async created() {
-        const pathName = new URL(document.location).pathname.split('/');
-        const studySeq = pathName[pathName.length - 2];
+        const studySeq = this.$route.params.studySeq;
         await this.$store.dispatch('moduleStudy/getStudyInfo', studySeq);
         if (this.studyInfo.isLeader == false) {
             window.location.href = '/error';
@@ -264,7 +287,8 @@ export default {
             endModal: false,
             nameCheckVal: true,
             file: null,
-            uploadImageFile: null
+            uploadImageFile: null,
+            deleteStudy: false
         };
     },
     methods: {
@@ -354,6 +378,11 @@ export default {
                 },
                 false
             );
+        },
+        //스터디 삭제하기
+        async deleteMyStudy() {
+            await this.$store.dispatch('moduleStudy/deleteMyStudy', this.studyInfo.sequence);
+            this.deleteStudy = false;
         }
     }
 };
