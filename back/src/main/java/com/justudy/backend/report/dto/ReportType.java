@@ -1,4 +1,4 @@
-package com.justudy.backend.admin.dto.request;
+package com.justudy.backend.report.dto;
 
 import com.justudy.backend.common.enum_util.EnumModel;
 

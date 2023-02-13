@@ -1,11 +1,9 @@
-package com.justudy.backend.admin.domain;
+package com.justudy.backend.report.domain;
 
-import com.justudy.backend.community.domain.CommunityEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Getter

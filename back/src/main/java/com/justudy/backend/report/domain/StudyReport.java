@@ -1,4 +1,4 @@
-package com.justudy.backend.admin.domain;
+package com.justudy.backend.report.domain;
 
 import com.justudy.backend.study.domain.StudyEntity;
 
