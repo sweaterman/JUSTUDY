@@ -27,6 +27,8 @@ public class AdminController {
 
     private final AdminService adminService;
 
+    private final MemberService memberService;
+
     @GetMapping("/total-member")
     public TotalResult getTotalMember() {
         return new TotalResult(adminService.getCountOfMembers());
@@ -35,5 +37,13 @@ public class AdminController {
     @GetMapping("/member")
     public MemberListResult<List<MemberListResponse>> getMembers(@ModelAttribute MemberSearch memberSearch) {
         return adminService.getMembers(memberSearch.validateNull());
+    }
+
+
+
+
+    @GetMapping("/community")
+    public CommunityListResult<CommunityListResponse> getCommunities(@ModelAttribute CommunitySearch communitySearch) {
+        return adminService.getCommunities(communitySearch);
     }
 }
