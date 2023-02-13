@@ -10,7 +10,7 @@ import com.justudy.backend.community.dto.request.CommunityEdit;
 import com.justudy.backend.community.dto.request.CommunitySearch;
 import com.justudy.backend.community.dto.response.CommunityDetailResponse;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
-import com.justudy.backend.community.dto.response.ListResult;
+import com.justudy.backend.community.dto.response.CommunityListResult;
 import com.justudy.backend.community.service.CommunityBookmarkService;
 import com.justudy.backend.community.service.CommunityCommentService;
 import com.justudy.backend.community.service.CommunityLoveService;
@@ -90,9 +90,9 @@ class CommunityControllerTest {
         List<CommunityListResponse> sortedLoveCount = list.stream().sorted(Comparator.comparing(CommunityListResponse::getLoveCount).reversed())
                 .collect(Collectors.toList());
         BDDMockito.given(communityService.getCommunities(ArgumentMatchers.eq(nullCondition)))
-                .willReturn(new ListResult<>(sortedSequence, 30L));
+                .willReturn(new CommunityListResult<>(sortedSequence, 30L));
         BDDMockito.given(communityService.getCommunities(ArgumentMatchers.eq(likeCondition)))
-                .willReturn(new ListResult<>(sortedLoveCount, 30L));
+                .willReturn(new CommunityListResult<>(sortedLoveCount, 30L));
 
         //expected
         mockMvc.perform(get(COMMON_URL + "/board")
