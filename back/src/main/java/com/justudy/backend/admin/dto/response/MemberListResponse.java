@@ -35,8 +35,8 @@ public class MemberListResponse {
         this.createdTime = createdTime;
     }
 
-    public MemberListResponse(MemberEntity member) {
-        MemberListResponse.builder()
+    public static MemberListResponse toResponse(MemberEntity member) {
+        return MemberListResponse.builder()
                 .memberSequence(member.getSequence())
                 .userId(member.getUserId())
                 .username(member.getUsername())
