@@ -5,6 +5,7 @@ import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.study.domain.StudyEntity;
+import com.justudy.backend.study.domain.StudyMemberEntity;
 import com.justudy.backend.study.domain.StudyResumeEntity;
 import com.justudy.backend.study.dto.request.StudyResumeCreate;
 import com.justudy.backend.study.dto.response.StudyResponse;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,8 +86,27 @@ public class StudyResumeService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteById(Long id) {
-        studyResumeRepository.deleteById(id);
+    @Transactional
+    public void deleteById(Long id, Long resumeSeq) {
+        StudyEntity studyEntity = studyRepository.findById(id)
+                .orElseThrow(StudyNotFound::new);
+        StudyResumeEntity studyResumeEntity = studyResumeRepository.findById(resumeSeq)
+                .orElseThrow(StudyResumeNotFound::new);
+        studyEntity.removeStudyResume(studyResumeEntity);
+        studyResumeRepository.deleteById(resumeSeq);
+    }
+
+    @Transactional
+    public void deleteStudyResumeByStudy(Long id) {
+        StudyEntity studyEntity = studyRepository.findById(id)
+                .orElseThrow(StudyNotFound::new);
+
+        //ConcurrentModificationException을 피하기위해 iterator를 활용한 제거
+        for (Iterator<StudyResumeEntity> iterator = studyEntity.getResumes().iterator(); iterator.hasNext(); ) {
+            iterator.next().changeStudy(null);
+            iterator.remove();
+        }
+        studyResumeRepository.deleteStudyResumeByStudy(id);
     }
 }
 

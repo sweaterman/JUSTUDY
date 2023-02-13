@@ -31,6 +31,12 @@ public class StudyResponse {
 
 
     public static StudyResponse makeBuilder(StudyEntity entity) {
+        log.info("멤버 {}",entity.getStudyMembers().toString());
+        entity.getStudyMembers()
+                .stream()
+                .map(studyMemberEntity -> studyMemberEntity.getMember().getSequence())
+                .forEach(st->log.info(" {}",st));
+
         String leader = entity.getStudyMembers()
                 .stream()
                 .filter(studyMemberEntity -> entity.getLeaderSeq().longValue() == studyMemberEntity.getMember().getSequence().longValue())
