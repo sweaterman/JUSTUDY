@@ -13,7 +13,9 @@ export default {
         myStudies: [], // 내가 가입한 스터디 목록
         studyInfo: {}, //스터디 상세 정보
         nameCheck: false,
-        applyList: [] //내가 방장일 때 지원목록 확인
+        applyList: [], //내가 방장일 때 지원목록 확인
+        boardList: [], // 게시판 글 목록
+        boardDetail: {} //게시판 글 상세
     },
     getters: {},
     mutations: {
@@ -49,6 +51,12 @@ export default {
         },
         GET_APPLYLIST(state, payload) {
             state.applyList = payload;
+        },
+        GET_BOARDLIST(state, payload) {
+            state.boardList = payload;
+        },
+        GET_BOARDDETAIL(state, payload) {
+            state.boardDetail = payload;
         }
     },
     actions: {
@@ -301,6 +309,155 @@ export default {
                     console.log('받은 내용', res.data);
                     commit;
                     window.location.replace(`/study/${study.seq}/info`);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디원 지원 신청 업데이트(수락, 거절)
+        async applyAcceptStudy({commit}, sendData) {
+            const API_URL = `${port}study/${sendData.studySeq}/members/apply/${sendData.applySeq}`;
+            await axios({
+                url: API_URL,
+                method: 'PUT',
+                data: sendData.result,
+                withCredentials: true
+            })
+                .then(() => {
+                    commit;
+                    window.location.reload();
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디장 위임하기
+        async changeLeader({commit}, data) {
+            const API_URL = `${port}study/${data.studySeq}/members/${data.memSeq}`;
+            await axios({
+                url: API_URL,
+                method: 'PUT',
+                withCredentials: true
+            })
+                .then(() => {
+                    commit;
+                    window.location.replace(`/study/${data.studySeq}/info`);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디에서 강퇴시키기
+        async deleteMember({commit}, data) {
+            const API_URL = `${port}study/${data.studySeq}/members/${data.memSeq}`;
+            await axios({
+                url: API_URL,
+                method: 'DELETE',
+                withCredentials: true
+            })
+                .then(() => {
+                    commit;
+                    window.location.reload();
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디 삭제하기
+        async deleteMyStudy({commit}, seq) {
+            const API_URL = `${port}study/${seq}`;
+            await axios({
+                url: API_URL,
+                method: 'DELETE',
+                withCredentials: true
+            })
+                .then(() => {
+                    commit;
+                    window.location.replace('/study/myStudy');
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디 게시글 목록 받아오기
+        async getBoardList({commit}, data) {
+            const API_URL = `${port}study/${data.seq}/board?/page=${data.page}&size=${data.size}&type=${data.type}&search=${data.search}&order=${data.order}`;
+            await axios({
+                url: API_URL,
+                method: 'GET',
+                withCredentials: true
+            })
+                .then(res => {
+                    console.log('게시글 목록리스트', res.data);
+                    commit('GET_BOARDLIST', res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디 게시글 상세보기
+        async getBoardDetail({commit}, data) {
+            const API_URL = `${port}study/${data.studySeq}/board/${data.boardSeq}`;
+            await axios({
+                url: API_URL,
+                method: 'GET',
+                withCredentials: true
+            })
+                .then(res => {
+                    console.log('게시글 상세 정보', res.data);
+                    commit('GET_BOARDDETAIL', res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디 게시글 생성하기
+        async writeBoard({commit}, data) {
+            const API_URL = `${port}study/${data.studySeq}/board`;
+            await axios({
+                url: API_URL,
+                method: 'POST',
+                withCredentials: true,
+                data: data.board
+            })
+                .then(res => {
+                    console.log('쓴 글', res.data);
+                    commit;
+                    //detail 글로 이동.
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디 게시글 수정하기
+        async modifyBoard({commit}, data) {
+            const API_URL = `${port}study/${data.studySeq}/board/${data.boardSeq}`;
+            await axios({
+                url: API_URL,
+                method: 'POST',
+                withCredentials: true,
+                data: data.board
+            })
+                .then(res => {
+                    console.log('수정한 글', res.data);
+                    commit;
+                    //detail 글로 이동.
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디 게시글 삭제하기
+        async deleteBoard({commit}, data) {
+            const API_URL = `${port}study/${data.studySeq}/board/${data.boardSeq}`;
+            await axios({
+                url: API_URL,
+                method: 'DELETE',
+                withCredentials: true
+            })
+                .then(() => {
+                    commit;
+                    //글 목록으로 이동
                 })
                 .catch(err => {
                     console.log(err);
