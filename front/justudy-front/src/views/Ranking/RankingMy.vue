@@ -72,6 +72,25 @@ export default {
 };
 </script>
 <style>
+/* 임시 alarm */
+/* .alarm {
+    width: 30%;
+    background-color: rgb(132, 220, 230);
+    position: absolute;
+    top: 30px;
+    height: 200px;
+    z-index: 2;
+} */
+.line_limit_alarm {
+    padding: 15px;
+    width: 80%;
+    height: 400px;
+    margin-top: 20px;
+    border-style: solid;
+    border-color: #eeeeee;
+    border-radius: 30px;
+    /* border-width: thin; */
+}
 .line_limit {
     width: 40px;
     overflow: hidden;
