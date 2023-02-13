@@ -195,7 +195,7 @@
                                     <v-subheader>관심있는 기술 스택</v-subheader>
                                 </v-col>
                                 <v-col cols="12" md="9">
-                                    <v-combobox v-model="user.category" :items="bottomCategories" item-text="value" item-value="key" label="관심 기술" multiple></v-combobox>
+                                    <v-combobox v-model="tempCategory" :items="bottomCategories" item-text="value" item-value="key"  label="관심 기술" multiple ></v-combobox>
                                 </v-col>
                             </v-row>
 
@@ -284,12 +284,27 @@ export default {
     async created() {
         //  회원정보와 관련된 것 get으로 가져와서 default 에 넣어놓기
         await this.$store.dispatch('moduleMyPage/getModifyUser');
-        this.$store.dispatch('moduleStudy/getBottomCategories', '전체');
-        console.log(this.bottomCategories);
-        this.user = this.$store.state.moduleMyPage.modifyUser;
+        await this.$store.dispatch('moduleStudy/getBottomCategories', '전체');
+
+        this.user = this.$store.state.moduleMyPage.modifyUser; 
+         for(let i=0;i<this.user.category.length;++i){
+            for(let j=0;j<this.bottomCategories.length;++j){
+                    this.bottomCategories[j].checked=false;
+                if(this.bottomCategories[j].value==this.user.category[i]){
+                    this.bottomCategories[j].checked=true;
+                    this.tempCategory.push(this.bottomCategories[j])
+                }
+            }
+        }
+        this.user.category=[];
+        for(let i=0;i<this.cat.length;++i){
+            this.user.category.push(this.tempCategory[i].value)
+        }
+        console.log(this.user)
     },
     data() {
         return {
+            tempCategory:[],
             // 기존 업데이트 ///////////////////////////////////////////////////////
             port: port,
             // user 데이터
