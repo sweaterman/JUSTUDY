@@ -3,8 +3,6 @@
         <v-row>
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
-                <!-- <TimerHeader /> -->
-
                 <!-- 타이머 메뉴 바 -->
                 <v-row :style="{padding: '2%'}">
                     <v-col cols="12" md="6" justify="center" align="center">

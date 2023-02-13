@@ -11,9 +11,9 @@
                 <v-row>
                     <!-- 사다리 타기(중앙에 배치) -->
                     <!-- <meetingLadder id="ladderCSS" v-show="isLadder" v-if="getIsLadder" /> -->
-                    <meetingLadder id="ladderCSS" v-show="isLadder" v-if="getIsLadder" justify-content="center" align-items="center" />
+                    <meetingLadder class="ladderCSS" v-show="isLadder" v-if="getIsLadder" />
                     <!--  채팅창 우측에 배치 -->
-                    <meetingChat id="chatCSS" v-show="isChat" justify-content="center" align-items="center" />
+                    <meetingChat class="chatCSS" v-show="isChat" justify-content="center" align-items="center" />
                     <!-- code editor  -->
                     <!-- <CodeEditor
                         class="leftArrange"
@@ -445,34 +445,33 @@ export default {
 <style scoped>
 /* 우상단 알람,방나가기,뮤트투표 기능 여기서 디자인하면 됨 */
 .alarm {
-    width: 37%;
-    margin-left: 60%;
+    width: 3%;
+    margin-left: 10%;
     background-color: rgb(132, 220, 230);
     position: absolute;
     top: 30px;
     height: 200px;
-    z-index: 2;
+    z-index: 1;
 }
 .leftArrange {
     width: 37%;
-    margin-left: 5%;
+    /* margin-left: 5%; */
     margin-right: 58%;
     position: absolute;
     top: 30px;
     height: 800px;
     z-index: 2;
 }
-/* #ladderCSS { */
-/* margin-left: 55%;
-    margin-top: 30%; */
-/* width: 33%;
-    float: right; */
-/* position: absolute; */
-/* z-index: 1;
+#ladderCSS {
+    margin-left: 55%;
+    margin-top: 30%;
+    width: 33%;
+    display: table-row;
+    z-index: 1;
     top: 30px;
-    /* width: 100%; */
-/* background-color: rgb(222, 222, 222); */
-/* } */
+    width: 100%;
+    background-color: rgb(222, 222, 222);
+}
 #chatCSS {
     /* margin-right: 15%;
     margin-bottom: 25%;
