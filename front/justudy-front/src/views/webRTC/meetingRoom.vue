@@ -266,6 +266,22 @@ export default {
             room: this.getRoomName
         };
         this.open(data);
+        setInterval( () => {
+            const obj = this.getParticipants;
+            const keys = Object.keys(obj); 
+            console.log("=========state============");
+            for (let i = 0; i < keys.length; i++) {
+                const key = keys[i]; 
+                const value = obj[key]; 
+                if("connected" != value.rtcPeer.peerConnection.connectionState){
+                    console.log("reconnect!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    location.reload();
+                    break;
+                }
+            }
+            console.log("=========================");
+
+        },3000);
     },
 
     beforeUnmount() {
