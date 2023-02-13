@@ -46,15 +46,15 @@
                                         <v-subheader>아이디</v-subheader>
                                     </v-col>
                                     <v-col cols="12" md="6">
-                                        <v-text-field v-model="user.userId" dense outlined label="ID" @input="checkVal.id = false" :rules="rules.id"> </v-text-field>
+                                        <v-text-field v-model="user.userId" dense outlined label="ID" @input="checkVal.id = false" readonly> </v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="3">
+                                    <!-- <v-col cols="12" md="3">
                                         <v-btn color="yellow" rounded @click="check('id')"
                                             >중복확인
                                             <v-icon v-if="checkVal.id" right> mdi-check-bold </v-icon>
                                             <v-icon v-if="!checkVal.id" right> mdi-alert-circle-outline </v-icon>
                                         </v-btn>
-                                    </v-col>
+                                    </v-col> -->
                                 </v-row>
 
                                 <!-- 비밀번호 -->
@@ -83,7 +83,7 @@
                                         <v-subheader>이름</v-subheader>
                                     </v-col>
                                     <v-col cols="12" md="6">
-                                        <v-text-field v-model="user.username" dense outlined label="이름" :rules="rules.name"></v-text-field>
+                                        <v-text-field v-model="user.username" dense outlined label="이름" :rules="rules.name" readonly></v-text-field>
                                     </v-col>
                                 </v-row>
 
@@ -110,15 +110,15 @@
                                         <v-subheader>SSAFY 학번</v-subheader>
                                     </v-col>
                                     <v-col cols="12" md="6">
-                                        <v-text-field v-model="user.ssafyId" dense outlined label="SSAFY 학번" @input="checkVal.ssafyId = false" :rules="rules.ssafyId"></v-text-field>
+                                        <v-text-field v-model="user.ssafyId" dense outlined label="SSAFY 학번" @input="checkVal.ssafyId = false" :rules="rules.ssafyId" readonly></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="3">
+                                    <!-- <v-col cols="12" md="3">
                                         <v-btn color="yellow" rounded @click="check('ssafyId')"
                                             >중복확인
                                             <v-icon v-if="checkVal.ssafyId" right> mdi-check-bold </v-icon>
                                             <v-icon v-if="!checkVal.ssafyId" right> mdi-alert-circle-outline </v-icon>
                                         </v-btn>
-                                    </v-col>
+                                    </v-col> -->
                                 </v-row>
 
                                 <!-- 전화번호 -->
@@ -284,6 +284,8 @@ export default {
     async created() {
         //  회원정보와 관련된 것 get으로 가져와서 default 에 넣어놓기
         await this.$store.dispatch('moduleMyPage/getModifyUser');
+        this.$store.dispatch('moduleStudy/getBottomCategories', '전체');
+        console.log(this.bottomCategories);
         this.user = this.$store.state.moduleMyPage.modifyUser;
     },
     data() {
@@ -382,9 +384,9 @@ export default {
             // 일괄 수정 API
             console.log(this.file);
             this.result = {
-                nickname: this.user.username,
+                nickname: this.user.nickname,
                 password: this.user.password,
-                passwordCheck: this.user.rePassword,
+                passwordCheck: this.user.passwordCheck,
                 phone: this.user.phone,
                 email: this.user.email,
                 region: 'SEOUL',
