@@ -1,105 +1,48 @@
 <template>
     <v-app>
-        <v-row :style="{marginTop: '2%'}">
+        <v-row>
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <!-- 타이머 메뉴 바 -->
-                <v-row justify="center" align="center">
-                    <v-col cols="12" md="4" justify="center" align="center">
+                <v-row :style="{padding: '2%'}">
+                    <v-col cols="12" md="6" justify="center" align="center">
                         <router-link to="/timer/study-start" style="text-decoration: none; color: #ffb000">
-                            <div :style="{fontWeight: 'bold', fontSize: 'x-large'}"><h2>공부 시작</h2></div>
+                            <span class="material-icons-outlined"> timer </span>
+                            <div>타이머</div>
                         </router-link>
                     </v-col>
-                    <v-col cols="12" md="4" justify="center" align="center">
-                        <router-link to="/timer/my-statistics" style="text-decoration: none; color: black">
-                            <div><h2>나의 통계</h2></div>
-                        </router-link>
-                    </v-col>
-                    <v-col cols="12" md="4" justify="center" align="center">
+                    <v-col cols="12" md="6" justify="center" align="center">
                         <router-link to="/timer/friend-statistics" style="text-decoration: none; color: black">
-                            <div><h2>친구 통계</h2></div>
+                            <span class="material-icons-outlined"> show_chart </span>
+                            <div>통계</div>
                         </router-link>
                     </v-col>
                 </v-row>
 
                 <!-- 카메라 화면 - 미구현 -->
-                <TimerCamera />
-
-                <!-- 타이머 구현 -->
-                <v-row :style="{marginTop: '5%'}">
-                    <hr width="100%" />
-                    <v-col cols="12" md="2" justify="center" align="center">
-                        <v-img :src="require('@/assets/fire3.gif')" :style="`width: 1200; height: 1000; `" />
+                <v-row>
+                    <v-col>
+                        <TimerCamera />
                     </v-col>
-                    <v-col cols="12" md="8" justify="center" align="center">
-                        <DigitalClock :allTime="allTimeMe" :fontSize="150" />
-                    </v-col>
-                    <v-col cols="12" md="2" justify="center" align="center">
-                        <v-img :src="require('@/assets/fire3.gif')" :style="`width: 1200; height: 1000; `" />
-                    </v-col>
-                    <hr width="100%" />
                 </v-row>
 
-                <!-- 기록 내용 -->
-                <v-row :style="{marginTop: '6%'}">
-                    <!-- 캠프파이어 -->
-                    <v-col cols="12" md="4" :style="{marginTop: '3%'}">
-                        <v-img :src="require('@/assets/campfire.gif')" max-height="600" max-width="600" />
+                <v-row justify="center" align="center">
+                    <v-col cols="12" md="4" justify="center" align="center">
+                        <!-- 나의 공부 시간 -->
+                        <v-row :style="{marginTop: '20%'}">
+                            <v-col>
+                                <DigitalClockPerDate content="이번주 공부 시간" :allTime="weekTime" />
+                            </v-col>
+                        </v-row>
+                        <v-row :style="{marginTop: '15%'}">
+                            <v-col>
+                                <DigitalClockPerDate content="이번달 공부 시간" :allTime="monthTime" />
+                            </v-col>
+                        </v-row>
                     </v-col>
-                    <!-- 본 내용 -->
-                    <v-col cols="12" md="8" :style="{marginBottom: '11%'}">
-                        <!-- 내용 - 공부왕 -->
-                        <v-row>
-                            <v-col cols="12" md="6" justify="center" align="center">
-                                <v-img :src="require('@/assets/king.gif')" max-height="250" max-width="250" />
-                                <div :style="{fontWeight: 'bold', fontSize: 'large'}">
-                                    <h1>
-                                        <span style="color: black">오늘의 </span>
-                                        <span style="color: #ffb000">공부</span>
-                                        <span style="color: black">왕</span>
-                                    </h1>
-                                </div>
-                            </v-col>
-                            <v-col cols="12" md="6" align="right">
-                                <div :style="{fontWeight: 'bold', fontSize: 'x-large'}">
-                                    <h1>
-                                        <span style="color: #ffb000">{{ king_name }} </span>
-                                    </h1>
-                                </div>
-                                <div :style="{fontWeight: 'bold', fontSize: 'xxx-large'}">
-                                    <h1>
-                                        <span style="color: black"
-                                            >{{ parseInt(firstYesterday.second / 3600) >= 10 ? parseInt(firstYesterday.second / 3600) : '0' + parseInt(firstYesterday.second / 3600) }}:{{
-                                                parseInt((firstYesterday.second % 3600) / 60) >= 10
-                                                    ? parseInt((firstYesterday.second % 3600) / 60)
-                                                    : '0' + parseInt((firstYesterday.second % 3600) / 60)
-                                            }}:{{ firstYesterday.second % 60 >= 10 ? firstYesterday.second % 60 : '0' + (firstYesterday.second % 60) }}</span
-                                        >
-                                    </h1>
-                                </div>
-                            </v-col>
-                        </v-row>
-                        <!-- 내용 - 오늘 접속자 -->
-                        <v-row :style="{marginTop: '-3%'}">
-                            <v-col cols="12" md="8" justify="center" align="center">
-                                <v-img :src="require('@/assets/people.gif')" max-height="300" max-width="500" />
-                                <div :style="{fontWeight: 'bold', fontSize: 'x-large'}">
-                                    <h2>
-                                        <span style="color: black">지금 공부 중인 </span>
-                                        <span style="color: #ffb000">SSAFY</span>
-                                        <span style="color: black">교육생</span>
-                                    </h2>
-                                </div>
-                            </v-col>
-                            <v-col cols="12" md="4" justify="center" align="center" :style="{marginTop: '7%'}">
-                                <div :style="{fontWeight: 'bold', fontSize: 'xxx-large'}">
-                                    <h1>
-                                        <span style="color: #ffb000">254</span>
-                                        <span style="color: black">명</span>
-                                    </h1>
-                                </div>
-                            </v-col>
-                        </v-row>
+                    <!-- 달력 -->
+                    <v-col cols="12" md="8">
+                        <TimerCalendar :studyCalendar="studyCalendar" />
                     </v-col>
                 </v-row>
             </v-col>
@@ -109,8 +52,11 @@
     </v-app>
 </template>
 <script>
-import DigitalClock from '@/components/timer/DigitalClock.vue';
+// import TimerHeader from '../../components/timer/TimerHeader.vue';
+import TimerCalendar from '@/components/timer/TimerCalendar.vue';
 import TimerCamera from '../../components/timer/TimerCamera.vue';
+import DigitalClockPerDate from '@/components/timer/DigitalClockPerDate.vue';
+// import DigitalClockAverage from '@/components/timer/DigitalClockAverage.vue';
 export default {
     name: 'StudyStart',
     data() {
@@ -120,15 +66,47 @@ export default {
             allTimeMe: 0,
             allTimeFirst: 9000,
             today: '',
-            firstYesterday: this.$store.state.moduleTimer.firstYesterday
+            firstYesterday: this.$store.state.moduleTimer.firstYesterday,
+
+            //my statics
+            weekTime: 0,
+            monthTime: 0,
+            averageWeekTime: 0,
+            averageMonthTime: 0,
+            studyCategory: [],
+            studyCalendar: []
         };
     },
 
     components: {
-        DigitalClock,
+        // DigitalClockAverage,
+        // TimerHeader,
+        TimerCalendar,
+        DigitalClockPerDate,
         TimerCamera
     },
     async created() {
+        // 타이머 정보 부분
+        await this.$store.dispatch('moduleTimer/getStudyTimeWeek', {nickName: '테스트 봇1'});
+        this.weekTime = this.$store.state.moduleTimer.studyTimeWeek.time;
+        await this.$store.dispatch('moduleTimer/getStudyTimeMonth', {nickName: '테스트 봇2'});
+        this.monthTime = this.$store.state.moduleTimer.studyTimeMonth.time;
+        await this.$store.dispatch('moduleTimer/getAverageMembersWeek');
+        this.averageWeekTime = this.$store.state.moduleTimer.averageMemberWeek.time;
+        await this.$store.dispatch('moduleTimer/getAverageMembersMonth');
+        this.averageMonthTime = this.$store.state.moduleTimer.averageMemberMonth.time;
+        await this.$store.dispatch('moduleTimer/getStudyCategory', {nickName: '테스트 봇1'});
+        this.studyCategory = this.$store.state.moduleTimer.studyCategory;
+        await this.$store.dispatch('moduleTimer/getStudyCalendar', {nickName: '테스트 봇1', year: 2023, month: 1});
+
+        let studyCalendar = new Array(32).fill(0);
+        let data = this.$store.state.moduleTimer.studyCalendar;
+        for (let i = 0; i < data.length; i++) {
+            studyCalendar[parseInt(data[i].day)] = data[i].second;
+        }
+
+        this.studyCalendar = studyCalendar;
+
         // API 받기
         await this.$store.dispatch('moduleTimer/getFirstYesterday');
         this.firstYesterday = this.$store.state.moduleTimer.firstYesterday;
@@ -148,3 +126,14 @@ export default {
     }
 };
 </script>
+<style scoped>
+.card_section {
+    padding: 10px;
+    height: 170px;
+    margin-bottom: 20px;
+    border-style: solid;
+    border-color: #eeeeee;
+    border-radius: 30px;
+    /* border-width: thin; */
+}
+</style>

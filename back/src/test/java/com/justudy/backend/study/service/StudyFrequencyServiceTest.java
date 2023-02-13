@@ -222,9 +222,9 @@ class StudyFrequencyServiceTest {
         return StudyFrequencyCreate
                 .builder()
                 .studySeq(study)
-                .week(1L)
-                .startTime(date)
-                .endTime(date)
+                .week("월")
+                .startTime(date.toString())
+                .endTime(date.toString())
                 .build();
     }
 
@@ -235,7 +235,7 @@ class StudyFrequencyServiceTest {
                 .frequency(null)
                 .bottomCategory("java")
                 .name("test study")
-                .leaderSeq(findMember.getSequence())
+//                .leaderSeq(findMember.getSequence())
                 .leader(findMember.getNickname())
                 .introduction("소개입니당")
                 .population(10)
@@ -251,16 +251,14 @@ class StudyFrequencyServiceTest {
         return StudyEdit
                 .builder()
                 .sequence(id)
-                .member(null)
-                .resume(null)
                 .frequency(null)
                 .bottomCategory("java")
                 .name("test study2")
-                .leaderSeq(findMember.getSequence())
+//                .leaderSeq(findMember.getSequence())
                 .introduction("소개입니당2")
                 .population(10)
                 .level("초보")
-                .onlineOffline("온라인")
+                .meeting("온라인")
                 .isOpen(true)
                 .github("git")
                 .notion("notiono")
@@ -295,7 +293,6 @@ class StudyFrequencyServiceTest {
                 .ssafyId("08" + number)
                 .phone(String.valueOf(number))
                 .email("testEmail" + number + "@ssafy.com")
-                .mmId(number + "test")
                 .region("SEOUL")
                 .category(new String[]{"java", "Spring"})
                 .introduction("테스트 봇" + number + " 입니다.")

@@ -1,6 +1,5 @@
 package com.justudy.backend.study.service;
 
-import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
@@ -36,7 +35,7 @@ public class StudyMemberService {
         StudyEntity studyEntity = studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new);
         //스터디원인지 확인
-        checkStudyMember(studyEntity.getStudyMembers(), memberId);
+        StudyMemberEntity studyMemberEntity = checkStudyMember(studyEntity.getStudyMembers(), memberId);
         //스터디 리더 변경
         studyEntity.changeLeader(memberId);
     }
@@ -62,7 +61,7 @@ public class StudyMemberService {
 
         //스터디원 추방
         studyEntity.removeStudyMember(memberEntity);
-        studyMemberRepository.deleteStudyMember(id, memberId);
+        studyMemberRepository.deleteById(memberEntity.getSequence());
     }
 
     @Transactional
@@ -99,9 +98,7 @@ public class StudyMemberService {
         studyMemberRepository.deleteStudyMemberByStudy(studySequence);
     }
 
-    private boolean checkLeader(Long leaderSeq, Long memberId) {
-        return leaderSeq.longValue() == memberId.longValue();
-    }
+
 
     private StudyMemberEntity checkStudyMember(List<StudyMemberEntity> studyMembers, Long memberId) {
         return studyMembers
@@ -110,5 +107,4 @@ public class StudyMemberService {
                 .findFirst()
                 .orElseThrow(StudyMemberNotFound::new);
     }
-
 }

@@ -1,31 +1,48 @@
 package com.justudy.backend.study.controller;
 
+import com.justudy.backend.GroupCall.service.StudyRoomService;
 import com.justudy.backend.category.dto.request.CategoryResponse;
 import com.justudy.backend.category.service.CategoryService;
+import com.justudy.backend.community.dto.request.CommunitySearch;
+import com.justudy.backend.community.dto.response.CommunityListResult;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
 import com.justudy.backend.file.service.FileStore;
 import com.justudy.backend.file.service.UploadFileService;
 import com.justudy.backend.login.infra.SessionConst;
+import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.study.dto.request.*;
+import com.justudy.backend.study.dto.request.community.StudyCommunityCommentCreate;
+import com.justudy.backend.study.dto.request.community.StudyCommunityCommentEdit;
+import com.justudy.backend.study.dto.request.community.StudyCommunityCreate;
+import com.justudy.backend.study.dto.request.community.StudyCommunityEdit;
 import com.justudy.backend.study.dto.response.*;
 import com.justudy.backend.member.service.MemberService;
+import com.justudy.backend.study.dto.response.community.StudyCommunityCommentResponse;
+import com.justudy.backend.study.dto.response.community.StudyCommunityDetailResponse;
+import com.justudy.backend.study.dto.response.community.StudyCommunityListResponse;
 import com.justudy.backend.study.service.StudyFrequencyService;
 import com.justudy.backend.study.service.StudyMemberService;
 import com.justudy.backend.study.service.StudyResumeService;
 import com.justudy.backend.study.service.StudyService;
+import com.justudy.backend.study.service.community.StudyCommunityBookmarkService;
+import com.justudy.backend.study.service.community.StudyCommunityCommentService;
+import com.justudy.backend.study.service.community.StudyCommunityLoveService;
+import com.justudy.backend.study.service.community.StudyCommunityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,33 +61,23 @@ public class StudyController {
     private final StudyMemberService studyMemberService;
     private final UploadFileService uploadFileService;
     private final FileStore fileStore;
+    private final StudyRoomService studyRoomService;
 
+    private final StudyCommunityService studyCommunityService;
+    private final StudyCommunityLoveService studyCommunityLoveService;
+    private final StudyCommunityBookmarkService studyCommunityBookmarkService;
+    private final StudyCommunityCommentService studyCommunityCommentService;
     // ---------------------------------------------------------------스터디---------------------------------------------------------------
-
-//    /**
-//     * 공개된 모든 스터디 정보를 가져오는 API
-//     *
-//     * @param page   페이지 넘버
-//     * @param type   검색 분류(스터디명, 스터디장)
-//     * @param search 검색 내용
-//     * @return ResponseEntity<List < StudyResponse>> 200 OK, 스터디 정보 목록
-//     * 정렬 기준 생성시간 남은 인원수?
-//     */
-//    @GetMapping("/")
-//    public ResponseEntity<List<StudyResponse>> readAllStudy(@RequestParam("page") int page, @RequestParam("type") String type, @RequestParam("search") String search) {
-//        return ResponseEntity.status(HttpStatus.OK).body(studyService.search(page, type, search));
-//    }
-
     /**
      * 공개된 스터디 정보를 가져오는 API
      *
-     * @param pageable   페이지 넘버
-     * @param type   검색 분류(스터디명, 스터디장)
-     * @param search 검색 내용
+     * @param pageable 페이지 넘버
+     * @param type     검색 분류(스터디명, 스터디장)
+     * @param search   검색 내용
      * @return ResponseEntity<List < StudyResponse>> 200 OK, 스터디 정보 목록
      * 페이징, 검색,
      */
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<StudySearchResponse> readAllStudy(@PageableDefault(size = MAX_STUDY_PAGE_SIZE) Pageable pageable, @RequestParam(value = "type", required = false) String type, @RequestParam(value = "search", required = false) String search) {
         List<String> Categories = null;
         //타입이 카테고리 검색이면
@@ -111,7 +118,7 @@ public class StudyController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<StudyDetailResponse> readStudy(@PathVariable("id") Long id, HttpSession session) {
-        //todo session 과 id 체크
+        //session 과 id 체크
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
 
@@ -125,21 +132,29 @@ public class StudyController {
      * @param request 생성정보
      * @return ResponseEntity<StudyDetailResponse> 201 CREATE, 생성된 스터디 정보
      */
-    @PostMapping("/")
-    public ResponseEntity<StudyDetailResponse> createStudy(@RequestBody StudyCreate request, @RequestPart(name = "file", required = false) MultipartFile multipartFile, HttpSession session) throws IOException {
+    @PostMapping("")
+    public ResponseEntity<StudyDetailResponse> createStudy(@RequestPart(name = "request") @Validated StudyCreate request, @RequestPart(name = "file", required = false) MultipartFile multipartFile, HttpSession session) throws IOException {
         //session 과 id 체크
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         request.changeLeaderSeq(loginSequence);
 
         //이미지 생성
         UploadFileEntity uploadImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
-        if (multipartFile != null)
+        if (multipartFile != null) {
             uploadImage = fileStore.storeFile(multipartFile);
+            uploadFileService.saveUploadFile(uploadImage);
+        }
         //스터디 생성
         Long studySeq = studyService.createStudy(request, uploadImage);
 
         //받은 활동주기 생성
-        request.getFrequency().forEach(studyFrequencyCreate -> studyFrequencyService.createStudyFrequency(studySeq, studyFrequencyCreate));
+        request.getFrequency().forEach(studyFrequencyCreate -> {
+            try {
+                studyFrequencyService.createStudyFrequency(studySeq, studyFrequencyCreate);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         //스터디맴버 리더 추가
         studyMemberService.createStudyMember(StudyMemberCreate
@@ -147,7 +162,10 @@ public class StudyController {
                 .studySeq(studySeq)
                 .memberSeq(loginSequence)
                 .build());
-        //todo 스터디 룸 생성
+        //스터디 룸 생성
+        studyRoomService.saveStudyRoom(studySeq);
+
+
 
         return ResponseEntity.status(HttpStatus.CREATED).body(studyService.readStudy(studySeq));
     }
@@ -161,23 +179,26 @@ public class StudyController {
      * 스터디 맴버나 지원서는 수정하지 않음
      */
     @PutMapping("/{id}")
-    public ResponseEntity<StudyDetailResponse> updateStudy(@PathVariable("id") Long id, @RequestBody StudyEdit request,
-                                                           @RequestPart(name = "file", required = false) MultipartFile multipartFile, HttpSession session) throws IOException {
+    public ResponseEntity<StudyDetailResponse> updateStudy(@PathVariable("id") Long id, @RequestPart(name = "request") @Validated StudyEdit request,
+                                                           @RequestPart(name = "file", required = false) MultipartFile multipartFile, HttpSession session) throws IOException, ParseException {
         //session 과 id 체크
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        if (loginSequence != request.getLeaderSeq()) {
+        Long leader = studyService.readStudy(id).getLeaderSeq();
+        if (loginSequence.longValue() != leader.longValue()) {
             throw new InvalidRequest("", "리더가 아니면 스터디를 수정할 수 없습니다.");
         }
 
-        //todo 이미지 수정
+        //이미지 수정
         //파일 없을시 변경 x
         UploadFileEntity uploadImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
-        if (multipartFile != null)
+        if (multipartFile != null) {
             uploadImage = fileStore.storeFile(multipartFile);
-
+            uploadFileService.saveUploadFile(uploadImage);
+        }
         //활동주기 수정
         studyFrequencyService.deleteStudyFrequencyByStudy(id);
         studyFrequencyService.createStudyFrequencies(id, request.getFrequency());
+
 
         //스터디 수정
         Long studySeq = studyService.updateStudy(id, request, uploadImage);
@@ -208,7 +229,12 @@ public class StudyController {
         // 스터디 맴버 삭제
         studyMemberService.deleteStudyMemberByStudy(id);
 
-        //todo 스터디룸 삭제
+        //스터디룸 삭제
+        studyRoomService.deleteStudyRoom(id);
+
+        //스터디 지원서 삭제
+        studyResumeService.deleteStudyResumeByStudy(id);
+
 
         //스터디 삭제
         studyService.deleteStudy(id);
@@ -236,7 +262,7 @@ public class StudyController {
      *
      * @return ResponseEntity<List < StudyResponse>> 200 OK, 스터디 지원목록 정보
      */
-    @GetMapping("/mystudy/apply/")
+    @GetMapping("/mystudy/apply")
     public ResponseEntity<List<StudyResponse>> readAllApplyStudy(HttpSession session) {
         //session 과 id 체크
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
@@ -250,8 +276,11 @@ public class StudyController {
      * @param request 생성정보
      * @return ResponseEntity<StudyResumeResponse> 201 CREATE, 생성된 스터디 지원목록
      */
-    @PostMapping("/apply/")
-    public ResponseEntity<StudyResumeResponse> createStudyResume( @RequestBody StudyResumeCreate request) {
+    @PostMapping("/apply")
+    public ResponseEntity<StudyResumeResponse> createStudyResume(@RequestBody StudyResumeCreate request, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        request.changeMemberSeq(loginSequence);
+
         Long resumeSeq = studyResumeService.createStudyResume(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(studyResumeService.readStudyResume(resumeSeq));
     }
@@ -259,7 +288,7 @@ public class StudyController {
     /**
      * 스터디 지원목록을 삭제하는 API
      *
-     * @param id 지원서 id
+     * @param id 스터디 id
      * @return ResponseEntity<Void> 204 NO CONTENT
      */
     @DeleteMapping("/apply/{id}")
@@ -354,7 +383,7 @@ public class StudyController {
     public ResponseEntity<Void> updateStudyLeader(@PathVariable("id") Long id, @PathVariable("memberid") Long memberId, HttpSession session) {
         //session 과 id 체크
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        if (loginSequence != studyService.getStudyLeader(id)) throw new InvalidRequest();
+        if (loginSequence.longValue() != studyService.getStudyLeader(id).longValue()) throw new InvalidRequest();
 
         studyMemberService.updateStudyLeader(id, memberId);
         return ResponseEntity.status(HttpStatus.OK).body(null);
@@ -372,7 +401,7 @@ public class StudyController {
     public ResponseEntity<Void> exileStudyMember(@PathVariable("id") Long id, @PathVariable("memberid") Long memberId, HttpSession session) {
         //session 과 리더 id 체크
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        if (loginSequence != studyService.getStudyLeader(id)) throw new InvalidRequest();
+        if (loginSequence.longValue() != studyService.getStudyLeader(id).longValue()) throw new InvalidRequest();
 
         studyMemberService.exileStudyMember(id, memberId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -389,7 +418,7 @@ public class StudyController {
     public ResponseEntity<Void> withdrawStudyMember(@PathVariable("id") Long id, HttpSession session) {
         //session 과  리더 id 체크 리더일시 탈퇴 불가능
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        if (loginSequence == studyService.getStudyLeader(id)) throw new InvalidRequest();
+        if (loginSequence.longValue() == studyService.getStudyLeader(id).longValue()) throw new InvalidRequest();
 
         studyMemberService.withdrawStudyMember(id, loginSequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -416,14 +445,16 @@ public class StudyController {
      * @param request isAccept
      * @return ResponseEntity<Void> 200 OK
      */
-    @PutMapping("/study/{id}/members/apply/{applyid}")
+    @PutMapping("/{id}/members/apply/{applyid}")
     public ResponseEntity<Void> acceptStudyResume(@PathVariable("id") Long id, @PathVariable("applyid") Long applyId, @RequestBody StudyResumeApply request, HttpSession session) {
         //session 과 leader id 체크
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        if (loginSequence == studyService.getStudyLeader(id)) throw new InvalidRequest();
+
+        if (loginSequence.longValue() != studyService.getStudyLeader(id).longValue()) throw new InvalidRequest();
 
         StudyDetailResponse studyEntity = studyService.readStudy(id);
         //지원서 체크
+
         Long resumeSeq = studyEntity.getResumeSeq()
                 .stream()
                 .filter(resume -> resume.longValue() == applyId.longValue())
@@ -446,9 +477,11 @@ public class StudyController {
         }
 
         //지원서 삭제
-        studyResumeService.deleteById(resumeSeq);
+        studyResumeService.deleteById(id,resumeSeq);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
+
+    // ---------------------------------------------------------------스터디 게시글---------------------------------------------------------------
 
     //스터디 게시글 목록
     //스터디 게시글 상세보기
@@ -460,5 +493,218 @@ public class StudyController {
     //스터디 댓글 수정
     //스터디 댓글 삭제
 
+    /**
+     * page - default 0
+     * size - default 20
+     * type - nickname, title, content
+     * search - 검색 내용
+     * order - view, like
+     */
+    @GetMapping("/{id}/board")
+    public CommunityListResult<List<StudyCommunityListResponse>> getList(@PathVariable("id") Long studySequence, @ModelAttribute CommunitySearch condition, HttpSession session) {
+        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> communitySearch = {}", condition);
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return studyCommunityService.getCommunities(condition.validateNull(), studySequence, loginSequence);
+    }
+
+    @GetMapping("/{id}/board/notices")
+    public CommunityListResult<List<StudyCommunityListResponse>> getNotices(@PathVariable("id") Long studySequence, @PageableDefault(size = 20) Pageable pageable, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return studyCommunityService.getNotices(pageable, studySequence, loginSequence);
+    }
+
+    @GetMapping("/{id}/board/popular")
+    public List<StudyCommunityListResponse> getMostPopular(@PathVariable("id") Long studySequence, @PageableDefault(size = 10) Pageable pageable, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return studyCommunityService.getMostLoveCommunitiesOfWeek(pageable, studySequence, loginSequence);
+    }
+
+
+    /**
+     * 커뮤니티 상세 정보를 가져오는 API
+     *
+     * @param communitySequence PK
+     * @return ResponseEntity<CommunityResponse> 200 OK, 커뮤니티 상세 정보
+     */
+    @GetMapping("/{id}/board/{boardId}")
+    public ResponseEntity<StudyCommunityDetailResponse> readCommunityById(@PathVariable("id") Long studySequence, @PathVariable("boardId") Long communitySequence,
+                                                                          HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        loginSequence = nullSafeLoginSequence(loginSequence);
+
+        return ResponseEntity.status(HttpStatus.OK).body(studyCommunityService.readStudyCommunityDetail(communitySequence, loginSequence, studySequence));
+    }
+
+    /**
+     * 커뮤니티 생성 API
+     *
+     * @param request 생성 정보
+     * @return ResponseEntity<CommunityResponse> 201 Created, 생성된 커뮤니티 정보
+     */
+    @PostMapping("/{id}/board")
+    public ResponseEntity<StudyCommunityDetailResponse> createCommunity(@PathVariable("id") Long studySequence, @RequestBody StudyCommunityCreate request, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        MemberEntity findMember = memberService.getMember(loginSequence);
+
+        StudyCommunityDetailResponse response = studyCommunityService.createStudyCommunity(request, findMember, studySequence);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
+     * 커뮤니티 수정 API
+     *
+     * @param communitySequence 커뮤니티 sequence (PK)
+     * @param request           수정 정보
+     * @return ResponseEntity<UserResponse> 200 OK, 수정된 커뮤니티글 정보
+     */
+    @PutMapping("/{id}/board/{boardid}")
+    public ResponseEntity<StudyCommunityDetailResponse> updateCommunity(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long communitySequence,
+                                                                        @RequestBody StudyCommunityEdit request,
+                                                                        HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        StudyCommunityDetailResponse response = studyCommunityService.updateCommunity(loginSequence, communitySequence, request, studySequence);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    /**
+     * 커뮤니티 삭제 API
+     *
+     * @param communitySequence 커뮤니티 sequence (PK)
+     * @return ResponseEntity<Void> 204 No Content
+     */
+    @DeleteMapping("/{id}/board/{boardId}")
+    public ResponseEntity<Void> deleteCommunity(@PathVariable("id") Long studySequence, @PathVariable("boardId") long communitySequence, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
+        studyCommunityService.deleteStudyCommunity(loginSequence, communitySequence, studySequence);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+    // ---------------------------------------------------------------북마크---------------------------------------------------------------
+
+    /**
+     * 북마크 생성 API - DONE
+     *
+     * @param communitySequence
+     * @param session
+     */
+    @PostMapping("/{id}/board/{boardid}/bookmark")
+    public ResponseEntity<Void> createBookmark(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long communitySequence,
+                                               HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        studyCommunityBookmarkService.createBookmark(loginSequence, communitySequence, studySequence);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+    }
+
+    /**
+     * 북마크 삭제 API
+     *
+     * @param communitySequence 커뮤니티 sequence (PK)
+     * @return ResponseEntity<List < CommunityResponse>> 204 NO_CONTENT'
+     * 북마크는 유저기능아닌가? 매핑 바꿔야할듯
+     * 복합키로 delete 어캐구현하지
+     */
+    @DeleteMapping("/{id}/board/{boardid}/bookmark")
+    public ResponseEntity<Void> deleteBookmark(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long communitySequence,
+                                               HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        studyCommunityBookmarkService.deleteBookmark(loginSequence, communitySequence, studySequence);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+    // ---------------------------------------------------------------좋아요---------------------------------------------------------------
+
+    /**
+     * 좋아요 생성 API
+     */
+    @PostMapping("/{id}/board/{boardid}/love")
+    public ResponseEntity<Void> createLove(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long communitySequence,
+                                           HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        studyCommunityLoveService.createLove(loginSequence, communitySequence, studySequence);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+    }
+
+    /**
+     * 좋아요 삭제 API
+     */
+    @DeleteMapping("/{id}/board/{boardid}/love")
+    public ResponseEntity<Void> deleteLove(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long communitySequence,
+                                           HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        studyCommunityLoveService.deleteLove(loginSequence, communitySequence, studySequence);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+// ---------------------------------------------------------------댓글---------------------------------------------------------------
+
+
+    /**
+     * 커뮤니티 id별로 모든 댓글 정보를 가져오는 API
+     *
+     * @param id 커뮤니티의 id
+     * @return ResponseEntity<List < CommentResponse>> 200 OK, 댓글 정보 목록
+     */
+    @GetMapping("/{id}/board/{boardid}/comments")
+    public ResponseEntity<List<StudyCommunityCommentResponse>> readAllCommentByBoard(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long id, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        return ResponseEntity.status(HttpStatus.OK).body(studyCommunityCommentService.readAllComment(id, loginSequence, studySequence));
+    }
+
+    /**
+     * 댓글 생성 API
+     *
+     * @param id      커뮤니티의 id
+     * @param request 생성 정보 (parentSeq포함)
+     * @return ResponseEntity<CommentResponse> 201 Created, 생성된 댓글 정보
+     */
+    @PostMapping("/{id}/board/{boardid}/comments")
+    public ResponseEntity<StudyCommunityCommentResponse> createComment(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long id, @RequestBody StudyCommunityCommentCreate request, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        request.changeMemberSeq(loginSequence);
+        return ResponseEntity.status(HttpStatus.CREATED).body(studyCommunityCommentService.createComment(id, request, studySequence));
+    }
+
+    /**
+     * 댓글 수정 API
+     *
+     * @param id        커뮤니티의 id
+     * @param commentId 댓글의 id
+     * @param request   수정 정보
+     */
+    @PutMapping("/{id}/board/{boardid}/comments/{commentid}")
+    public ResponseEntity<Void> updateComment(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long id, @PathVariable("commentid") Long commentId, @RequestBody StudyCommunityCommentEdit request, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        studyCommunityCommentService.UpdateComment(id, commentId, request, loginSequence, studySequence);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    /**
+     * 댓글 삭제 API
+     *
+     * @param id        커뮤니티의 id
+     * @param commentId 댓글의 id
+     * @return ResponseEntity<Object> 204 No Content
+     */
+    @DeleteMapping("/{id}/board/{boardid}/comments/{commentid}")
+    public ResponseEntity<Void> deleteComment(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long id, @PathVariable("commentid") Long commentId, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        studyCommunityCommentService.deleteComment(id, commentId, loginSequence, studySequence);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+
+    private Long nullSafeLoginSequence(Long loginSequence) {
+        if (loginSequence == null) {
+            return 0L;
+        }
+        return loginSequence;
+    }
 
 }

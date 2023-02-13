@@ -16,7 +16,6 @@ import com.justudy.backend.study.dto.request.StudyEdit;
 import com.justudy.backend.study.dto.request.StudyFrequencyCreate;
 import com.justudy.backend.study.dto.request.StudyMemberCreate;
 import com.justudy.backend.study.dto.response.StudyDetailResponse;
-import com.justudy.backend.study.dto.response.StudySearchResponse;
 import com.justudy.backend.study.repository.StudyFrequencyRepository;
 import com.justudy.backend.study.repository.StudyMemberRepository;
 import com.justudy.backend.study.repository.StudyRepository;
@@ -136,9 +135,9 @@ class StudyServiceTest {
         StudyCreate create = makeRequest(findMember);
         Long id = service.createStudy(create, basicImage);
         List<StudyFrequencyCreate> studyFrequencycreates = new ArrayList<>();
-        studyFrequencycreates.add(StudyFrequencyCreate.builder().studySeq(id).week(1L).build());
-        studyFrequencycreates.add(StudyFrequencyCreate.builder().studySeq(id).week(2L).build());
-        studyFrequencycreates.add(StudyFrequencyCreate.builder().studySeq(id).week(3L).build());
+        studyFrequencycreates.add(StudyFrequencyCreate.builder().studySeq(id).week("월").build());
+        studyFrequencycreates.add(StudyFrequencyCreate.builder().studySeq(id).week("화").build());
+        studyFrequencycreates.add(StudyFrequencyCreate.builder().studySeq(id).week("수").build());
         StudyEdit edit = makeRequest(id, findMember, studyFrequencycreates);
 
         // When
@@ -244,16 +243,14 @@ class StudyServiceTest {
         return StudyEdit
                 .builder()
                 .sequence(id)
-                .member(null)
-                .resume(null)
                 .frequency(studyFrequencyCreates)
                 .bottomCategory("java")
                 .name("test study2")
-                .leaderSeq(findMember.getSequence())
+//                .leaderSeq(findMember.getSequence())
                 .introduction("소개입니당2")
                 .population(10)
                 .level("초보")
-                .onlineOffline("온라인")
+                .meeting("온라인")
                 .isOpen(true)
                 .github("git")
                 .notion("notiono")
@@ -271,7 +268,6 @@ class StudyServiceTest {
                 .ssafyId("08" + number)
                 .phone(String.valueOf(number))
                 .email("testEmail" + number + "@ssafy.com")
-                .mmId(number + "test")
                 .region("SEOUL")
                 .category(new String[]{"java", "Spring"})
                 .introduction("테스트 봇" + number + " 입니다.")

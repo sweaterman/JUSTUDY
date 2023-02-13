@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class MemberActivityEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "member_activity_seq")
   private Long sequence;
 
@@ -38,8 +38,17 @@ public class MemberActivityEntity {
   @Column(name = "member_activity_category")
   private String category;
 
+//  @Builder
+//  public MemberActivityEntity(MemberEntity member, Date date, Long time, String category) {
+//    this.member = member;
+//    this.date = date;
+//    this.time = time;
+//    this.category = category;
+//  }
+
   @Builder
-  public MemberActivityEntity(MemberEntity member, Date date, Long time, String category) {
+  public MemberActivityEntity(MemberEntity member, Date date, Long time, String category, Long sequence) {
+    this.sequence = sequence;
     this.member = member;
     this.date = date;
     this.time = time;

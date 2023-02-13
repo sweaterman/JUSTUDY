@@ -4,10 +4,10 @@ import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.exception.CategoryNotFound;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.common.validate.Validation;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
 import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.exception.ConflictRequest;
-import com.justudy.backend.exception.ForbiddenRequest;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
@@ -17,8 +17,10 @@ import com.justudy.backend.member.domain.MemberCategoryEntity;
 import com.justudy.backend.member.domain.MemberEditor;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.domain.MemberRole;
+import com.justudy.backend.member.dto.request.MatterMostRequest;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
+import com.justudy.backend.member.dto.response.MatterMostResponse;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
 import com.justudy.backend.member.dto.response.ProfileResponse;
@@ -26,13 +28,19 @@ import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -77,7 +85,9 @@ public class MemberService {
     }
 
     public List<CommunityListResponse> getMyBookmarks(Long loginSequence) {
-        return communityService.getMyBookmarks(loginSequence);
+        List<CommunityListResponse> myBookmarks = communityService.getMyBookmarks(loginSequence);
+        log.info("[getMyBookmarks] myBookmarks = {}", myBookmarks);
+        return myBookmarks;
     }
 
     public List<CommunityListResponse> getMyLoves(Long loginSequence) {
@@ -100,7 +110,9 @@ public class MemberService {
 
     @Transactional
     public Long banMember(Long loginSequence, Long memberSequence) {
-        validateSessionUser(loginSequence, MemberRole.ADMIN);
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+        Validation.validateUserRole(findMember, MemberRole.ADMIN);
 
         MemberEntity targetMember = memberRepository.findById(memberSequence)
                 .orElseThrow(() -> new MemberNotFound());
@@ -129,7 +141,7 @@ public class MemberService {
 
         MemberEditor memberEditor = editorBuilder
                 .nickname(editRequest.getNickname())
-                .password(editRequest.getPassword())
+                .password(encodePassword(editRequest.getPassword()))
                 .phone(editRequest.getPhone())
                 .email(editRequest.getEmail())
                 .region(Region.valueOf(editRequest.getRegion()))
@@ -141,13 +153,8 @@ public class MemberService {
         List<MemberCategoryEntity> newCategories = createNewMemberCategories(editRequest);
         findMember.changeMemberCategory(newCategories);
 
-        UploadFileEntity oldImageFile = findMember.getImageFile();
         findMember.edit(memberEditor);
-        UploadFileEntity newImageFile = findMember.getImageFile();
-
-        if (validateImageFile(oldImageFile.getSequence(), newImageFile.getSequence())) {
-            uploadFileService.saveUploadFile(newImageFile);
-        }
+        findMember.changeModifiedTime(LocalDateTime.now());
 
         return findMember.getSequence();
     }
@@ -210,6 +217,7 @@ public class MemberService {
     }
 
     private void addCategory(MemberCreate request, MemberEntity member) {
+        log.info("request.getCategory.length = ", request.getCategory().length);
         List<CategoryEntity> categories = Arrays.stream(request.getCategory())
                 .map(category -> (categoryRepository.findByValue(category)
                         .orElseThrow(CategoryNotFound::new)))
@@ -220,14 +228,14 @@ public class MemberService {
         }
     }
 
-    private void validateSessionUser(Long loginSequence, MemberRole role) {
-        MemberEntity findMember = memberRepository.findById(loginSequence)
-                .orElseThrow(() -> new MemberNotFound());
-
-        if (!findMember.getRole().equals(role)) {
-            throw new ForbiddenRequest();
-        }
-    }
+//    private void validateSessionUser(Long loginSequence, MemberRole role) {
+//        MemberEntity findMember = memberRepository.findById(loginSequence)
+//                .orElseThrow(() -> new MemberNotFound());
+//
+//        if (!findMember.getRole().equals(role)) {
+//            throw new ForbiddenRequest();
+//        }
+//    }
 
     private ProfileResponse createProfileResponse(MemberEntity member) {
         return ProfileResponse.builder()
@@ -294,31 +302,66 @@ public class MemberService {
         String newPassword = editRequest.getPassword();
         String newPasswordCheck = editRequest.getPasswordCheck();
         if (StringUtils.hasText(newPassword)
-                && StringUtils.hasText(newPasswordCheck)) {
+                || StringUtils.hasText(newPasswordCheck)) {
             isNotEqualPassword(newPassword, newPasswordCheck);
         }
     }
 
-    private void isDuplicatedUserId(String userId) {
+    private String encodePassword(String password) {
+        if (password == null) {
+            return null;
+        }
+        return passwordEncoder.encode(password);
+    }
+
+    public ResponseEntity<?> validateMatterMost(String mmId, String mmPassword) {
+        isDuplicatedMmId(mmId);
+
+        URI uri = UriComponentsBuilder
+                .fromUriString("https://meeting.ssafy.com")
+                .path("/api/v4/users/login")
+                .encode()
+                .build()
+                .toUri();
+
+        MatterMostRequest matterMostRequest = new MatterMostRequest(mmId, mmPassword);
+        RequestEntity<MatterMostRequest> requestEntity = RequestEntity
+                .post(uri)
+                .header("host", "meeting.ssafy.com")
+                .header("origin", "https://meeting.ssafy.com")
+                .body(matterMostRequest);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<MatterMostResponse> response = restTemplate.exchange(requestEntity, MatterMostResponse.class);
+        return ResponseEntity.status(200).body(response.getBody());
+    }
+
+    public void isDuplicatedMmId(String mmId) {
+        if (memberRepository.findMmId(mmId).isPresent()) {
+            throw new ConflictRequest("mmId", "이미 가입된 MatterMostId 입니다.");
+        }
+    }
+
+    public void isDuplicatedUserId(String userId) {
         if (memberRepository.findUserId(userId).isPresent()) {
             throw new ConflictRequest("userId", "이미 가입된 아이디입니다.");
         }
     }
 
-    private void isDuplicatedNickname(String nickname) {
+    public void isDuplicatedNickname(String nickname) {
         if (memberRepository.findNickname(nickname).isPresent()) {
             throw new ConflictRequest("nickname", "이미 가입된 닉네임입니다.");
         }
     }
 
-    private void isDuplicatedSsafyId(String ssafyId) {
+    public void isDuplicatedSsafyId(String ssafyId) {
         if (memberRepository.findSsafyId(ssafyId).isPresent()) {
             throw new ConflictRequest("ssafyId", "이미 가입된 SSAFY학번입니다.");
         }
     }
 
     private void isNotEqualPassword(String password, String passwordCheck) {
-        if (!password.equals(passwordCheck)) {
+        if (password == null || !password.equals(passwordCheck)) {
             throw new InvalidRequest("password", "비밀번호와 비밀번호확인이 다릅니다.");
         }
     }

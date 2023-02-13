@@ -25,11 +25,11 @@ public class StudyRoomService {
     String uuid = UUID.randomUUID().toString();
     StudyEntity study = studyRepository.getReferenceById(studySeq);
 
-    studyRoomRepository.save(StudyRoomEntity
-        .builder()
-        .studyRoomUUID(uuid)
-        .studyEntity(study)
-        .build());
+    study.changeStudyRoom(studyRoomRepository.save(StudyRoomEntity
+            .builder()
+            .studyRoomUUID(uuid)
+            .studyEntity(study)
+            .build()));
   }
 
 
@@ -44,4 +44,9 @@ public class StudyRoomService {
   }
 
 
+    public void deleteStudyRoom(Long studySeq) {
+        StudyEntity study = studyRepository.getReferenceById(studySeq);
+        studyRoomRepository.deleteById(study.getStudyRoom().getSequence());
+        study.changeStudyRoom(null);
+    }
 }

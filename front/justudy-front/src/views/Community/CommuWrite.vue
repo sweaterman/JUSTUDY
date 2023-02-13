@@ -2,16 +2,16 @@
     <v-app>
         <!-- 글읽기 제목 -->
 
-        <v-row :style="{marginTop: '3%'}">
+        <v-row :style="{marginTop: '1%'}">
             <v-col cols="12" md="4" />
             <v-col cols="12" md="4" justify="center" align="center">
-                <TextButton :buttonLength="100" :height="70" :fontSize="10" :content="`게시판 글쓰기`" :standard="px" />
+                <div><h1>게시판 글쓰기</h1></div>
             </v-col>
             <v-col cols="12" md="4" />
         </v-row>
 
         <!-- 카테고리 지정 -->
-        <CategoryHeader />
+        <CategoryHeader_write />
 
         <!-- 글쓰기 -->
         <v-row :style="{marginTop: '1%', marginBottom: '1%'}">
@@ -21,19 +21,19 @@
                     <v-card>
                         <!-- 작성자 -->
                         <v-row>
-                            <v-col cols="12" md="2" justify="center" align="center" :style="{color: 'white'}">
-                                <v-btn depressed color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '20%', marginLeft: '15%'}">작성자</v-btn>
+                            <v-col cols="12" md="2" align="right" :style="{marginTop: '1%'}">
+                                <h2>작성자</h2>
                             </v-col>
                             <v-col cols="12" md="10">
-                                <v-text-field v-model="writer" solo readonly outlined depressed style="width: 80%; height: 20px; margin-right: 10%; margin-left: 5%; margin-top: 4%"></v-text-field>
-                                <!-- <v-btn color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '3%', marginLeft: '10%'}"></v-btn> -->
+                                <h3>{{ writer }}</h3>
                             </v-col>
                         </v-row>
 
                         <!-- 제목 -->
                         <v-row>
-                            <v-col cols="12" md="2" justify="center" align="center">
-                                <v-btn depressed color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginLeft: '15%'}">제목</v-btn>
+                            <v-col cols="12" md="2" align="right" :style="{marginTop: '0.5%'}">
+                                <!-- <v-btn depressed color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginLeft: '15%'}">제목</v-btn> -->
+                                <h2>제목</h2>
                             </v-col>
                             <v-col cols="12" md="10">
                                 <v-text-field
@@ -49,8 +49,8 @@
 
                         <!-- 내용 -->
                         <v-row>
-                            <v-col cols="12" md="2">
-                                <v-btn depressed color="white" :style="{height: '40px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '1%', marginLeft: '15%'}">내용</v-btn>
+                            <v-col cols="12" md="2" align="right" :style="{marginTop: '0.5%'}">
+                                <h2>내용</h2>
                             </v-col>
                             <v-col cols="12" md="10">
                                 <v-textarea v-model="board.content" label="내용" outlined rows="13" style="width: 80%; margin-right: 10%; margin-left: 5%; margintop: 4%"></v-textarea>
@@ -67,13 +67,15 @@
             <v-col cols="12" md="8">
                 <v-row>
                     <v-col cols="12" md="1">
-                        <v-btn @click="moveback" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">취소</v-btn>
+                        <v-btn outlined text @click="moveback">
+                            <span class="material-icons-outlined"> arrow_back </span>
+                        </v-btn>
                     </v-col>
                     <v-col cols="12" md="9"></v-col>
                     <v-col cols="12" md="2" align="right">
-                        <v-btn :disabled="board.title.length >= 30 || board.title.length < 1" @click="write()" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}"
-                            >작성</v-btn
-                        >
+                        <v-btn :style="{color: 'green'}" outlined text :disabled="board.title.length >= 30 || board.title.length < 1" @click="write()">
+                            <span class="material-icons-outlined"> done </span>
+                        </v-btn>
                     </v-col>
                 </v-row>
             </v-col>
@@ -81,19 +83,17 @@
         </v-row>
     </v-app>
 </template>
-
 <script>
-import CommunityData from '@/data/CommunityData';
-import CategoryHeader from '../../components/common/CategoryHeader.vue';
-import TextButton from '../../components/common/TextButton.vue';
+import CategoryHeader_write from '../../components/common/CategoryHeader_write.vue';
+// import TextButton from '../../components/common/TextButton.vue';
 
 export default {
-    components: {TextButton, CategoryHeader},
+    components: {
+        CategoryHeader_write
+    },
     data() {
         // const index = this.$route.params.id;
         return {
-            data: CommunityData,
-            writer: '돌숭이',
             title: '',
             content: '',
             tab: null,
@@ -105,9 +105,11 @@ export default {
                 content: '',
                 category: this.$route.query.category,
                 isHighlighted: false
-            }
+            },
+            isFormValid: true
         };
     },
+    mounted() {},
     methods: {
         moveback() {
             window.history.back(); // window.history.back()을 통해 뒤로가기
@@ -124,7 +126,7 @@ export default {
             // });
             this.board.category = this.$route.query.category;
             this.board.isHighlighted = false;
-            console.log(this.board.category);
+            console.log(this.board);
             await this.$store.dispatch('moduleCommunity/getCommunityContentWrite', {board: this.board});
             this.$router.push({
                 path: window.history.back()

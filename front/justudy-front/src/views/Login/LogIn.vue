@@ -36,7 +36,7 @@
                         <v-subheader>비밀번호</v-subheader>
                     </v-col>
                     <v-col cols="6">
-                        <v-text-field v-model="user.password" dense outlined label="비밀번호" :rules="[v => !!v || '비밀번호는 필수입니다.']"></v-text-field>
+                        <v-text-field type="password" v-model="user.password" dense outlined label="비밀번호" :rules="[v => !!v || '비밀번호는 필수입니다.']"></v-text-field>
                     </v-col>
                 </v-row>
             </v-col>
@@ -79,13 +79,13 @@ export default {
     },
 
     methods: {
-        movetomain() {
-            this.$store.dispatch('moduleLogin/login', {
+        async movetomain() {
+            await this.$store.dispatch('moduleLogin/login', {
                 user: this.user
             });
         },
         movetosignin() {
-            window.location.href = '/signin';
+            window.location.href = '/signUp';
         }
     }
 };

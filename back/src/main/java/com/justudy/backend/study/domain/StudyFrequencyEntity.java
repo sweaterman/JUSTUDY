@@ -14,14 +14,14 @@ import java.util.Date;
 @Entity
 public class StudyFrequencyEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_frequency_seq")
     private Long sequence;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_seq")
     private StudyEntity study;
     @Column(name = "study_frequency_week")
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private StudyFrequencyWeek week;
     @Temporal(TemporalType.TIME)
     @Column(name = "study_frequency_start_time")

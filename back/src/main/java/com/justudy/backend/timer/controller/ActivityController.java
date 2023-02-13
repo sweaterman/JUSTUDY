@@ -3,6 +3,7 @@ package com.justudy.backend.timer.controller;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.timer.dto.request.ActivityRequest;
 import com.justudy.backend.timer.dto.request.CalendarRequest;
+import com.justudy.backend.timer.dto.request.MemberCalendarRequest;
 import com.justudy.backend.timer.dto.response.ActivityCalendarResponse;
 import com.justudy.backend.timer.dto.response.ActivitySubjectResponse;
 import com.justudy.backend.timer.dto.response.MemberActivityYesterdayResponse;
@@ -37,7 +38,6 @@ public class ActivityController {
   public ResponseEntity<Void> registerPersonalTime(HttpSession session,
       @RequestBody ActivityRequest memberActivityRequest) {
 
-    log.info("registerPersonalTime {} ", memberActivityRequest);
     Long seq = (Long) session.getAttribute(SessionConst.LOGIN_USER);
     Date todayDate = Date.valueOf(LocalDate.now());
 
@@ -54,31 +54,33 @@ public class ActivityController {
   }
 
   @GetMapping("/member/week")
-  public ResponseEntity<HashMap> readWeekTimeBySeq(@RequestParam Long seq) {
+  public ResponseEntity<HashMap> readWeekTimeBySeq(@RequestParam String nickName) {
     HashMap<String, Long> ret = new HashMap<String, Long>();
 
     Date agoWeek = Date.valueOf(LocalDate.now().minusWeeks(1));
     Date curWeek = Date.valueOf(LocalDate.now());
-    ret.put("time", memberActivityService.getSumTimeByIdAndPeriod(agoWeek, curWeek, seq));
+    ret.put("time",
+        memberActivityService.getSumTimeByNickNameAndPeriod(agoWeek, curWeek, nickName));
     return ResponseEntity.status(HttpStatus.OK).body(ret);
   }
 
   @GetMapping("/member/month")
-  public ResponseEntity<HashMap> readMonthTimeBySeq(@RequestParam Long seq) {
+  public ResponseEntity<HashMap> readMonthTimeBySeq(@RequestParam String nickName) {
     HashMap<String, Long> ret = new HashMap<String, Long>();
 
     Date agoMonth = Date.valueOf(LocalDate.now().minusMonths(1));
     Date curMonth = Date.valueOf(LocalDate.now());
-    ret.put("time", memberActivityService.getSumTimeByIdAndPeriod(agoMonth, curMonth, seq));
+    ret.put("time",
+        memberActivityService.getSumTimeByNickNameAndPeriod(agoMonth, curMonth, nickName));
     return ResponseEntity.status(HttpStatus.OK).body(ret);
   }
 
   @GetMapping("/member/category")
   public ResponseEntity<List<ActivitySubjectResponse>> readCategoryTimeBySeq(
-      @RequestParam Long seq) {
+      @RequestParam String nickName) {
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(memberActivityService.getSumTimeByIdAndCategory(seq));
+        .body(memberActivityService.getSumTimeByNickNameAndCategory(nickName));
   }
 
   @GetMapping("/members/week")
@@ -105,15 +107,15 @@ public class ActivityController {
 
   @PostMapping("/member-calendar")
   public ResponseEntity<List<ActivityCalendarResponse>> readCalendarTimeBySeq(
-      @RequestBody CalendarRequest memberCalendarRequest) {
+      @RequestBody MemberCalendarRequest memberCalendarRequest) {
     LocalDate wantedMonth = LocalDate.of(memberCalendarRequest.getYear(),
         memberCalendarRequest.getMonth(), 1);
     Date firstDay = Date.valueOf(wantedMonth.withDayOfMonth(1));
     Date lastDay = Date.valueOf(wantedMonth.withDayOfMonth(wantedMonth.lengthOfMonth()));
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(memberActivityService.getCalendarTimeById(firstDay, lastDay,
-            memberCalendarRequest.getSeq()));
+        .body(memberActivityService.getCalendarTimeByNickName(firstDay, lastDay,
+            memberCalendarRequest.getNickName()));
   }
 
   @PostMapping("/study-calendar")

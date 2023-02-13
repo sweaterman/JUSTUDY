@@ -1,106 +1,209 @@
 <template>
     <v-app>
-        <div>
-            <!-- 중앙 메인화면 -->
-            <div style="width: 70%" ref="main"></div>
-            <!-- 모든 참가자 화면 -->
-            <v-sheet class="mx-auto" max-width="100%">
-                <v-slide-group multiple show-arrows>
-                    <div style="display: inline-block" ref="el1" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el2" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el3" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el4" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el5" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el6" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el7" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el8" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el9" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el10" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el11" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el12" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el13" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el14" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el15" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el16" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el17" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el18" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el19" @click="viewChange"></div>
-                    <div style="display: inline-block" ref="el20" @click="viewChange"></div>
-                </v-slide-group>
-            </v-sheet>
-            <!-- 기능모음 -->
-            <div id="room" style="width: 100%">
+        <v-row :style="{marginTop: '3%'}">
+            <v-col cols="12" md="1" />
+            <v-col cols="12" md="8">
+                <!-- 모든 참가자 화면 -->
+                <div style="width: 100%" ref="main"></div>
+            </v-col>
+            <v-col cols="12" md="3" :style="{padding: '4%'}">
+                <v-row> </v-row>
+                <v-row>
+                    <!-- 사다리 타기(중앙에 배치) -->
+                    <!-- <meetingLadder id="ladderCSS" v-show="isLadder" v-if="getIsLadder" /> -->
+                    <meetingLadder class="ladderCSS" v-show="isLadder" v-if="getIsLadder" />
+                    <!--  채팅창 우측에 배치 -->
+                    <meetingChat class="chatCSS" v-show="isChat" justify-content="center" align-items="center" />
+                    <!-- code editor  -->
+                    <!-- <CodeEditor
+                        class="leftArrange"
+                        width="100%"
+                        height="500px"
+                        v-show="isShowEditor"
+                        v-model="codeContent"
+                        :language_selector="true"
+                        :languages="[
+                            ['javascript', 'JS'],
+                            ['python', 'Python'],
+                            ['cpp', 'c++'],
+                            ['java', 'Java']
+                        ]"
+                    ></CodeEditor> -->
+                    <CodeEditor
+                        width="100%"
+                        height="720px"
+                        v-show="isShowEditor"
+                        v-model="codeContent"
+                        justify-content="center"
+                        align-items="center"
+                        :language_selector="true"
+                        :languages="[
+                            ['javascript', 'JS'],
+                            ['python', 'Python'],
+                            ['cpp', 'c++'],
+                            ['java', 'Java']
+                        ]"
+                    ></CodeEditor>
+                    <!-- 우상단 알림 css 수정시에는 v-show를 true로 해주신 다음에 디자인 수정하시고, 원래대로 하시면 되겠습니다.-->
+                    <div class="card_alarm" v-show="getIsViewAlarmDiv">
+                        <v-row>
+                            <v-col>
+                                <v-btn @click="offViewAlarmDiv" depressed color="white">X</v-btn>
+                            </v-col>
+                        </v-row>
+                        <v-row justify="center" align="center">
+                            <v-col justify="center" align="center">
+                                <h2 v-text="getAlarmDivText"></h2>
+                            </v-col>
+                        </v-row>
+                    </div>
+
+                    <!-- 우상단 Ban투표 -->
+                    <div class="card_alarm" v-show="getIsViewBanDiv">
+                        <v-row>
+                            <v-col>
+                                <h2 v-text="getBanDivText"></h2>
+                                <h3 v-text="getRemainTime"></h3>
+                            </v-col>
+                        </v-row>
+                        <v-row justify="center" align="center">
+                            <v-col justify="center" align="center">
+                                <v-btn @click="banVote(true)" depressed color="white">Yes</v-btn><v-btn @click="banVote(false)" depressed color="white">No</v-btn>
+                            </v-col>
+                        </v-row>
+                    </div>
+
+                    <!-- 우상단 Mute투표 -->
+                    <div class="card_alarm" v-show="getIsViewMuteDiv">
+                        <v-row>
+                            <v-col>
+                                <h2 v-text="getMuteDivText"></h2>
+                            </v-col>
+                        </v-row>
+                        <v-row justify="center" align="center">
+                            <v-col justify="center" align="center">
+                                <h3 v-text="getRemainTime"></h3>
+                                <v-btn @click="muteVote(true)" depressed color="white">Yes</v-btn><v-btn @click="muteVote(false)" depressed color="white">No</v-btn>
+                            </v-col>
+                        </v-row>
+                    </div>
+
+                    <!-- 우상단 방나가기투표 -->
+                    <div class="card_alarm" v-show="getIsViewExitDiv">
+                        <v-row>
+                            <v-col>
+                                <h2 v-text="getExitDivText"></h2>
+                            </v-col>
+                        </v-row>
+                        <v-row justify="center" align="center">
+                            <v-col justify="center" align="center">
+                                <h3 v-text="getRemainTime"></h3>
+                                <v-btn @click="exitVote(true)" depressed color="white">Yes</v-btn><v-btn @click="exitVote(false)" depressed color="white">No</v-btn>
+                            </v-col>
+                        </v-row>
+                    </div>
+                </v-row>
+            </v-col>
+        </v-row>
+
+        <!-- 기능모음 -->
+        <v-row :style="{marginTop: '3%', marginBottom: '2%'}">
+            <v-col cols="12" md="1" />
+            <v-col cols="12" md="10">
+                <v-row>
+                    <!-- 내 화면 기능 -->
+                    <v-col cols="12" md="1" align="right">
+                        <!-- 내 소리 온 오프 전환 -->
+                        <v-btn v-if="soundon" @click="setMute" color="white" depressed>
+                            <span class="material-icons-outlined"> volume_up </span>
+                        </v-btn>
+                        <v-btn v-if="!soundon" @click="setMute" color="white" depressed>
+                            <span class="material-icons-outlined"> volume_off </span>
+                        </v-btn>
+                    </v-col>
+                    <v-col cols="12" md="1" align="center">
+                        <!-- 내 화면 온 오프 전환 -->
+                        <v-btn v-if="cameraon" @click="setScreen" color="white" depressed>
+                            <span class="material-icons-outlined"> visibility </span>
+                        </v-btn>
+                        <v-btn v-if="!cameraon" @click="setScreen" color="white" depressed>
+                            <span class="material-icons-outlined"> visibility_off </span>
+                        </v-btn>
+                    </v-col>
+                    <v-col cols="12" md="1" align="left" v-show="!isMobile">
+                        <!-- 화면 공유 세팅 -->
+                        <v-btn v-if="!shareon" @click="shareScreen" color="white" depressed>
+                            <span class="material-icons-outlined"> airplay </span>
+                        </v-btn>
+                        <v-btn v-if="shareon" @click="shareScreen" color="white" depressed>
+                            <span class="material-icons-outlined"> web_asset_off </span>
+                        </v-btn>
+                    </v-col>
+                    <v-col cols="12" md="1" />
+
+                    <!-- 투표 관련 기능 -->
+                    <v-col cols="12" md="2" align="right">
+                        <!-- 참가자 이름을 불러옴.... -->
+                        <v-select v-model="selected" :items="namesFromParticipants" @click="getPeople" max-width="300">
+                            <!-- <option v-for="(item, index) in namesFromParticipants" :key="index"> -->
+                            <!-- </option> -->
+                        </v-select>
+                    </v-col>
+
+                    <v-col cols="12" md="1" align="right">
+                        <!-- 해당 인원 강퇴 제안하기-->
+                        <v-btn @click="requestBan" v-bind:disabled="btnDisable" color="white" depressed>
+                            <span class="material-icons-outlined" style="color: orange"> waving_hand </span>
+                        </v-btn>
+                    </v-col>
+
+                    <v-col cols="12" md="1" align="center">
+                        <!-- 해당 인원 mute 제안하기 -->
+                        <v-btn @click="requestMute" v-bind:disabled="btnDisable" color="white" depressed>
+                            <span class="material-icons-outlined" style="color: orange"> voice_over_off </span>
+                        </v-btn>
+                    </v-col>
+
+                    <v-col cols="12" md="1" align="left">
+                        <!-- 모두다 나가기 제안하기 -->
+                        <v-btn @click="requestExit" v-bind:disabled="btnDisable" color="white" depressed>
+                            <span class="material-icons-outlined" style="color: orange"> power_settings_new </span>
+                        </v-btn>
+                    </v-col>
+
+                    <!-- 모달 생성 -->
+                    <v-col cols="12" md="1" align="right">
+                        <!-- 사다리타기 생성 -->
+                        <v-btn @click="modalClicked('onLadder')" color="white" depressed>
+                            <span class="material-icons-outlined"> rule </span>
+                        </v-btn>
+                    </v-col>
+
+                    <v-col cols="12" md="1" align="center">
+                        <!-- 채팅창 생성 -->
+                        <v-btn @click="modalClicked('onChat')" color="white" depressed>
+                            <span class="material-icons-outlined"> speaker_notes </span>
+                        </v-btn>
+                        <span v-show="getIsNewChat">‼</span>
+                    </v-col>
+
+                    <v-col cols="12" md="1" align="left">
+                        <!-- 에디터 생성 -->
+                        <v-btn @click="modalClicked('showEditor')" color="white" depressed>
+                            <span class="material-icons-outlined"> integration_instructions </span>
+                        </v-btn>
+                    </v-col>
+                </v-row>
+            </v-col>
+            <v-col cols="12" md="1">
                 <!-- 방 그냥 나가기 -->
-                <v-btn type="button" id="button-leave" @mouseup="leaveRoom">Leave room</v-btn>
-                <!-- 내 소리 온 오프 전환 -->
-                <v-btn @click="setMute">소리on/off</v-btn>
-                <!-- 소리 상태 콘솔에 읽어보기 -->
-                <v-btn @click="test">get소리</v-btn>
-                <!-- 내 화면 온 오프 전환 -->
-                <v-btn @click="setScreen">화면on/off</v-btn>
-                <!-- 화면 상태 콘솔에 읽어보기 -->
-                <v-btn @click="test2">get화면</v-btn>
-                <!-- 화면 공유 세팅 -->
-                <v-btn @click="shareScreen">화면공유on/off</v-btn>
-                <!-- 참가자 이름을 불러옴.... -->
-                <select v-model="selected" @click="getPeople" style="width: 100px">
-                    <option v-for="(item, index) in namesFromParticipants" :key="index">
-                        {{ item }}
-                    </option>
-                </select>
-
-                <!-- 해당 인원 강퇴! 이건 방장기능이라 제안하지 않음 -->
-                <v-btn @click="banParticipant">강퇴</v-btn>
-                <!-- 해당 인원 mute 제안하기 -->
-                <v-btn @click="requestMute" v-bind:disabled="tempMuteBtnDisable">mute제안</v-btn>
-                <!-- 모두다 나가기 제안하기 -->
-                <v-btn @click="requestExit" v-bind:disabled="tempExitBtnDisable">스터디 모두 종료 제안</v-btn>
-                <!-- 사다리타기 생성 -->
-                <v-btn @click="onLadder">사다리타기</v-btn>
-                <!-- 채팅창 생성 -->
-                <v-btn @click="onChat">채팅창</v-btn>
-                <span v-show="getIsNewChat">‼</span>
-                <v-btn @click="showEditor">에디터</v-btn>
-            </div>
-
-            <!-- 우상단 알림 css 수정시에는 v-show를 true로 해주신 다음에 디자인 수정하시고, 원래대로 하시면 되겠습니다.-->
-            <div class="alarm" v-show="getIsViewAlarmDiv">
-                <v-btn @click="offViewAlarmDiv">X</v-btn>
-                <h2 v-text="getAlarmDivText"></h2>
-            </div>
-            <!-- 우상단 Mute투표 -->
-            <div class="alarm" v-show="getIsViewMuteDiv">
-                <h2 v-text="getMuteDivText"></h2>
-                <h3 v-text="getRemainTime"></h3>
-                <v-btn @click="muteVote(true)">Yes</v-btn><v-btn @click="muteVote(false)">No</v-btn>
-            </div>
-            <!-- 우상단 방나가기투표 -->
-            <div class="alarm" v-show="getIsViewExitDiv">
-                <h2 v-text="getExitDivText"></h2>
-                >
-                <h3 v-text="getRemainTime"></h3>
-                <v-btn @click="exitVote(true)">Yes</v-btn><v-btn @click="exitVote(false)">No</v-btn>
-            </div>
-
-            <!-- 사다리 타기(중앙에 배치) -->
-            <meetingLadder id="ladderCSS" v-if="getIsLadder" />
-            <!--  채팅창 우측에 배치 -->
-            <meetingChat id="chatCSS" v-show="getIsChat" />
-            <!-- code editor  -->
-            <CodeEditor
-                class="leftArrange"
-                height="800px"
-                v-show="isShowEditor"
-                v-model="codeContent"
-                :language_selector="true"
-                :languages="[
-                    ['javascript', 'JS'],
-                    ['python', 'Python'],
-                    ['cpp', 'c++'],
-                    ['java', 'Java']
-                ]"
-            ></CodeEditor>
-        </div>
+                <v-row :style="{marginTop: '2%'}">
+                    <v-btn type="button" id="button-leave" @mouseup="leaveRoom" color="white" depressed>
+                        <span class="material-icons-outlined" style="color: crimson"> logout </span>
+                    </v-btn>
+                </v-row>
+            </v-col>
+        </v-row>
     </v-app>
 </template>
 <script>
@@ -128,11 +231,19 @@ export default {
     },
     data() {
         return {
+            // 도균
+            soundon: true,
+            cameraon: true,
+            shareon: false,
+            isLadder: false,
+            isChat: false,
+
+            //의석
             isShowEditor: false,
             namesFromParticipants: [], //이름만
             selected: '',
-            tempMuteBtnDisable: false,
-            tempExitBtnDisable: false
+            btnDisable: false,
+            isMobile: /Mobi/i.test(window.navigator.userAgent)
         };
     },
     created() {
@@ -144,35 +255,13 @@ export default {
         this.leave();
     },
     mounted() {
-        // 최대 참가 수 만큼 엘리먼트 정보 넣어줌. (현재 20명).  아래 addInitEl 부분은 필수
-        window.addEventListener('beforeunload', this.leaveRoom);
-        this.addInitEl([
-            this.$refs.el1,
-            this.$refs.el2,
-            this.$refs.el3,
-            this.$refs.el4,
-            this.$refs.el5,
-            this.$refs.el6,
-            this.$refs.el7,
-            this.$refs.el8,
-            this.$refs.el9,
-            this.$refs.el10,
-            this.$refs.el11,
-            this.$refs.el12,
-            this.$refs.el13,
-            this.$refs.el14,
-            this.$refs.el15,
-            this.$refs.el16,
-            this.$refs.el17,
-            this.$refs.el18,
-            this.$refs.el19,
-            this.$refs.el20
-        ]);
-
+        window.addEventListener('beforeunload', this.unLoadEvent);
+        this.addInitEl(this.InitEl);
         this.setMainParents(this.$refs.main);
         this.setSource('webcam');
         const data = {
             url: 'wss://i8a104.p.ssafy.io/groupcall',
+            // url: 'ws://localhost:8080/groupcall',
             person: this.getPersonName,
             room: this.getRoomName
         };
@@ -180,7 +269,7 @@ export default {
     },
 
     beforeUnmount() {
-        window.removeEventListener('beforeunload', this.leaveRoom);
+        window.removeEventListener('beforeunload', this.unLoadEvent);
     },
 
     computed: {
@@ -192,9 +281,11 @@ export default {
             'getParticipants',
             'getSource',
             'getIsViewAlarmDiv',
+            'getIsViewBanDiv',
             'getIsViewMuteDiv',
             'getIsViewExitDiv',
             'getAlarmDivText',
+            'getBanDivText',
             'getMuteDivText',
             'getExitDivText',
             'getRemainTime',
@@ -213,6 +304,26 @@ export default {
         }
     },
     methods: {
+        modalClicked(click) {
+            if (click == 'onLadder') {
+                this.isLadder = !this.isLadder;
+                this.isChat = false;
+                this.isShowEditor = false;
+
+                this.setIsLadder(true);
+            } else if (click == 'onChat') {
+                this.isLadder = false;
+                this.isChat = !this.isChat;
+                this.isShowEditor = false;
+
+                this.setIsChat(true);
+                this.setIsNewChat(false);
+            } else if (click == 'showEditor') {
+                this.isLadder = false;
+                this.isChat = false;
+                this.isShowEditor = !this.isShowEditor;
+            }
+        },
         ...mapActions(moduleWebRTC, [
             'addInitEl',
             'setMainParents',
@@ -226,11 +337,12 @@ export default {
             'exit',
             'reset',
             'share',
+            'requestBanSend',
             'requestMuteSend',
             'requestExitSend',
             'setViewAlarmDiv',
-            'requestMuteSend',
             'setIsViewMuteDiv',
+            'setIsViewBanDiv',
             'setIsViewExitDiv',
             'setIsLadder',
             'setIsChat',
@@ -240,16 +352,19 @@ export default {
             'setCodeEditor',
             'sendCode'
         ]),
-        showEditor() {
-            if (this.isShowEditor) this.isShowEditor = false;
-            else this.isShowEditor = true;
-        },
+
+        // showEditor() {
+        //     if (this.isShowEditor) this.isShowEditor = false;
+        //     else this.isShowEditor = true;
+        // },
         leaveRoom() {
             this.leave();
         },
         shareScreen() {
+            this.shareon = !this.shareon;
             const data = {
                 url: 'wss://i8a104.p.ssafy.io/groupcall',
+                // url: 'ws://localhost:8080/groupcall',
                 person: this.getPersonName,
                 room: this.getRoomName
             };
@@ -261,9 +376,11 @@ export default {
             }
         },
         setMute() {
+            this.soundon = !this.soundon;
             this.isSetAudio(!this.getAudio);
         },
         setScreen() {
+            this.cameraon = !this.cameraon;
             this.isSetScreen(!this.getScreen);
         },
         getPeople() {
@@ -278,51 +395,50 @@ export default {
             }
             console.log(this.namesFromParticipants);
         },
-        banParticipant() {
-            console.log(this.selected);
-            this.ban(this.selected);
-        },
         keepQuiet() {
-            console.log(this.selected);
             this.mute(this.selected);
-        },
-        viewChange(el) {
-            const curEl = el.currentTarget.firstChild;
-            const mainView = this.$refs.main;
-            while (mainView.hasChildNodes()) {
-                mainView.removeChild(mainView.firstChild);
-            }
-            let canvas = document.createElement('canvas');
-            let context = canvas.getContext('2d');
-            let videoEl = curEl;
-            canvas.style = 'width:100%';
-            mainView.appendChild(canvas);
-            function updateCanvas() {
-                context.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-                window.requestAnimationFrame(updateCanvas);
-            }
-            requestAnimationFrame(updateCanvas);
+            this.selected = '';
         },
         offViewAlarmDiv() {
             this.setViewAlarmDiv(false);
         },
-        requestMute() {
+        requestBan() {
             if (this.selected == '') {
-                console.log('음소거할 사람을 선택해주세요');
+                alert('강제 퇴장을 할 사람을 선택해주세요');
                 return;
             }
-            this.tempMuteBtnDisable = true;
+            this.btnDisable = true;
+            // this.ban(this.selected);
+            this.requestBanSend(this.selected);
+            setTimeout(() => {
+                this.btnDisable = false;
+            }, 6500);
+            this.selected = '';
+        },
+        requestMute() {
+            if (this.selected == '') {
+                alert('음소거할 사람을 선택해주세요');
+                return;
+            }
+            this.btnDisable = true;
             this.requestMuteSend(this.selected);
             setTimeout(() => {
-                this.tempMuteBtnDisable = false;
-            }, 6500); //여러번 누르기를 방지하기 위함(1초의 초기화 시간 + 5초의 투표시간)
+                this.btnDisable = false;
+            }, 6500);
+            this.selected = '';
         },
         requestExit() {
-            this.tempExitBtnDisable = true;
+            this.btnDisable = true;
             this.requestExitSend();
             setTimeout(() => {
-                this.tempExitBtnDisable = false;
-            }, 6500); //여러번 누르기를 방지하기 위함(1초의 초기화 시간 + 5초의 투표시간)
+                this.btnDisable = false;
+            }, 6500);
+        },
+        banVote(isSelected) {
+            if (isSelected) {
+                this.ban();
+            }
+            this.setIsViewBanDiv(false);
         },
         muteVote(isSelected) {
             if (isSelected) {
@@ -343,12 +459,13 @@ export default {
             this.setIsChat(true);
             this.setIsNewChat(false);
         },
-        //////////////////////////////////////////////////////
-        test() {
-            console.log(this.getAudio);
-        },
-        test2() {
-            console.log(this.getScreen);
+        unLoadEvent() {
+            let start = new Date();
+            let end = new Date();
+            this.leaveRoom();
+            while (end - start < 1000) {
+                end = new Date();
+            }
         }
     }
 };
@@ -356,10 +473,20 @@ export default {
 
 <style scoped>
 /* 우상단 알람,방나가기,뮤트투표 기능 여기서 디자인하면 됨 */
+.card_alarm {
+    padding: 15px;
+    width: 80%;
+    height: 280px;
+    margin-top: 20px;
+    border-style: solid;
+    border-color: #eeeeee;
+    border-radius: 30px;
+    /* border-width: thin; */
+}
 .alarm {
-    width: 37%;
-    margin-left: 60%;
-    background-color: aqua;
+    width: 30%;
+
+    background-color: rgb(132, 220, 230);
     position: absolute;
     top: 30px;
     height: 200px;
@@ -367,7 +494,7 @@ export default {
 }
 .leftArrange {
     width: 37%;
-    margin-left: 5%;
+    /* margin-left: 5%; */
     margin-right: 58%;
     position: absolute;
     top: 30px;
@@ -375,22 +502,25 @@ export default {
     z-index: 2;
 }
 #ladderCSS {
-    margin-left: 33%;
+    margin-left: 55%;
+    margin-top: 30%;
+    width: 33%;
+    display: table-row;
+    z-index: 1;
+    top: 30px;
+    width: 100%;
+    background-color: rgb(222, 222, 222);
+}
+#chatCSS {
+    /* margin-right: 15%;
+    margin-bottom: 25%;
     width: 33%;
     position: absolute;
     z-index: 3;
-    top: 300px;
-    height: 500px;
-    background-color: beige;
-}
-#chatCSS {
-    margin-left: 66%;
-    width: 33%;
-    position: absolute;
-    z-index: 1;
     top: 30px;
+    height: 80px; */
+    width: 100%;
     height: 800px;
-    background-color: darksalmon;
 }
 select {
     background-color: blanchedalmond;

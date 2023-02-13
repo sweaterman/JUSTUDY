@@ -4,8 +4,7 @@ import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
-import com.justudy.backend.file.service.FileStore;
-import com.justudy.backend.file.service.UploadFileService;
+import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.dto.request.StudyCreate;
@@ -14,12 +13,12 @@ import com.justudy.backend.study.dto.response.StudyDetailResponse;
 import com.justudy.backend.study.dto.response.StudyResponse;
 import com.justudy.backend.study.dto.response.StudySearchResponse;
 import com.justudy.backend.study.exception.StudyNotFound;
-import com.justudy.backend.study.repository.StudyFrequencyRepository;
 import com.justudy.backend.study.repository.StudyRepository;
 import com.justudy.backend.study.repository.StudyResumeRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -38,12 +37,6 @@ public class StudyService {
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
     private final StudyResumeRepository studyResumeRepository;
-    private final StudyFrequencyRepository studyFrequencyRepository;
-    private final UploadFileService uploadFileService;
-
-    private final FileStore fileStore;
-
-// ---------------------------------------------------------------커뮤니티---------------------------------------------------------------
 
     @Transactional
     public Long createStudy(StudyCreate request, UploadFileEntity basicImage) {
@@ -51,7 +44,6 @@ public class StudyService {
         CategoryEntity categoryEntity = categoryRepository.findByKey(request.getBottomCategory()).orElseThrow(InvalidRequest::new);
 
         StudyEntity study = request.toEntity(categoryEntity);
-
         study.changeImage(basicImage);
         return studyRepository.save(study).getSequence();
     }
@@ -59,16 +51,16 @@ public class StudyService {
     public StudyDetailResponse readStudy(Long studySequence) {
         StudyEntity entity = studyRepository.findById(studySequence)
                 .orElseThrow(StudyNotFound::new);
-        return StudyDetailResponse.makeBuilder(entity);
+        String leaderName = memberRepository.findById(entity.getLeaderSeq()).orElseThrow(MemberNotFound::new).getNickname();
+        return StudyDetailResponse.makeBuilder(entity, leaderName);
     }
 
     public StudyDetailResponse readDetailStudy(Long studySequence, Long loginSequence) {
         StudyEntity entity = studyRepository.findById(studySequence)
                 .orElseThrow(StudyNotFound::new);
-        Boolean isLeader = false;
-        Boolean isMember = false;
-        Boolean isApply = false;
-
+        boolean isLeader = false;
+        boolean isMember = false;
+        boolean isApply = false;
 
         //맴버일시
         Long seq = entity.getStudyMembers()
@@ -86,11 +78,12 @@ public class StudyService {
 
 
         //리더일시
-        if (entity.getLeaderSeq() == loginSequence) {
+        String leaderName = memberRepository.findById(loginSequence).orElseThrow(MemberNotFound::new).getNickname();
+        if (entity.getLeaderSeq().longValue() == loginSequence.longValue()) {
             isLeader = true;
             isMember = false;
         }
-        return StudyDetailResponse.makeBuilder(entity, isApply, isMember, isLeader);
+        return StudyDetailResponse.makeBuilder(entity, isApply, isMember, isLeader, leaderName);
     }
 
     @Transactional
@@ -100,8 +93,11 @@ public class StudyService {
 
         entity.changeImage(uploadImage);
 
+        CategoryEntity categoryEntity = categoryRepository.findByKey(request.getBottomCategory()).orElseThrow(InvalidRequest::new);
+        entity.changeCategory(categoryEntity);
+
         entity.update(request.getName(), request.getIntroduction(), request.getPopulation(),
-                request.getLevel(), request.getOnlineOffline(), request.getIsOpen(), request.getGithub(),
+                request.getLevel(), request.getMeeting(), request.getIsOpen(), request.getGithub(),
                 request.getNotion(), request.getStartTime());
         return id;
     }
@@ -116,9 +112,6 @@ public class StudyService {
 
 
     public StudySearchResponse search(Pageable pageable, List<String> sub, String type, String search) {
-        int MAX_STUDY_PAGE_SIZE = 9;
-//        Pageable pageable = PageRequest.of(page, MAX_STUDY_PAGE_SIZE);
-
         String studyLeader = null;
         String studyName = null;
 
@@ -127,7 +120,6 @@ public class StudyService {
         } else if (type != null && type.compareTo("name") == 0) {
             studyName = search;
         }
-        log.info("서치 : {} {}", type, search);
         Slice<StudyEntity> studyEntities = studyRepository.findAllBySearchOption(pageable, sub, studyLeader, studyName);
         return StudySearchResponse.makeBuilder(studyEntities
                 .stream()
@@ -141,12 +133,18 @@ public class StudyService {
     }
 
     public Boolean checkNickName(String nickName) {
-        if (studyRepository.readStudyByNickName(nickName) == null) return true;
-        return false;
+        return studyRepository.readStudyByNickName(nickName) == null;
     }
 
     public Long getStudyLeader(Long id) {
         return studyRepository.findById(id)
                 .orElseThrow(StudyNotFound::new).getLeaderSeq();
+    }
+
+    @Transactional
+    public void updateStudyOnAir(Long seq,boolean state){
+        StudyEntity studyEntity = studyRepository.findById(seq).orElseThrow(StudyNotFound::new);;
+        studyEntity.changeOnAir(state);
+        studyRepository.save(studyEntity);
     }
 }

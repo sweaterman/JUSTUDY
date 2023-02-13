@@ -37,11 +37,11 @@
 
                     <!-- 하위 카테고리 buttons -->
                     <v-row>
-                        <v-col cols="12">
+                        <v-col v-if="checkAll" cols="12">
                             <div class="btnGroup" v-for="bot in bottomCategories" :key="bot.key">
                                 <v-btn outlined class="btnBot" rounded x-large @click="doSearch('category', bot.key)">
                                     <!-- 추후 SVG 아이콘으로 수정예정 -->
-                                    <v-avatar size="50"><img src="@/assets/icon_70x70.png" alt="stackIcon" /></v-avatar>
+                                    <v-avatar size="50"><img :src="`${port}images/${bot.imageSequence}`" alt="stackIcon" /></v-avatar>
                                     {{ bot.value }}
                                 </v-btn>
                             </div>
@@ -51,8 +51,8 @@
                     <!-- 선택한 항목 표기 chips -->
                     <v-row>
                         <v-col cols="12">
-                            <v-chip-group column multiple>
-                                <v-chip close close-icon="mdi-close-outline" v-for="i in choice" :key="i" @click:close="remove(i)"> {{ i }}</v-chip>
+                            <v-chip-group column>
+                                <v-chip close close-icon="mdi-close-outline" @click:close="remove(i)" v-for="i in choice" :key="i"> {{ i }}</v-chip>
                             </v-chip-group>
                         </v-col>
                     </v-row>
@@ -97,6 +97,7 @@
 <script>
 import StudyList from '@/components/study/StudyList.vue';
 import {mapState} from 'vuex';
+import port from '@/store/port';
 
 export default {
     name: 'SearchStudyView',
@@ -133,7 +134,9 @@ export default {
             pageNum: 1,
             promotion: 'promotion',
             items: ['스터디명', '스터디장'],
-            checkMore: true
+            checkMore: true,
+            checkAll: false,
+            port: port
         };
     },
     methods: {
@@ -149,7 +152,6 @@ export default {
                     } else {
                         this.searchSend = 'leader';
                     }
-
                     //데이터 검색하고 받아오기.
                     this.pageNum = 1;
                     await this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: this.searchSend, content: this.searchContent});
@@ -159,18 +161,23 @@ export default {
                 this.searchSelect = null;
                 this.searchContent = null;
 
-                console.log(type, content);
-
-                //기존에 선택한 카테고리가 이미 있다면 합치고 중복제거.
-                this.choice = this.choice.concat(content);
-                this.choice = this.choice.filter((item, pos) => this.choice.indexOf(item) === pos);
+                if (content != null) {
+                    //기존에 선택한 카테고리가 이미 있다면 합치고 중복제거.
+                    this.choice = this.choice.concat(content);
+                    this.choice = this.choice.filter((item, pos) => this.choice.indexOf(item) === pos);
+                }
 
                 //데이터 검색하고 받아오기.
                 this.pageNum = 1;
-                await this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: 'category', content: this.choice});
+                if (this.choice == []) {
+                    await this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: 'category', content: ''});
+                } else {
+                    await this.$store.dispatch('moduleStudy/getPromotionStudies', {page: 1, type: 'category', content: this.choice});
+                }
             }
         },
         remove(i) {
+            this.pageNum = 1;
             this.choice = this.choice.filter(element => element !== i);
             this.doSearch('category');
         },
@@ -200,14 +207,16 @@ export default {
             }
         },
         moveToCreate() {
-            this.$router.push({path: `/study/create`});
+            window.location.href = `/study/create`;
         },
         //top에 해당하는 bottom 카테고리 가져오기
         async changeBottom(top) {
             if (top == '전체') {
                 this.choice = [];
+                this.checkAll = false;
                 await this.$store.dispatch('moduleStudy/getBottomCategories', '전체');
             } else {
+                this.checkAll = true;
                 await this.$store.dispatch('moduleStudy/getBottomCategories', top);
             }
         }

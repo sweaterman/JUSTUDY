@@ -1,23 +1,23 @@
 <template>
     <v-app>
-        <v-row :style="{marginTop: '2%'}">
+        <v-row :style="{marginTop: '0.5%'}">
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <!-- 타이머 메뉴 바 -->
                 <v-row justify="center" align="center">
                     <v-col cols="12" md="4" justify="center" align="center">
-                        <router-link to="/timer/study-start" style="text-decoration: none; color: black">
-                            <div><h2>공부 시작</h2></div>
+                        <router-link to="/timer/my-statistics" style="text-decoration: none; color: #ffb000">
+                            <div :style="{fontWeight: 'bold', fontSize: 'large'}"><h2>나의 통계</h2></div>
                         </router-link>
                     </v-col>
                     <v-col cols="12" md="4" justify="center" align="center">
-                        <router-link to="/timer/my-statistics" style="text-decoration: none; color: #ffb000">
-                            <div :style="{fontWeight: 'bold', fontSize: 'x-large'}"><h2>나의 통계</h2></div>
+                        <router-link to="/timer/study-start" style="text-decoration: none; color: black">
+                            <div>공부 시작</div>
                         </router-link>
                     </v-col>
                     <v-col cols="12" md="4" justify="center" align="center">
                         <router-link to="/timer/friend-statistics" style="text-decoration: none; color: black">
-                            <div><h2>친구 통계</h2></div>
+                            <div>친구 통계</div>
                         </router-link>
                     </v-col>
                 </v-row>
@@ -98,17 +98,17 @@ export default {
         DigitalClockAverage
     },
     async created() {
-        await this.$store.dispatch('moduleTimer/getStudyTimeWeek', {seq: 50});
+        await this.$store.dispatch('moduleTimer/getStudyTimeWeek', {nickName: '테스트 봇1'});
         this.weekTime = this.$store.state.moduleTimer.studyTimeWeek.time;
-        await this.$store.dispatch('moduleTimer/getStudyTimeMonth', {seq: 50});
+        await this.$store.dispatch('moduleTimer/getStudyTimeMonth', {nickName: '테스트 봇1'});
         this.monthTime = this.$store.state.moduleTimer.studyTimeMonth.time;
         await this.$store.dispatch('moduleTimer/getAverageMembersWeek');
         this.averageWeekTime = this.$store.state.moduleTimer.averageMemberWeek.time;
         await this.$store.dispatch('moduleTimer/getAverageMembersMonth');
         this.averageMonthTime = this.$store.state.moduleTimer.averageMemberMonth.time;
-        await this.$store.dispatch('moduleTimer/getStudyCategory', {seq: 50});
+        await this.$store.dispatch('moduleTimer/getStudyCategory', {nickName: '테스트 봇1'});
         this.studyCategory = this.$store.state.moduleTimer.studyCategory;
-        await this.$store.dispatch('moduleTimer/getStudyCalendar', {seq: 50, year: 2023, month: 1});
+        await this.$store.dispatch('moduleTimer/getStudyCalendar', {nickName: '테스트 봇1', year: 2023, month: 1});
 
         let studyCalendar = new Array(32).fill(0);
         let data = this.$store.state.moduleTimer.studyCalendar;
