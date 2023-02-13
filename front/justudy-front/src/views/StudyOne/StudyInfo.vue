@@ -202,8 +202,7 @@ export default {
         ...mapState('moduleStudy', ['studyInfo'])
     },
     async created() {
-        const pathName = new URL(document.location).pathname.split('/');
-        const studySeq = pathName[pathName.length - 2];
+        const studySeq = this.$route.params.studySeq;
         await this.$store.dispatch('moduleStudy/getStudyInfo', studySeq);
         if (this.studyInfo.isMember == false && this.studyInfo.isLeader == false) {
             window.location.href = '/error';

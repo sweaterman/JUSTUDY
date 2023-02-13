@@ -18,7 +18,7 @@
 
                 <v-col cols="12" md="1" />
                 <v-col cols="12" md="2" align="right">
-                    <v-btn color="yellow">글작성</v-btn>
+                    <v-btn @click="moveToWrite()" color="yellow">글작성</v-btn>
                 </v-col>
             </v-row>
 
@@ -50,7 +50,7 @@
                         <!-- 이전페이지로 이동 -->
                         <v-icon color="black" small>mdi-arrow-left-bold-outline</v-icon>
                     </v-btn>
-                    <span>{{ sendData.page }}/{{ boardList.totalCount / sendData.size }} page</span>
+                    <span>{{ sendData.page }}/{{ boardList.totalCount / sendData.size + 1 }} page</span>
                     <v-btn width="5px" @click="movepage('next')">
                         <!-- 다음페이지로 이동 -->
                         <v-icon color="black" small> mdi-arrow-right-bold-outline </v-icon>
@@ -70,8 +70,7 @@ export default {
         ...mapState('moduleStudy', ['boardList'])
     },
     async created() {
-        const pathName = new URL(document.location).pathname.split('/');
-        const studySeq = pathName[pathName.length - 2];
+        const studySeq = this.$route.params.studySeq;
         this.sendData.seq = studySeq;
         await this.$store.dispatch('moduleStudy/getBoardList', this.sendData);
     },
@@ -99,8 +98,7 @@ export default {
                     key: 'nickname',
                     value: '글작성자'
                 }
-            ],
-            numOfPages: 0 //총 페이지 수
+            ]
         };
     },
     methods: {
@@ -117,6 +115,9 @@ export default {
         },
         searchData() {
             //검색하기.
+        },
+        moveToWrite() {
+            window.location.href = `/study/${this.sendData.seq}/board/write`;
         }
     }
 };
