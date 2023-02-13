@@ -4,9 +4,12 @@ import com.justudy.backend.community.exception.SearchOrderTypeNotFound;
 import com.justudy.backend.community.exception.SearchTypeNotFound;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 
+@Slf4j
 @Data
 public class CommunitySearch {
 
@@ -54,7 +57,7 @@ public class CommunitySearch {
     }
 
     private SearchType convertToSearchType(String type) {
-        if (type == null) {
+        if (type == null || !StringUtils.hasText(type)) {
             return null;
         }
         return Arrays.stream(SearchType.values())
@@ -64,7 +67,8 @@ public class CommunitySearch {
     }
 
     private SearchOrderType convertToSearchOrderType(String order) {
-        if (order == null) {
+        log.info(">>>>>>>>>>>>>>>>> convertToSearchOrderType");
+        if (order == null || !StringUtils.hasText(order)) {
             return null;
         }
         return Arrays.stream(SearchOrderType.values())
