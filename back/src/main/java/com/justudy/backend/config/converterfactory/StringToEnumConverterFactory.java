@@ -1,6 +1,7 @@
 package com.justudy.backend.config.converterfactory;
 
 import com.justudy.backend.common.enum_util.EnumModel;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.util.StringUtils;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class StringToEnumConverterFactory implements ConverterFactory<String, Enum<? extends EnumModel>> {
 
     @Override

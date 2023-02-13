@@ -1,7 +1,7 @@
 package com.justudy.backend.study.service.community;
 
 import com.justudy.backend.community.dto.request.CommunitySearch;
-import com.justudy.backend.community.dto.response.ListResult;
+import com.justudy.backend.community.dto.response.CommunityListResult;
 import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.exception.ForbiddenRequest;
 import com.justudy.backend.member.domain.MemberEntity;
@@ -11,7 +11,6 @@ import com.justudy.backend.study.dto.request.community.StudyCommunityCreate;
 import com.justudy.backend.study.dto.request.community.StudyCommunityEdit;
 import com.justudy.backend.study.dto.response.community.StudyCommunityDetailResponse;
 import com.justudy.backend.study.dto.response.community.StudyCommunityListResponse;
-import com.justudy.backend.study.exception.StudyMemberNotFound;
 import com.justudy.backend.study.exception.StudyNotFound;
 import com.justudy.backend.study.repository.StudyRepository;
 import com.justudy.backend.study.repository.community.StudyCommunityRepository;
@@ -98,7 +97,7 @@ public class StudyCommunityService {
         return StudyCommunityDetailResponse.makeBuilder(community, true, false, false);
     }
 
-    public ListResult<List<StudyCommunityListResponse>> getCommunities(CommunitySearch condition, Long studySequence, Long loginSequence) {
+    public CommunityListResult<List<StudyCommunityListResponse>> getCommunities(CommunitySearch condition, Long studySequence, Long loginSequence) {
         //스터디원인지 체크
         StudyEntity studyEntity = studyRepository.findById(studySequence).orElseThrow(StudyNotFound::new);
         isStudyMember(studyEntity, loginSequence);
@@ -107,10 +106,10 @@ public class StudyCommunityService {
                 .map(StudyCommunityListResponse::new).collect(Collectors.toList());
         Long countOfList = communityRepository.getCountOfList(condition, studySequence);
 
-        return new ListResult<>(communityList, countOfList);
+        return new CommunityListResult<>(communityList, countOfList);
     }
 
-    public ListResult<List<StudyCommunityListResponse>> getNotices(Pageable pageable, Long studySequence, Long loginSequence) {
+    public CommunityListResult<List<StudyCommunityListResponse>> getNotices(Pageable pageable, Long studySequence, Long loginSequence) {
         //스터디원인지 체크
         StudyEntity studyEntity = studyRepository.findById(studySequence).orElseThrow(StudyNotFound::new);
         isStudyMember(studyEntity, loginSequence);
@@ -119,7 +118,7 @@ public class StudyCommunityService {
                 .map(StudyCommunityListResponse::new).collect(Collectors.toList());
         Long countOfNotices = communityRepository.getCountOfNotices();
 
-        return new ListResult<>(noticeList, countOfNotices);
+        return new CommunityListResult<>(noticeList, countOfNotices);
     }
 
     public List<StudyCommunityListResponse> getMostLoveCommunitiesOfWeek(Pageable pageable, Long studySequence, Long loginSequence) {
