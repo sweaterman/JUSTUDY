@@ -69,7 +69,7 @@ public class AdminController {
 
     @GetMapping("/community/{communitySequence}")
     public CommunityDetailResponse getCommunityDetail(@PathVariable Long communitySequence) {
-        return communityService.getCommunityDetailByAdmin(communitySequence);
+        return adminService.getCommunityDetailByAdmin(communitySequence);
     }
 
     @DeleteMapping("/community/{communitySequence}")

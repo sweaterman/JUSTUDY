@@ -8,6 +8,7 @@ import com.justudy.backend.admin.repository.AdminRepository;
 import com.justudy.backend.common.validate.Validation;
 import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.dto.request.CommunitySearch;
+import com.justudy.backend.community.dto.response.CommunityDetailResponse;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
 import com.justudy.backend.community.dto.response.CommunityListResult;
 import com.justudy.backend.community.exception.CommunityNotFound;
@@ -75,6 +76,13 @@ public class AdminService {
         Long totalCount = adminRepository.getCountCommunitiesBySearch(communitySearch);
         return new CommunityListResult<>(communityResponses, totalCount);
     }
+
+    public CommunityDetailResponse getCommunityDetailByAdmin(Long communitySequence) {
+        CommunityEntity community = communityRepository.findBySequence(communitySequence)
+                .orElseThrow(CommunityNotFound::new);
+        return CommunityDetailResponse.makeBuilder(community);
+    }
+
 
     @Transactional
     public Long deleteCommunity(Long loginSequence, Long communitySequence) {
