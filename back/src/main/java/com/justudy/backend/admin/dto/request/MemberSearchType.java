@@ -1,16 +1,15 @@
 package com.justudy.backend.admin.dto.request;
 
 import com.justudy.backend.common.enum_util.EnumModel;
-import com.justudy.backend.member.domain.QMemberEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 import java.util.function.Function;
 
-import static com.justudy.backend.member.domain.QMemberEntity.*;
+import static com.justudy.backend.member.domain.QMemberEntity.memberEntity;
 
 public enum MemberSearchType implements EnumModel {
 
-    MEMBER_ID("userId", str -> memberEntity.userId.contains(str)),
+    MEMBER_ID("userid", str -> memberEntity.userId.contains(str)),
     SSAFY_ID("ssafy-id", str -> memberEntity.ssafyId.contains(str)),
     MEMBER_NAME("name", str -> memberEntity.username.contains(str)),
     NICKNAME("nickname", str -> memberEntity.nickname.contains(str));

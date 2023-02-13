@@ -5,13 +5,19 @@ import com.justudy.backend.admin.dto.response.MemberListResponse;
 import com.justudy.backend.admin.dto.response.MemberListResult;
 import com.justudy.backend.admin.dto.response.TotalResult;
 import com.justudy.backend.admin.service.AdminService;
+import com.justudy.backend.community.dto.request.CommunitySearch;
+import com.justudy.backend.community.dto.response.CommunityListResponse;
+import com.justudy.backend.community.dto.response.CommunityListResult;
+import com.justudy.backend.login.infra.SessionConst;
+import com.justudy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,7 +33,7 @@ public class AdminController {
     }
 
     @GetMapping("/member")
-    public MemberListResult<MemberListResponse> getMembers(@ModelAttribute MemberSearch memberSearch) {
-        return adminService.getMembers(memberSearch);
+    public MemberListResult<List<MemberListResponse>> getMembers(@ModelAttribute MemberSearch memberSearch) {
+        return adminService.getMembers(memberSearch.validateNull());
     }
 }

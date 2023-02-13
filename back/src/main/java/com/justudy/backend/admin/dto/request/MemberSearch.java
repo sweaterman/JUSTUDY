@@ -29,7 +29,6 @@ public class MemberSearch {
         return this;
     }
 
-
     public Long getOffset() {
         return (Math.max(1, page) - 1) * Math.min(size, MAX_SIZE);
     }
