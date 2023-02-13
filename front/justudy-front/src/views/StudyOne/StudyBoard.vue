@@ -7,13 +7,13 @@
                     <div>스터디 게시판</div>
                 </v-col>
                 <v-col cols="12" md="2" align="right">
-                    <v-select :items="searchoption" v-model="searchoptionselected" />
+                    <v-select :items="searchoption" item-text="value" item-value="key" v-model="sendData.type" />
                 </v-col>
                 <v-col cols="12" md="4">
-                    <v-text-field v-model="searchkeyword" dense outlined label="검색키워드" full-width />
+                    <v-text-field v-model="sendData.search" dense outlined label="검색키워드" full-width />
                 </v-col>
                 <v-col cols="12" md="1">
-                    <v-btn>검색</v-btn>
+                    <v-btn @click="searchData()">검색</v-btn>
                 </v-col>
 
                 <v-col cols="12" md="1" />
@@ -34,11 +34,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="item in contentlist" :key="item.id">
+                        <tr v-for="item in boardList.communityList" :key="item.sequnce">
                             <td>{{ item.title }}</td>
-                            <td>{{ item.writer }}</td>
-                            <td>{{ item.view_count }}</td>
-                            <td>{{ item.created_time }}</td>
+                            <td>{{ item.nickname }}</td>
+                            <td>{{ item.viewCount }}</td>
+                            <td>{{ item.createdTime }}</td>
                         </tr>
                     </tbody>
                 </v-simple-table>
@@ -46,12 +46,12 @@
 
             <v-row>
                 <v-col cols="12">
-                    <v-btn width="5px" @click="movetopreviouspage">
+                    <v-btn width="5px" @click="movepage('previous')">
                         <!-- 이전페이지로 이동 -->
-                        <v-icon color="black" small> mdi-arrow-left-bold-outline </v-icon>
+                        <v-icon color="black" small>mdi-arrow-left-bold-outline</v-icon>
                     </v-btn>
-                    <span> {{ curPageNum }}/{{ numOfPages }} page </span>
-                    <v-btn width="5px" @click="movetonextpage">
+                    <span>{{ sendData.page }}/{{ boardList.totalCount / sendData.size }} page</span>
+                    <v-btn width="5px" @click="movepage('next')">
                         <!-- 다음페이지로 이동 -->
                         <v-icon color="black" small> mdi-arrow-right-bold-outline </v-icon>
                     </v-btn>
@@ -62,35 +62,61 @@
 </template>
 
 <script>
+import {mapState} from 'vuex';
+
 export default {
     name: 'StudyBoard',
     computed: {
-        //스터디게시판에 글 몇개인지 받아오기 & 첫번째 페이지 글 가져오기
-        //검색했을 때도 글 총몇개인지가져오고 페이지네이션 적용
+        ...mapState('moduleStudy', ['boardList'])
     },
-    created() {
-        // const pathName = new URL(document.location).pathname.split('/');
-        // const studySeq = pathName[pathName.length - 2];
+    async created() {
+        const pathName = new URL(document.location).pathname.split('/');
+        const studySeq = pathName[pathName.length - 2];
+        this.sendData.seq = studySeq;
+        await this.$store.dispatch('moduleStudy/getBoardList', this.sendData);
     },
     data() {
         return {
-            searchoptionselected: null,
+            sendData: {
+                seq: '',
+                page: 1,
+                size: 20,
+                type: '', //nickname, title, content
+                search: '', //검색 내용
+                order: '' //view, like
+            },
             searchkeyword: null,
-            searchoption: ['글제목', '글내용', '글작성자'],
-            numOfPages: 10, //총 페이지 수 (데이터 받아서 수정)
-            curPageNum: 1
+            searchoption: [
+                {
+                    key: 'title',
+                    value: '글제목'
+                },
+                {
+                    key: 'content',
+                    value: '글내용'
+                },
+                {
+                    key: 'nickname',
+                    value: '글작성자'
+                }
+            ],
+            numOfPages: 0 //총 페이지 수
         };
     },
     methods: {
-        movetopreviouspage() {
-            if (this.curPageNum != 1) {
-                this.curPageNum = this.curPageNum - 1;
+        async movepage(type) {
+            if (type == 'previous' && this.sendData.page != 1) {
+                //이전 페이지로
+                this.sendData.page -= 1;
+                await this.$store.dispatch('moduleStudy/getBoardList', this.sendData);
+            } else if (type == 'next' && this.sendData.page != this.numOfPages) {
+                //다음 페이지로
+                this.sendData.page += 1;
+                await this.$store.dispatch('moduleStudy/getBoardList', this.sendData);
             }
         },
-        movetonextpage() {
-            if (this.curPageNum != this.numOfPages) {
-                this.curPageNum = this.curPageNum + 1;
-            }
+        searchData() {
+            //검색하기.
         }
     }
 };
