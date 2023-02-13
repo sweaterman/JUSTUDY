@@ -28,7 +28,7 @@
                     </v-col>
                     <v-col cols="12" md="6">
                         <div class="card_section">
-                            <Follow buttonContent="팔로우" />
+                            <Follower buttonContent="팔로우" />
                         </div>
                     </v-col>
                 </v-row>
@@ -37,10 +37,11 @@
                     <!-- 해당 친구 프로필 -->
                     <v-col cols="12" md="4">
                         <div class="card_section">
-                            <v-img :src="require('@/assets/juniorClass.png')" :style="{width: '200px', height: '200px'}" rounded v-on:click="dialogChange()" />
-                            <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="require('@/assets/juniorClass.png')" />
-                            이싸피
-                            <img src="../../assets/redHeart.png" />
+                            <!-- <v-img :src="`${port}images/${user.imageSequence}`" style="width: 200px; height: 200px; border-radius: 100px" rounded v-on:click="dialogChange()" /> -->
+
+                            <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="require('../../assets/middleClass.png')" />
+                            <!-- 이싸피
+                            <img src="../../assets/redHeart.png" /> -->
                         </div>
                     </v-col>
                     <!-- 나의 공부 시간 -->
@@ -78,15 +79,18 @@
                     </v-col>
                 </v-row> -->
             </v-col>
+
             <v-col cols="12" md="2" />
         </v-row>
     </v-app>
 </template>
 <script>
 import Follow from '@/components/common/Follow.vue';
+import Follower from '@/components/common/Follower.vue';
 import Profile from '@/components/mypage/Profile.vue';
 import DigitalClockPerDate from '@/components/timer/DigitalClockPerDate.vue';
 import DigitalClockAverage from '@/components/timer/DigitalClockAverage.vue';
+import port from '@/store/port';
 export default {
     name: 'MyStatistics',
     data() {
@@ -96,35 +100,30 @@ export default {
             averageWeekTime: 0,
             averageMonthTime: 0,
             studyCategory: [],
-            studyCalendar: []
+            port: port,
+            user: {}
         };
     },
     components: {
         Follow,
+        Follower,
         Profile,
         DigitalClockPerDate,
         DigitalClockAverage
     },
     async created() {
-        await this.$store.dispatch('moduleTimer/getStudyTimeWeek', {seq: 50});
+        await this.$store.dispatch('moduleMyPage/getMyPageUser');
+        this.user = this.$store.state.moduleMyPage.user;
+        await this.$store.dispatch('moduleTimer/getStudyTimeWeek', {nickName: this.user.nickname});
         this.weekTime = this.$store.state.moduleTimer.studyTimeWeek.time;
-        await this.$store.dispatch('moduleTimer/getStudyTimeMonth', {seq: 50});
+        await this.$store.dispatch('moduleTimer/getStudyTimeMonth', {nickName: this.user.nickname});
         this.monthTime = this.$store.state.moduleTimer.studyTimeMonth.time;
         await this.$store.dispatch('moduleTimer/getAverageMembersWeek');
         this.averageWeekTime = this.$store.state.moduleTimer.averageMemberWeek.time;
         await this.$store.dispatch('moduleTimer/getAverageMembersMonth');
         this.averageMonthTime = this.$store.state.moduleTimer.averageMemberMonth.time;
-        await this.$store.dispatch('moduleTimer/getStudyCategory', {seq: 50});
-        this.studyCategory = this.$store.state.moduleTimer.studyCategory;
-        await this.$store.dispatch('moduleTimer/getStudyCalendar', {seq: 50, year: 2023, month: 1});
-
-        let studyCalendar = new Array(32).fill(0);
-        let data = this.$store.state.moduleTimer.studyCalendar;
-        for (let i = 0; i < data.length; i++) {
-            studyCalendar[parseInt(data[i].day)] = data[i].second;
-        }
-
-        this.studyCalendar = studyCalendar;
+        // await this.$store.dispatch('moduleTimer/getStudyCategory', {seq: 50});
+        // this.studyCategory = this.$store.state.moduleTimer.studyCategory;
     }
 };
 </script>
