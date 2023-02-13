@@ -177,6 +177,10 @@ public class MemberEntity {
         this.imageFile = imageFile;
     }
 
+    public void changeModifiedTime(LocalDateTime modifiedTime) {
+        this.modifiedTime = modifiedTime;
+    }
+
     //== 연관관계 편의메소드 ==//
     public void addMemberCategory(MemberCategoryEntity memberCategory) {
         this.categories.add(memberCategory);

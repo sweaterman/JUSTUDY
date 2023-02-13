@@ -50,6 +50,21 @@ public class CommunityDetailResponse {
         this.isLoved = isLoved;
     }
 
+    public static CommunityDetailResponse makeBuilder(CommunityEntity entity) {
+        return CommunityDetailResponse.builder()
+                .sequence(entity.getSequence())
+                .memberSequence(entity.getMember().getSequence())
+                .nickname(entity.getMember().getNickname())
+                .category(new CategoryResponse(entity.getCategory()))
+                .title(entity.getTitle())
+                .content(entity.getContent())
+                .viewCount(entity.getViewCount())
+                .createdTime(entity.getCreatedTime())
+                .modifiedTime(entity.getModifiedTime())
+                .loveCount(entity.getLoveCount() + entity.getWeekLoveCount())
+                .build();
+    }
+
     public static CommunityDetailResponse makeBuilder(CommunityEntity entity,
                                                       boolean isWriter, boolean isBookmarked, boolean isLoved) {
         return CommunityDetailResponse.builder()
