@@ -40,6 +40,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -151,6 +152,7 @@ public class MemberService {
         findMember.changeMemberCategory(newCategories);
 
         findMember.edit(memberEditor);
+        findMember.changeModifiedTime(LocalDateTime.now());
 
         return findMember.getSequence();
     }
