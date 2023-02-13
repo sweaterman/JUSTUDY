@@ -17,7 +17,7 @@
                         </v-col>
 
                         <v-col cols="12" md="1">
-                            <router-link :to="`/study/${studySeq}/board`">
+                            <router-link :to="`/study/${studySeq}/board/main`">
                                 <v-btn :style="{color: 'blue'}">
                                     <span class="material-icons-outlined"> article </span>
                                 </v-btn>
@@ -45,19 +45,13 @@
 export default {
     name: 'StudyMain',
     created() {
-        const pathName = new URL(document.location).pathname.split('/');
-        const studySeq = pathName[pathName.length - 2];
+        const studySeq = this.$route.params.studySeq;
         this.studySeq = studySeq;
     },
     data() {
         return {
             studySeq: 1
         };
-    },
-    methods: {
-        moveToEdit() {
-            window.location.href = `/study/${this.studyInfo.sequence}/edit`;
-        }
     }
 };
 </script>

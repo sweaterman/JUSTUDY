@@ -11,7 +11,7 @@
                 </v-row>
                 <v-row v-for="member in studyInfo.member" :key="member.sequence">
                     <!-- 스터디 방장은 빼고 보여줌 -->
-                    <v-col v-if="member.sequence != studyInfo.leaderSeq">
+                    <v-col v-if="member.nickName != studyInfo.leader">
                         <div class="card_section_member">
                             <v-row justify="center" align="center">
                                 <v-col cols="12" md="2" justify="center" align="center">
@@ -199,8 +199,7 @@ export default {
         };
     },
     async created() {
-        const pathName = new URL(document.location).pathname.split('/');
-        const studySeq = pathName[pathName.length - 2];
+        const studySeq = this.$route.params.studySeq;
         await this.$store.dispatch('moduleStudy/getStudyInfo', studySeq);
         if (this.studyInfo.isLeader == false) {
             window.location.href = '/error';
@@ -235,7 +234,7 @@ export default {
                 //스터디 신청 허락
                 this.studyAcceptDialog = false;
                 const sendData = {
-                    memSeq: this.memSeq,
+                    studySeq: this.studyInfo.sequence,
                     applySeq: this.applySeq,
                     result: {
                         isAccept: true
@@ -246,7 +245,7 @@ export default {
                 //스터디 신청 거절
                 this.studyRejectDialog = false;
                 const sendData = {
-                    memSeq: this.memSeq,
+                    studySeq: this.studyInfo.sequence,
                     applySeq: this.applySeq,
                     result: {
                         isAccept: false

@@ -316,8 +316,7 @@ export default {
         },
         //스터디원 지원 신청 업데이트(수락, 거절)
         async applyAcceptStudy({commit}, sendData) {
-            console.log(sendData);
-            const API_URL = `${port}study/study/${sendData.memSeq}/members/apply/${sendData.applySeq}`;
+            const API_URL = `${port}study/${sendData.studySeq}/members/apply/${sendData.applySeq}`;
             await axios({
                 url: API_URL,
                 method: 'PUT',
@@ -382,7 +381,7 @@ export default {
         },
         //스터디 게시글 목록 받아오기
         async getBoardList({commit}, data) {
-            const API_URL = `${port}study/${data.seq}/board?/page=${data.page}&size=${data.size}&&type=${data.type}&search=${data.search}&order=${data.order}`;
+            const API_URL = `${port}study/${data.seq}/board?/page=${data.page}&size=${data.size}&type=${data.type}&search=${data.search}&order=${data.order}`;
             await axios({
                 url: API_URL,
                 method: 'GET',
