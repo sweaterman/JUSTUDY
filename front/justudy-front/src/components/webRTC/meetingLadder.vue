@@ -37,17 +37,15 @@
                         <!-- 사다리타기 결과 적기 -->
                         <v-row>
                             <v-col>
-                                <div>
-                                    <div v-for="(item, index) in valuesFromParticipants" :key="index">
-                                        <v-row>
-                                            <v-col cols="12" md="4" justify="center" align="center">
-                                                <label :for="index" v-text="index"></label>
-                                            </v-col>
-                                            <v-col cols="12" md="8" justify="center" align="center">
-                                                <input :id="index" v-model="valuesFromParticipants[index]" />
-                                            </v-col>
-                                        </v-row>
-                                    </div>
+                                <div v-for="(item, index) in valuesFromParticipants" :key="index">
+                                    <v-row>
+                                        <v-col cols="12" md="3" justify="center" align="center">
+                                            <label :for="index" v-text="index + 1"></label>
+                                        </v-col>
+                                        <v-col cols="12" md="9" align="left">
+                                            <input :id="index" v-model="valuesFromParticipants[index]" :style="{width: '100%'}" />
+                                        </v-col>
+                                    </v-row>
                                 </div>
                             </v-col>
                         </v-row>

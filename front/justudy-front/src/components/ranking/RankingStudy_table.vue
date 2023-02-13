@@ -12,8 +12,7 @@
                     <v-col>
                         <h3>
                             <span style="color: black">오늘의 </span>
-                            <span style="color: #ffb000">공부</span>
-                            <span style="color: black">왕!</span>
+                            <span style="color: #ffb000">스터디</span>
                         </h3>
                     </v-col>
                 </v-row>
@@ -33,7 +32,7 @@
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankStudyYesterday[0].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
@@ -43,12 +42,12 @@
                     <v-col cols="12" md="4">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #ffb000">{{ rankMemberYesterday[0].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #ffb000">{{ rankStudyYesterday[0].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
                         <v-row>
-                            <DigitalClock :allTime="rankMemberYesterday[0].time" :fontSize="30" />
+                            <DigitalClock :allTime="rankStudyYesterday[0].time" :fontSize="30" />
                         </v-row>
                     </v-col>
                 </v-row>
@@ -61,26 +60,13 @@
                     </v-col>
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2">
-                        <!-- 받아온 이미지 src에 넣기 -->
-                        <!-- <ProfilePicture
-                            :diameter="30"
-                            :height="70"
-                            :fontSize="32"
-                            content="LV"
-                            standard="px"
-                            
-                            :src="`${port}images/${rankMemberYesterday[0].img}`"
-                            style="padding: 5%"
-                            justify="center"
-                            align="center"
-                        /> -->
                         <ProfilePicture
                             :diameter="70"
                             :height="70"
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankStudyYesterday[1].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
@@ -90,12 +76,12 @@
                     <v-col cols="12" md="4">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #bbbbbb">{{ rankMemberYesterday[1].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #bbbbbb">{{ rankStudyYesterday[1].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
                         <v-row>
-                            <DigitalClock :allTime="rankMemberYesterday[1].time" :fontSize="30" />
+                            <DigitalClock :allTime="rankStudyYesterday[1].time" :fontSize="30" />
                         </v-row>
                     </v-col>
                 </v-row>
@@ -115,7 +101,7 @@
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankStudyYesterday[2].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
@@ -125,12 +111,12 @@
                     <v-col cols="12" md="4">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #503000">{{ rankMemberYesterday[2].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #503000">{{ rankStudyYesterday[2].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
                         <v-row>
-                            <DigitalClock :allTime="rankMemberYesterday[2].time" :fontSize="30" />
+                            <DigitalClock :allTime="rankStudyYesterday[2].time" :fontSize="30" />
                         </v-row>
                     </v-col>
                 </v-row>
@@ -138,7 +124,7 @@
                 <!-- 오늘 버닝 데이터 TOP10 -->
                 <v-row justify="center" align="center">
                     <v-col>
-                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankMemberYesterday">
+                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyYesterday">
                             <v-col cols="12" md="2"> {{ value.order + 2 }} </v-col>
                             <v-col class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
@@ -161,9 +147,8 @@
                 <v-row>
                     <v-col>
                         <h3>
-                            <span style="color: black">이번주 </span>
-                            <span style="color: #ffb000">공부</span>
-                            <span style="color: black">왕!</span>
+                            <span style="color: black">이번주의 </span>
+                            <span style="color: #ffb000">스터디</span>
                         </h3>
                     </v-col>
                 </v-row>
@@ -183,7 +168,7 @@
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankStudyWeek[0].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
@@ -193,12 +178,12 @@
                     <v-col cols="12" md="4">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #ffb000">{{ rankMemberWeek[0].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #ffb000">{{ rankStudyWeek[0].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
                         <v-row>
-                            <DigitalClock :allTime="rankMemberWeek[0].time" :fontSize="30" />
+                            <DigitalClock :allTime="rankStudyWeek[0].time" :fontSize="30" />
                         </v-row>
                     </v-col>
                 </v-row>
@@ -211,13 +196,14 @@
                     </v-col>
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2">
+                        <!-- 받아온 이미지 src에 넣기 -->
                         <ProfilePicture
                             :diameter="70"
                             :height="70"
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankStudyWeek[1].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
@@ -227,12 +213,12 @@
                     <v-col cols="12" md="4">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #bbbbbb">{{ rankMemberWeek[1].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #bbbbbb">{{ rankStudyWeek[1].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
                         <v-row>
-                            <DigitalClock :allTime="rankMemberWeek[1].time" :fontSize="30" />
+                            <DigitalClock :allTime="rankStudyWeek[1].time" :fontSize="30" />
                         </v-row>
                     </v-col>
                 </v-row>
@@ -252,7 +238,7 @@
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankStudyWeek[2].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
@@ -262,12 +248,12 @@
                     <v-col cols="12" md="4">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #503000">{{ rankMemberWeek[2].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #503000">{{ rankStudyWeek[2].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
                         <v-row>
-                            <DigitalClock :allTime="rankMemberWeek[2].time" :fontSize="30" />
+                            <DigitalClock :allTime="rankStudyWeek[2].time" :fontSize="30" />
                         </v-row>
                     </v-col>
                 </v-row>
@@ -275,7 +261,7 @@
                 <!-- 이번주 버닝 데이터 TOP10 -->
                 <v-row justify="center" align="center">
                     <v-col>
-                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankMemberWeek">
+                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyWeek">
                             <v-col cols="12" md="2"> {{ value.order + 2 }} </v-col>
                             <v-col class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
@@ -298,9 +284,8 @@
                 <v-row>
                     <v-col>
                         <h3>
-                            <span style="color: black">이번달 </span>
-                            <span style="color: #ffb000">공부</span>
-                            <span style="color: black">왕!</span>
+                            <span style="color: black">이번달의 </span>
+                            <span style="color: #ffb000">스터디</span>
                         </h3>
                     </v-col>
                 </v-row>
@@ -320,7 +305,7 @@
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankStudyMonth[0].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
@@ -330,12 +315,12 @@
                     <v-col cols="12" md="4">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #ffb000">{{ rankMemberMonth[0].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #ffb000">{{ rankStudyMonth[0].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
                         <v-row>
-                            <DigitalClock :allTime="rankMemberMonth[0].time" :fontSize="30" />
+                            <DigitalClock :allTime="rankStudyMonth[0].time" :fontSize="30" />
                         </v-row>
                     </v-col>
                 </v-row>
@@ -348,13 +333,14 @@
                     </v-col>
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2">
+                        <!-- 받아온 이미지 src에 넣기 -->
                         <ProfilePicture
                             :diameter="70"
                             :height="70"
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankStudyMonth[1].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
@@ -364,12 +350,12 @@
                     <v-col cols="12" md="4">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #bbbbbb">{{ rankMemberMonth[1].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #bbbbbb">{{ rankStudyMonth[1].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
                         <v-row>
-                            <DigitalClock :allTime="rankMemberMonth[1].time" :fontSize="30" />
+                            <DigitalClock :allTime="rankStudyMonth[1].time" :fontSize="30" />
                         </v-row>
                     </v-col>
                 </v-row>
@@ -389,7 +375,7 @@
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankStudyMonth[2].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
@@ -399,12 +385,12 @@
                     <v-col cols="12" md="4">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #503000">{{ rankMemberMonth[2].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #503000">{{ rankStudyMonth[2].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
                         <v-row>
-                            <DigitalClock :allTime="rankMemberMonth[2].time" :fontSize="30" />
+                            <DigitalClock :allTime="rankStudyMonth[2].time" :fontSize="30" />
                         </v-row>
                     </v-col>
                 </v-row>
@@ -412,7 +398,7 @@
                 <!-- 이번달 버닝 데이터 TOP10 -->
                 <v-row justify="center" align="center">
                     <v-col>
-                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankMemberMonth">
+                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyMonth">
                             <v-col cols="12" md="2"> {{ value.order + 2 }} </v-col>
                             <v-col class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
@@ -438,9 +424,9 @@ export default {
     data() {
         return {
             data: MyRankingData,
-            rankMemberYesterday: [],
-            rankMemberWeek: [],
-            rankMemberMonth: [],
+            rankStudyYesterday: [],
+            rankStudyWeek: [],
+            rankStudyMonth: [],
             port: port
         };
     },
@@ -453,11 +439,11 @@ export default {
     },
     async created() {
         await this.$store.dispatch('moduleRanking/getRankMemberYesterday');
-        this.rankMemberYesterday = this.$store.state.moduleRanking.rankMemberYesterday;
+        this.rankStudyYesterday = this.$store.state.moduleRanking.rankStudyYesterday;
         await this.$store.dispatch('moduleRanking/getRankMemberWeek');
-        this.rankMemberWeek = this.$store.state.moduleRanking.rankMemberWeek;
+        this.rankStudyWeek = this.$store.state.moduleRanking.rankStudyWeek;
         await this.$store.dispatch('moduleRanking/getRankMemberMonth');
-        this.rankMemberMonth = this.$store.state.moduleRanking.rankMemberMonth;
+        this.rankStudyMonth = this.$store.state.moduleRanking.rankStudyMonth;
     }
 };
 </script>
