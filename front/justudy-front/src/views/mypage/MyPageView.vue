@@ -192,8 +192,7 @@ export default {
         await this.$store.dispatch('moduleMyPage/getBookMarkList');
         this.bookMarkList = this.$store.state.moduleMyPage.bookMarkList;
         //ff
-        await this.$store.dispatch('moduleTimer/getStudyCategory', {nickName: '테스트 봇1'});
-        this.category = this.$store.state.moduleTimer.studyCategory;
+
         // 팔로잉
         // this.$store.dispatch("user/following");
         // 팔로우
