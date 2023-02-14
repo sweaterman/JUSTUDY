@@ -29,6 +29,11 @@
                             <router-link :to="`/study/${studySeq}/calender`"> CALENDER </router-link>
                         </v-col>
                     </v-row>
+
+                    <v-row>
+                        <v-divider></v-divider>
+                    </v-row>
+
                     <v-row>
                         <router-view></router-view>
                     </v-row>
