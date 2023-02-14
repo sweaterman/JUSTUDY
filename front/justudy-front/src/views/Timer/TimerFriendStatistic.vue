@@ -19,30 +19,121 @@
                     </v-col>
                 </v-row>
 
-                <!-- 달력 -->
                 <v-row>
-                    <v-col cols="12" md="6">
-                        <div class="card_section">
-                            <Follow buttonContent="팔로잉" />
+                    <v-btn @click="clicked('following')">팔로잉</v-btn>
+                    <v-btn @click="clicked('follower')">팔로워</v-btn>
+                </v-row>
+
+                <!-- 팔로잉 -->
+                <v-row v-show="isFollowing" class="card_section_follow" justify="center" align="center">
+                    <v-col cols="12" md="1" align="left">
+                        <v-btn @click="toLeft()" color="white" depressed>
+                            <span class="material-icons-outlined"> chevron_left </span>
+                        </v-btn>
+                        <!-- <img src="@/assets/arrow.png" style="width: 30px; height: 30px; transform: rotate(0.5turn)" @click="toLeft()" /> -->
+                    </v-col>
+                    <v-col cols="12" md="10">
+                        <div class="d-flex align-center" style="width: 90%; margin-left: 5%; margin-right: 5%; overflow: hidden">
+                            <div :style="`margin-left : ${bannerPosition}px ; transition: 0.5s`"></div>
+                            <!-- 진짜 -->
+                            <!-- <div v-for="item in follow" v-bind:key="item" style="margin: 1%; transition: 0.5s">
+                                        <ProfileFollow :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="`${port}images/${item.imageSequence}`" :data="item" />
+
+                                        {{ item.nickname }} -->
+
+                            <div v-for="item in 50" v-bind:key="item" style="padding: 1%; transition: 0.5s">
+                                <Profile :diameter="100" standard="px" @dialogChangeFromChild="dialogChange()" :src="require('@/assets/juniorClass.png')" />
+                                이싸피
+                            </div>
                         </div>
                     </v-col>
-                    <v-col cols="12" md="6">
-                        <div class="card_section">
-                            <Follower buttonContent="팔로우" />
+                    <v-col cols="12" md="1" align="right">
+                        <v-btn @click="toRight()" color="white" depressed>
+                            <span class="material-icons-outlined"> chevron_right </span>
+                        </v-btn>
+                        <!-- <img src="@/assets/arrow.png" style="width: 30px; height: 30px" @click="toRight()" /> -->
+                    </v-col>
+                </v-row>
+                <!-- 팔로워 -->
+                <v-row v-show="isFollower" class="card_section_follow" justify="center" align="center">
+                    <v-col cols="12" md="1" align="left">
+                        <v-btn @click="toLeft()" color="white" depressed>
+                            <span class="material-icons-outlined"> chevron_left </span>
+                        </v-btn>
+                        <!-- <img src="@/assets/arrow.png" style="width: 30px; height: 30px; transform: rotate(0.5turn)" @click="toLeft()" /> -->
+                    </v-col>
+                    <v-col cols="12" md="10">
+                        <div class="d-flex align-center" style="overflow: hidden">
+                            <div :style="`margin-left : ${bannerPosition}px ; transition: 0.5s`"></div>
+                            <!-- <div v-for="item in follower" v-bind:key="item" style="margin: 1%; transition: 0.5s">
+                                    <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="`${port}images/${item.imageSequence}`" :data="item" />
+
+                                    {{ item.nickname }} -->
+                            <div v-for="item in 9" v-bind:key="item" style="margin: 1%; transition: 0.5s">
+                                <Profile :diameter="100" standard="px" @dialogChangeFromChild="dialogChange()" :src="require('@/assets/justudy.png')" />
+                                이싸피
+                            </div>
                         </div>
+                    </v-col>
+                    <v-col cols="12" md="1" align="right">
+                        <v-btn @click="toRight()" color="white" depressed>
+                            <span class="material-icons-outlined"> chevron_right </span>
+                        </v-btn>
+                        <!-- <img src="@/assets/arrow.png" style="width: 30px; height: 30px" @click="toRight()" /> -->
                     </v-col>
                 </v-row>
 
-                <v-row>
+                <v-row :style="{marginTop: '3%'}">
                     <!-- 해당 친구 프로필 -->
-                    <v-col cols="12" md="4">
-                        <div class="card_section">
-                            <!-- <v-img :src="`${port}images/${user.imageSequence}`" style="width: 200px; height: 200px; border-radius: 100px" rounded v-on:click="dialogChange()" /> -->
+                    <v-col class="card_section_profile" cols="12" md="4">
+                        <v-row>
+                            <v-col justify="center" align="center">
+                                <Profile :diameter="100" standard="px" @dialogChangeFromChild="dialogChange()" :src="require('@/assets/justudy.png')" />
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <!-- <div id="modal" @click="close(false)" style="padding: 100px 300px">
+                                <div class="d-flex justify-center">
+                                    <div class="d-flex flex-column pa-12">
+                                        <div>
+                                            <div class="d-flex justify-space-around">
+                                                <p>닉네임</p>
+                                                <h1>{{ data.nickname }}</h1>
+                                            </div>
 
-                            <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="require('../../assets/middleClass.png')" />
-                            <!-- 이싸피
-                            <img src="../../assets/redHeart.png" /> -->
-                        </div>
+                                            <hr />
+                                        </div>
+                                        <div v-if="loaded">
+                                            <div class="d-flex justify-space-around">
+                                                <p>선호하는 기술 스택</p>
+                                                <h1>{{ profile }}</h1>
+                                            </div>
+
+                                            <hr />
+                                        </div>
+                                        <div>
+                                            <div class="d-flex justify-space-around">
+                                                <p>희망진로</p>
+                                                <h1>{{ data.dream ? data.dream : '없음' }}</h1>
+                                            </div>
+
+                                            <hr />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-center">
+                                    <div>
+                                        <h1 style="font-size: 64px">자기소개</h1>
+                                        <h1>안녕하세요</h1>
+                                        <h1>만능 개발자 입니다.</h1>
+                                        <h1>타이머 대결 환영합니다.</h1>
+                                    </div>
+                                    <RadarChart buttonContent="학습 진행도" :hasButton="true" />
+                                </div>
+                            </div> -->
+
+                            <ModalComponent :dialog="dialog" @closeModal="close" :id="seq" :src="src" :data="data" />
+                        </v-row>
                     </v-col>
                     <!-- 나의 공부 시간 -->
                     <v-col cols="12" md="4">
@@ -71,22 +162,17 @@
                         </v-row>
                     </v-col>
                 </v-row>
-
-                <!-- 나의 과목 비교 -->
-                <!-- <v-row>
-                    <v-col cols="12" md="4">
-                        <TimeAndRadarChart :studyCategory="studyCategory" />
-                    </v-col>
-                </v-row> -->
             </v-col>
-
             <v-col cols="12" md="2" />
         </v-row>
     </v-app>
 </template>
 <script>
-import Follow from '@/components/common/Follow.vue';
-import Follower from '@/components/common/Follower.vue';
+// import ProfilePicture from '@/components/mypage/ProfilePicture.vue';
+// import RadarChart from '@/components/common/RadarChart.vue';
+// import Follow from '@/components/common/Follow.vue';
+// import Follower from '@/components/common/Follower.vue';
+import ModalComponent from '@/components/mypage/ModalComponent.vue';
 import Profile from '@/components/mypage/Profile.vue';
 import DigitalClockPerDate from '@/components/timer/DigitalClockPerDate.vue';
 import DigitalClockAverage from '@/components/timer/DigitalClockAverage.vue';
@@ -95,6 +181,9 @@ export default {
     name: 'MyStatistics',
     data() {
         return {
+            isFollowing: true,
+            isFollower: false,
+
             weekTime: 0,
             monthTime: 0,
             averageWeekTime: 0,
@@ -104,9 +193,33 @@ export default {
             user: {}
         };
     },
+    methods: {
+        clicked(check) {
+            if (check == 'following') {
+                this.isFollowing = true;
+                this.isFollower = false;
+            } else {
+                this.isFollowing = false;
+                this.isFollower = true;
+            }
+        },
+        dialogChange() {
+            this.$emit('dialogChangeFromChild');
+        },
+        toLeft() {
+            // if 문 써서 조절 하면 됨
+            this.bannerPosition = this.bannerPosition + 200;
+        },
+        toRight() {
+            this.bannerPosition = this.bannerPosition - 200;
+        }
+    },
     components: {
-        Follow,
-        Follower,
+        // ProfilePicture,
+        // RadarChart,
+        // Follow,
+        // Follower,
+        ModalComponent,
         Profile,
         DigitalClockPerDate,
         DigitalClockAverage
@@ -124,13 +237,23 @@ export default {
         this.averageMonthTime = this.$store.state.moduleTimer.averageMemberMonth.time;
         // await this.$store.dispatch('moduleTimer/getStudyCategory', {seq: 50});
         // this.studyCategory = this.$store.state.moduleTimer.studyCategory;
+        await this.$store.dispatch('moduleTimer/getFollow');
+        this.follow = this.$store.state.moduleTimer.follow;
     }
 };
 </script>
 <style scoped>
-.card_section {
-    padding: 10px;
-    margin-bottom: 20px;
+.card_section_follow {
+    padding: 5px;
+    margin-bottom: 2px;
+    border-style: solid;
+    border-color: #eeeeee;
+    border-radius: 30px;
+    /* border-width: thin; */
+}
+.card_section_profile {
+    padding: 5px;
+    margin-bottom: 2px;
     border-style: solid;
     border-color: #eeeeee;
     border-radius: 30px;

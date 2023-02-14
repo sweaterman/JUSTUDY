@@ -5,6 +5,22 @@
             <v-col cols="12" md="8">
                 <!-- 모든 참가자 화면 -->
                 <div style="width: 100%" ref="main"></div>
+                <!-- code editor  -->
+                <CodeEditor
+                    width="100%"
+                    height="720px"
+                    v-show="isShowEditor"
+                    v-model="codeContent"
+                    justify-content="center"
+                    align-items="center"
+                    :language_selector="true"
+                    :languages="[
+                        ['javascript', 'JS'],
+                        ['python', 'Python'],
+                        ['cpp', 'c++'],
+                        ['java', 'Java']
+                    ]"
+                ></CodeEditor>
             </v-col>
             <v-col cols="12" md="3" :style="{padding: '4%'}">
                 <v-row> </v-row>
@@ -14,36 +30,6 @@
                     <meetingLadder class="ladderCSS" v-show="isLadder" v-if="getIsLadder" />
                     <!--  채팅창 우측에 배치 -->
                     <meetingChat class="chatCSS" v-show="isChat" justify-content="center" align-items="center" />
-                    <!-- code editor  -->
-                    <!-- <CodeEditor
-                        class="leftArrange"
-                        width="100%"
-                        height="500px"
-                        v-show="isShowEditor"
-                        v-model="codeContent"
-                        :language_selector="true"
-                        :languages="[
-                            ['javascript', 'JS'],
-                            ['python', 'Python'],
-                            ['cpp', 'c++'],
-                            ['java', 'Java']
-                        ]"
-                    ></CodeEditor> -->
-                    <CodeEditor
-                        width="100%"
-                        height="720px"
-                        v-show="isShowEditor"
-                        v-model="codeContent"
-                        justify-content="center"
-                        align-items="center"
-                        :language_selector="true"
-                        :languages="[
-                            ['javascript', 'JS'],
-                            ['python', 'Python'],
-                            ['cpp', 'c++'],
-                            ['java', 'Java']
-                        ]"
-                    ></CodeEditor>
                     <!-- 우상단 알림 css 수정시에는 v-show를 true로 해주신 다음에 디자인 수정하시고, 원래대로 하시면 되겠습니다.-->
                     <div class="card_alarm" v-show="getIsViewAlarmDiv">
                         <v-row>
@@ -266,22 +252,21 @@ export default {
             room: this.getRoomName
         };
         this.open(data);
-        setInterval( () => {
+        setInterval(() => {
             const obj = this.getParticipants;
-            const keys = Object.keys(obj); 
-            console.log("=========state============");
+            const keys = Object.keys(obj);
+            console.log('=========state============');
             for (let i = 0; i < keys.length; i++) {
-                const key = keys[i]; 
-                const value = obj[key]; 
-                if("connected" != value.rtcPeer.peerConnection.connectionState){
-                    console.log("reconnect!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                const key = keys[i];
+                const value = obj[key];
+                if ('connected' != value.rtcPeer.peerConnection.connectionState) {
+                    console.log('reconnect');
                     location.reload();
                     break;
                 }
             }
-            console.log("=========================");
-
-        },3000);
+            console.log('=========================');
+        }, 3000);
     },
 
     beforeUnmount() {
@@ -324,19 +309,15 @@ export default {
             if (click == 'onLadder') {
                 this.isLadder = !this.isLadder;
                 this.isChat = false;
-                this.isShowEditor = false;
 
                 this.setIsLadder(true);
             } else if (click == 'onChat') {
                 this.isLadder = false;
                 this.isChat = !this.isChat;
-                this.isShowEditor = false;
 
                 this.setIsChat(true);
                 this.setIsNewChat(false);
             } else if (click == 'showEditor') {
-                this.isLadder = false;
-                this.isChat = false;
                 this.isShowEditor = !this.isShowEditor;
             }
         },
