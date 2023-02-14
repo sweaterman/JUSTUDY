@@ -35,7 +35,8 @@ public class StudyCommunityRepositoryImpl implements StudyCommunityRepositoryCus
         List<StudyCommunityEntity> list = queryFactory.selectFrom(qStudyCommunity)
                 .join(qStudyCommunity.member, memberEntity).fetchJoin()
                 .where(qStudyCommunity.isHighlighted.eq(true),
-                        qStudyCommunity.isDeleted.eq(false))
+                        qStudyCommunity.isDeleted.eq(false),
+                        eqStudy(studySequence))
                 .limit(communitySearch.getNoticeBoardSize())
                 .orderBy(qStudyCommunity.sequence.desc())
                 .fetch();
