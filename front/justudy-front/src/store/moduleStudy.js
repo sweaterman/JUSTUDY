@@ -15,7 +15,8 @@ export default {
         nameCheck: false,
         applyList: [], //내가 방장일 때 지원목록 확인
         boardList: [], // 게시판 글 목록
-        boardDetail: {} //게시판 글 상세
+        boardDetail: {}, //게시판 글 상세
+        commentList: [] //게시판 댓글 목록
     },
     getters: {},
     mutations: {
@@ -57,6 +58,9 @@ export default {
         },
         GET_BOARDDETAIL(state, payload) {
             state.boardDetail = payload;
+        },
+        GET_COMMENTLIST(state, payload) {
+            state.commentList = payload;
         }
     },
     actions: {
@@ -423,7 +427,7 @@ export default {
                 .then(res => {
                     console.log('쓴 글', res.data);
                     commit;
-                    //detail 글로 이동.
+                    window.location.replace(`/study/${data.studySeq}/board/main`);
                 })
                 .catch(err => {
                     console.log(err);
@@ -434,7 +438,7 @@ export default {
             const API_URL = `${port}study/${data.studySeq}/board/${data.boardSeq}`;
             await axios({
                 url: API_URL,
-                method: 'POST',
+                method: 'PUT',
                 withCredentials: true,
                 data: data.board
             })
@@ -442,6 +446,7 @@ export default {
                     console.log('수정한 글', res.data);
                     commit;
                     //detail 글로 이동.
+                    window.location.href = `/study/${data.studySeq}/board/detail/${data.boardSeq}`;
                 })
                 .catch(err => {
                     console.log(err);
@@ -457,11 +462,144 @@ export default {
             })
                 .then(() => {
                     commit;
-                    //글 목록으로 이동
+                    window.location.replace(`/study/${data.studySeq}/board/main`);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디 게시글 좋아요 누르기
+        async doLike({commit}, data) {
+            const API_URL = `${port}study/${data.studySeq}/board/${data.boardSeq}/love`;
+            await axios({
+                url: API_URL,
+                method: 'POST',
+                withCredentials: true
+            })
+                .then(() => {
+                    commit;
+                    window.location.reload();
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디 게시글 좋아요 취소
+        async undoLike({commit}, data) {
+            const API_URL = `${port}study/${data.studySeq}/board/${data.boardSeq}/love`;
+            await axios({
+                url: API_URL,
+                method: 'DELETE',
+                withCredentials: true
+            })
+                .then(() => {
+                    commit;
+                    window.location.reload();
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디 게시글 북마크 누르기
+        async doBookmarked({commit}, data) {
+            const API_URL = `${port}study/${data.studySeq}/board/${data.boardSeq}/bookmark`;
+            await axios({
+                url: API_URL,
+                method: 'POST',
+                withCredentials: true
+            })
+                .then(() => {
+                    commit;
+                    window.location.reload();
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //스터디 게시글 북마크 취소
+        async undoBookmarked({commit}, data) {
+            const API_URL = `${port}study/${data.studySeq}/board/${data.boardSeq}/bookmark`;
+            await axios({
+                url: API_URL,
+                method: 'DELETE',
+                withCredentials: true
+            })
+                .then(() => {
+                    commit;
+                    window.location.reload();
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        // 댓글 목록 가져오기
+        async getCommentList({commit}, data) {
+            const API_URL = `${port}study/${data.studySeq}/board/${data.boardSeq}/comments`;
+            await axios({
+                url: API_URL,
+                method: 'GET',
+                withCredentials: true
+            })
+                .then(res => {
+                    commit('GET_COMMENTLIST', res.data);
+                    console.log('받아온 댓글', res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        // 댓글 작성하기
+        async writeComment({commit}, data) {
+            const API_URL = `${port}study/${data.studySeq}/board/${data.boardSeq}/comments`;
+            await axios({
+                url: API_URL,
+                method: 'POST',
+                withCredentials: true,
+                data: data.comment
+            })
+                .then(res => {
+                    commit;
+                    console.log('작성한 댓글', res.data);
+                    window.location.reload();
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        // 댓글 수정하기
+        async modifyComment({commit}, data) {
+            const API_URL = `${port}study/${data.studySeq}/board/${data.boardSeq}/comments/${data.commentSeq}`;
+            await axios({
+                url: API_URL,
+                method: 'PUT',
+                withCredentials: true,
+                data: data.comment
+            })
+                .then(res => {
+                    commit;
+                    console.log('수정한 댓글', res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        //댓글 삭제하기
+        async deleteComment({commit}, data) {
+            const API_URL = `${port}study/${data.studySeq}/board/${data.boardSeq}/comments/${data.commentSeq}`;
+            await axios({
+                url: API_URL,
+                method: 'DELETE',
+                withCredentials: true
+            })
+                .then(() => {
+                    commit;
+                    window.location.reload();
                 })
                 .catch(err => {
                     console.log(err);
                 });
         }
+
+        //게시글, 댓글 신고 추가
     }
 };
