@@ -11,7 +11,6 @@ import java.util.Arrays;
 
 @Slf4j
 @Data
-@Log4j2
 public class CommunitySearch {
 
     private static final Long DEFAULT_PAGE = 0L;
