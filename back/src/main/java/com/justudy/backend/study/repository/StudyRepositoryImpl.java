@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;
+
 @Log4j2
 @RequiredArgsConstructor
 public class StudyRepositoryImpl implements StudyRepositorySupport {
@@ -28,11 +29,12 @@ public class StudyRepositoryImpl implements StudyRepositorySupport {
     public Slice<StudyEntity> findAllBySearchOption(Pageable pageable, List<String> sub, String studyLeader, String studyName) {
         JPQLQuery<StudyEntity> query = queryFactory
                 .selectFrom(qStudyEntity)
-                .join(qStudyEntity.studyMembers,qStudyMemberEntity)
+                .join(qStudyEntity.studyMembers, qStudyMemberEntity)
                 .fetchJoin()
-                .join(qStudyMemberEntity.member,qMemberEntity)
+                .join(qStudyMemberEntity.member, qMemberEntity)
                 .fetchJoin()
-                .where(inCategories(sub), eqLeader(studyLeader), eqStudyName(studyName));
+                .where(inCategories(sub), eqLeader(studyLeader), eqStudyName(studyName), qStudyEntity.isOpen.eq(true))
+                .orderBy(qStudyEntity.createdTime.desc());
 
         return pagingUtil.getSliceImpl(pageable, query, qStudyEntity.getClass());
     }
