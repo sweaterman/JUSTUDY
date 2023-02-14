@@ -37,13 +37,13 @@
                             <div :style="`margin-left : ${bannerPosition}px ; transition: 0.5s`"></div>
                             <!-- 진짜 -->
                             <!-- <div v-for="item in follow" v-bind:key="item" style="margin: 1%; transition: 0.5s">
-                                        <ProfileFollow :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="`${port}images/${item.imageSequence}`" :data="item" />
+                                <ProfileFollow :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="`${port}images/${item.imageSequence}`" :data="item" />
 
-                                        {{ item.nickname }} -->
+                                {{ item.nickname }} -->
 
-                            <div v-for="item in 50" v-bind:key="item" style="padding: 1%; transition: 0.5s">
-                                <Profile :diameter="100" standard="px" @dialogChangeFromChild="dialogChange()" :src="require('@/assets/juniorClass.png')" />
-                                이싸피
+                            <div v-for="item in follow" v-bind:key="item" style="padding: 1%; transition: 0.5s">
+                                <Profile :diameter="100" standard="px" @dialogChangeFromChild="dialogChange(item.memberSequence)" :src="`${port}/images/${item.imageSequence}`" />
+                                {{ item.nickname }}
                             </div>
                         </div>
                     </v-col>
@@ -60,18 +60,18 @@
                         <v-btn @click="toLeft()" color="white" depressed>
                             <span class="material-icons-outlined"> chevron_left </span>
                         </v-btn>
-                        <!-- <img src="@/assets/arrow.png" style="width: 30px; height: 30px; transform: rotate(0.5turn)" @click="toLeft()" /> -->
+                        <img src="@/assets/arrow.png" style="width: 30px; height: 30px; transform: rotate(0.5turn)" @click="toLeft()" />
                     </v-col>
                     <v-col cols="12" md="10">
                         <div class="d-flex align-center" style="overflow: hidden">
                             <div :style="`margin-left : ${bannerPosition}px ; transition: 0.5s`"></div>
                             <!-- <div v-for="item in follower" v-bind:key="item" style="margin: 1%; transition: 0.5s">
-                                    <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="`${port}images/${item.imageSequence}`" :data="item" />
+                                <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="`${port}images/${item.imageSequence}`" :data="item" />
 
-                                    {{ item.nickname }} -->
-                            <div v-for="item in 9" v-bind:key="item" style="margin: 1%; transition: 0.5s">
-                                <Profile :diameter="100" standard="px" @dialogChangeFromChild="dialogChange()" :src="require('@/assets/justudy.png')" />
-                                이싸피
+                                {{ item.nickname }} -->
+                            <div v-for="item in follower" v-bind:key="item" style="margin: 1%; transition: 0.5s">
+                                <Profile :diameter="100" standard="px" @dialogChangeFromChild="dialogChange(item.memberSequence)" :src="`${port}/images/${item.imageSequence}`" />
+                                {{ item.nickname }}
                             </div>
                         </div>
                     </v-col>
@@ -88,7 +88,8 @@
                     <v-col class="card_section_profile" cols="12" md="4">
                         <v-row>
                             <v-col justify="center" align="center">
-                                <Profile :diameter="100" standard="px" @dialogChangeFromChild="dialogChange()" :src="require('@/assets/justudy.png')" />
+                                <Profile :diameter="100" standard="px" :src="`${port}/images/${user.imageSequence}`" />
+                                {{ user.nickname }}
                             </v-col>
                         </v-row>
                         <v-row>
@@ -163,6 +164,7 @@
                     </v-col>
                 </v-row>
             </v-col>
+            {{ follow }}
             <v-col cols="12" md="2" />
         </v-row>
     </v-app>
@@ -183,14 +185,17 @@ export default {
         return {
             isFollowing: true,
             isFollower: false,
-
+            bannerPosition: 0,
             weekTime: 0,
             monthTime: 0,
             averageWeekTime: 0,
             averageMonthTime: 0,
             studyCategory: [],
             port: port,
-            user: {}
+            user: {},
+            profile: {},
+            follow: [],
+            follower: []
         };
     },
     methods: {
@@ -203,11 +208,25 @@ export default {
                 this.isFollower = true;
             }
         },
-        dialogChange() {
-            this.$emit('dialogChangeFromChild');
+        async dialogChange(memSeq) {
+            console.log(memSeq);
+            // this.$emit('dialogChangeFromChild');
+            await this.$store.dispatch('moduleMyPage/getProfile', {id: memSeq});
+
+            this.user = this.$store.state.moduleMyPage.profile;
+
+            await this.$store.dispatch('moduleTimer/getStudyTimeWeek', {nickName: this.user.nickname});
+            this.weekTime = this.$store.state.moduleTimer.studyTimeWeek.time;
+            await this.$store.dispatch('moduleTimer/getStudyTimeMonth', {nickName: this.user.nickname});
+            this.monthTime = this.$store.state.moduleTimer.studyTimeMonth.time;
+            await this.$store.dispatch('moduleTimer/getAverageMembersWeek');
+            this.averageWeekTime = this.$store.state.moduleTimer.averageMemberWeek.time;
+            await this.$store.dispatch('moduleTimer/getAverageMembersMonth');
+            this.averageMonthTime = this.$store.state.moduleTimer.averageMemberMonth.time;
         },
         toLeft() {
             // if 문 써서 조절 하면 됨
+
             this.bannerPosition = this.bannerPosition + 200;
         },
         toRight() {
@@ -239,6 +258,8 @@ export default {
         // this.studyCategory = this.$store.state.moduleTimer.studyCategory;
         await this.$store.dispatch('moduleTimer/getFollow');
         this.follow = this.$store.state.moduleTimer.follow;
+        await this.$store.dispatch('moduleTimer/getFollower');
+        this.follower = this.$store.state.moduleTimer.follower;
     }
 };
 </script>
