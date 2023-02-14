@@ -44,23 +44,6 @@ public class InitDb {
 
     private final InitService initService;
 
-    private static MemberCreate makeMemberCreate(int number) {
-        MemberCreate request = MemberCreate.builder()
-                .userId("test" + number)
-                .password("1234")
-                .passwordCheck("1234")
-                .username("테스트" + number)
-                .nickname("봇" + number)
-                .region("SEOUL")
-                .category(new String[]{"Java", "Spring"})
-                .ssafyId("08" + number)
-                .mmId("mmTest" + number)
-                .phone(String.valueOf(number))
-                .email("testEmail" + number + "@ssafy.com")
-                .build();
-        return request;
-    }
-
     private static MemberCreate makeMemberCreate(int number, String[] category) {
         MemberCreate request = MemberCreate.builder()
                 .userId("test" + number)
@@ -118,6 +101,41 @@ public class InitDb {
             saveTimer();
             saveRank();
             saveTest1();
+            saveAdmin();
+        }
+
+        private void saveAdmin() {
+            UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
+                    .orElseThrow(UploadFileNotFound::new);
+            MemberCreate request = MemberCreate.builder()
+                    .userId("consultant")
+                    .password("12341234")
+                    .passwordCheck("12341234")
+                    .username("컨설턴트")
+                    .nickname("컨설턴트계정")
+                    .region("SEOUL")
+                    .category(new String[]{"Java"})
+                    .ssafyId("9999999")
+                    .mmId("mmTest")
+                    .phone(String.valueOf("9999999"))
+                    .email("testEmail@ssafy.com")
+                    .build();
+            memberService.saveAdmin(request, basicImage);
+
+            request = MemberCreate.builder()
+                    .userId("coach")
+                    .password("12341234")
+                    .passwordCheck("12341234")
+                    .username("코치")
+                    .nickname("코치계정")
+                    .region("SEOUL")
+                    .category(new String[]{"Java"})
+                    .ssafyId("9999998")
+                    .mmId("mmTest")
+                    .phone(String.valueOf("9999999"))
+                    .email("testEmail@ssafy.com")
+                    .build();
+            memberService.saveAdmin(request, basicImage);
         }
 
         private void saveTest1() {
@@ -201,13 +219,13 @@ public class InitDb {
             for (long i = 1; i < 51; i++) {
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
-                    roomActivityService.saveRoomAcitivity(
+                    roomActivityService.saveRoomActivity(
                             new ActivityRequest((long) (Math.random() * 50), "frontend"), i,
                             day);
                 }
                 for (int count = 1; count <= 30; count++) {
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
-                    roomActivityService.saveRoomAcitivity(
+                    roomActivityService.saveRoomActivity(
                             new ActivityRequest((long) (Math.random() * 50), "backend"), i,
                             day);
                 }
@@ -284,7 +302,7 @@ public class InitDb {
         }
 
         public void saveStudyRoom() {
-            for (long i = 1; i <= 50; i ++)
+            for (long i = 1; i <= 50; i++)
                 studyRoomService.saveStudyRoom(i);
         }
 
