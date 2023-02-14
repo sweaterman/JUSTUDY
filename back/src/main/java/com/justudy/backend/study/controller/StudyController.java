@@ -673,6 +673,7 @@ public class StudyController {
     public ResponseEntity<StudyCommunityCommentResponse> createComment(@PathVariable("id") Long studySequence, @PathVariable("boardid") Long id, @RequestBody StudyCommunityCommentCreate request, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         request.changeMemberSeq(loginSequence);
+        request.changecommunitySeq(id);
         return ResponseEntity.status(HttpStatus.CREATED).body(studyCommunityCommentService.createComment(id, request, studySequence));
     }
 

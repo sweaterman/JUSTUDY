@@ -200,33 +200,39 @@ public class InitDb {
         }
 
         private void saveTimer() {
+            String[] category = {"etc", "project", "computer-science", "algorithm", "mobile", "infra", "frontend", "backend"};
+
             for (int i = 1; i <= 10; i++) {
                 long memberSequence = i;
                 for (int count = 1; count <= 30; count++) {
+                    int categoryIdx = (int) (Math.random() * 7);
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
-                            new ActivityRequest((long) (Math.random() * 50), "frontend"), memberSequence,
+                            new ActivityRequest((long) (Math.random() * 50), category[categoryIdx]), memberSequence,
                             day);
                 }
                 for (int count = 1; count <= 30; count++) {
+                    int categoryIdx = (int) (Math.random() * 7);
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
-                            new ActivityRequest((long) (Math.random() * 50), "backend"), memberSequence,
+                            new ActivityRequest((long) (Math.random() * 50), category[categoryIdx]), memberSequence,
                             day);
                 }
 
             }
             for (long i = 1; i < 51; i++) {
                 for (int count = 1; count <= 30; count++) {
+                    int categoryIdx = (int) (Math.random() * 7);
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     roomActivityService.saveRoomActivity(
-                            new ActivityRequest((long) (Math.random() * 50), "frontend"), i,
+                            new ActivityRequest((long) (Math.random() * 50), category[categoryIdx]), i,
                             day);
                 }
                 for (int count = 1; count <= 30; count++) {
+                    int categoryIdx = (int) (Math.random() * 7);
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     roomActivityService.saveRoomActivity(
-                            new ActivityRequest((long) (Math.random() * 50), "backend"), i,
+                            new ActivityRequest((long) (Math.random() * 50), category[categoryIdx]), i,
                             day);
                 }
 
