@@ -14,6 +14,9 @@ import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.service.MemberService;
+import com.justudy.backend.report.dto.request.ReportRequest;
+import com.justudy.backend.report.dto.response.CommunityReportDetail;
+import com.justudy.backend.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +40,7 @@ public class CommunityController {
     private final CommunityBookmarkService communityBookmarkService;
     private final CommunityCommentService communityCommentService;
     private final CategoryService categoryService;
+    private final ReportService reportService;
 
     /**
      * page - default 0
@@ -123,6 +127,22 @@ public class CommunityController {
 
         communityService.deleteCommunity(loginSequence, communitySequence);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+    @GetMapping("/board/{boardId}/report")
+    public CommunityReportDetail getReportDetail(@PathVariable("boardId") Long communitySequence) {
+        return communityService.getReportDetail(communitySequence);
+    }
+
+    @PostMapping("/board/{boardId}/report")
+    public ResponseEntity<Void> createReport(@PathVariable("boardId") Long communitySequence,
+                                             @RequestBody ReportRequest reportRequest,
+                                             HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        log.info("reportRequest = {}", reportRequest);
+
+        reportService.saveReport(loginSequence, communitySequence,reportRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
     // ---------------------------------------------------------------북마크---------------------------------------------------------------
