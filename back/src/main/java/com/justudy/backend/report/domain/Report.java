@@ -27,8 +27,8 @@ public abstract class Report {
     @JoinColumn(name = "reporter_seq")
     private MemberEntity reporter;
 
-    @Column(name = "target_seq")
-    private Long targetSequence;
+    @Column(name = "report_content")
+    private String content;
 
     @Column(name = "report_created_time")
     private LocalDateTime createdTime;
@@ -39,13 +39,11 @@ public abstract class Report {
     @Column(name = "report_finished_time")
     private LocalDateTime finishedTime;
 
-    public Report(MemberEntity reporter, Long targetSequence,
-                  LocalDateTime createdTime,
-                  boolean isFinished, LocalDateTime finishedTime) {
+    public Report(MemberEntity reporter, String content) {
         this.reporter = reporter;
-        this.targetSequence = targetSequence;
-        this.createdTime = createdTime;
-        this.isFinished = isFinished;
-        this.finishedTime = finishedTime;
+        this.content = content;
+        this.createdTime = LocalDateTime.now();
+        this.isFinished = false;
+        this.finishedTime = null;
     }
 }
