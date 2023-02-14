@@ -9,6 +9,8 @@ export default {
         CommunityContent: {},
         bookMarkList: [],
 
+        hotBoard:[],
+
         commentList: []
     },
     getters: {},
@@ -29,6 +31,9 @@ export default {
             state.bookMarkList = payload;
         },
 
+        GET_HOTBOARD(state, payload) {
+            state.hotBoard = payload;
+        },
         GET_COMMENTLIST(state, payload) {
             state.commentList = payload;
         }
@@ -262,21 +267,20 @@ export default {
                 .catch(err => {
                     console.log(err);
                 });
-        }
-
+        },
         //인기글 불러오기 메인 페이지 기능
-        // async getPopularCommunityBoard({commit}, {number}) {
-        //     const API_URL = `${port}community/board/popular?page=${number}`;
-        //     await axios({
-        //         url: API_URL,
-        //         method: 'GET'
-        //     })
-        //         .then(res => {
-        //             commit('', res.data);
-        //         })
-        //         .catch(err => {
-        //             console.log(err);
-        //         });
-        // },
+        async getPopularCommunityBoard({commit}, {number}) {
+            const API_URL = `${port}community/board/popular?page=${number}&size=5`;
+            await axios({
+                url: API_URL,
+                method: 'GET'
+            })
+                .then(res => {
+                    commit('GET_HOTBOARD', res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
     }
 };
