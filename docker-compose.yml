@@ -9,7 +9,7 @@ services:
     depends_on:
       - db
     volumes:
-      - /back:/server
+      - /back:/image
     restart: on-failure
 
   front:
