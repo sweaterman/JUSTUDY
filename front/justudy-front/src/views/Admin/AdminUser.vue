@@ -89,7 +89,7 @@
                             </v-col>
 
                             <v-col cols="12" md="2" justify="center" align="center">
-                                <div style="margin-top: 5px; margin-right: 10px; margin-left: 10px">{{ $route.query.page }}/{{ totalpage }} page</div>
+                                <div style="margin-top: 5px; margin-right: 10px; margin-left: 10px">{{ page }} page</div>
                                 <!-- 위와 같이 해줌으로서 '현재페이지/총페이지 page' 식으로 나타냄 -->
                             </v-col>
 
@@ -112,14 +112,21 @@
 </template>
 <script>
 import TabIcon from "@/components/Admin/TabIcon.vue"
+import axios from 'axios';
+import port from '@/store/port';
+
 export default {
     components: {TabIcon},
     data() {
         return {
+            page:1,
+            port: port,
+            size : 10,
             totalpage:1,
+            searchword:"",
             searchkeyword:"",
-            searchoption:['아이디','닉네임','학번'],
-            searchoptionselected:'아이디',
+            searchoption:['MEMBER_ID','SSAFY_ID','MEMBER_NAME','NICKNAME'],
+            searchoptionselected:'MEMBER_ID',
             contentlist: [
                 {
                     id:1,
@@ -133,6 +140,9 @@ export default {
             cnt: 0 // 현재 게시판의 총 글 개수
         };
     },
+    created(){
+        this.changeUserData();
+    },  
     computed: {
         // // computed는 계산 목적으로 사용된다고 보면 됨
         // totalpage() {
@@ -145,6 +155,37 @@ export default {
         // }
     },
     methods: {
+        changeUserData(){
+            let API_URL = `${this.port}admin/member?page=${this.page}&size=${this.size}`;
+            if(this.searchword != null ||  this.searchword != "" ){
+                API_URL = `${this.port}admin/member?page=${this.page}&size=${this.size}&search=${this.searchword}&type=${this.searchoptionselected}`;
+            }
+            console.log("API_URL : "+API_URL);
+            this.contentlist = [];
+            axios.get(API_URL)
+            .then((ret) => {
+                    let response = ret.data.memberList;
+                    console.log(response);
+                    for(let i = 0; i < response.length; i++){
+                        response[i];
+                        this.contentlist.push(
+                            {
+                                id:response[i].memberSequence,
+                                no:i,
+                                writer:response[i].username,
+                                nickName:response[i].nickname,
+                                ssafy:response[i].ssafyId,
+                                createdAt:response[i].createdTime,
+                            }
+                        )
+                    }
+                    console.log(this.contentlist);
+                }
+            )
+            .catch((error) => {
+                console.log(error);
+            });
+        },
         // 페이지 이동시 params로 게시판 구분, query로 페이지 구분
         movetoboard1() {
             // window.location.href = 'admin/user/1/?page=1';
@@ -170,23 +211,21 @@ export default {
             window.location.href = window.location.pathname + '/content/' + id;
         },
         movetopreviouspage() {
-            if (this.$route.query.page == 1) {
+            if (this.page == 1) {
                 alert('첫번째 페이지입니다!');
             } else {
-                var pp = parseInt(this.$route.query.page) - 1;
-                window.location.href = window.location.pathname + '?page=' + pp;
+                this.page-=1;
+                this.changeUserData();
             }
         },
         movetonextpage() {
-            if (this.$route.query.page == Math.ceil(this.cnt / 10)) {
-                alert('마지막 페이지입니다!');
-            } else {
-                var pp = parseInt(this.$route.query.page) + 1;
-                window.location.href = window.location.pathname + '?page=' + pp;
-            }
+                this.page+=1;
+                this.changeUserData();
         },
         searchstart(){
-
+            this.searchword =this.searchkeyword; 
+            this.page=1;
+            this.changeUserData();
         },
     }
 };
