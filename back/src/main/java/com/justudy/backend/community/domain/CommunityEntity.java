@@ -32,6 +32,7 @@ public class CommunityEntity {
     private String title;
 
     @Column(name = "community_content")
+    @Lob
     private String content;
 
     @Column(name = "community_view_count")
