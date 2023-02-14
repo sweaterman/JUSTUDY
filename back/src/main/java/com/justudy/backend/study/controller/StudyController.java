@@ -30,6 +30,7 @@ import com.justudy.backend.study.service.community.StudyCommunityBookmarkService
 import com.justudy.backend.study.service.community.StudyCommunityCommentService;
 import com.justudy.backend.study.service.community.StudyCommunityLoveService;
 import com.justudy.backend.study.service.community.StudyCommunityService;
+import com.justudy.backend.timer.service.RoomActivityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
@@ -67,7 +68,9 @@ public class StudyController {
     private final StudyCommunityLoveService studyCommunityLoveService;
     private final StudyCommunityBookmarkService studyCommunityBookmarkService;
     private final StudyCommunityCommentService studyCommunityCommentService;
+    private final RoomActivityService roomActivityService;
     // ---------------------------------------------------------------스터디---------------------------------------------------------------
+
     /**
      * 공개된 스터디 정보를 가져오는 API
      *
@@ -166,7 +169,6 @@ public class StudyController {
         studyRoomService.saveStudyRoom(studySeq);
 
 
-
         return ResponseEntity.status(HttpStatus.CREATED).body(studyService.readStudy(studySeq));
     }
 
@@ -228,6 +230,9 @@ public class StudyController {
 
         // 스터디 맴버 삭제
         studyMemberService.deleteStudyMemberByStudy(id);
+
+        //활동기록 삭제
+        roomActivityService.deleteRoomActivity(id);
 
         //스터디룸 삭제
         studyRoomService.deleteStudyRoom(id);
@@ -477,7 +482,7 @@ public class StudyController {
         }
 
         //지원서 삭제
-        studyResumeService.deleteById(id,resumeSeq);
+        studyResumeService.deleteById(id, resumeSeq);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
