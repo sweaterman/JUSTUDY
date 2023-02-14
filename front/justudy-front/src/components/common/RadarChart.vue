@@ -125,7 +125,7 @@ export default {
         await this.$store.dispatch('moduleTimer/getStudyCategory', {nickName: this.user.nickname});
         this.category = this.$store.state.moduleTimer.studyCategory;
         // this.category = this.$store.state.moduleTimer.studyCategory;
-        console.log('아아아' + this.category);
+
         // console.log(this.chartData.datasets[0].data);
         for (let i = 0; i < this.category.length; i++) {
             this.chartData.datasets[0].data[i] = this.category[i].second;

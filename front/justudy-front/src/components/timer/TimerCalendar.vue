@@ -79,11 +79,15 @@ export default {
             monthDate: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
             year: 0,
             month: 0,
-            date: 0
+            date: 0,
+            studyCategory: [],
+            studyCalendar: []
         };
     },
     props: {
-        studyCalendar: {}
+        nickName: {
+            type: String
+        }
     },
     methods: {
         greenValue(cr, cc, firstDayOfWeek) {
@@ -112,7 +116,7 @@ export default {
         //         return 'white';
         //     }
         // },
-        monthBefore() {
+        async monthBefore() {
             if (this.month == 0) {
                 this.year -= 1;
                 this.month = 11;
@@ -120,8 +124,18 @@ export default {
                 this.month--;
             }
             this.firstDayOfWeek = this.WEEKDAY.indexOf(new Date(this.year, this.month, 1).toString().slice(0, 3));
+            // 값 가져오기
+            await this.$store.dispatch('moduleTimer/getStudyCalendar', {nickName: this.nickName, year: this.year, month: this.month + 1});
+
+            let studyCalendar = new Array(32).fill(0);
+            let data = this.$store.state.moduleTimer.studyCalendar;
+            for (let i = 0; i < data.length; i++) {
+                studyCalendar[parseInt(data[i].day)] = data[i].second;
+            }
+
+            this.studyCalendar = studyCalendar;
         },
-        monthAfter() {
+        async monthAfter() {
             if (this.month == 11) {
                 this.year += 1;
                 this.month = 0;
@@ -129,6 +143,16 @@ export default {
                 this.month++;
             }
             this.firstDayOfWeek = this.WEEKDAY.indexOf(new Date(this.year, this.month, 1).toString().slice(0, 3));
+            // 값 가져오기
+            await this.$store.dispatch('moduleTimer/getStudyCalendar', {nickName: this.nickName, year: this.year, month: this.month + 1});
+
+            let studyCalendar = new Array(32).fill(0);
+            let data = this.$store.state.moduleTimer.studyCalendar;
+            for (let i = 0; i < data.length; i++) {
+                studyCalendar[parseInt(data[i].day)] = data[i].second;
+            }
+
+            this.studyCalendar = studyCalendar;
         },
 
         hourMinSecond(data) {
@@ -141,7 +165,7 @@ export default {
             );
         }
     },
-    created() {
+    async mounted() {
         let today = new Date();
         let year = today.getFullYear();
         let month = today.getMonth();
@@ -157,6 +181,17 @@ export default {
         if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
             this.monthDate[1] = 29;
         }
+
+        // 값 가져오기
+        await this.$store.dispatch('moduleTimer/getStudyCalendar', {nickName: this.nickName, year: this.year, month: this.month + 1});
+
+        let studyCalendar = new Array(32).fill(0);
+        let data = this.$store.state.moduleTimer.studyCalendar;
+        for (let i = 0; i < data.length; i++) {
+            studyCalendar[parseInt(data[i].day)] = data[i].second;
+        }
+
+        this.studyCalendar = studyCalendar;
     }
 };
 </script>
