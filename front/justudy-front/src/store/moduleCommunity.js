@@ -278,13 +278,5 @@ export default {
         //             console.log(err);
         //         });
         // },
-
-        //북마크 리스트 커뮤니티쪽 작업 아닌듯
-        // async getBookMarkList({commit}, {id}) {
-        //     const API_URL = `${port}community/board/bookmark/${id}`;
-        //     await axios.get(API_URL).then(res => {
-        //         commit('getBookMarkList', res.data);
-        //     });
-        // },
     }
 };

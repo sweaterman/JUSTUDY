@@ -27,17 +27,17 @@
     </div>
 </template>
 <script>
-import ModalComponent from './ModalComponent.vue';
+import ModalComponent from '../mypage/ModalComponent.vue';
 export default {
     name: 'ProfilePicture',
+    components: {
+        ModalComponent
+    },
     data() {
         return {
             dialog: false,
             aaa: 150
         };
-    },
-    components: {
-        ModalComponent
     },
     props: {
         diameter: {
@@ -53,7 +53,7 @@ export default {
         }
     },
     methods: {
-        dialogChange() {
+        async dialogChange() {
             this.dialog = true;
             this.$emit('dialogChangeFromChild');
         },

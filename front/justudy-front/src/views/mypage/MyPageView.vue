@@ -76,7 +76,7 @@
 
                 <v-row>
                     <v-col cols="12" md="5" justify="center" align="center">
-                        <RadarChart buttonContent="학습 진행도" :hasButton="true" />
+                        <RadarChart buttonContent="학습 진행도" :hasButton="true" :category="category" />
                         <v-row justify="center" align="center">
                             <v-btn color="yellow" :style="{height: '50px', width: '170px', fontWeight: 'bold', fontSize: 'x-large', marginTop: '30%'}">학습 진행도</v-btn>
                         </v-row>
@@ -111,6 +111,7 @@
         <!-- 북마크한 글 파트 -->
         <v-row :style="{marginBottom: '5%'}">
             <BoardList boardtitle="북마크한 글" :bookMarkList="bookMarkList" />
+            <!-- {{ bookMarkList }} -->
         </v-row>
 
         <!-- 달력 파트 -->
@@ -150,7 +151,9 @@ export default {
             bookMark: [],
             studyCalendar: [],
             user: {},
-            bookMarkList: []
+            bookMarkList: [],
+            timeCategoryData: [],
+            category: []
         };
     },
     computed: {
@@ -186,8 +189,10 @@ export default {
         let studyCalendar = new Array(32).fill('🟡18:00');
         this.studyCalendar = studyCalendar;
         console.log(studyCalendar);
-        await this.$store.dispatch('moduleCommunity/getBookMarkList', {id: 50});
-        this.bookMarkList = this.$store.state.moduleCommunity.bookMarkList;
+        await this.$store.dispatch('moduleMyPage/getBookMarkList');
+        this.bookMarkList = this.$store.state.moduleMyPage.bookMarkList;
+        //ff
+
         // 팔로잉
         // this.$store.dispatch("user/following");
         // 팔로우

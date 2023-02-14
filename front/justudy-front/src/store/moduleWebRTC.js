@@ -12,17 +12,17 @@ function Participant(parents, name, receiveCallback, iceCallback) {
     video.controls = false;
     video.muted = false;
     // video.style = 'display:inline-block;max-width:600px;';
-    video.style = 'display:inline-block;width:20%;transform: scaleX(-1)';
+    video.style = 'display:inline-block;width:20%;';
     parents.append(video);
     video.value = true;
     video.addEventListener('click', () => {
         if (video.value) {
             ///키울 때
-            video.style = 'display:block;width:100%;transform: scaleX(-1)';
+            video.style = 'display:block;width:100%;';
             video.value = false;
             parents.childNodes.forEach(item => {
                 if (item != video) {
-                    item.style = 'display:inline-block;width:20%;transform: scaleX(-1)';
+                    item.style = 'display:inline-block;width:20%;';
                     item.value = true;
                 }
             });
@@ -30,7 +30,7 @@ function Participant(parents, name, receiveCallback, iceCallback) {
             parents.append(video);
         } else {
             ///축소 시킬 때
-            video.style = 'display:inline-block;width:20%;transform: scaleX(-1)';
+            video.style = 'display:inline-block;width:20%;';
             video.value = true;
         }
     });
@@ -351,6 +351,12 @@ const moduleWebRTC = {
                 };
                 dispatch('sendMessage', message);
             };
+            // state.webSock.onclose = async (e) => {
+            //     console.log('Socket is closed. Reconnect will be attempted in 1.5 second.', e);
+            //     setTimeout(function() {
+            //         dispatch('reset',{url, person, room});
+            //       }, 1500)
+            // }
         },
 
         setEnvironment({commit}, {maxWidth, maxFrameRate, minFrameRate}) {

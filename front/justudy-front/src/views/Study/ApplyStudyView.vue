@@ -9,7 +9,7 @@
                 <v-col align="center" justify="center" cols="12" md="5">
                     <v-row>
                         <v-col cols="12">
-                            <img class="hover" style="width: 95%" src="@/assets/test_study.jpg" alt="study_image" />
+                            <img class="hover" style="width: 95%" :src="`${port}images/${applyStudyInfo.imageSequence}`" alt="study_image" />
                         </v-col>
                     </v-row>
 
@@ -110,7 +110,7 @@
                                 <v-subheader>시작예정일</v-subheader>
                             </v-col>
                             <v-col cols="7" align-self="center">
-                                {{ applyStudyInfo.start_time }}
+                                {{ applyStudyInfo.startTime }}
                             </v-col>
                         </v-row>
 
@@ -151,6 +151,7 @@
 </template>
 
 <script>
+import port from '@/store/port';
 import {mapState} from 'vuex';
 
 export default {
@@ -160,8 +161,7 @@ export default {
         ...mapState('moduleLogin', ['isLogin'])
     },
     async created() {
-        const pathName = new URL(document.location).pathname.split('/');
-        const studySeq = pathName[pathName.length - 1];
+        const studySeq = this.$route.params.studySeq;
         await this.$store.dispatch('moduleStudy/getApplyStudyInfo', studySeq);
         this.sendData.studySeq = studySeq;
 
@@ -178,7 +178,8 @@ export default {
                 content: null
             },
             applyData: false, //모달창
-            applyDisplay: true //이미 보냈거나 가입했는지 확인
+            applyDisplay: true, //이미 보냈거나 가입했는지 확인
+            port: port
         };
     },
 

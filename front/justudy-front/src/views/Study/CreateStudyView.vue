@@ -198,7 +198,7 @@
                                     <v-subheader>시작 예정일</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    <v-text-field v-model="study.start_time"></v-text-field>
+                                    <v-text-field v-model="study.startTime"></v-text-field>
                                 </v-col>
                             </v-row>
 
@@ -266,7 +266,7 @@ export default {
                 meeting: '',
                 github: '',
                 notion: '',
-                start_time: ''
+                startTime: ''
             },
             temp_frequency: {
                 week: null,
@@ -307,7 +307,7 @@ export default {
                 this.study.bottomCategory == '' ||
                 this.study.frequency.length == 0 ||
                 this.study.meeting == '' ||
-                this.study.start_time == ''
+                this.study.startTime == ''
             ) {
                 console.log(this.study);
                 alert('모든 항목을 입력해주세요.');
@@ -324,7 +324,7 @@ export default {
                     meeting: this.study.meeting,
                     github: this.study.github,
                     notion: this.study.notion,
-                    start_time: this.study.start_time,
+                    startTime: this.study.startTime,
                     frequency: this.study.frequency
                 };
 

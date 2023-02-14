@@ -11,9 +11,9 @@
                 <v-row>
                     <!-- 사다리 타기(중앙에 배치) -->
                     <!-- <meetingLadder id="ladderCSS" v-show="isLadder" v-if="getIsLadder" /> -->
-                    <meetingLadder id="ladderCSS" v-show="isLadder" v-if="getIsLadder" justify-content="center" align-items="center" />
+                    <meetingLadder class="ladderCSS" v-show="isLadder" v-if="getIsLadder" />
                     <!--  채팅창 우측에 배치 -->
-                    <meetingChat id="chatCSS" v-show="isChat" justify-content="center" align-items="center" />
+                    <meetingChat class="chatCSS" v-show="isChat" justify-content="center" align-items="center" />
                     <!-- code editor  -->
                     <!-- <CodeEditor
                         class="leftArrange"
@@ -45,34 +45,62 @@
                         ]"
                     ></CodeEditor>
                     <!-- 우상단 알림 css 수정시에는 v-show를 true로 해주신 다음에 디자인 수정하시고, 원래대로 하시면 되겠습니다.-->
-                    <div class="alarm" v-show="getIsViewAlarmDiv">
-                        <span class="material-icons-outlined"> visibility </span>
-                        <v-btn @click="offViewAlarmDiv">X</v-btn>
-                        <h2 v-text="getAlarmDivText"></h2>
+                    <div class="card_alarm" v-show="getIsViewAlarmDiv">
+                        <v-row>
+                            <v-col>
+                                <v-btn @click="offViewAlarmDiv" depressed color="white">X</v-btn>
+                            </v-col>
+                        </v-row>
+                        <v-row justify="center" align="center">
+                            <v-col justify="center" align="center">
+                                <h2 v-text="getAlarmDivText"></h2>
+                            </v-col>
+                        </v-row>
                     </div>
 
                     <!-- 우상단 Ban투표 -->
-                    <div class="alarm" v-show="getIsViewBanDiv">
-                        <h2 v-text="getBanDivText"></h2>
-                        <h3 v-text="getRemainTime"></h3>
-                        <span class="material-icons-outlined"> visibility </span>
-                        <v-btn @click="banVote(true)">Yes</v-btn><v-btn @click="banVote(false)">No</v-btn>
+                    <div class="card_alarm" v-show="getIsViewBanDiv">
+                        <v-row>
+                            <v-col>
+                                <h2 v-text="getBanDivText"></h2>
+                                <h3 v-text="getRemainTime"></h3>
+                            </v-col>
+                        </v-row>
+                        <v-row justify="center" align="center">
+                            <v-col justify="center" align="center">
+                                <v-btn @click="banVote(true)" depressed color="white">Yes</v-btn><v-btn @click="banVote(false)" depressed color="white">No</v-btn>
+                            </v-col>
+                        </v-row>
                     </div>
 
                     <!-- 우상단 Mute투표 -->
-                    <div class="alarm" v-show="getIsViewMuteDiv">
-                        <h2 v-text="getMuteDivText"></h2>
-                        <h3 v-text="getRemainTime"></h3>
-                        <span class="material-icons-outlined"> visibility </span>
-                        <v-btn @click="muteVote(true)">Yes</v-btn><v-btn @click="muteVote(false)">No</v-btn>
+                    <div class="card_alarm" v-show="getIsViewMuteDiv">
+                        <v-row>
+                            <v-col>
+                                <h2 v-text="getMuteDivText"></h2>
+                            </v-col>
+                        </v-row>
+                        <v-row justify="center" align="center">
+                            <v-col justify="center" align="center">
+                                <h3 v-text="getRemainTime"></h3>
+                                <v-btn @click="muteVote(true)" depressed color="white">Yes</v-btn><v-btn @click="muteVote(false)" depressed color="white">No</v-btn>
+                            </v-col>
+                        </v-row>
                     </div>
 
                     <!-- 우상단 방나가기투표 -->
-                    <div class="alarm" v-show="getIsViewExitDiv">
-                        <h2 v-text="getExitDivText"></h2>
-                        <h3 v-text="getRemainTime"></h3>
-                        <span class="material-icons-outlined"> visibility </span>
-                        <v-btn @click="exitVote(true)">Yes</v-btn><v-btn @click="exitVote(false)">No</v-btn>
+                    <div class="card_alarm" v-show="getIsViewExitDiv">
+                        <v-row>
+                            <v-col>
+                                <h2 v-text="getExitDivText"></h2>
+                            </v-col>
+                        </v-row>
+                        <v-row justify="center" align="center">
+                            <v-col justify="center" align="center">
+                                <h3 v-text="getRemainTime"></h3>
+                                <v-btn @click="exitVote(true)" depressed color="white">Yes</v-btn><v-btn @click="exitVote(false)" depressed color="white">No</v-btn>
+                            </v-col>
+                        </v-row>
                     </div>
                 </v-row>
             </v-col>
@@ -238,6 +266,22 @@ export default {
             room: this.getRoomName
         };
         this.open(data);
+        setInterval( () => {
+            const obj = this.getParticipants;
+            const keys = Object.keys(obj); 
+            console.log("=========state============");
+            for (let i = 0; i < keys.length; i++) {
+                const key = keys[i]; 
+                const value = obj[key]; 
+                if("connected" != value.rtcPeer.peerConnection.connectionState){
+                    console.log("reconnect!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    location.reload();
+                    break;
+                }
+            }
+            console.log("=========================");
+
+        },3000);
     },
 
     beforeUnmount() {
@@ -423,13 +467,13 @@ export default {
             }
             this.setIsViewExitDiv(false);
         },
-        // onLadder() {
-        //     this.setIsLadder(true);
-        // },
-        // onChat() {
-        //     this.setIsChat(true);
-        //     this.setIsNewChat(false);
-        // },
+        onLadder() {
+            this.setIsLadder(true);
+        },
+        onChat() {
+            this.setIsChat(true);
+            this.setIsNewChat(false);
+        },
         unLoadEvent() {
             let start = new Date();
             let end = new Date();
@@ -444,9 +488,19 @@ export default {
 
 <style scoped>
 /* 우상단 알람,방나가기,뮤트투표 기능 여기서 디자인하면 됨 */
+.card_alarm {
+    padding: 15px;
+    width: 80%;
+    height: 280px;
+    margin-top: 20px;
+    border-style: solid;
+    border-color: #eeeeee;
+    border-radius: 30px;
+    /* border-width: thin; */
+}
 .alarm {
-    width: 37%;
-    margin-left: 60%;
+    width: 30%;
+
     background-color: rgb(132, 220, 230);
     position: absolute;
     top: 30px;
@@ -455,7 +509,7 @@ export default {
 }
 .leftArrange {
     width: 37%;
-    margin-left: 5%;
+    /* margin-left: 5%; */
     margin-right: 58%;
     position: absolute;
     top: 30px;
@@ -463,15 +517,14 @@ export default {
     z-index: 2;
 }
 #ladderCSS {
-    /* margin-left: 55%;
-    margin-top: 30%; */
-    /* width: 33%;
-    float: right; */
-    /* position: absolute; */
-    /* z-index: 1;
+    margin-left: 55%;
+    margin-top: 30%;
+    width: 33%;
+    display: table-row;
+    z-index: 1;
     top: 30px;
-    /* width: 100%; */
-    /* background-color: rgb(222, 222, 222); */
+    width: 100%;
+    background-color: rgb(222, 222, 222);
 }
 #chatCSS {
     /* margin-right: 15%;

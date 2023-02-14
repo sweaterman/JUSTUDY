@@ -1,34 +1,47 @@
 <template>
-    <v-app>
-        <v-card>
-            <v-row>
-                <v-col cols="12" md="10">
-                    <v-textarea v-model="content" label="생성"></v-textarea>
-                    <v-btn @click="createComment" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">생성</v-btn>
-                </v-col>
-            </v-row>
-        </v-card>
-        <div :key="item.sequence" v-for="(item, index) in this.comments">
-            <v-row>
-                <v-col>
-                    {{ item.parentSeq != 0 ? 'ㄴㄴㄴ' : '' }}
-                </v-col>
-                <v-col>
-                    {{ item.memberSeq }}
-                    <v-textarea v-model="item.content" label="내용"></v-textarea>
-                    {{ item.createdTime }}
-                    <br />
-                    <v-btn v-if="item.isWriter" @click="updateComment(item)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정</v-btn>
-                    <v-btn v-if="item.isWriter" @click="deleteComment(item.sequence)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">삭제</v-btn>
-                </v-col>
-                <v-col v-if="item.parentSeq == 0">
-                    <v-textarea v-model="item.inputValue" label="답글생성"></v-textarea>
+    <v-row>
+        <v-col cols="12" md="2" />
+        <v-col cols="12" md="6" :style="{marginLeft: '5%', width: '50%'}">
+            <div class="card_section">
+                <v-row justify="center" align="center">
+                    <v-col cols="12" md="10">
+                        <v-textarea v-model="content" label="내용" rows="1" style="width: 100%; margin-right: 10%; margin-left: 5%; margintop: 4%"></v-textarea>
+                    </v-col>
+                    <v-col cols="12" md="2" align="right">
+                        <v-btn text @click="createComment" color="green">
+                            <span class="material-icons-outlined"> check </span>
+                        </v-btn>
+                    </v-col>
+                </v-row>
+            </div>
+            <!-- <v-textarea v-model="content" outlined rows="1" label="답글 달기" style="width: 80%"></v-textarea> -->
+        </v-col>
+        <v-col cols="12" md="1">
+            <!-- <v-btn @click="createComment" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">생성</v-btn> -->
+            <!-- <div :key="item.sequence" v-for="(item, index) in this.comments">
+                    <v-row :style="`background-color: ${getColor(item.parentSeq)}`">
+                        <v-col>
+                            {{ item.parentSeq != 0 ? 'ㄴㄴㄴ' : '' }}
+                        </v-col>
+                        <v-col>
+                            {{ item.memberSeq }}
+                            <v-textarea v-model="item.content" label="내용"></v-textarea>
+                            {{ item.createdTime }}
+                            <br />
+                            <v-btn v-if="item.isWriter" @click="updateComment(item)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정</v-btn>
+                            <v-btn v-if="item.isWriter" @click="deleteComment(item.sequence)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">삭제</v-btn>
+                        </v-col>
+                        <v-col v-if="item.parentSeq == 0">
+                            <v-textarea v-model="item.inputValue" label="답글생성"></v-textarea>
 
-                    <v-btn @click="createReply(item.sequence, index)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">답글생성</v-btn>
-                </v-col>
-            </v-row>
-        </div>
-    </v-app>
+                            <v-btn @click="createReply(item.sequence, index)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">답글생성</v-btn>
+                        </v-col>
+                    </v-row>
+                </div> -->
+        </v-col>
+
+        <v-col cols="12" md="3" />
+    </v-row>
 </template>
 <script>
 export default {
@@ -50,6 +63,13 @@ export default {
         };
     },
     methods: {
+        getColor(parentSeq) {
+            if (parentSeq == 0) {
+                return 'white';
+            } else {
+                return 'yellow';
+            }
+        },
         async updateData() {
             console.log('아아' + this.contentId);
             await this.$store.dispatch('moduleCommunity/getCommentList', {id: this.contentId});
@@ -96,4 +116,12 @@ export default {
     }
 };
 </script>
-<style scoped></style>
+<style scoped>
+.card_section {
+    padding: 1%;
+    border-style: solid;
+    border-color: #eeeeee;
+    border-radius: 30px;
+    /* border-width: thin; */
+}
+</style>

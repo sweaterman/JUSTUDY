@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex flex-column align-center">
-        <h2>{{ content }}</h2>
-        <DigitalClock :allTime="allTime" :fontSize="100" />
+        <h2 :style="{color: '#ffb000'}">{{ content }}</h2>
+        <DigitalClock :allTime="allTime" :fontSize="80" />
     </div>
 </template>
 <script>

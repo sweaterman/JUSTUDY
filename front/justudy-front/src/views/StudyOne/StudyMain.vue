@@ -3,23 +3,22 @@
         <v-container>
             <v-row :style="{padding: '1%'}">
                 <!-- 왼쪽 여백 -->
-
-                <!-- 본문 -->
                 <v-col cols="12" md="2" />
 
+                <!-- 본문 -->
                 <v-col cols="12" md="8">
                     <v-row>
                         <v-col cols="12" md="1">
                             <router-link :to="`/study/${studySeq}/info`">
-                                <v-btn @click="needtochange" :style="{color: 'blue'}">
+                                <v-btn :style="{color: 'blue'}">
                                     <span class="material-icons-outlined"> info </span>
                                 </v-btn>
                             </router-link>
                         </v-col>
 
                         <v-col cols="12" md="1">
-                            <router-link :to="`/study/${studySeq}/board`">
-                                <v-btn @click="needtochange" :style="{color: 'blue'}">
+                            <router-link :to="`/study/${studySeq}/board/main`">
+                                <v-btn :style="{color: 'blue'}">
                                     <span class="material-icons-outlined"> article </span>
                                 </v-btn>
                             </router-link>
@@ -27,12 +26,7 @@
 
                         <v-col cols="12" md="4" />
                         <v-col cols="12" md="2" justify="center" align="center">
-                            <router-link :to="`/study/${studySeq}/calender`">
-                                CALENDER
-                                <!-- <v-btn @click="needtochange" color="white" depressed>
-                            <span class="material-icons-outlined"> cancle </span>
-                        </v-btn> -->
-                            </router-link>
+                            <router-link :to="`/study/${studySeq}/calender`"> CALENDER </router-link>
                         </v-col>
                     </v-row>
                     <v-row>
@@ -50,15 +44,14 @@
 <script>
 export default {
     name: 'StudyMain',
+    created() {
+        const studySeq = this.$route.params.studySeq;
+        this.studySeq = studySeq;
+    },
     data() {
         return {
             studySeq: 1
         };
-    },
-    methods: {
-        moveToEdit() {
-            window.location.href = `/study/${this.studyInfo.sequence}/edit`;
-        }
     }
 };
 </script>

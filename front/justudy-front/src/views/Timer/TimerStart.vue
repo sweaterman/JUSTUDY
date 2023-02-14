@@ -1,12 +1,10 @@
 <template>
     <v-app>
-        <v-row :style="{marginTop: '0.5%'}">
+        <v-row>
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
-                <!-- <TimerHeader /> -->
-
                 <!-- 타이머 메뉴 바 -->
-                <v-row justify="center" align="center">
+                <v-row :style="{padding: '2%'}">
                     <v-col cols="12" md="6" justify="center" align="center">
                         <router-link to="/timer/study-start" style="text-decoration: none; color: #ffb000">
                             <span class="material-icons-outlined"> timer </span>
@@ -22,97 +20,31 @@
                 </v-row>
 
                 <!-- 카메라 화면 - 미구현 -->
-                <TimerCamera />
-
-                <!-- 기록 내용 -->
                 <v-row>
-                    <!-- 캠프파이어 -->
-                    <!-- <v-col cols="12" md="2" justify="center" align="center">
-                        <v-img :src="require('@/assets/campfire.gif')" max-height="160px" max-width="160px" />
-                    </v-col> -->
-
-                    <!-- 본 내용 -->
-                    <v-col cols="12" md="6">
-                        <!-- 내용 - 공부왕 -->
-                        <div class="card_section">
-                            <v-row>
-                                <v-col cols="12" md="4" justify="center" align="center">
-                                    <v-img :src="require('@/assets/king.gif')" max-height="100%" />
-                                </v-col>
-                                <v-col cols="12" md="8" justify="center" align="center">
-                                    <v-row justify="center" align="center">
-                                        <div :style="{fontWeight: 'bold', fontSize: 'large'}">
-                                            <h2>
-                                                <span style="color: black">오늘의 </span>
-                                                <span style="color: #ffb000">공부</span>
-                                                <span style="color: black">왕</span>
-                                            </h2>
-                                        </div>
-                                    </v-row>
-                                    <v-row justify="center" align="center">
-                                        <div :style="{fontWeight: 'bold', fontSize: 'large'}">
-                                            <h2>
-                                                <span style="color: #ffb000">{{ king_name }} </span>
-                                            </h2>
-                                        </div>
-                                        <div :style="{fontWeight: 'bold', fontSize: 'large'}"><h3>님!</h3></div>
-                                    </v-row>
-                                    <v-row justify="center" align="center">
-                                        <div :style="{fontWeight: 'bold', fontSize: 'large'}">
-                                            <h1>
-                                                <span style="color: black"
-                                                    >{{ parseInt(firstYesterday.second / 3600) >= 10 ? parseInt(firstYesterday.second / 3600) : '0' + parseInt(firstYesterday.second / 3600) }}:{{
-                                                        parseInt((firstYesterday.second % 3600) / 60) >= 10
-                                                            ? parseInt((firstYesterday.second % 3600) / 60)
-                                                            : '0' + parseInt((firstYesterday.second % 3600) / 60)
-                                                    }}:{{ firstYesterday.second % 60 >= 10 ? firstYesterday.second % 60 : '0' + (firstYesterday.second % 60) }}</span
-                                                >
-                                            </h1>
-                                        </div>
-                                    </v-row>
-                                </v-col>
-                            </v-row>
-                        </div>
-                    </v-col>
-
-                    <!-- 내용 - 오늘 접속자 -->
-                    <v-col cols="12" md="6">
-                        <div class="card_section">
-                            <v-row>
-                                <v-img :src="require('@/assets/people.gif')" max-height="30" max-width="30" />
-                            </v-row>
-                            <v-row>
-                                <div :style="{fontWeight: 'bold', fontSize: 'large'}">
-                                    <h2>
-                                        <span style="color: black">지금 공부 중인 </span>
-                                        <span style="color: #ffb000">SSAFY</span>
-                                        <span style="color: black">교육생</span>
-                                    </h2>
-                                </div>
-                            </v-row>
-                            <v-row>
-                                <div :style="{fontWeight: 'bold', fontSize: 'large'}">
-                                    <h1>
-                                        <span style="color: #ffb000">254</span>
-                                        <span style="color: black">명</span>
-                                    </h1>
-                                </div>
-                            </v-row>
-                        </div>
+                    <v-col>
+                        <TimerCamera />
                     </v-col>
                 </v-row>
 
-                <!-- 나의 공부 시간 -->
-                <v-row>
-                    <v-col cols="12" md="6">
-                        <DigitalClockPerDate content="이번주 공부 시간" :allTime="weekTime" />
+                <v-row justify="center" align="center">
+                    <v-col cols="12" md="4" justify="center" align="center">
+                        <!-- 나의 공부 시간 -->
+                        <v-row :style="{marginTop: '20%'}">
+                            <v-col>
+                                <DigitalClockPerDate content="이번주 공부 시간" :allTime="weekTime" />
+                            </v-col>
+                        </v-row>
+                        <v-row :style="{marginTop: '15%'}">
+                            <v-col>
+                                <DigitalClockPerDate content="이번달 공부 시간" :allTime="monthTime" />
+                            </v-col>
+                        </v-row>
                     </v-col>
-                    <v-col cols="12" md="6">
-                        <DigitalClockPerDate content="이번달 공부 시간" :allTime="monthTime" />
+                    <!-- 달력 -->
+                    <v-col cols="12" md="8">
+                        <TimerCalendar :studyCalendar="studyCalendar" />
                     </v-col>
                 </v-row>
-
-                <v-row> </v-row>
             </v-col>
 
             <v-col cols="12" md="2" />
@@ -121,6 +53,7 @@
 </template>
 <script>
 // import TimerHeader from '../../components/timer/TimerHeader.vue';
+import TimerCalendar from '@/components/timer/TimerCalendar.vue';
 import TimerCamera from '../../components/timer/TimerCamera.vue';
 import DigitalClockPerDate from '@/components/timer/DigitalClockPerDate.vue';
 // import DigitalClockAverage from '@/components/timer/DigitalClockAverage.vue';
@@ -148,6 +81,7 @@ export default {
     components: {
         // DigitalClockAverage,
         // TimerHeader,
+        TimerCalendar,
         DigitalClockPerDate,
         TimerCamera
     },
