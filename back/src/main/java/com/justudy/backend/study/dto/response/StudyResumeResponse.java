@@ -1,12 +1,11 @@
 package com.justudy.backend.study.dto.response;
 
+import com.justudy.backend.common.date.DateChanger;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.study.domain.StudyResumeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -16,7 +15,7 @@ public class StudyResumeResponse {
     private Long memberSeq;
     private Long studySeq;
     private String content;
-    private LocalDateTime createdTime;
+    private String createdTime;
     private Long imageSequence;
     private String nickName;
 
@@ -27,7 +26,7 @@ public class StudyResumeResponse {
                 .memberSeq(entity.getMember().getSequence())
                 .studySeq(entity.getStudy().getSequence())
                 .content(entity.getContent())
-                .createdTime(entity.getCreatedTime())
+                .createdTime(DateChanger.format(entity.getCreatedTime()))
                 .imageSequence(memberEntity.getImageFile().getSequence())
                 .nickName(memberEntity.getNickname())
                 .build();
