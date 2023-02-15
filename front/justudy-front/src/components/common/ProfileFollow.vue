@@ -12,7 +12,7 @@
             v-on:click="dialogChange()"
         />
         <div>
-            <ModalComponent :dialog="dialog" @closeModal="close" :id="id" :src="src" :data="data" />
+            <ModalComponent :dialog="dialog" @closeModal="close" :id="seq" :src="src" :data="data" />
         </div>
         <!-- <v-img
             :src="require('@/assets/redHeart.png')"

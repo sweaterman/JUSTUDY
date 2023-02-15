@@ -47,7 +47,8 @@ export default {
                 })
                 .then(res => {
                     commit('getMyPageUser', res.data);
-                });
+                })
+                .catch(async () => {});
         },
 
         async getModifyUser({commit}) {
@@ -69,8 +70,8 @@ export default {
             });
         },
 
-        getProfile({commit}, {id}) {
-            axios.get(port + 'member/profiles/' + id).then(res => {
+        async getProfile({commit}, {id}) {
+            await axios.get(port + 'member/profiles/' + id).then(res => {
                 commit('getProfile', res.data);
             });
         }

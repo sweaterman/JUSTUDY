@@ -4,11 +4,13 @@ export default [
     {
         path: '/meeting',
         name: 'meetingEntrance',
-        component: meetingEntrance
+        component: meetingEntrance,
+        meta: {authorization: ['login']}
     },
     {
         path: '/meeting/room',
         name: 'meetingRoom',
-        component: meetingRoom
+        component: meetingRoom,
+        meta: {authorization: ['login']}
     }
 ];

@@ -138,7 +138,7 @@ export default {
         };
     },
     async created() {
-        this.updateData('frontend');
+        this.updateData('all');
     },
     computed: {
         // // computed는 계산 목적으로 사용된다고 보면 됨
@@ -223,7 +223,7 @@ export default {
             }
         },
         async movetonextpage() {
-            if (this.$route.query.page == Math.ceil(this.cnt / 20)) {
+            if (this.$route.query.page >= Math.ceil(this.cnt / 20)) {
                 alert('마지막 페이지입니다!');
             } else {
                 var pp = parseInt(this.$route.query.page) + 1;

@@ -9,6 +9,9 @@ export default {
         CommunityContent: {},
         bookMarkList: [],
 
+        hotBoard: [],
+        loveList: [],
+
         commentList: []
     },
     getters: {},
@@ -35,8 +38,10 @@ export default {
     },
     actions: {
         async getCommunityBoard({commit}, {number, category, type, search, order}) {
-            let API_URL = `${port}community/board?page=${number}&category=${category}`;
-
+            let API_URL;
+            if (category == 'all') API_URL = `${port}community/board?page=${number}`;
+            else API_URL = `${port}community/board?page=${number}&category=${category}`;
+            console.log(API_URL);
             if (!(typeof type == 'undefined' || type == null || type == '')) API_URL += `&type=${type}`;
             if (!(typeof search == 'undefined' || search == null || search == '')) API_URL += `&search=${search}`;
             if (!(typeof order == 'undefined' || order == null || order == '')) API_URL += `&order=${order}`;
@@ -102,12 +107,12 @@ export default {
         //한민 작업
         //북마크 생성
         //reload 필요?
-        async createBookMark({commit}, {id, bookMark}) {
+        async createBookMark({commit}, {id}) {
             const API_URL = `${port}community/board/${id}/bookmark`;
             await axios({
                 url: API_URL,
                 method: 'POST',
-                data: bookMark,
+
                 withCredentials: true
             })
                 .then(() => {
@@ -115,6 +120,8 @@ export default {
                 })
                 .catch(err => {
                     console.log(err);
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '/login';
                 });
         },
         //북마크 삭제
@@ -131,6 +138,8 @@ export default {
                 })
                 .catch(err => {
                     console.log(err);
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '/login';
                 });
         },
         //카테고리 불러오기
@@ -176,6 +185,8 @@ export default {
                 })
                 .catch(err => {
                     console.log(err);
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '/login';
                 });
         },
         //좋아요 삭제
@@ -192,6 +203,31 @@ export default {
                 })
                 .catch(err => {
                     console.log(err);
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '/login';
+                });
+        },
+
+        //북마크 리스트 커뮤니티쪽 작업 아닌듯
+        async getBookMarkList({commit}) {
+            const API_URL = `${port}member/bookmarks`;
+            await axios
+                .get(API_URL, {
+                    withCredentials: true
+                })
+                .then(res => {
+                    commit('getBookMarkList', res.data);
+                });
+        },
+        //좋아요 리스트
+        async getLoveList({commit}) {
+            const API_URL = `${port}member/loves`;
+            await axios
+                .get(API_URL, {
+                    withCredentials: true
+                })
+                .then(res => {
+                    commit('getLoveList', res.data);
                 });
         },
 
@@ -263,20 +299,19 @@ export default {
                     console.log(err);
                 });
         }
-
         //인기글 불러오기 메인 페이지 기능
         // async getPopularCommunityBoard({commit}, {number}) {
-        //     const API_URL = `${port}community/board/popular?page=${number}`;
+        //     const API_URL = `${port}community/board/popular?page=${number}&size=5`;
         //     await axios({
         //         url: API_URL,
         //         method: 'GET'
         //     })
         //         .then(res => {
-        //             commit('', res.data);
+        //             commit('GET_HOTBOARD', res.data);
         //         })
         //         .catch(err => {
         //             console.log(err);
         //         });
-        // },
+        // }
     }
 };

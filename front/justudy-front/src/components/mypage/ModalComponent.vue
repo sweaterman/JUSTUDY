@@ -1,14 +1,30 @@
 <template>
     <div :v-model="dialog" v-if="dialog" id="all" @click="close(true)">
-        <div id="modal" @click="close(false)">
+        <div id="modal" @click="close(false)" style="padding: 100px 300px">
             <div class="d-flex justify-center">
-                <ProfilePicture :diameter="200" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" :src="src" />
+                <ProfilePicture :diameter="200" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" :src="`${port}images/${data.imageSequence}`" />
                 <!-- <v-img :src="src" style="width: 200px; height: 200px; border-radius: 100px" /> -->
                 <div class="d-flex flex-column pa-12">
-                    <div v-for="item in 3" v-bind:key="item">
+                    <div>
                         <div class="d-flex justify-space-around">
                             <p>닉네임</p>
                             <h1>{{ data.nickname }}</h1>
+                        </div>
+
+                        <hr />
+                    </div>
+                    <!-- <div v-if="loaded">
+                        <div class="d-flex justify-space-around">
+                            <p>선호하는 기술 스택</p>
+                            <h1>{{ profile }}</h1>
+                        </div>
+
+                        <hr />
+                    </div> -->
+                    <div>
+                        <div class="d-flex justify-space-around">
+                            <p>희망진로</p>
+                            <h1>{{ data.dream ? data.dream : '없음' }}</h1>
                         </div>
 
                         <hr />
@@ -17,12 +33,13 @@
             </div>
             <div class="d-flex justify-center">
                 <div>
-                    <h1 style="font-size: 64px">자기소개</h1>
-                    <h1>안녕하세요</h1>
-                    <h1>만능 개발자 입니다.</h1>
-                    <h1>타이머 대결 환영합니다.</h1>
+                    <h1 style="font-size: 48px">자기소개</h1>
+                    <h2>
+                        {{ data.introduction ? data.introduction : '소개글이 없습니다.' }}
+                    </h2>
                 </div>
-                <RadarChart buttonContent="학습 진행도" :hasButton="true" />
+                <!-- {{ data }} -->
+                <RadarChartProfile buttonContent="학습 진행도" :hasButton="true" :nickName="data.nickname" />
             </div>
         </div>
     </div>
@@ -30,19 +47,20 @@
 <script>
 import ProfilePicture from './ProfilePicture.vue';
 
-import RadarChart from '@/components/common/RadarChart.vue';
+import RadarChartProfile from '@/components/common/RadarChartProfile.vue';
 import port from '@/store/port';
 export default {
     name: 'ModalComponent',
     components: {
         ProfilePicture,
-        RadarChart
+        RadarChartProfile
     },
     data() {
         return {
             block: false,
             profile: {},
-            port: port
+            port: port,
+            loaded: false
         };
     },
     props: {
@@ -68,9 +86,14 @@ export default {
             }
         }
     },
-    async created() {
+    async mounted() {
+        this.loaded = false;
+
         await this.$store.dispatch('moduleMyPage/getProfile', {id: this.id});
+
         this.profile = this.$store.state.moduleMyPage.profile;
+        console.log('dddd' + this.profile);
+        this.loaded = true;
     }
 };
 </script>
@@ -82,7 +105,7 @@ export default {
     width: 100%;
     height: 100%;
 
-    padding-top: 30%;
+    padding-top: 6%;
     padding-left: 10%;
     padding-right: 10%;
     z-index: 1;
@@ -95,7 +118,7 @@ export default {
     left: 10%;
     right: 10%;
     border-radius: 30px;
-    background-color: yellow;
+    background-color: white;
     z-index: 2;
 }
 </style>

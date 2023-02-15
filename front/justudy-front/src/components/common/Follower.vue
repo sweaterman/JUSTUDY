@@ -6,7 +6,7 @@
         <div class="d-flex align-center" style="width: 90%; margin-left: 5%; margin-right: 5%; overflow: hidden">
             <div :style="`margin-left : ${bannerPosition}px ; transition: 0.5s`"></div>
             <div v-for="item in follower" v-bind:key="item" style="margin: 1%; transition: 0.5s">
-                <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="`${port}images/${item.imageSequence}`" />
+                <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="`${port}images/${item.imageSequence}`" :data="item" />
 
                 {{ item.nickname }}
 
@@ -25,7 +25,6 @@ import Profile from '@/components/mypage/Profile.vue';
 import port from '@/store/port';
 export default {
     name: 'FollowFollowing',
-
     components: {
         BasicButton,
         Profile

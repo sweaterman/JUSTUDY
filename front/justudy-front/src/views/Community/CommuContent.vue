@@ -70,15 +70,22 @@
                             <span class="material-icons-outlined"> arrow_back </span>
                         </v-btn>
                     </v-col>
-                    <v-col cols="12" md="6"> </v-col>
-                    <v-col cols="12" md="2" align="right">
-                        <v-btn outlined text @click="editcontent" v-if="editable == false">
+
+                    <v-col cols="12" md="6" v-if="Data.nickname == user.nickname"> </v-col>
+                    <v-col cols="12" md="8" v-if="Data.nickname != user.nickname"> </v-col>
+                    <v-col cols="12" md="2" align="right" v-if="Data.nickname == user.nickname">
+                        <v-btn outlined text @click="editcontent">
                             <span class="material-icons-outlined"> edit </span>
                         </v-btn>
                     </v-col>
-                    <v-col cols="12" md="2">
+                    <v-col cols="12" md="2" v-if="Data.nickname == user.nickname">
                         <v-btn outlined text @click="deletecontent" color="red">
                             <span class="material-icons-outlined"> delete </span>
+                        </v-btn>
+                    </v-col>
+                    <v-col cols="12" md="2" v-if="Data.nickname != user.nickname">
+                        <v-btn outlined text color="red">
+                            <span class="material-icons-outlined"> bug_report </span>
                         </v-btn>
                     </v-col>
                 </v-row>
@@ -86,6 +93,7 @@
                     <hr style="margin-left: 9%; margin-top: 1%; width: 100%" />
                 </v-row>
             </v-col>
+
             <v-col cols="12" md="2" />
         </v-row>
 
@@ -111,7 +119,10 @@ export default {
             // createdAt: '2023/01/18', // 작성일
             // updatedAt: '2023/01/20', // 최근 수정일
             // text: '그런건 없습니다', // 글 내용
-            editable: false // 수정가능여부 (수정 버튼누르면 true로 바뀜)
+            editable: false, // 수정가능여부 (수정 버튼누르면 true로 바뀜),
+            bookMarkList: [],
+            loveList: [],
+            user: {}
         };
     },
     mounted() {
@@ -134,23 +145,45 @@ export default {
         //     });
     },
     async created() {
+        await this.$store.dispatch('moduleMyPage/getMyPageUser');
+        this.user = this.$store.state.moduleMyPage.user;
         await this.$store.dispatch('moduleCommunity/getCommunityContent', {id: this.$route.params.id});
         this.Data = this.$store.state.moduleCommunity.CommunityContent;
         console.log(this.Data);
+        await this.$store.dispatch('moduleCommunity/getBookMarkList');
+        this.bookMarkList = this.$store.state.moduleCommunity.bookMarkList;
+        await this.$store.dispatch('moduleCommunity/getLoveList');
+        this.loveList = this.$store.state.moduleCommunity.loveList;
+        for (let i = 0; i < this.bookMarkList.length; i++) {
+            if (this.bookMarkList[i].sequence == this.$route.params.id) {
+                this.bookmark = true;
+                break;
+            }
+        }
+        for (let i = 0; i < this.loveList.length; i++) {
+            if (this.loveList[i].sequence == this.$route.params.id) {
+                this.like = true;
+                break;
+            }
+        }
     },
     methods: {
-        clickLike(check) {
+        async clickLike(check) {
             if (check != 'liked') {
                 this.like = true;
+                await this.$store.dispatch('moduleCommunity/createLove', {id: this.$route.params.id});
             } else {
                 this.like = false;
+                await this.$store.dispatch('moduleCommunity/deleteLove', {id: this.$route.params.id});
             }
         },
-        clickMark(check) {
+        async clickMark(check) {
             if (check != 'marked') {
                 this.bookmark = true;
+                await this.$store.dispatch('moduleCommunity/createBookMark', {id: this.$route.params.id});
             } else {
                 this.bookmark = false;
+                await this.$store.dispatch('moduleCommunity/deleteBookMark', {id: this.$route.params.id});
             }
         },
         moveback() {
