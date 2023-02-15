@@ -7,7 +7,8 @@ export default {
         checkId: false,
         checkNickname: false,
         checkSsafyId: false,
-        checkMM: false
+        checkMM: false,
+        memberCategory: []
     },
     getters: {},
     mutations: {
@@ -22,6 +23,9 @@ export default {
         },
         CHECK_MM(state, payload) {
             state.checkMM = payload;
+        },
+        GET_MEMBERCATEGORY(state, payload) {
+            state.memberCategory = payload;
         }
     },
     actions: {
@@ -93,6 +97,19 @@ export default {
             })
                 .then(() => {
                     commit('CHECK_MM', true);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        },
+        async getMemberCategory({commit}) {
+            const API_URL = `${port}category/member-category`;
+            await axios({
+                url: API_URL,
+                method: 'GET'
+            })
+                .then(res => {
+                    commit('GET_MEMBERCATEGORY', res.data);
                 })
                 .catch(err => {
                     console.log(err);

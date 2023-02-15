@@ -35,7 +35,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="item in boardList.communityList" :key="item.sequnce">
-                            <td>{{ item.title }}</td>
+                            <td @click="moveToDetail(item.sequence)">{{ item.title }}</td>
                             <td>{{ item.nickname }}</td>
                             <td>{{ item.viewCount }}</td>
                             <td>{{ item.createdTime }}</td>
@@ -50,7 +50,7 @@
                         <!-- 이전페이지로 이동 -->
                         <v-icon color="black" small>mdi-arrow-left-bold-outline</v-icon>
                     </v-btn>
-                    <span>{{ sendData.page }}/{{ boardList.totalCount / sendData.size + 1 }} page</span>
+                    <span>{{ sendData.page }}/{{ parseInt(boardList.totalCount / sendData.size) + 1 }} page</span>
                     <v-btn width="5px" @click="movepage('next')">
                         <!-- 다음페이지로 이동 -->
                         <v-icon color="black" small> mdi-arrow-right-bold-outline </v-icon>
@@ -103,11 +103,11 @@ export default {
     },
     methods: {
         async movepage(type) {
-            if (type == 'previous' && this.sendData.page != 1) {
+            if (type == 'previous' && this.sendData.page > 1) {
                 //이전 페이지로
                 this.sendData.page -= 1;
                 await this.$store.dispatch('moduleStudy/getBoardList', this.sendData);
-            } else if (type == 'next' && this.sendData.page != this.numOfPages) {
+            } else if (type == 'next' && this.sendData.page < this.numOfPages) {
                 //다음 페이지로
                 this.sendData.page += 1;
                 await this.$store.dispatch('moduleStudy/getBoardList', this.sendData);
@@ -118,6 +118,9 @@ export default {
         },
         moveToWrite() {
             window.location.href = `/study/${this.sendData.seq}/board/write`;
+        },
+        moveToDetail(seq) {
+            window.location.href = `/study/${this.sendData.seq}/board/detail/${seq}`;
         }
     }
 };
