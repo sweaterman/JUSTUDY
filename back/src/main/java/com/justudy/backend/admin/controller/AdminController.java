@@ -101,4 +101,12 @@ public class AdminController {
     public ReportDetail getReportDetail(@PathVariable("reportId") Long reportSequence) {
         return reportService.getReportDetail(reportSequence);
     }
+
+    @DeleteMapping("/comment/{commentSequence}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentSequence,
+                                              HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        adminService.deleteComment(loginSequence, commentSequence);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
 }

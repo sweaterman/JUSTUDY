@@ -6,12 +6,15 @@ import com.justudy.backend.admin.dto.response.MemberListResponse;
 import com.justudy.backend.admin.dto.response.MemberListResult;
 import com.justudy.backend.admin.repository.AdminRepository;
 import com.justudy.backend.common.validate.Validation;
+import com.justudy.backend.community.domain.CommunityCommentEntity;
 import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.dto.request.CommunitySearch;
 import com.justudy.backend.community.dto.response.CommunityDetailResponse;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
 import com.justudy.backend.community.dto.response.CommunityListResult;
+import com.justudy.backend.community.exception.CommentNotFound;
 import com.justudy.backend.community.exception.CommunityNotFound;
+import com.justudy.backend.community.repository.CommunityCommentRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.domain.MemberRole;
@@ -40,6 +43,8 @@ public class AdminService {
     private final MemberRepository memberRepository;
 
     private final CommunityRepository communityRepository;
+
+    private final CommunityCommentRepository commentRepository;
 
     public Long getCountOfMembers() {
         return adminRepository.getCountOfMembers();
@@ -101,6 +106,18 @@ public class AdminService {
         LocalDateTime endDateTime = getEndDateTime();
 
         return adminRepository.countCommunityByTime(startDateTime, endDateTime);
+    }
+
+    @Transactional
+    public Long deleteComment(Long loginSequence, Long commentSequence) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+
+        Validation.validateUserRole(findMember, MemberRole.ADMIN);
+        CommunityCommentEntity findComment = commentRepository.findById(commentSequence)
+                .orElseThrow(CommentNotFound::new);
+        findComment.changeIsDeleted(false);
+        return findComment.getSequence();
     }
 
 
