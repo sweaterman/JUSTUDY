@@ -42,7 +42,7 @@
                     </v-col>
                     <!-- 달력 -->
                     <v-col cols="12" md="8">
-                        <TimerCalendar :studyCalendar="studyCalendar" />
+                        <TimerCalendar :studyCalendar="studyCalendar" :nickName="user.nickname" v-if="loaded" />
                     </v-col>
                 </v-row>
             </v-col>
@@ -74,7 +74,9 @@ export default {
             averageWeekTime: 0,
             averageMonthTime: 0,
             studyCategory: [],
-            studyCalendar: []
+            studyCalendar: [],
+            user: {},
+            loaded: false
         };
     },
 
@@ -86,26 +88,20 @@ export default {
         TimerCamera
     },
     async created() {
+        this.loaded = false;
+        await this.$store.dispatch('moduleMyPage/getMyPageUser');
+        this.user = this.$store.state.moduleMyPage.user;
         // 타이머 정보 부분
-        await this.$store.dispatch('moduleTimer/getStudyTimeWeek', {nickName: '테스트 봇1'});
+        await this.$store.dispatch('moduleTimer/getStudyTimeWeek', {nickName: this.user.nickname});
         this.weekTime = this.$store.state.moduleTimer.studyTimeWeek.time;
-        await this.$store.dispatch('moduleTimer/getStudyTimeMonth', {nickName: '테스트 봇2'});
+        await this.$store.dispatch('moduleTimer/getStudyTimeMonth', {nickName: this.user.nickname});
         this.monthTime = this.$store.state.moduleTimer.studyTimeMonth.time;
         await this.$store.dispatch('moduleTimer/getAverageMembersWeek');
         this.averageWeekTime = this.$store.state.moduleTimer.averageMemberWeek.time;
         await this.$store.dispatch('moduleTimer/getAverageMembersMonth');
         this.averageMonthTime = this.$store.state.moduleTimer.averageMemberMonth.time;
-        await this.$store.dispatch('moduleTimer/getStudyCategory', {nickName: '테스트 봇1'});
+        await this.$store.dispatch('moduleTimer/getStudyCategory', {nickName: this.user.nickname});
         this.studyCategory = this.$store.state.moduleTimer.studyCategory;
-        await this.$store.dispatch('moduleTimer/getStudyCalendar', {nickName: '테스트 봇1', year: 2023, month: 1});
-
-        let studyCalendar = new Array(32).fill(0);
-        let data = this.$store.state.moduleTimer.studyCalendar;
-        for (let i = 0; i < data.length; i++) {
-            studyCalendar[parseInt(data[i].day)] = data[i].second;
-        }
-
-        this.studyCalendar = studyCalendar;
 
         // API 받기
         await this.$store.dispatch('moduleTimer/getFirstYesterday');
@@ -123,6 +119,8 @@ export default {
             this.allTimeMe++;
             // this.allTimeFirst++;
         }, 1000);
+
+        this.loaded = true;
     }
 };
 </script>

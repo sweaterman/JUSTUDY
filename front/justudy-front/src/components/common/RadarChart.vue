@@ -2,8 +2,8 @@
     <v-row>
         <v-row>
             <v-col>
-                {{ category }}
                 <Radar
+                    v-if="loaded"
                     :chart-options="chartOptions"
                     :chart-data="chartData"
                     :chart-id="chartId"
@@ -67,17 +67,12 @@ export default {
         },
         buttonContent: {
             type: String
-        },
-        category: {}
+        }
     },
-    data() {
-        // 함수형태
-        return {
-            title: "Hello it's function !",
-            user: {},
-
-            chartData: {
-                labels: ['CS', 'Algorithm', 'Frontend', 'Backend', 'Database', 'etc'],
+    computed: {
+        chartData() {
+            return {
+                labels: ['Frontend', 'Backend', 'Algorithm', 'CS', 'Database', 'etc'],
                 datasets: [
                     {
                         label: 'value',
@@ -90,7 +85,16 @@ export default {
                         data: [0, 0, 0, 0, 0, 0]
                     }
                 ]
-            },
+            };
+        }
+    },
+    data() {
+        // 함수형태
+        return {
+            title: "Hello it's function !",
+            user: {},
+            category: [],
+            loaded: false,
             chartOptions: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -112,20 +116,16 @@ export default {
             }
         };
     },
-    async created() {
-        console.log('아아아' + this.category);
-        // console.log(this.chartData.datasets[0].data);
-        for (let i = 0; i < 5; i++) {
-            // this.chartData.datasets[0].data[i] = this.category[i].second;
-            this.chartData.datasets[0].data[i] = 300;
-        }
-    },
-    async beforeUpdate() {
-        // await this.$store.dispatch('moduleMyPage/getMyPageUser');
 
-        // this.user = this.$store.state.moduleMyPage.user;
+    async mounted() {
+        this.loaded = false;
+        await this.$store.dispatch('moduleMyPage/getMyPageUser');
 
-        console.log('아아아' + this.category);
+        this.user = this.$store.state.moduleMyPage.user;
+        await this.$store.dispatch('moduleTimer/getStudyCategory', {nickName: this.user.nickname});
+        this.category = this.$store.state.moduleTimer.studyCategory;
+        // this.category = this.$store.state.moduleTimer.studyCategory;
+
         // console.log(this.chartData.datasets[0].data);
         for (let i = 0; i < this.category.length; i++) {
             this.chartData.datasets[0].data[i] = this.category[i].second;
@@ -137,6 +137,7 @@ export default {
         // this.chartData.datasets[0].data[3] = this.category[3] ? this.category[3]?.second : 0;
         // this.chartData.datasets[0].data[4] = this.category[4] ? this.category[4]?.second : 0;
         // this.chartData.datasets[0].data[5] = this.category[5] ? this.category[5]?.second : 0;
+        this.loaded = true;
     }
 };
 </script>

@@ -11,7 +11,9 @@
         `"
             v-on:click="dialogChange()"
         />
-
+        <div>
+            <ModalComponent :dialog="dialog" @closeModal="close" :id="seq" :src="src" :data="data" />
+        </div>
         <!-- <v-img
             :src="require('@/assets/redHeart.png')"
             :style="`
@@ -25,12 +27,17 @@
     </div>
 </template>
 <script>
+import ModalComponent from './ModalComponent.vue';
 export default {
     name: 'ProfilePicture',
     data() {
         return {
+            dialog: false,
             aaa: 150
         };
+    },
+    components: {
+        ModalComponent
     },
     props: {
         diameter: {
@@ -39,11 +46,21 @@ export default {
         standard: {
             type: String
         },
-        src: {}
+        src: {},
+        data: {},
+        seq: {
+            type: Number
+        }
     },
     methods: {
         dialogChange() {
+            this.dialog = true;
             this.$emit('dialogChangeFromChild');
+        },
+        close(status) {
+            if (status) {
+                this.dialog = false;
+            }
         }
     }
 };
