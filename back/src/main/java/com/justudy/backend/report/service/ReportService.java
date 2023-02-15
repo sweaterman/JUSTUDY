@@ -11,8 +11,10 @@ import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.report.domain.*;
 import com.justudy.backend.report.dto.request.ReportRequest;
+import com.justudy.backend.report.dto.response.admin.ReportDetail;
 import com.justudy.backend.report.dto.response.admin.ReportListResponse;
 import com.justudy.backend.report.dto.response.admin.ReportListResult;
+import com.justudy.backend.report.exception.ReportNotFound;
 import com.justudy.backend.report.repository.ReportRepository;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.exception.StudyNotFound;
@@ -56,6 +58,13 @@ public class ReportService {
                 .collect(Collectors.toList());
         Long totalCount = reportRepository.getCountOfReportList();
         return new ReportListResult<>(reports, totalCount);
+    }
+
+    public ReportDetail getReportDetail(Long reportSequence) {
+        Report report = reportRepository.findReportBySequence(reportSequence)
+                .orElseThrow(ReportNotFound::new);
+
+        return new ReportDetail(report);
     }
 
 

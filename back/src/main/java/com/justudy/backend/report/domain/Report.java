@@ -48,4 +48,9 @@ public abstract class Report {
         this.isFinished = false;
         this.finishedTime = null;
     }
+
+    public void acceptReport() {
+        this.isFinished = true;
+        this.finishedTime = LocalDateTime.now();
+    }
 }

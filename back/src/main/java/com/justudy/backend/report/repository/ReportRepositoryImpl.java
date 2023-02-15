@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 import static com.justudy.backend.report.domain.QReport.*;
 
@@ -38,5 +39,14 @@ public class ReportRepositoryImpl implements ReportRepositoryCustom {
         return queryFactory.select(report.count())
                 .from(report)
                 .fetchOne();
+    }
+
+    @Override
+    public Optional<Report> findReportBySequence(Long sequence) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(report)
+                .where(report.sequence.eq(sequence))
+                .fetchOne());
+
     }
 }

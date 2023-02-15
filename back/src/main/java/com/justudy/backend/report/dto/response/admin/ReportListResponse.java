@@ -12,28 +12,12 @@ public class ReportListResponse {
 
     private Long targetSequence;
 
-    private String reportContent;
+    private String content;
 
     public ReportListResponse(Report report) {
         this.reportSequence = report.getSequence();
         this.targetSequence = report.getTargetSequence();
-        this.reportContent = report.getContent();
-        this.type = validateCategory(report);
-    }
-
-    private String validateCategory(Report report) {
-        if (report instanceof MemberReport) {
-            return "member";
-        }
-        if (report instanceof CommunityReport) {
-            return "community";
-        }
-        if (report instanceof CommentReport) {
-            return "comment";
-        }
-        if (report instanceof StudyReport) {
-            return "study";
-        }
-        return null;
+        this.content = report.getContent();
+        this.type = ValidateReportType.valid(report);
     }
 }
