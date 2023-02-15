@@ -135,7 +135,7 @@
                                         <v-subheader>지역</v-subheader>
                                     </v-col>
                                     <v-col cols="12" md="6">
-                                        <v-combobox v-model="user.region" :items="regionList" item-text="value" item-value="key" label="지역 선택"></v-combobox>
+                                        <v-select v-model="user.region" :items="regionList" item-text="value" item-value="key" label="지역 선택"></v-select>
                                     </v-col>
                                 </v-row>
                             </v-col>
@@ -175,7 +175,7 @@
                                     <v-subheader>관심있는 기술 스택</v-subheader>
                                 </v-col>
                                 <v-col cols="12" md="9">
-                                    <v-combobox v-model="user.category" :items="memberCategory" item-text="value" item-value="key" label="관심 기술" multiple></v-combobox>
+                                    <v-select v-model="user.category" :items="memberCategory" item-text="value" item-value="key" label="관심 기술" multiple></v-select>
                                 </v-col>
                             </v-row>
 
@@ -343,36 +343,48 @@ export default {
         async check(type) {
             if (type == 'id') {
                 //id 중복체크
-                await this.$store.dispatch('moduleSignUp/checkVal', {
-                    type: 'userId',
-                    content: this.user.userId
-                });
-                if (this.checkId == true) {
-                    this.checkVal.id = true;
+                if (this.user.userId == '') {
+                    alert('정보를 먼저 입력해주세요!');
                 } else {
-                    this.checkVal.id = false;
+                    await this.$store.dispatch('moduleSignUp/checkVal', {
+                        type: 'userId',
+                        content: this.user.userId
+                    });
+                    if (this.checkId == true) {
+                        this.checkVal.id = true;
+                    } else {
+                        this.checkVal.id = false;
+                    }
                 }
             } else if (type == 'nickname') {
-                //닉네임 중복체크
-                await this.$store.dispatch('moduleSignUp/checkVal', {
-                    type: 'nickname',
-                    content: this.user.nickname
-                });
-                if (this.checkNickname == true) {
-                    this.checkVal.nickname = true;
+                if (this.user.nickname == '') {
+                    alert('정보를 먼저 입력해주세요!');
                 } else {
-                    this.checkVal.nickname = false;
+                    //닉네임 중복체크
+                    await this.$store.dispatch('moduleSignUp/checkVal', {
+                        type: 'nickname',
+                        content: this.user.nickname
+                    });
+                    if (this.checkNickname == true) {
+                        this.checkVal.nickname = true;
+                    } else {
+                        this.checkVal.nickname = false;
+                    }
                 }
             } else {
-                //싸피 학번 중복체크
-                await this.$store.dispatch('moduleSignUp/checkVal', {
-                    type: 'ssafyId',
-                    content: this.user.ssafyId
-                });
-                if (this.checkSsafyId == true) {
-                    this.checkVal.ssafyId = true;
+                if (this.user.ssafyId == '') {
+                    alert('정보를 먼저 입력해주세요!');
                 } else {
-                    this.checkVal.ssafyId = false;
+                    //싸피 학번 중복체크
+                    await this.$store.dispatch('moduleSignUp/checkVal', {
+                        type: 'ssafyId',
+                        content: this.user.ssafyId
+                    });
+                    if (this.checkSsafyId == true) {
+                        this.checkVal.ssafyId = true;
+                    } else {
+                        this.checkVal.ssafyId = false;
+                    }
                 }
             }
         },
@@ -385,45 +397,29 @@ export default {
             }
         },
         async signUp() {
+            console.log(this.user);
             //MM 확인
             await this.$store.dispatch('moduleSignUp/sendMMAPI', {
                 mmId: this.user.mmId,
                 mmPassword: this.user.mmPw
             });
             if (this.checkMM) {
-                if (this.user.category == '') {
-                    await this.$store.dispatch('moduleSignUp/signUp', {
-                        userId: this.user.userId,
-                        password: this.user.password,
-                        passwordCheck: this.user.passwordCheck,
-                        username: this.user.username,
-                        nickname: this.user.nickname,
-                        ssafyId: this.user.ssafyId,
-                        phone: this.user.phone,
-                        email: this.user.email,
-                        region: this.user.region.key,
-                        dream: this.user.dream,
-                        category: [],
-                        introduction: this.user.introduction,
-                        mmId: this.user.mmId
-                    });
-                } else {
-                    await this.$store.dispatch('moduleSignUp/signUp', {
-                        userId: this.user.userId,
-                        password: this.user.password,
-                        passwordCheck: this.user.passwordCheck,
-                        username: this.user.username,
-                        nickname: this.user.nickname,
-                        ssafyId: this.user.ssafyId,
-                        phone: this.user.phone,
-                        email: this.user.email,
-                        region: this.user.region.key,
-                        dream: this.user.dream,
-                        category: this.user.category.map(row => row.key),
-                        introduction: this.user.introduction,
-                        mmId: this.user.mmId
-                    });
-                }
+                // await this.$store.dispatch('moduleSignUp/signUp', {
+                //     userId: this.user.userId,
+                //     password: this.user.password,
+                //     passwordCheck: this.user.passwordCheck,
+                //     username: this.user.username,
+                //     nickname: this.user.nickname,
+                //     ssafyId: this.user.ssafyId,
+                //     phone: this.user.phone,
+                //     email: this.user.email,
+                //     region: this.user.region.key,
+                //     dream: this.user.dream,
+                //     category: [],
+                //     introduction: this.user.introduction,
+                //     mmId: this.user.mmId
+                // });
+                await this.$store.dispatch('moduleSignUp/signUp', this.user);
             } else {
                 alert('올바른 MatterMost ID와 비밀번호를 입력해주세요!');
             }
