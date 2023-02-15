@@ -25,17 +25,20 @@ export default [
     {
         path: '/study/create',
         name: 'CreateStudyView',
-        component: CreateStudyView
+        component: CreateStudyView,
+        meta: {authorization: ['login']}
     },
     {
         path: '/study/search/:studySeq',
         name: 'ApplyStudyView',
-        component: ApplyStudyView
+        component: ApplyStudyView,
+        meta: {authorization: ['login']}
     },
     {
         path: '/study/myStudy',
         name: 'MyStudyView',
-        component: MyStudyView
+        component: MyStudyView,
+        meta: {authorization: ['login']}
     },
 
     // 개별 스터디 router
@@ -109,6 +112,7 @@ export default [
                 name: 'StudyMemberManage',
                 component: StudyMemberManage
             }
-        ]
+        ],
+        meta: {authorization: ['login']}
     }
 ];
