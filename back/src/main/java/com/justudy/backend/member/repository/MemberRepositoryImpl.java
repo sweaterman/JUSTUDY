@@ -5,6 +5,7 @@ import com.justudy.backend.member.domain.MemberEntity;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
@@ -12,6 +13,7 @@ import static com.justudy.backend.file.domain.QUploadFileEntity.uploadFileEntity
 import static com.justudy.backend.member.domain.QMemberCategoryEntity.memberCategoryEntity;
 import static com.justudy.backend.member.domain.QMemberEntity.memberEntity;
 
+@Slf4j
 @RequiredArgsConstructor
 public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
