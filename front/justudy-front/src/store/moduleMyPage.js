@@ -47,6 +47,9 @@ export default {
                 })
                 .then(res => {
                     commit('getMyPageUser', res.data);
+                })
+                .catch(() => {
+                    // console.log(e);
                 });
         },
 

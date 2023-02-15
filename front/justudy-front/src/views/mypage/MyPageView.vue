@@ -95,10 +95,68 @@
                         </router-link>
                     </v-col> -->
                     <!-- 팔로우 N 팔로잉 -->
-                    <v-col cols="12" md="6">
+                    <v-col cols="12" md="6" class="d-flex flex-column justify-center">
                         <v-row>
-                            <!-- <Follow buttonContent="팔로잉" @dialogChangeFromChild="dialogChange()" /> -->
-                            <!-- <Follow buttonContent="팔로우" /> -->
+                            <v-btn @click="clicked('following')">팔로잉</v-btn>
+                            <v-btn @click="clicked('follower')">팔로워</v-btn>
+                        </v-row>
+                        <!-- 팔로잉 -->
+                        <v-row v-show="isFollowing" class="card_section_follow" justify="center" align="center">
+                            <v-col cols="12" md="1" align="left">
+                                <v-btn @click="toLeft()" color="white" depressed>
+                                    <span class="material-icons-outlined"> chevron_left </span>
+                                </v-btn>
+                                <!-- <img src="@/assets/arrow.png" style="width: 30px; height: 30px; transform: rotate(0.5turn)" @click="toLeft()" /> -->
+                            </v-col>
+                            <v-col cols="12" md="10">
+                                <div class="d-flex align-center" style="width: 90%; margin-left: 5%; margin-right: 5%; overflow: hidden">
+                                    <div :style="`margin-left : ${bannerPosition}px ; transition: 0.5s`"></div>
+                                    <!-- 진짜 -->
+                                    <!-- <div v-for="item in follow" v-bind:key="item" style="margin: 1%; transition: 0.5s">
+                                <ProfileFollow :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="`${port}images/${item.imageSequence}`" :data="item" />
+
+                                {{ item.nickname }} -->
+
+                                    <div v-for="item in follow" v-bind:key="item" style="padding: 1%; transition: 0.5s">
+                                        <Profile :diameter="100" standard="px" @dialogChangeFromChild="dialogChange(item.memberSequence)" :src="`${port}/images/${item.imageSequence}`" />
+                                        {{ item.nickname }}
+                                    </div>
+                                </div>
+                            </v-col>
+                            <v-col cols="12" md="1" align="right">
+                                <v-btn @click="toRight()" color="white" depressed>
+                                    <span class="material-icons-outlined"> chevron_right </span>
+                                </v-btn>
+                                <!-- <img src="@/assets/arrow.png" style="width: 30px; height: 30px" @click="toRight()" /> -->
+                            </v-col>
+                        </v-row>
+                        <!-- 팔로워 -->
+                        <v-row v-show="isFollower" class="card_section_follow" justify="center" align="center">
+                            <v-col cols="12" md="1" align="left">
+                                <v-btn @click="toLeft()" color="white" depressed>
+                                    <span class="material-icons-outlined"> chevron_left </span>
+                                </v-btn>
+                                <!-- <img src="@/assets/arrow.png" style="width: 30px; height: 30px; transform: rotate(0.5turn)" @click="toLeft()" /> -->
+                            </v-col>
+                            <v-col cols="12" md="10">
+                                <div class="d-flex align-center" style="overflow: hidden">
+                                    <div :style="`margin-left : ${bannerPosition}px ; transition: 0.5s`"></div>
+                                    <!-- <div v-for="item in follower" v-bind:key="item" style="margin: 1%; transition: 0.5s">
+                                <Profile :diameter="200" standard="px" @dialogChangeFromChild="dialogChange()" :src="`${port}images/${item.imageSequence}`" :data="item" />
+
+                                {{ item.nickname }} -->
+                                    <div v-for="item in follower" v-bind:key="item" style="margin: 1%; transition: 0.5s">
+                                        <Profile :diameter="100" standard="px" @dialogChangeFromChild="dialogChange(item.memberSequence)" :src="`${port}/images/${item.imageSequence}`" />
+                                        {{ item.nickname }}
+                                    </div>
+                                </div>
+                            </v-col>
+                            <v-col cols="12" md="1" align="right">
+                                <v-btn @click="toRight()" color="white" depressed>
+                                    <span class="material-icons-outlined"> chevron_right </span>
+                                </v-btn>
+                                <!-- <img src="@/assets/arrow.png" style="width: 30px; height: 30px" @click="toRight()" /> -->
+                            </v-col>
                         </v-row>
                     </v-col>
                 </v-row>
@@ -128,7 +186,7 @@
                         </v-row>
                         <v-row>
                             <v-col>
-                                <Radar :chart-options="chartOptions" :chart-data="chartData" :chart-id="radar - chart" :dataset-id-key="label" :plugins="plugins" />
+                                <Radar :chart-options="chartOptions" :chart-data="chartData" :chart-id="radar - chart" :dataset-id-key="label" :plugins="plugins" v-if="loaded" />
                             </v-col>
                             <!-- <RadarChart buttonContent="학습 진행도" :hasButton="true" :category="category" /> -->
                         </v-row>
@@ -200,6 +258,7 @@ import BoardList from '@/components/common/BoardList.vue';
 // import TextButton from '@/components/common/TextButton.vue';
 // import {mapState} from 'vuex';
 import port from '@/store/port';
+import Profile from '@/components/mypage/Profile.vue';
 export default {
     name: 'MyPageView',
     data() {
@@ -233,9 +292,12 @@ export default {
             first: '알고리즘',
             second: '데이터베이스',
             // store에서 담아올 값
-
-            following: {},
-            follow: {},
+            profile: {},
+            follow: [],
+            follower: [],
+            isFollowing: true,
+            isFollower: false,
+            bannerPosition: 0,
             studyAnalyzeValue: [],
             studyRecommand: [],
             bookMark: [],
@@ -273,22 +335,52 @@ export default {
         // StudyAnalyze,
         // ProfileDetail,
         // Follow,
+
         ProfilePicture,
         MyPageCalendar,
         // RadarChart,
-        ModalComponent
-        // TextButton
+        ModalComponent,
+        // TextButton,
+        Profile
     },
     methods: {
+        clicked(check) {
+            if (check == 'following') {
+                this.isFollowing = true;
+                this.isFollower = false;
+                this.bannerPosition = 0;
+            } else {
+                this.isFollowing = false;
+                this.isFollower = true;
+                this.bannerPosition = 0;
+            }
+        },
         movetoupdate() {
             window.location.href = '/mypage/update';
         },
-        dialogChange() {
+        async dialogChange(memSeq) {
             this.dialog = true;
+            console.log(memSeq);
+            // this.$emit('dialogChangeFromChild');
+            await this.$store.dispatch('moduleMyPage/getProfile', {id: memSeq});
         },
         close(status) {
             if (status) {
                 this.dialog = false;
+            }
+        },
+        toLeft() {
+            // if 문 써서 조절 하면 됨
+            if (this.bannerPosition <= -200) {
+                this.bannerPosition = this.bannerPosition + 200;
+            }
+        },
+        toRight() {
+            if (this.isFollowing && this.bannerPosition >= -20 * this.follow.length) {
+                this.bannerPosition = this.bannerPosition - 200;
+            }
+            if (this.isFollower && this.bannerPosition >= -20 * this.follower.length) {
+                this.bannerPosition = this.bannerPosition - 200;
             }
         }
     },
@@ -304,9 +396,11 @@ export default {
         //ff
 
         // 팔로잉
-        // this.$store.dispatch("user/following");
-        // 팔로우
-        // this.$store.dispatch("user/follow");
+        await this.$store.dispatch('moduleTimer/getFollow');
+        this.follow = this.$store.state.moduleTimer.follow;
+        // 팔로워
+        await this.$store.dispatch('moduleTimer/getFollower');
+        this.follower = this.$store.state.moduleTimer.follower;
         // 학습 분석 수치  (얘는 타이머를 통해 수치를 가지고 올거임)
         // this.$store.dispatch("timer/categoryTime")
         // 추천 스터디 가지고 오기

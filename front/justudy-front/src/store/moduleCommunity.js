@@ -120,6 +120,8 @@ export default {
                 })
                 .catch(err => {
                     console.log(err);
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '/login';
                 });
         },
         //북마크 삭제
@@ -136,6 +138,8 @@ export default {
                 })
                 .catch(err => {
                     console.log(err);
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '/login';
                 });
         },
         //카테고리 불러오기
@@ -181,6 +185,8 @@ export default {
                 })
                 .catch(err => {
                     console.log(err);
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '/login';
                 });
         },
         //좋아요 삭제
@@ -197,6 +203,8 @@ export default {
                 })
                 .catch(err => {
                     console.log(err);
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '/login';
                 });
         },
 

@@ -39,6 +39,8 @@
                         <v-text-field type="password" v-model="user.password" dense outlined label="비밀번호" :rules="[v => !!v || '비밀번호는 필수입니다.']"></v-text-field>
                     </v-col>
                 </v-row>
+                <!-- 나중에 삭제 예정 -->
+                <v-row> 임시 아이디 : test1 에서 test20 중 아무거나 치면됩니다. (ex: test7)<br />임시 비밀번호 : 1234 </v-row>
             </v-col>
 
             <!-- 우측 여백 -->
