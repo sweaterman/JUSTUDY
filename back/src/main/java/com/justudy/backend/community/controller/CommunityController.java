@@ -231,6 +231,7 @@ public class CommunityController {
     public ResponseEntity<CommunityCommentResponse> createComment(@PathVariable("id") Long id, @RequestBody CommunityCommentCreate request, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         request.changeMemberSeq(loginSequence);
+        request.changecommunitySeq(id);
         return ResponseEntity.status(HttpStatus.CREATED).body(communityCommentService.createComment(id, request));
     }
 

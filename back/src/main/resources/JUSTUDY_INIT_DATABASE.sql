@@ -10,6 +10,7 @@ CREATE DATABASE IF NOT EXISTS justudy;
 
 USE justudy;
 
+DROP TABLE IF EXISTS report;
 DROP TABLE IF EXISTS ranking;
 DROP TABLE IF EXISTS room_activity;
 DROP TABLE IF EXISTS study_room;
@@ -31,7 +32,7 @@ DROP TABLE IF EXISTS member_category;
 DROP TABLE IF EXISTS `member`;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS upload_file;
-DROP TABLE IF EXISTS report;
+
 
 
 create table if not exists upload_file (
@@ -487,7 +488,13 @@ INSERT INTO `member` (
     (17,0,'2023-02-14 01:46:35',"모든 오류는 내가 잡는다 내가 바로 오의석",'testEmail17@ssafy.com',"모든 오류는 내가 잡는다 내가 바로 오의석",_binary '\0',_binary '\0','BEGINNER','mmTest17','2023-02-14 01:46:35','피자헛둘셋넷','$2a$10$rS7J1NSnTzQjHdxir1Z39OiB1I/TGBi/8uKpPT2zrPPXll.YH.Gy.','01037601229','SEOUL','USER','0817989','OFFLINE','test17','홍길동',1),
     (18,2,'2023-02-14 01:46:35',"kurento 마스터 오의석",'testEmail18@ssafy.com',"kurento 마스터 오의석",_binary '\0',_binary '\0','MIDDLE','mmTest18','2023-02-14 01:46:35','캡틴아메리카노','$2a$10$noI1xFLvz18CicTSpRZXFOpaofdZttlPpXGS6ft6.Vp0GiEZCWWQS','01037601229','SEOUL','USER','0818878','BUSY','test18','홍길동',1),
     (19,0,'2023-02-14 01:46:35',"devops가 꿈인 초보 개발자입니다",'testEmail19@ssafy.com',"devops가 꿈인 초보 개발자입니다",_binary '\0',_binary '\0','BEGINNER','mmTest19','2023-02-14 01:46:35','오즈의 맙소사','$2a$10$3KH4FdqBu6EhCFLOAbcexuNJ.FUREHctb1MI2I3TqU6n0Jd7uZ3by','01037601229','DAEJEON','USER','0819565','OFFLINE','test19','홍길동',1),
+<<<<<<< HEAD
     (20,8,'2023-02-14 01:46:35',"함께 JPA 공부하실분 구하고 있어요",'testEmail20@ssafy.com',"함께 JPA 공부하실분 구하고 있어요",_binary '\0',_binary '\0','ADVANCED','mmTest20','2023-02-14 01:46:35','경찰청철찰살','$2a$10$BwuyoCoEEaPA2ESlaOtXm.oxe7E.f28W3Pb/0owJMFK/ljE4mu/1y','01037601229','BUWOOLKYUNG','USER','0820323','ONLINE','test20','홍길동',1);
+=======
+    (20,8,'2023-02-14 01:46:35',"함께 JPA 공부하실분 구하고 있어요",'testEmail20@ssafy.com',"함께 JPA 공부하실분 구하고 있어요",_binary '\0',_binary '\0','ADVANCED','mmTest20','2023-02-14 01:46:35','경찰청철찰살','$2a$10$BwuyoCoEEaPA2ESlaOtXm.oxe7E.f28W3Pb/0owJMFK/ljE4mu/1y','01037601229','BUWOOLKYUNG','USER','0820323','ONLINE','test20','홍길동',1),
+    (21,8,'2023-02-14 01:46:35',"관리자 계정",'testEmail20@ssafy.com',"관리자 계정",_binary '\0',_binary '\0','ADVANCED','mmTest20','2023-02-14 01:46:35','관리자','$2a$10$bfR4PhFooAEcJ8tEoTq4kO/zzROT8u314x1wU6SYwfBg8wBlpbSPK','01037601229','SEOUL','ADMIN','0000000','ONLINE','root','주인',1),
+    (22,8,'2023-02-14 01:46:35',"관리자 계정",'testEmail20@ssafy.com',"관리자 계정",_binary '\0',_binary '\0','ADVANCED','mmTest20','2023-02-14 01:46:35','관리자2','$2a$10$bfR4PhFooAEcJ8tEoTq4kO/zzROT8u314x1wU6SYwfBg8wBlpbSPK','01037601229','SEOUL','ADMIN','0000001','ONLINE','admin','관리자',1);
+>>>>>>> 10d7d097bfe56c63fb8138c73eee79811dfb6634
     
 INSERT INTO follow VALUES 
 		(0, 1, 2, now()),

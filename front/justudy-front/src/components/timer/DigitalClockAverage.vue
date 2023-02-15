@@ -2,7 +2,7 @@
     <div class="d-flex flex-column align-center">
         <h2>{{ content }}</h2>
         <div style="margin-top: 10px"></div>
-        <div style="color: white; background-color: black; font-size: 30px; width: 20%" class="d-flex justify-center">
+        <div style="color: white; background-color: black; font-size: 30px; width: 40%" class="d-flex justify-center">
             {{ parseInt(averageTime / 3600) >= 10 ? parseInt(averageTime / 3600) : '0' + parseInt(averageTime / 3600) }}:{{
                 parseInt((averageTime % 3600) / 60) >= 10 ? parseInt((averageTime % 3600) / 60) : '0' + parseInt((averageTime % 3600) / 60)
             }}:{{ averageTime % 60 >= 10 ? averageTime % 60 : '0' + (averageTime % 60) }}

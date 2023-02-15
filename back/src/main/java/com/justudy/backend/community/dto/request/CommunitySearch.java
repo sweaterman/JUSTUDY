@@ -60,6 +60,7 @@ public class CommunitySearch {
         if (type == null || !StringUtils.hasText(type)) {
             return null;
         }
+        log.info("로그 {}", type);
         return Arrays.stream(SearchType.values())
                 .filter(searchType -> searchType.getValue().equals(type))
                 .findFirst()

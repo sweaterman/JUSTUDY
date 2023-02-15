@@ -9,26 +9,32 @@
                 <v-col cols="12" md="8">
                     <v-row>
                         <v-col cols="12" md="6">
-                            <!-- 이미지 등록 부분 (후추 수정) -->
+                            <!-- 이미지 preview -->
                             <v-row>
                                 <v-col class="center" cols="12">
-                                    <!-- <v-img v-model="uploadimageurl" src="uploadimageurl.url" contain height="270px" width="480px" style="border: 2px solid black" /> -->
-                                    <img style="width: 95%" src="@/assets/test_study.jpg" alt="study_image" />
+                                    <img style="width: 95%" :src="uploadImageFile" />
                                 </v-col>
                             </v-row>
+
+                            <!-- 이미지 업로드 -->
                             <v-row>
-                                <v-col class="center" cols="12">
-                                    <v-file-input class="input" type="file" counter show-size label="이미지 제출" outlined dense prepend-icon="mdi-camera" style="width: 400px" />
+                                <v-col cols="12" align="center">
+                                    <v-file-input v-model="file" show-size label="이미지 선택" @change="onFileSelected(file)"></v-file-input>
+                                    <!-- <input type="file" onchange="readURL(this);" /> -->
                                 </v-col>
                             </v-row>
 
                             <!-- 스터디 이름 -->
                             <v-row>
                                 <v-col class="center" cols="8">
-                                    <v-text-field v-model="study.name" label="스터디 이름" :rules="name_rules" hide-details="auto"></v-text-field>
+                                    <v-text-field v-model="study.name" @input="nameCheckVal = false" label="스터디 이름" :rules="name_rules" hide-details="auto"></v-text-field>
                                 </v-col>
                                 <v-col class="center" cols="4">
-                                    <v-btn color="green darken-1" outlined text @click="nameCheckBtn(study.name)"> 중복체크 </v-btn>
+                                    <v-btn color="green darken-1" outlined text @click="nameCheckBtn(study.name)">
+                                        중복체크
+                                        <v-icon v-if="nameCheckVal" right> mdi-check-bold </v-icon>
+                                        <v-icon v-if="!nameCheckVal" right> mdi-alert-circle-outline </v-icon>
+                                    </v-btn>
                                 </v-col>
                             </v-row>
 
@@ -192,7 +198,7 @@
                                     <v-subheader>시작 예정일</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    <v-text-field v-model="study.start_time"></v-text-field>
+                                    <v-text-field v-model="study.startTime"></v-text-field>
                                 </v-col>
                             </v-row>
 
@@ -260,7 +266,7 @@ export default {
                 meeting: '',
                 github: '',
                 notion: '',
-                start_time: ''
+                startTime: ''
             },
             temp_frequency: {
                 week: null,
@@ -278,7 +284,8 @@ export default {
             startModal: false,
             endModal: false,
             nameCheckVal: false,
-            uploadimageurl: null
+            file: null,
+            uploadImageFile: null
         };
     },
     methods: {
@@ -290,7 +297,7 @@ export default {
             await this.$store.dispatch('moduleStudy/nameCheck', name);
             this.nameCheckVal = this.nameCheck;
         },
-        createStudy() {
+        async createStudy() {
             if (
                 this.study.name == '' ||
                 this.study.introduction == '' ||
@@ -300,7 +307,7 @@ export default {
                 this.study.bottomCategory == '' ||
                 this.study.frequency.length == 0 ||
                 this.study.meeting == '' ||
-                this.study.start_time == ''
+                this.study.startTime == ''
             ) {
                 console.log(this.study);
                 alert('모든 항목을 입력해주세요.');
@@ -317,13 +324,22 @@ export default {
                     meeting: this.study.meeting,
                     github: this.study.github,
                     notion: this.study.notion,
-                    start_time: this.study.start_time,
+                    startTime: this.study.startTime,
                     frequency: this.study.frequency
                 };
 
+                const formData = new FormData();
+                formData.append('file', this.file);
+                formData.append(
+                    'request',
+                    new Blob([JSON.stringify(sendStudy)], {
+                        type: 'application/json'
+                    })
+                );
+
                 //등록 요청 보내기.
-                this.$store.dispatch('moduleStudy/createStudy', sendStudy);
-                console.log(sendStudy);
+                await this.$store.dispatch('moduleStudy/createStudy', {formData: formData});
+                console.log(this.file);
             }
         },
         addFrequency() {
@@ -342,6 +358,20 @@ export default {
             this.frequency_num = this.frequency_num - 1;
             const tempStudy = this.study.frequency.filter(o => o.week !== w && o.startTime !== s && o.endTime !== e);
             this.study.frequency = tempStudy;
+        },
+        onFileSelected(file) {
+            const fileData = data => {
+                this.uploadImageFile = data;
+            };
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.addEventListener(
+                'load',
+                function () {
+                    fileData(reader.result);
+                },
+                false
+            );
         }
     }
 };

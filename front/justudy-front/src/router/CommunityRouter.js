@@ -5,22 +5,22 @@ import CommuUpdate from '../views/Community/CommuUpdate.vue';
 
 export default [
     {
-        path: '/community/:page',
+        path: '/community',
         name: 'CommuBoard',
         component: CommuBoard
     },
     {
-        path: '/community/:page/write',
+        path: '/community/write',
         name: 'CommuWrite',
         component: CommuWrite
     },
     {
-        path: '/community/:page/content/:id',
+        path: '/community/content/:id',
         name: 'CommuContent',
         component: CommuContent
     },
     {
-        path: '/community/:page/content/:id/update',
+        path: '/community/content/:id/update',
         name: 'CommuUpdate',
         component: CommuUpdate
     }

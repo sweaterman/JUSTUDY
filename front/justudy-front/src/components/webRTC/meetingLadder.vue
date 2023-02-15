@@ -1,57 +1,71 @@
 <template>
-    <v-app>
-        <v-row :style="{marginTop: '3%'}">
-            <v-col cols="12" md="1">
-                <v-btn @click="ladderClose">X</v-btn>
-            </v-col>
-            <v-col cols="12" md="10">
-                <v-row>
-                    <v-col cols="12" md="12" justify="center" align="center">
-                        <div :style="{fontWeight: 'bold', fontSize: 'xx-large'}">제비 뽑기</div>
-                    </v-col>
-                </v-row>
-
-                <!-- 참가자들 -->
-                <v-row :style="{marginTop: '5%'}">
-                    <v-row>
-                        <div :style="{fontWeight: 'bold', fontSize: 'x-large'}">참여자</div>
-                    </v-row>
+    <div class="card_section">
+        <v-container>
+            <v-row>
+                <v-col>
                     <v-row justify="center" align="center">
-                        <div>
-                            <div v-for="(item, index) in namesFromParticipants" :key="index" v-text="item"></div>
-                        </div>
+                        <v-col justify="center" align="center">
+                            <div :style="{fontWeight: 'bold', fontSize: 'xx-large'}">제비 뽑기</div>
+                        </v-col>
                     </v-row>
-                </v-row>
 
-                <!-- 사다리타기 결과 적기 -->
-                <v-row :style="{marginTop: '10%'}">
-                    <v-row>
-                        <div :style="{fontWeight: 'bold', fontSize: 'x-large'}">당첨 항목</div>
-                    </v-row>
-                    <v-row>
-                        <div>
-                            <div v-for="(item, index) in valuesFromParticipants" :key="index">
-                                <label :for="index" v-text="index"></label>
-                                <input :id="index" v-model="valuesFromParticipants[index]" />
-                            </div>
-                        </div>
-                    </v-row>
-                </v-row>
+                    <!-- 참가자들 -->
+                    <v-col :style="{padding: '12%'}">
+                        <v-row>
+                            <v-col>
+                                <div :style="{fontWeight: 'bold', fontSize: 'x-large'}">참여자</div>
+                                <hr :style="{width: '80%'}" />
+                            </v-col>
+                        </v-row>
+                        <v-row justify="center" align="center">
+                            <v-col>
+                                <div>
+                                    <div v-for="(item, index) in namesFromParticipants" :key="index" v-text="item"></div>
+                                </div>
+                            </v-col>
+                        </v-row>
+                    </v-col>
 
-                <!-- 실행 버튼 -->
-                <v-row :style="{marginTop: '25%'}">
-                    <v-col cols="12" md="2">
-                        <v-btn @click="ladderStart">사다리 돌리기</v-btn>
+                    <!-- 사다리타기 결과 적기 -->
+                    <v-col :style="{padding: '12%'}">
+                        <v-row>
+                            <v-col>
+                                <div :style="{fontWeight: 'bold', fontSize: 'x-large'}">당첨 항목</div>
+                                <hr :style="{width: '80%'}" />
+                            </v-col>
+                        </v-row>
+                        <!-- 사다리타기 결과 적기 -->
+                        <v-row>
+                            <v-col>
+                                <div v-for="(item, index) in valuesFromParticipants" :key="index">
+                                    <v-row>
+                                        <v-col cols="12" md="3" justify="center" align="center">
+                                            <label :for="index" v-text="index + 1"></label>
+                                        </v-col>
+                                        <v-col cols="12" md="9" align="left">
+                                            <input :id="index" v-model="valuesFromParticipants[index]" :style="{width: '100%'}" />
+                                        </v-col>
+                                    </v-row>
+                                </div>
+                            </v-col>
+                        </v-row>
                     </v-col>
-                    <v-col cols="12" md="8" />
-                    <v-col cols="12" md="2">
-                        <v-btn @click="ladderTransfer">결과 전송하기</v-btn>
-                    </v-col>
-                </v-row>
-            </v-col>
-            <v-col cols="12" md="1" />
-        </v-row>
-    </v-app>
+
+                    <!-- 실행 버튼 -->
+                    <v-row :style="{padding: '12%'}">
+                        <v-btn @click="ladderStart" color="white" :style="{color: 'green'}">
+                            <v-col cols="12" md="4">
+                                <span class="material-icons-outlined"> add_task </span>
+                            </v-col>
+                            <v-col cols="12" md="8">
+                                <div>결과 확인</div>
+                            </v-col>
+                        </v-btn>
+                    </v-row>
+                </v-col>
+            </v-row>
+        </v-container>
+    </div>
 </template>
 
 <script>
@@ -104,22 +118,33 @@ export default {
                 // console.log(data);
                 this.ladderResult.push(data);
             }
-            console.log(this.ladderResult);
-        },
-        ladderTransfer() {
-            if (this.ladderResult.length < 1) {
-                console.log('사다리 돌리기를 먼저해주세요');
-                return;
-            }
             this.sendLadderResult(this.ladderResult);
+            console.log(this.ladderResult);
         }
+        // ladderTransfer() {
+        //     if (this.ladderResult.length < 1) {
+        //         console.log('사다리 돌리기를 먼저해주세요');
+        //         return;
+        //     }
+        //     this.sendLadderResult(this.ladderResult);
+        // }
     }
 };
 </script>
 
 <style scoped>
+.card_section {
+    padding: 10px;
+    /* margin-bottom: 1px; */
+    border-style: solid;
+    border-color: #eeeeee;
+    border-radius: 30px;
+    /* border-width: thin; */
+}
+</style>
+<!-- <style scoped>
 input {
     background-color: darkgray;
     border: 2 solid black;
 }
-</style>
+</style> -->

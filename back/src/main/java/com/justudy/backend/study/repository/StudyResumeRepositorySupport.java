@@ -14,4 +14,6 @@ public interface StudyResumeRepositorySupport {
     List<StudyResumeEntity> readAllStudyResumeByMember(Long id);
 
     Optional<StudyResumeEntity> readStudyResumeByStudyAndMember(Long sequence, Long loginSequence);
+
+    void deleteStudyResumeByStudy(Long id);
 }

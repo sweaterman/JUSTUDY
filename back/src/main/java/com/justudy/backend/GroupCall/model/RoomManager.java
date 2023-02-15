@@ -19,7 +19,6 @@ package com.justudy.backend.GroupCall.model;
 
 import com.justudy.backend.GroupCall.dto.response.StudyRoomResponse;
 import com.justudy.backend.GroupCall.service.StudyRoomService;
-import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.dto.response.StudyDetailResponse;
 import com.justudy.backend.study.service.StudyService;
 import com.justudy.backend.timer.dto.request.ActivityRequest;
@@ -66,11 +65,11 @@ public class RoomManager {
 
   //방이 없으면 방을 새로 만들고, 해당 방의 객체를 보내준다. Room 이름 정보와 MediaPipeline를 보내준다.(같은 미디어 파이프 라인끼리 N:N화상회의를 하기위함
   public Room getRoom(String roomName) {
-    log.debug("Searching for room {}", roomName);
+    log.info("Searching for room {}", roomName);
     Room room = rooms.get(roomName);
 
     if (room == null) {
-      log.debug("Room {} not existent. Will create now!", roomName);
+      log.info("Room {} not existent. Will create now!", roomName);
 
       room = new Room(roomName, kurento.createMediaPipeline());
       rooms.put(roomName, room);
@@ -82,7 +81,7 @@ public class RoomManager {
       }
 
     }
-    log.debug("Room {} found!", roomName);
+    log.info("Room {} found!", roomName);
     return room;
   }
 
@@ -98,17 +97,17 @@ public class RoomManager {
       LocalDateTime startDateTime = room.getStartTime();
       LocalDateTime endDateTime = LocalDateTime.now();
       Long diffTime = ChronoUnit.SECONDS.between(startDateTime, endDateTime);
-      roomActivityService.saveRoomAcitivity(
+      roomActivityService.saveRoomActivity(
           new ActivityRequest(diffTime, studyDetailResponse.getTopCategory()),
           studyRoom.getSequence(),
           Date.valueOf(LocalDate.now()));
 
     } catch (Exception error) {
-      log.debug("fail.. {} ", error);
+      log.info("fail.. {} ", error);
     }
     this.rooms.remove(room.getName());
     room.close();
-    log.debug("Room {} removed and closed", room.getName());
+    log.info("Room {} removed and closed", room.getName());
   }
 
 }

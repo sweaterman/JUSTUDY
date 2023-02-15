@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-row :style="{marginTop: '5%'}">
+        <v-row>
             <v-col cols="12" md="2" justify="center" align="center">
                 <div id="video-container" ref="webcamContainer" style="position: relative" justify="center" align="center">
                     <video ref="webcamElement" autoplay muted playsinline></video>
@@ -24,32 +24,79 @@
                 <!-- <h1 style="position: relative; z-index: 2">{{ timeString }}</h1> -->
             </v-col>
 
-            <v-col cols="12" md="10" v-if="isView">
+            <v-col cols="12" md="10" v-if="isView" justify="center" align="center">
                 <v-row>
+                    <v-col>
+                        <v-col cols="12" md="6" justify="center" align="center">
+                            <router-link to="/ranking/study-ranking" style="text-decoration: none; color: black">
+                                <span class="material-icons-outlined"> group </span>
+                                <div>스터디 랭킹</div>
+                            </router-link>
+                        </v-col>
+                        <h4>카테고리</h4>
+                        <h4>를 선택해주세요</h4>
+                    </v-col>
+                </v-row>
+                <v-row :style="{marginTop: '0.4%'}">
                     <v-col coks="12" md="2">
-                        <input @change="webcamOnOff" value="Computer Science" id="a" v-model="webcamSwitch" type="checkbox" />
-                        <label class="category" for="a"><div :style="{fontWeight: 'bold', fontSize: 'large'}">CS</div></label>
-                        <br />
+                        <v-row justify="center" align="center">
+                            <v-btn class="card_section_category" color="white" depressed justify="center" align="center" x-large :style="{marginTop: '5%'}">
+                                <input @change="webcamOnOff" value="Front-end" id="a" v-model="webcamSwitch" type="checkbox" v-show="false" />
+                                <label class="category" for="a">
+                                    <div :style="{fontSize: 'medium'}">Front-end</div>
+                                </label>
+                            </v-btn>
+                        </v-row>
                     </v-col>
                     <v-col coks="12" md="2">
-                        <input @change="webcamOnOff" value="DataBase" id="b" v-model="webcamSwitch" type="checkbox" />
-                        <label class="category" for="b">DataBase</label>
-                        <br />
+                        <v-row justify="center" align="center">
+                            <input @change="webcamOnOff" value="Back-end" id="b" v-model="webcamSwitch" type="checkbox" v-show="false" />
+                            <v-btn class="card_section_category" color="white" depressed justify="center" align="center" x-large :style="{marginTop: '5%'}">
+                                <label class="category" for="b">
+                                    <div :style="{fontSize: 'medium'}">Back-end</div>
+                                </label>
+                            </v-btn>
+                        </v-row>
                     </v-col>
                     <v-col coks="12" md="2">
-                        <input @change="webcamOnOff" value="etc" id="c" v-model="webcamSwitch" type="checkbox" />
-                        <label class="category" for="c">etc</label>
-                        <br />
+                        <v-row justify="center" align="center">
+                            <input @change="webcamOnOff" value="DataBase" id="c" v-model="webcamSwitch" type="checkbox" v-show="false" />
+                            <v-btn class="card_section_category" color="white" depressed justify="center" align="center" x-large :style="{marginTop: '5%'}">
+                                <label class="category" for="c">
+                                    <div :style="{fontSize: 'medium'}">DataBase</div>
+                                </label>
+                            </v-btn>
+                        </v-row>
                     </v-col>
                     <v-col coks="12" md="2">
-                        <input @change="webcamOnOff" value="Frontend" id="d" v-model="webcamSwitch" type="checkbox" />
-                        <label class="category" for="d">Frontend</label>
-                        <br />
+                        <v-row justify="center" align="center">
+                            <input @change="webcamOnOff" value="ComputerScience" id="d" v-model="webcamSwitch" type="checkbox" v-show="false" />
+                            <v-btn class="card_section_category" color="white" depressed justify="center" align="center" x-large :style="{marginTop: '5%'}">
+                                <label class="category" for="d">
+                                    <div :style="{fontSize: 'medium'}">CS</div>
+                                </label>
+                            </v-btn>
+                        </v-row>
                     </v-col>
                     <v-col coks="12" md="2">
-                        <input @change="webcamOnOff" value="Backend" id="e" v-model="webcamSwitch" type="checkbox" />
-                        <label class="category" for="e">Backend</label>
-                        <br />
+                        <v-row justify="center" align="center">
+                            <input @change="webcamOnOff" value="Algorithm" id="e" v-model="webcamSwitch" type="checkbox" v-show="false" />
+                            <v-btn class="card_section_category" color="white" depressed justify="center" align="center" x-large :style="{marginTop: '5%'}">
+                                <label class="category" for="e">
+                                    <div :style="{fontSize: 'medium'}">Algorithm</div>
+                                </label>
+                            </v-btn>
+                        </v-row>
+                    </v-col>
+                    <v-col coks="12" md="2">
+                        <v-row justify="center" align="center">
+                            <input @change="webcamOnOff" value="Etc." id="f" v-model="webcamSwitch" type="checkbox" v-show="false" />
+                            <v-btn class="card_section_category" color="white" depressed justify="center" align="center" x-large :style="{marginTop: '5%'}">
+                                <label class="category" for="f">
+                                    <div :style="{fontSize: 'medium'}">Etc.</div>
+                                </label>
+                            </v-btn>
+                        </v-row>
                     </v-col>
                 </v-row>
             </v-col>
@@ -191,7 +238,7 @@ class Webcam {
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const modelPath = '/models';
+const modelPath = 'https://cdn.jsdelivr.net/gh/cgarciagl/face-api.js/weights/';
 const activeTime = 0.23;
 export default {
     name: 'FaceRecognition',
@@ -232,10 +279,10 @@ export default {
                         console.log('webcam started');
                         console.log(result);
                         Promise.all([
-                            window.faceapi.nets.tinyFaceDetector.load(modelPath),
-                            window.faceapi.nets.faceLandmark68TinyNet.load(modelPath),
-                            window.faceapi.nets.faceExpressionNet.load(modelPath),
-                            window.faceapi.nets.ageGenderNet.load(modelPath)
+                            window.faceapi.nets.tinyFaceDetector.loadFromUri(modelPath),
+                            window.faceapi.nets.faceLandmark68TinyNet.loadFromUri(modelPath),
+                            window.faceapi.nets.faceExpressionNet.loadFromUri(modelPath),
+                            window.faceapi.nets.ageGenderNet.loadFromUri(modelPath)
                         ]).then(() => {
                             this.createCanvas();
                             this.startDetection();
@@ -300,6 +347,18 @@ export default {
 };
 </script>
 <style scoped>
+.card_section_category {
+    padding: 10px;
+    /* margin-bottom: 1px; */
+    width: 100%;
+    height: 100px;
+    border-style: solid;
+    border-color: #eeeeee;
+    border-radius: 30px;
+    justify-items: center;
+    align-items: center;
+    /* border-width: thin; */
+}
 video {
     background: black;
     width: 100% !important;

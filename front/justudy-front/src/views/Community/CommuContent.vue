@@ -7,11 +7,9 @@
                 <v-form ref="form" @submit.prevent="onSubmitForm">
                     <!-- 제목 -->
                     <v-row>
-                        <!-- <v-btn depressed color="white" :style="{height: '65px', width: '165px', fontWeight: 'bold', fontSize: 'large', marginTop: '20%'}">글쓴이</v-btn> -->
                         <div style="margin-left: 9%; margin-top: 1%">
                             <h1>{{ Data.title }}</h1>
                         </div>
-                        <!-- <v-text-field v-model="title" solo readonly depressed outlined label="제목" style="width: 80%; margin-right: 10%; margin-top: 0.5%"></v-text-field> -->
                     </v-row>
                     <v-row>
                         <hr style="margin-left: 9%; margin-top: 1%; width: 100%" />
@@ -19,17 +17,33 @@
 
                     <!-- 글쓴이 -->
                     <v-row>
-                        <div style="width: 300px; margin-left: 9%; margin-top: 1.7%; margin-bottom: 0.5%">
-                            <h3>{{ Data.writer }}</h3>
-                        </div>
-                        <!-- <v-text-field v-model="writer" solo readonly outlined depressed label="글쓴이" style="width: 80%; height: 20px; margin-right: 10%; margin-top: 4%"></v-text-field> -->
-                        <!-- <v-btn color="white" :style="{height: '65px', width: '200px', fontWeight: 'bold', fontSize: 'large', marginTop: '3%', marginLeft: '10%'}"></v-btn> -->
+                        <v-col cols="12" md="6">
+                            <div style="width: 300px; margin-left: 17%; margin-top: 1.7%; margin-bottom: 0.5%">
+                                <h3>작성자 : {{ Data.nickname }}</h3>
+                            </div>
+                        </v-col>
+                        <v-col cols="12" md="2" />
+                        <v-col cols="12" md="2" align="right">
+                            <v-btn v-if="like" outlined text @click="clickLike('liked')" :style="{color: 'red'}">
+                                <span class="material-icons-outlined"> favorite </span>
+                            </v-btn>
+                            <v-btn v-if="!like" outlined text @click="clickLike('notliked')">
+                                <span class="material-icons-outlined"> favorite </span>
+                            </v-btn>
+                        </v-col>
+                        <v-col cols="12" md="2" align="left">
+                            <v-btn v-if="bookmark" outlined text @click="clickMark('marked')" :style="{color: 'gold'}">
+                                <span class="material-icons-outlined"> bookmark </span>
+                            </v-btn>
+                            <v-btn v-if="!bookmark" outlined text @click="clickMark('notmarked')">
+                                <span class="material-icons-outlined"> bookmark </span>
+                            </v-btn>
+                        </v-col>
                     </v-row>
 
                     <!-- 작성일 -->
                     <v-row>
                         <div style="width: 300px; margin-left: 9%; padding-top: 4px; padding-bottom: 25px">작성일 : {{ Data.createdTime }}</div>
-                        <!-- <v-text-field v-model="createdAt" solo readonly depressed outlined label="작성일" style="width: 80%; margin-right: 15%"></v-text-field> -->
                     </v-row>
                     <!-- 수정일 기능 -->
                     <!-- <v-row>
@@ -52,33 +66,38 @@
             <v-col cols="12" md="8">
                 <v-row>
                     <v-col cols="12" md="2" align="right">
-                        <v-btn @click="moveback" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large', marginLeft: '55%'}">뒤로가기</v-btn>
+                        <v-btn outlined text @click="moveback">
+                            <span class="material-icons-outlined"> arrow_back </span>
+                        </v-btn>
                     </v-col>
-                    <v-col cols="12" md="6"> </v-col>
-                    <v-col cols="12" md="2" align="right">
-                        <v-btn @click="editcontent" v-if="editable === false" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정</v-btn>
-                        <!-- <v-btn @click="editcontentfinish" v-if="editable === true" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정완료</v-btn> -->
+
+                    <v-col cols="12" md="6" v-if="Data.nickname == user.nickname"> </v-col>
+                    <v-col cols="12" md="8" v-if="Data.nickname != user.nickname"> </v-col>
+                    <v-col cols="12" md="2" align="right" v-if="Data.nickname == user.nickname">
+                        <v-btn outlined text @click="editcontent">
+                            <span class="material-icons-outlined"> edit </span>
+                        </v-btn>
                     </v-col>
-                    <v-col cols="12" md="2">
-                        <v-btn @click="deletecontent" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">삭제</v-btn>
+                    <v-col cols="12" md="2" v-if="Data.nickname == user.nickname">
+                        <v-btn outlined text @click="deletecontent" color="red">
+                            <span class="material-icons-outlined"> delete </span>
+                        </v-btn>
+                    </v-col>
+                    <v-col cols="12" md="2" v-if="Data.nickname != user.nickname">
+                        <v-btn outlined text color="red">
+                            <span class="material-icons-outlined"> bug_report </span>
+                        </v-btn>
                     </v-col>
                 </v-row>
                 <v-row>
                     <hr style="margin-left: 9%; margin-top: 1%; width: 100%" />
                 </v-row>
             </v-col>
+
             <v-col cols="12" md="2" />
         </v-row>
 
-        <v-row>
-            <v-col cols="12" md="2" />
-            <v-col cols="12" md="8">
-                <v-row>
-                    <CommuComment :contentId="contentId" />
-                </v-row>
-            </v-col>
-            <v-col cols="12" md="2" />
-        </v-row>
+        <CommuComment :contentId="parseInt(this.$route.params.id)" />
     </v-app>
 </template>
 
@@ -93,12 +112,17 @@ export default {
         return {
             Data: {},
             index: index,
+            like: false,
+            bookmark: false,
             // writer: '돌숭이', // 작성자
             // title: '돌숭이의 꿀팁', // 글 제목
             // createdAt: '2023/01/18', // 작성일
             // updatedAt: '2023/01/20', // 최근 수정일
             // text: '그런건 없습니다', // 글 내용
-            editable: false // 수정가능여부 (수정 버튼누르면 true로 바뀜)
+            editable: false, // 수정가능여부 (수정 버튼누르면 true로 바뀜),
+            bookMarkList: [],
+            loveList: [],
+            user: {}
         };
     },
     mounted() {
@@ -121,10 +145,47 @@ export default {
         //     });
     },
     async created() {
+        await this.$store.dispatch('moduleMyPage/getMyPageUser');
+        this.user = this.$store.state.moduleMyPage.user;
         await this.$store.dispatch('moduleCommunity/getCommunityContent', {id: this.$route.params.id});
         this.Data = this.$store.state.moduleCommunity.CommunityContent;
+        console.log(this.Data);
+        await this.$store.dispatch('moduleCommunity/getBookMarkList');
+        this.bookMarkList = this.$store.state.moduleCommunity.bookMarkList;
+        await this.$store.dispatch('moduleCommunity/getLoveList');
+        this.loveList = this.$store.state.moduleCommunity.loveList;
+        for (let i = 0; i < this.bookMarkList.length; i++) {
+            if (this.bookMarkList[i].sequence == this.$route.params.id) {
+                this.bookmark = true;
+                break;
+            }
+        }
+        for (let i = 0; i < this.loveList.length; i++) {
+            if (this.loveList[i].sequence == this.$route.params.id) {
+                this.like = true;
+                break;
+            }
+        }
     },
     methods: {
+        async clickLike(check) {
+            if (check != 'liked') {
+                this.like = true;
+                await this.$store.dispatch('moduleCommunity/createLove', {id: this.$route.params.id});
+            } else {
+                this.like = false;
+                await this.$store.dispatch('moduleCommunity/deleteLove', {id: this.$route.params.id});
+            }
+        },
+        async clickMark(check) {
+            if (check != 'marked') {
+                this.bookmark = true;
+                await this.$store.dispatch('moduleCommunity/createBookMark', {id: this.$route.params.id});
+            } else {
+                this.bookmark = false;
+                await this.$store.dispatch('moduleCommunity/deleteBookMark', {id: this.$route.params.id});
+            }
+        },
         moveback() {
             window.history.back(); // window.history.back()을 통해 뒤로가기
         },
@@ -158,7 +219,7 @@ export default {
                 name: 'CommuUpdate',
                 path: this.$route.path + 'update',
                 query: {
-                    category: this.Data.category
+                    category: this.Data.category.key
                 }
             });
         },

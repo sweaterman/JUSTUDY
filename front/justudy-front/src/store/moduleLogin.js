@@ -4,7 +4,9 @@ import port from './port';
 export default {
     namespaced: true,
     state: {
-        isLogin: {}
+        isLogin: {
+            loginCheck: false
+        }
     },
     getters: {},
     mutations: {
@@ -25,8 +27,11 @@ export default {
                         withCredentials: true
                     }
                 )
-                .then(() => {
-                    commit('SET_ISLOGIN', {loginCheck: true});
+                .then(res => {
+                    commit('SET_ISLOGIN', {
+                        loginCheck: true
+                    });
+                    localStorage.setItem('nickname', res.data.nickname);
                     window.location.href = '/';
                 })
                 .catch(err => {
@@ -42,18 +47,15 @@ export default {
                 withCredentials: true
             })
                 .then(() => {
-                    commit('SET_ISLOGIN', {loginCheck: false});
+                    commit('SET_ISLOGIN', {
+                        loginCheck: false
+                    });
+                    localStorage.removeItem('nickname');
                     window.location.href = '/';
                 })
                 .catch(err => {
                     console.log(err);
                 });
-        },
-
-        async signUp(_, {user}) {
-            const API_URL = `${port}member/register`;
-            console.log(user.password);
-            await axios.post(API_URL, user);
         }
     }
 };

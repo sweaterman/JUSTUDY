@@ -5,14 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.lang.reflect.Member;
-
 @Getter
 @Builder
 @AllArgsConstructor
 public class StudyMemberResponse {
     private Long sequence;
     private Boolean alarm;
+    private Long memberSequence;
     private Integer badge;
     private String name;
     private String nickName;
@@ -20,12 +19,13 @@ public class StudyMemberResponse {
 
     public static StudyMemberResponse makeBuilder(StudyMemberEntity entity) {
         return StudyMemberResponse.builder()
-                .sequence(entity.getSequence())
+                .sequence(entity.getMember().getSequence())
                 .badge(entity.getBadge())
                 .alarm(entity.getAlarm())
                 .name(entity.getMember().getUsername())
                 .nickName(entity.getMember().getNickname())
                 .imageSequence(entity.getMember().getImageFile().getSequence())
+//                .memberSequence(entity.getMember().getSequence())
                 .build();
     }
 }

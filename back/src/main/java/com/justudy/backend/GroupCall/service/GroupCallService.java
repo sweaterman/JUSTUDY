@@ -62,9 +62,9 @@ public class GroupCallService {
     UserSession user = registry.getBySession(session);
 
     if (user != null) {
-      log.debug("Incoming message from user '{}': {}", user.getName(), jsonMessage);
+      log.info("Incoming message from user '{}': {}", user.getName(), jsonMessage);
     } else {
-      log.debug("Incoming message from new user: {}", jsonMessage);
+      log.info("Incoming message from new user: {}", jsonMessage);
     }
 
     switch (jsonMessage.get("id").getAsString()) {
@@ -196,19 +196,19 @@ public class GroupCallService {
 
   @OnOpen
   public void afterConnectionEstablished() throws Exception {
-    log.debug("afterConnectionEstablished...........................");
+    log.info("afterConnectionEstablished...........................");
 
   }
 
   @OnClose
   public void afterConnectionClosed(Session session) throws Exception {
-    log.debug("afterConnectionClosed");
+    log.info("afterConnectionClosed");
     UserSession user = registry.removeBySession(session);
     if (user == null) {
-      log.debug("......duplicate eror");
+      log.info("......duplicate eror");
       return;
     }
-    log.debug("user getRoomName : {}", user.getRoomName());
+    log.info("user getRoomName : {}", user.getRoomName());
     if (roomManager.getRoomState(user.getRoomName()) != null) {
       roomManager.getRoom(user.getRoomName()).leave(user);
     }
@@ -218,7 +218,7 @@ public class GroupCallService {
     final String roomName = params.get("room").getAsString();
     String name = params.get("name").getAsString();
 
-    log.debug("PARTICIPANT {}: trying to join room {}", name, roomName);
+    log.info("PARTICIPANT {}: trying to join room {}", name, roomName);
 
     Room room = roomManager.getRoom(roomName);
 

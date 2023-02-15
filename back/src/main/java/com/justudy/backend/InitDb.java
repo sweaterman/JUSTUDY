@@ -44,23 +44,6 @@ public class InitDb {
 
     private final InitService initService;
 
-    private static MemberCreate makeMemberCreate(int number) {
-        MemberCreate request = MemberCreate.builder()
-                .userId("test" + number)
-                .password("1234")
-                .passwordCheck("1234")
-                .username("테스트" + number)
-                .nickname("봇" + number)
-                .region("SEOUL")
-                .category(new String[]{"Java", "Spring"})
-                .ssafyId("08" + number)
-                .mmId("mmTest" + number)
-                .phone(String.valueOf(number))
-                .email("testEmail" + number + "@ssafy.com")
-                .build();
-        return request;
-    }
-
     private static MemberCreate makeMemberCreate(int number, String[] category) {
         MemberCreate request = MemberCreate.builder()
                 .userId("test" + number)
@@ -80,7 +63,7 @@ public class InitDb {
 
     @PostConstruct
     public void init() throws ParseException {
-        initService.init();
+        //initService.init();
     }
 
     @RequiredArgsConstructor
@@ -111,13 +94,48 @@ public class InitDb {
             saveCategory();
             saveMember();
             saveCommunity();
-//            saveStudy();
-//            saveStudyFrequency();
-//            saveStudyMember();
-//            saveStudyRoom();
-//            saveTimer();
-//            saveRank();
-//            saveTest1();
+            saveStudy();
+            saveStudyFrequency();
+            saveStudyMember();
+            saveStudyRoom();
+            saveTimer();
+            saveRank();
+            saveTest1();
+            saveAdmin();
+        }
+
+        private void saveAdmin() {
+            UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
+                    .orElseThrow(UploadFileNotFound::new);
+            MemberCreate request = MemberCreate.builder()
+                    .userId("consultant")
+                    .password("12341234")
+                    .passwordCheck("12341234")
+                    .username("컨설턴트")
+                    .nickname("컨설턴트계정")
+                    .region("SEOUL")
+                    .category(new String[]{"Java"})
+                    .ssafyId("9999999")
+                    .mmId("mmTest")
+                    .phone(String.valueOf("9999999"))
+                    .email("testEmail@ssafy.com")
+                    .build();
+            memberService.saveAdmin(request, basicImage);
+
+            request = MemberCreate.builder()
+                    .userId("coach")
+                    .password("12341234")
+                    .passwordCheck("12341234")
+                    .username("코치")
+                    .nickname("코치계정")
+                    .region("SEOUL")
+                    .category(new String[]{"Java"})
+                    .ssafyId("9999998")
+                    .mmId("mmTest")
+                    .phone(String.valueOf("9999999"))
+                    .email("testEmail@ssafy.com")
+                    .build();
+            memberService.saveAdmin(request, basicImage);
         }
 
         private void saveTest1() {
@@ -126,17 +144,17 @@ public class InitDb {
             UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
                     .orElseThrow(UploadFileNotFound::new);
             // 리더인 스터디 130
-            MemberEntity member = memberService.getMember(50L);
-            StudyEntity study = studyService.getStudyByLeader(50L);
+            MemberEntity member = memberService.getMember(1L);
+            StudyEntity study = studyService.getStudyByLeader(1L);
             //리더가 아닌 가입 스터디
-            final Long studyNotLeader = 228L;
+            final Long studyNotLeader = 50L;
             studyMemberService.createStudyMember(StudyMemberCreate.builder().memberSeq(member.getSequence()).studySeq(studyNotLeader).build());
             //팀장 아닐때 지원한 스터디
-            final Long studyNotLeader2 = 226L;
+            final Long studyNotLeader2 = 49L;
             studyResumeService.createStudyResume(StudyResumeCreate.builder().memberSeq(member.getSequence()).studySeq(studyNotLeader2).content("지원할까말까").build());
 
             //지원안한 스터디
-            final Long studyNotApply = 177L;
+            final Long studyNotApply = 48L;
 
         }
 
@@ -155,8 +173,8 @@ public class InitDb {
         private void saveStudyFrequency() throws ParseException {
             SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
             java.util.Date date = formatter.parse("18:00");
-            for (int i = 0; i < 10; i++) {
-                long memberSequence = 50 + (3 * i);
+            for (int i = 1; i <= 10; i++) {
+                long memberSequence = i;
                 MemberEntity findmember = memberService.getMember(memberSequence);
                 StudyEntity findStudy = studyService.getStudyByLeader(findmember.getSequence());
 
@@ -182,33 +200,39 @@ public class InitDb {
         }
 
         private void saveTimer() {
-            for (int i = 0; i < 10; i++) {
-                long memberSequence = 50 + (3 * i);
+            String[] category = {"etc", "project", "computer-science", "algorithm", "mobile", "infra", "frontend", "backend"};
+
+            for (int i = 1; i <= 10; i++) {
+                long memberSequence = i;
                 for (int count = 1; count <= 30; count++) {
+                    int categoryIdx = (int) (Math.random() * 7);
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
-                            new ActivityRequest((long) (Math.random() * 50), "frontend"), memberSequence,
+                            new ActivityRequest((long) (Math.random() * 50), category[categoryIdx]), memberSequence,
                             day);
                 }
                 for (int count = 1; count <= 30; count++) {
+                    int categoryIdx = (int) (Math.random() * 7);
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
-                            new ActivityRequest((long) (Math.random() * 50), "backend"), memberSequence,
+                            new ActivityRequest((long) (Math.random() * 50), category[categoryIdx]), memberSequence,
                             day);
                 }
 
             }
-            for (long i = 240; i < 290; i++) {
+            for (long i = 1; i < 51; i++) {
                 for (int count = 1; count <= 30; count++) {
+                    int categoryIdx = (int) (Math.random() * 7);
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
-                    roomActivityService.saveRoomAcitivity(
-                            new ActivityRequest((long) (Math.random() * 50), "frontend"), i,
+                    roomActivityService.saveRoomActivity(
+                            new ActivityRequest((long) (Math.random() * 50), category[categoryIdx]), i,
                             day);
                 }
                 for (int count = 1; count <= 30; count++) {
+                    int categoryIdx = (int) (Math.random() * 7);
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
-                    roomActivityService.saveRoomAcitivity(
-                            new ActivityRequest((long) (Math.random() * 50), "backend"), i,
+                    roomActivityService.saveRoomActivity(
+                            new ActivityRequest((long) (Math.random() * 50), category[categoryIdx]), i,
                             day);
                 }
 
@@ -259,8 +283,8 @@ public class InitDb {
         private void saveStudy() {
             UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
                     .orElseThrow(UploadFileNotFound::new);
-            for (int i = 0; i < 10; i++) {
-                long memberSequence = 50 + (3 * i);
+            for (int i = 1; i <= 10; i++) {
+                long memberSequence = (i);
                 MemberEntity findmember = memberService.getMember(memberSequence);
                 for (int count = 1; count <= 5; count++) {
                     if (count % 2 == 0) {
@@ -284,7 +308,7 @@ public class InitDb {
         }
 
         public void saveStudyRoom() {
-            for (long i = 130; i < 230; i += 2)
+            for (long i = 1; i <= 50; i++)
                 studyRoomService.saveStudyRoom(i);
         }
 
