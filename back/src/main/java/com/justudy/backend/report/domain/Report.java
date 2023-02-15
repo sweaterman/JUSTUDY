@@ -25,7 +25,7 @@ public abstract class Report {
     @JoinColumn(name = "reporter_seq")
     private MemberEntity reporter;
 
-    @Column(name = "target_sequence")
+    @Column(name = "target_seq")
     private Long targetSequence;
 
     @Column(name = "report_content")

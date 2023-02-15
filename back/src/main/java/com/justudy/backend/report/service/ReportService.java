@@ -12,12 +12,14 @@ import com.justudy.backend.member.repository.MemberRepository;
 import com.justudy.backend.report.domain.*;
 import com.justudy.backend.report.dto.request.ReportRequest;
 import com.justudy.backend.report.dto.response.admin.ReportListResponse;
+import com.justudy.backend.report.dto.response.admin.ReportListResult;
 import com.justudy.backend.report.repository.ReportRepository;
 import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.exception.StudyNotFound;
 import com.justudy.backend.study.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,10 +50,12 @@ public class ReportService {
         return reportRepository.save(report).getSequence();
     }
 
-    public List<ReportListResponse> getReportList() {
-        return reportRepository.getReportList().stream()
+    public ReportListResult getReportList(Pageable pageable) {
+        List<ReportListResponse> reports = reportRepository.getReportList(pageable).stream()
                 .map(ReportListResponse::new)
                 .collect(Collectors.toList());
+        Long totalCount = reportRepository.getCountOfReportList();
+        return new ReportListResult<>(reports, totalCount);
     }
 
 
