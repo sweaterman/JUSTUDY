@@ -1,15 +1,15 @@
 <template>
-    <div>
+    <v-app>
         <NavHeader />
         <v-divider></v-divider>
         <router-view></router-view>
         <NavFooter />
-    </div>
+    </v-app>
 </template>
 
 <script>
 import NavHeader from '../src/components/common/NavHeader.vue';
-import NavFooter from '../src/components/common/NavFooter.vue';
+import NavFooter from './components/common/NavFooter.vue';
 
 export default {
     name: 'App',
@@ -19,3 +19,5 @@ export default {
     }
 };
 </script>
+
+<style></style>

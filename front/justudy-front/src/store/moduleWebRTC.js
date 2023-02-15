@@ -351,12 +351,12 @@ const moduleWebRTC = {
                 };
                 dispatch('sendMessage', message);
             };
-            state.webSock.onclose = async (e) => {
-                console.log('Socket is closed. Reconnect will be attempted in 1.5 second.', e);
-                setTimeout(function() {
-                    dispatch('reset',{url, person, room});
-                  }, 1500)
-            }
+            // state.webSock.onclose = async (e) => {
+            //     console.log('Socket is closed. Reconnect will be attempted in 1.5 second.', e);
+            //     setTimeout(function() {
+            //         dispatch('reset',{url, person, room});
+            //       }, 1500)
+            // }
         },
 
         setEnvironment({commit}, {maxWidth, maxFrameRate, minFrameRate}) {

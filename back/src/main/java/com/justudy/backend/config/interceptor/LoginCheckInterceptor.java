@@ -21,11 +21,10 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
         HttpSession session = request.getSession();
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
-        if (session != null && isLoggedIn(loginSequence)) {
+        if (session != null && loginSequence != null && isLoggedIn(loginSequence)) {
             log.info("LoginCheckInterceptor return true");
             return true;
         }

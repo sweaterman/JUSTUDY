@@ -19,7 +19,6 @@ package com.justudy.backend.GroupCall.model;
 
 import com.justudy.backend.GroupCall.dto.response.StudyRoomResponse;
 import com.justudy.backend.GroupCall.service.StudyRoomService;
-import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.dto.response.StudyDetailResponse;
 import com.justudy.backend.study.service.StudyService;
 import com.justudy.backend.timer.dto.request.ActivityRequest;
@@ -98,7 +97,7 @@ public class RoomManager {
       LocalDateTime startDateTime = room.getStartTime();
       LocalDateTime endDateTime = LocalDateTime.now();
       Long diffTime = ChronoUnit.SECONDS.between(startDateTime, endDateTime);
-      roomActivityService.saveRoomAcitivity(
+      roomActivityService.saveRoomActivity(
           new ActivityRequest(diffTime, studyDetailResponse.getTopCategory()),
           studyRoom.getSequence(),
           Date.valueOf(LocalDate.now()));

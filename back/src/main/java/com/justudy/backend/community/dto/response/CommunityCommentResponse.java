@@ -1,5 +1,6 @@
 package com.justudy.backend.community.dto.response;
 
+import com.justudy.backend.common.date.DateChanger;
 import com.justudy.backend.community.domain.CommunityCommentEntity;
 import com.justudy.backend.member.domain.MemberEntity;
 import lombok.AllArgsConstructor;
@@ -7,9 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
-import java.lang.reflect.Member;
-import java.time.LocalDateTime;
 
 @Log4j2
 @Getter
@@ -21,8 +19,8 @@ public class CommunityCommentResponse {
     private String memberNickName;
     private Long communitySeq;
     private String content;
-    private LocalDateTime createdTime;
-    private LocalDateTime modifiedTime;
+    private String createdTime;
+    private String modifiedTime;
     private Boolean isDeleted;
     private Long parentSeq;
 
@@ -49,7 +47,7 @@ public class CommunityCommentResponse {
                 .memberNickName(memberNickName)
                 .communitySeq(entity.getCommunity().getSequence())
                 .content(comment)
-                .createdTime(entity.getCreatedTime())
+                .createdTime(DateChanger.format(entity.getCreatedTime()))
                 .parentSeq(entity.getParentSeq())
                 .isWriter(isWriter)
                 .build();

@@ -25,6 +25,18 @@
             </v-col>
 
             <v-col cols="12" md="10" v-if="isView" justify="center" align="center">
+                <v-row>
+                    <v-col>
+                        <v-col cols="12" md="6" justify="center" align="center">
+                            <router-link to="/ranking/study-ranking" style="text-decoration: none; color: black">
+                                <span class="material-icons-outlined"> group </span>
+                                <div>스터디 랭킹</div>
+                            </router-link>
+                        </v-col>
+                        <h4>카테고리</h4>
+                        <h4>를 선택해주세요</h4>
+                    </v-col>
+                </v-row>
                 <v-row :style="{marginTop: '0.4%'}">
                     <v-col coks="12" md="2">
                         <v-row justify="center" align="center">

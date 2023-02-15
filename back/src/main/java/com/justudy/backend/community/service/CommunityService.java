@@ -13,6 +13,8 @@ import com.justudy.backend.community.exception.CommunityNotFound;
 import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.exception.ForbiddenRequest;
 import com.justudy.backend.member.domain.MemberEntity;
+import com.justudy.backend.report.dto.request.CommunityReportReason;
+import com.justudy.backend.report.dto.response.CommunityReportDetail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +22,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -81,6 +85,15 @@ public class CommunityService {
                 categoryService.getCategoryEntityByKey(request.getCategory()));
 
         return CommunityDetailResponse.makeBuilder(community, true, false, false);
+    }
+
+    public CommunityReportDetail getReportDetail(Long communitySequence) {
+        CommunityEntity community = communityRepository.findBySequence(communitySequence)
+                .orElseThrow(CommunityNotFound::new);
+        Map<String, String> reasonMap = Arrays.stream(CommunityReportReason.class.getEnumConstants())
+                .collect(Collectors.toMap(reason -> reason.getValue(), reason -> reason.getMessage()));
+
+        return new CommunityReportDetail(community.getMember().getNickname(), community.getTitle(), reasonMap);
     }
 
     public CommunityListResult<List<CommunityListResponse>> getCommunities(CommunitySearch condition) {

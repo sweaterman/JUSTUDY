@@ -13,8 +13,13 @@ import com.justudy.backend.community.dto.response.CommunityListResult;
 import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.service.MemberService;
+import com.justudy.backend.report.dto.response.admin.ReportDetail;
+import com.justudy.backend.report.dto.response.admin.ReportListResult;
+import com.justudy.backend.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +38,8 @@ public class AdminController {
     private final MemberService memberService;
 
     private final CommunityService communityService;
+
+    private final ReportService reportService;
 
     @GetMapping("/total-member")
     public TotalResult getTotalMember() {
@@ -83,5 +90,15 @@ public class AdminController {
     @GetMapping("/week/community")
     public Long geCountOfCommunityByWeek() {
         return adminService.geCountOfCommunityByWeek();
+    }
+
+    @GetMapping("/report")
+    public ReportListResult getReportList(@PageableDefault(size = 20) Pageable pageable) {
+        return reportService.getReportList(pageable);
+    }
+
+    @GetMapping("/report/{reportId}")
+    public ReportDetail getReportDetail(@PathVariable("reportId") Long reportSequence) {
+        return reportService.getReportDetail(reportSequence);
     }
 }

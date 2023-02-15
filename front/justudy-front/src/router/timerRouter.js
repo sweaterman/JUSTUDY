@@ -9,18 +9,20 @@ export default [
     {
         path: '/timer/study-start',
         name: 'TimerStart',
-        component: TimerStart
+        component: TimerStart,
+        meta: {authorization: ['login']}
     },
     {
         path: '/timer/my-statistics',
         name: 'TimerMyStatistic',
-        component: TimerMyStatistic
-        // meta: {authorization: ['login']}
+        component: TimerMyStatistic,
+        meta: {authorization: ['login']}
     },
     {
         path: '/timer/friend-statistics',
         name: 'TimerFriendStatistic',
-        component: TimerFriendStatistic
+        component: TimerFriendStatistic,
+        meta: {authorization: ['login']}
     },
     {
         path: '/timer/ranking',
@@ -29,6 +31,7 @@ export default [
     },
     {
         path: '/aaa',
-        component: Aaaa
+        component: Aaaa,
+        meta: {authorization: ['login']}
     }
 ];
