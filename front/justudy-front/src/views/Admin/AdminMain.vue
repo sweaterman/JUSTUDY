@@ -14,8 +14,8 @@
                 <v-row>
                     <v-col cols="12" md="1" ></v-col>
                     <v-col cols="12" md="3" class="boxModel">총 유저수<br/>{{ totalUserNum }}</v-col>
-                    <v-col cols="12" md="3" class="boxModel">일일 로그인 횟수<br/>{{ dailyUserNum }}</v-col>
-                    <v-col cols="12" md="3" class="boxModel">금주 총 로그인 시간<br/>{{ weeklyLoginTime }}</v-col>
+                    <v-col cols="12" md="3" class="boxModel">금주 커뮤니티 생성 수<br/>{{ weekCommunityNum }}</v-col>
+                    <v-col cols="12" md="3" class="boxModel">금주 회원가입 수 <br/>{{ weeklyLoginTime }}</v-col>
                     <v-col cols="12" md="1" ></v-col>
                 </v-row>
                 <div style="height:200px"></div>
@@ -40,14 +40,17 @@
 
 <script>
 import TabIcon from "@/components/Admin/TabIcon.vue"
+import axios from 'axios';
+import port from '@/store/port';
 export default {
     name: 'AdminMain',
     components: {TabIcon},
 
     data() {
         return {
+            port:port,
             totalUserNum:120,
-            dailyUserNum:10,
+            weekCommunityNum:10,
             weeklyLoginTime:300,
             series1: [{
               name: "Desktops",
@@ -111,8 +114,52 @@ export default {
         };
     },
 
+    created(){
+        this.getTotalMember();
+        this.getWeekcommunity();
+        this.getSignup();
+    },  
     
     methods: {
+        getTotalMember(){
+            let API_URL = `${this.port}admin/total-member`;
+            
+            axios.get(API_URL)
+            .then((ret) => {
+                    this.totalUserNum = ret.data.total;
+                    console.log(this.totalUserNum);
+                }
+            )
+            .catch((error) => {
+                console.log(error);
+            });
+        },
+        getWeekcommunity(){
+            let API_URL = `${this.port}admin/week/community`;
+            
+            axios.get(API_URL)
+            .then((ret) => {
+                    this.weekCommunityNum = ret.data;
+                    console.log(this.weekCommunityNum);
+                }
+            )
+            .catch((error) => {
+                console.log(error);
+            });
+        },
+        getSignup(){
+            let API_URL = `${this.port}admin/week/signup`;
+            
+            axios.get(API_URL)
+            .then((ret) => {
+                    this.weeklyLoginTime = ret.data;
+                    console.log(this.weeklyLoginTime);
+                }
+            )
+            .catch((error) => {
+                console.log(error);
+            });
+        },
     }
 };
 </script>

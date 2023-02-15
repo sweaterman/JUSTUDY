@@ -43,7 +43,7 @@
                                         <td style="width: 5%; font-size: x-large">No</td>
                                         <td style="width: 20%; font-size: x-large">스터디명</td>
                                         <td style="width: 20%; font-size: x-large">스터디장</td>
-                                        <td style="width: 20%; font-size: x-large">스터디설명</td>
+                                        <td style="width: 20%; font-size: x-large">스터디카테고리</td>
                                         <td style="width: 20%; font-size: x-large">인원수</td>
                                         <td style="width: 15%; font-size: x-large">개설일자</td>
                                     </tr>
@@ -53,7 +53,7 @@
                                         <td>{{ item.no }}</td>
                                         <td>{{ item.name }}</td>
                                         <td>{{ item.leader }}</td>
-                                        <td>{{ item.introduce }}</td>
+                                        <td>{{ item.topCategory }}</td>
                                         <td>{{ item.userNums }}</td>
                                         <td>{{ item.createdAt.split('T')[0] }}</td>
                                         <!-- Sequelize의 createdAt, updatedAt의 날짜 형식이 '2021-12-10T12:38:52.000Z' 이런 식이여서 
@@ -79,7 +79,7 @@
                             </v-col>
 
                             <v-col cols="12" md="2" justify="center" align="center">
-                                <div style="margin-top: 5px; margin-right: 10px; margin-left: 10px">{{ $route.query.page }}/{{ totalpage }} page</div>
+                                <div style="margin-top: 5px; margin-right: 10px; margin-left: 10px">{{ page }} page</div>
                                 <!-- 위와 같이 해줌으로서 '현재페이지/총페이지 page' 식으로 나타냄 -->
                             </v-col>
 
@@ -101,17 +101,23 @@
 </template>
 <script>
 import TabIcon from '@/components/Admin/TabIcon.vue';
+import axios from 'axios';
+import port from '@/store/port';
 export default {
     components: {TabIcon},
     data() {
         return {
+            port:port,
             searchoption:['스터디명','스터디장'],
             searchoptionselected:'스터디명',
+            searchkeyword:"",
+            size : 10,
+            page : 1,
             contentlist: [{
                     no :1,
                     name :"놀자",
                     leader :"olleh",
-                    introduce :"온라인이 진리",      
+                    topCategory :"온라인이 진리",      
                     userNums :"3/4",     
                     createdAt: "2012-01-01T"
                 }
@@ -130,7 +136,45 @@ export default {
         //     }
         // }
     },
+    created(){
+        this.changeUserData();
+    },
     methods: {
+        changeUserData(){
+            
+            // let API_URL = `${this.port}study?pageNumber=${this.page}&pageSize=${this.size}&paged=true`;
+            let API_URL = `${this.port}study/?page=${this.page}`;
+            if(this.searchword != null &&  this.searchword != "" ){
+                API_URL = `${this.port}study/?page=${this.page}&search=${this.searchword}&type=${this.searchoptionselected}`;
+            }
+            console.log("API_URL : "+API_URL);
+            this.contentlist = [];
+            axios.get(API_URL)
+            .then((ret) => {
+                    let response = ret.data.studyResponse;
+                    console.log(response);
+                    for(let i = 0; i < response.length; i++){
+                        response[i];
+                        this.contentlist.push(
+                            {
+                                id : response[i].sequence,
+                                no :i+1,
+                                name :response[i].name,
+                                leader :response[i].leader,
+                                userNums :response[i].population,
+                                createdAt :response[i].startTime,
+                                topCategory :response[i].topCategory
+
+                            }
+                        )
+                    }
+                    console.log(this.contentlist);
+                }
+            )
+            .catch((error) => {
+                console.log(error);
+            });
+        },
         // 페이지 이동시 params로 게시판 구분, query로 페이지 구분
         movetoboard1() {
             // window.location.href = 'admin/study/1/?page=1';
@@ -151,26 +195,27 @@ export default {
             // 여기다 write를 붙여주면 글 작성 페이지로 라우팅 되게 됨
         },
         movetocontent(id) {
-            console.log(id);
             // 클릭된 글의 id를 받아와야 라우팅할때 보낼 수 있음
-            // window.location.href = window.location.pathname + 'content?id=' + id;
+            console.log('/study/' + id);
+            window.location.href = '/study/' + id;
         },
         movetopreviouspage() {
-            if (this.$route.query.page == 1) {
+            if (this.page == 1) {
                 alert('첫번째 페이지입니다!');
             } else {
-                var pp = parseInt(this.$route.query.page) - 1;
-                window.location.href = window.location.pathname + '?page=' + pp;
+                this.page-=1;
+                this.changeUserData();
             }
         },
         movetonextpage() {
-            if (this.$route.query.page == Math.ceil(this.cnt / 10)) {
-                alert('마지막 페이지입니다!');
-            } else {
-                var pp = parseInt(this.$route.query.page) + 1;
-                window.location.href = window.location.pathname + '?page=' + pp;
-            }
-        }
+                this.page+=1;
+                this.changeUserData();
+        },
+        searchstart(){
+            this.searchword =this.searchkeyword; 
+            this.page=1;
+            this.changeUserData();
+        },
     }
 };
 </script>

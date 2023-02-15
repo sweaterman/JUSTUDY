@@ -157,7 +157,7 @@ export default {
     methods: {
         changeUserData(){
             let API_URL = `${this.port}admin/member?page=${this.page}&size=${this.size}`;
-            if(this.searchword != null ||  this.searchword != "" ){
+            if(this.searchword != null  &&  this.searchword != "" ){
                 API_URL = `${this.port}admin/member?page=${this.page}&size=${this.size}&search=${this.searchword}&type=${this.searchoptionselected}`;
             }
             console.log("API_URL : "+API_URL);
@@ -171,7 +171,7 @@ export default {
                         this.contentlist.push(
                             {
                                 id:response[i].memberSequence,
-                                no:i,
+                                no:i+1,
                                 writer:response[i].username,
                                 nickName:response[i].nickname,
                                 ssafy:response[i].ssafyId,

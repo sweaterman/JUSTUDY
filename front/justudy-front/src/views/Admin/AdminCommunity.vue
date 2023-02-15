@@ -16,7 +16,7 @@
                         <div align="center" :style="{fontSize: 'xx-large'}">커뮤니티 관리</div>
                         <v-row style="padding-top: 60px">
                             <v-col cols="12" md="2">
-                                <v-select :items="searchTopOption" v-model="searchTopOptionSelected" :style="{width: '150px'}" />
+                                <!-- <v-select :items="searchTopOption" v-model="searchTopOptionSelected" :style="{width: '150px'}" /> -->
                             </v-col>
                             <v-col cols="12" md="2" >
                                 <v-select :items="searchoption" v-model="searchoptionselected" :style="{width: '150px'}" />
@@ -44,8 +44,8 @@
                                         <td style="width: 5%; font-size: x-large">No</td>
                                         <td style="width: 20%; font-size: x-large">제목</td>
                                         <td style="width: 20%; font-size: x-large">글쓴이</td>
-                                        <td style="width: 20%; font-size: x-large">내용</td>
-                                        <td style="width: 20%; font-size: x-large">분류</td>
+                                        <td style="width: 20%; font-size: x-large">조회수</td>
+                                        <td style="width: 20%; font-size: x-large">좋아요수</td>
                                         <td style="width: 15%; font-size: x-large">작성일자</td>
                                     </tr>
                                 </thead>
@@ -54,8 +54,8 @@
                                         <td>{{ item.no }}</td>
                                         <td>{{ item.title }}</td>
                                         <td>{{ item.writer }}</td>
-                                        <td>{{ item.content }}</td>
-                                        <td>{{ item.kinds }}</td>
+                                        <td>{{ item.viewCount }}</td>
+                                        <td>{{ item.loveCount }}</td>
                                         <td>{{ item.createdAt.split('T')[0] }}</td>
                                         <!-- Sequelize의 createdAt, updatedAt의 날짜 형식이 '2021-12-10T12:38:52.000Z' 이런 식이여서 
                                     split('T')[0]을 통해 날짜만 표시 -->
@@ -80,7 +80,7 @@
                             </v-col>
 
                             <v-col cols="12" md="2" justify="center" align="center">
-                                <div style="margin-top: 5px; margin-right: 10px; margin-left: 10px">{{ $route.query.page }}/{{ totalpage }} page</div>
+                                <div style="margin-top: 5px; margin-right: 10px; margin-left: 10px">{{ page }} page</div>
                                 <!-- 위와 같이 해줌으로서 '현재페이지/총페이지 page' 식으로 나타냄 -->
                             </v-col>
 
@@ -190,20 +190,28 @@
 </template>
 <script>
 import TabIcon from "@/components/Admin/TabIcon.vue"
+import axios from 'axios';
+import port from '@/store/port';
 export default {
     components: {TabIcon},
     data() {
         return {
+            port:port,
+            page:1,
+            size:10,
+            searchword:"",
+            searchkeyword:"",
             searchTopOption:['frontend','backend','infra','cs','algorithm','leading-edge','bulletinboard'],
             searchTopOptionSelected:"frontend",
-            searchoption:['제목','글쓴이',"작성일자"],
-            searchoptionselected:'제목',
+            searchoption:['NICKNAME','TITLE',"CONTENT"],
+            searchoptionselected:'NICKNAME',
             contentlist: [{
+                    id:0,
                     no :1,
                     title :"GOD 어머님께",
                     writer :"짱구",
-                    content :"어머님은 탕수육을 좋아하셨어",      
-                    kinds :"frontend",     
+                    viewCount :"어머님은 탕수육을 좋아하셨어",      
+                    loveCount :"frontend",     
                     createdAt: "2012-01-01T"
                 }
             ], // 현재 게시판과 페이지에 맞는 글 리스트들
@@ -221,7 +229,42 @@ export default {
         //     }
         // }
     },
+    created(){
+        this.changeUserData();
+    },
     methods: {
+        changeUserData(){
+            let API_URL = `${this.port}admin/community?page=${this.page}&size=${this.size}`;
+            if(this.searchword != null &&  this.searchword != "" ){
+                API_URL = `${this.port}admin/community?page=${this.page}&size=${this.size}&search=${this.searchword}&type=${this.searchoptionselected}`;
+            }
+            console.log("API_URL : "+API_URL);
+            this.contentlist = [];
+            axios.get(API_URL)
+            .then((ret) => {
+                    let response = ret.data.communityList;
+                    console.log(ret);
+                    for(let i = 0; i < response.length; i++){
+                        response[i];
+                        this.contentlist.push(
+                            {
+                                id : response[i].sequence,
+                                no :i+1,
+                                title :response[i].title,
+                                writer :response[i].nickname,
+                                viewCount :response[i].viewCount,
+                                loveCount :response[i].loveCount, 
+                                createdAt: response[i].createdTime,
+                            }
+                        )
+                    }
+                    console.log(this.contentlist);
+                }
+            )
+            .catch((error) => {
+                console.log(error);
+            });
+        },
         // 페이지 이동시 params로 게시판 구분, query로 페이지 구분
         movetoboard1() {
             // window.location.href = 'admin/community/1/?page=1';
@@ -243,25 +286,26 @@ export default {
         },
         movetocontent(id) {
             // 클릭된 글의 id를 받아와야 라우팅할때 보낼 수 있음
-            console.log(id);
-            // window.location.href = window.location.pathname + 'content?id=' + id;
+            console.log('/community/content/' + id);
+            window.location.href = '/community/content/' + id;
         },
         movetopreviouspage() {
-            if (this.$route.query.page == 1) {
+            if (this.page == 1) {
                 alert('첫번째 페이지입니다!');
             } else {
-                var pp = parseInt(this.$route.query.page) - 1;
-                window.location.href = window.location.pathname + '?page=' + pp;
+                this.page-=1;
+                this.changeUserData();
             }
         },
         movetonextpage() {
-            if (this.$route.query.page == Math.ceil(this.cnt / 10)) {
-                alert('마지막 페이지입니다!');
-            } else {
-                var pp = parseInt(this.$route.query.page) + 1;
-                window.location.href = window.location.pathname + '?page=' + pp;
-            }
-        }
+                this.page+=1;
+                this.changeUserData();
+        },
+        searchstart(){
+            this.searchword =this.searchkeyword; 
+            this.page=1;
+            this.changeUserData();
+        },
     }
 };
 </script>
