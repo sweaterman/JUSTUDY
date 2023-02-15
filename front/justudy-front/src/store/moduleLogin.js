@@ -12,6 +12,9 @@ export default {
     mutations: {
         SET_ISLOGIN(state, payload) {
             state.isLogin = payload;
+        },
+        stateLogout(state) {
+            state.isLogin.loginCheck = false;
         }
     },
     actions: {
@@ -56,6 +59,10 @@ export default {
                 .catch(err => {
                     console.log(err);
                 });
+        },
+
+        async stateLogout({commit}) {
+            commit('stateLogout');
         }
     }
 };

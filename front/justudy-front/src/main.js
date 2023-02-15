@@ -15,6 +15,7 @@ router.beforeEach(async (to, from, next) => {
 
     if (authorization?.[0] == 'login') {
         // 여기서 로그인 체크 할것임
+
         await axios
             .get(port + 'member/mypage', {
                 withCredentials: true
@@ -24,7 +25,11 @@ router.beforeEach(async (to, from, next) => {
             })
             .catch(() => {
                 alert('로그인이 필요합니다.');
-                return next({path: '/login'});
+                console.log(store._modules.root._children.moduleLogin.state.isLogin.loginCheck);
+                console.log(store.registered);
+                // store._modules.root._children.moduleLogin._rawModule.state.isLogin.loginCheck = true;
+                // store._modules.root._children.moduleLogin._rawModule.actions('moduleLogin/stateLogout');
+                return next({path: '/beforeLogin'});
             });
         // console.log(authorization);
     }
