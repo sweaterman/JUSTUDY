@@ -1,11 +1,11 @@
 <template>
-    <div class="div">
+    <div class="footer_div">
         <v-container>
             <v-row>
                 <v-col cols="0" md="2" />
 
                 <!-- 이미지 부분  -->
-                <v-col class="center" cols="12" md="2">
+                <v-col class="footer_center" cols="12" md="2">
                     <img style="width: 110px; height: 90px" src="@/assets/ssafy.png" alt="ssafy" />
                 </v-col>
 
@@ -28,12 +28,14 @@
 </template>
 
 <script>
-export default {};
+export default {
+    name: 'NavFooter'
+};
 </script>
 
 <style scoped>
-.div {
-    margin-top: 20px;
+.footer_div {
+    margin-top: 50px;
     background-color: #363636;
     height: 150px;
     display: flex;
@@ -41,7 +43,7 @@ export default {};
     justify-content: center;
 }
 
-.center {
+.footer_center {
     display: flex;
     align-items: center;
     justify-content: center;
