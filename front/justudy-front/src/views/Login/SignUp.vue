@@ -175,7 +175,7 @@
                                     <v-subheader>관심있는 기술 스택</v-subheader>
                                 </v-col>
                                 <v-col cols="12" md="9">
-                                    <v-combobox v-model="user.category" :items="bottomCategories" item-text="value" item-value="key" label="관심 기술" multiple></v-combobox>
+                                    <v-combobox v-model="user.category" :items="memberCategory" item-text="value" item-value="key" label="관심 기술" multiple></v-combobox>
                                 </v-col>
                             </v-row>
 
@@ -250,14 +250,14 @@ import {mapState} from 'vuex';
 export default {
     name: 'SignUpView',
     computed: {
-        ...mapState('moduleStudy', ['bottomCategories']),
+        ...mapState('moduleSignUp', ['memberCategory']),
         ...mapState('moduleSignUp', ['checkId']),
         ...mapState('moduleSignUp', ['checkNickname']),
         ...mapState('moduleSignUp', ['checkSsafyId']),
         ...mapState('moduleSignUp', ['checkMM'])
     },
     created() {
-        this.$store.dispatch('moduleStudy/getBottomCategories', '전체');
+        this.$store.dispatch('moduleSignUp/getMemberCategory');
     },
     data() {
         return {

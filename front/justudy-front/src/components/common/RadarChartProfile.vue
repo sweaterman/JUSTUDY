@@ -14,6 +14,7 @@
                     :width="width"
                     :height="height"
                 />
+                <!-- {{ chartData }} -->
             </v-col>
         </v-row>
     </v-row>
@@ -67,7 +68,8 @@ export default {
         },
         buttonContent: {
             type: String
-        }
+        },
+        nickName: {}
     },
     computed: {
         chartData() {
@@ -122,7 +124,7 @@ export default {
         await this.$store.dispatch('moduleMyPage/getMyPageUser');
 
         this.user = this.$store.state.moduleMyPage.user;
-        await this.$store.dispatch('moduleTimer/getStudyCategory', {nickName: this.user.nickname});
+        await this.$store.dispatch('moduleTimer/getStudyCategory', {nickName: this.nickName});
         this.category = this.$store.state.moduleTimer.studyCategory;
         // this.category = this.$store.state.moduleTimer.studyCategory;
 

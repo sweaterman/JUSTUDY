@@ -25,7 +25,6 @@ import Profile from '@/components/mypage/Profile.vue';
 import port from '@/store/port';
 export default {
     name: 'FollowFollowing',
-
     components: {
         BasicButton,
         Profile

@@ -2,7 +2,7 @@
     <div :v-model="dialog" v-if="dialog" id="all" @click="close(true)">
         <div id="modal" @click="close(false)" style="padding: 100px 300px">
             <div class="d-flex justify-center">
-                <ProfilePicture :diameter="200" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" :src="src" />
+                <ProfilePicture :diameter="200" :buttonLength="200" :height="70" :fontSize="32" content="LV" standard="px" :src="`${port}images/${data.imageSequence}`" />
                 <!-- <v-img :src="src" style="width: 200px; height: 200px; border-radius: 100px" /> -->
                 <div class="d-flex flex-column pa-12">
                     <div>
@@ -33,12 +33,13 @@
             </div>
             <div class="d-flex justify-center">
                 <div>
-                    <h1 style="font-size: 64px">자기소개</h1>
-                    <h1>안녕하세요</h1>
-                    <h1>만능 개발자 입니다.</h1>
-                    <h1>타이머 대결 환영합니다.</h1>
+                    <h1 style="font-size: 48px">자기소개</h1>
+                    <h2>
+                        {{ data.introduction ? data.introduction : '소개글이 없습니다.' }}
+                    </h2>
                 </div>
-                <RadarChart buttonContent="학습 진행도" :hasButton="true" />
+                <!-- {{ data }} -->
+                <RadarChartProfile buttonContent="학습 진행도" :hasButton="true" :nickName="data.nickname" />
             </div>
         </div>
     </div>
@@ -46,13 +47,13 @@
 <script>
 import ProfilePicture from './ProfilePicture.vue';
 
-import RadarChart from '@/components/common/RadarChart.vue';
+import RadarChartProfile from '@/components/common/RadarChartProfile.vue';
 import port from '@/store/port';
 export default {
     name: 'ModalComponent',
     components: {
         ProfilePicture,
-        RadarChart
+        RadarChartProfile
     },
     data() {
         return {

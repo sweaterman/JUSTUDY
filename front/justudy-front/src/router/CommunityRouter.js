@@ -12,7 +12,8 @@ export default [
     {
         path: '/community/write',
         name: 'CommuWrite',
-        component: CommuWrite
+        component: CommuWrite,
+        meta: {authorization: ['login']}
     },
     {
         path: '/community/content/:id',
@@ -22,6 +23,7 @@ export default [
     {
         path: '/community/content/:id/update',
         name: 'CommuUpdate',
-        component: CommuUpdate
+        component: CommuUpdate,
+        meta: {authorization: ['login']}
     }
 ];
