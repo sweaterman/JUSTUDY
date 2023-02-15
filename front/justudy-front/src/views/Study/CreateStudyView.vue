@@ -19,7 +19,12 @@
                             <!-- 이미지 업로드 -->
                             <v-row>
                                 <v-col cols="12" align="center">
-                                    <v-file-input v-model="file" show-size label="이미지 선택" @change="onFileSelected(file)"></v-file-input>
+                                    <v-file-input
+                                        v-model="file"
+                                        show-size
+                                        label="이미지 선택"
+                                        @change="onFileSelected(file)"
+                                    ></v-file-input>
                                     <!-- <input type="file" onchange="readURL(this);" /> -->
                                 </v-col>
                             </v-row>
@@ -27,13 +32,24 @@
                             <!-- 스터디 이름 -->
                             <v-row>
                                 <v-col class="center" cols="8">
-                                    <v-text-field v-model="study.name" @input="nameCheckVal = false" label="스터디 이름" :rules="name_rules" hide-details="auto"></v-text-field>
+                                    <v-text-field
+                                        v-model="study.name"
+                                        @input="nameCheckVal = false"
+                                        label="스터디 이름"
+                                        :rules="name_rules"
+                                        hide-details="auto"
+                                    ></v-text-field>
                                 </v-col>
                                 <v-col class="center" cols="4">
-                                    <v-btn color="green darken-1" outlined text @click="nameCheckBtn(study.name)">
+                                    <v-btn
+                                        color="green darken-1"
+                                        outlined
+                                        text
+                                        @click="nameCheckBtn(study.name)"
+                                    >
                                         중복체크
-                                        <v-icon v-if="nameCheckVal" right> mdi-check-bold </v-icon>
-                                        <v-icon v-if="!nameCheckVal" right> mdi-alert-circle-outline </v-icon>
+                                        <v-icon v-if="nameCheckVal" right>mdi-check-bold</v-icon>
+                                        <v-icon v-if="!nameCheckVal" right>mdi-alert-circle-outline</v-icon>
                                     </v-btn>
                                 </v-col>
                             </v-row>
@@ -67,14 +83,14 @@
                                     <v-subheader>상위 카테고리</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    <v-combobox
+                                    <v-select
                                         v-model="study.topCategory"
                                         :items="topCategories"
                                         item-text="value"
                                         item-value="key"
                                         label="상위 카테고리 선택"
                                         @change="checkTopCategory()"
-                                    ></v-combobox>
+                                    ></v-select>
                                 </v-col>
                             </v-row>
 
@@ -84,7 +100,13 @@
                                     <v-subheader>하위 카테고리</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    <v-combobox v-model="study.bottomCategory" :items="bottomCategories" item-text="value" item-value="key" label="하위 카테고리 선택"></v-combobox>
+                                    <v-select
+                                        v-model="study.bottomCategory"
+                                        :items="bottomCategories"
+                                        item-text="value"
+                                        item-value="key"
+                                        label="하위 카테고리 선택"
+                                    ></v-select>
                                 </v-col>
                             </v-row>
 
@@ -94,7 +116,11 @@
                                     <v-subheader>모집 인원</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    <v-combobox v-model="study.population" :items="populationList" label="모집인원 선택"></v-combobox>
+                                    <v-select
+                                        v-model="study.population"
+                                        :items="populationList"
+                                        label="모집인원 선택"
+                                    ></v-select>
                                 </v-col>
                             </v-row>
 
@@ -104,7 +130,11 @@
                                     <v-subheader>LEVEL</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    <v-combobox v-model="study.level" :items="levelList" label="레벨 선택"></v-combobox>
+                                    <v-select
+                                        v-model="study.level"
+                                        :items="levelList"
+                                        label="레벨 선택"
+                                    ></v-select>
                                 </v-col>
                             </v-row>
 
@@ -116,7 +146,9 @@
                                 <v-col cols="8">
                                     <!-- 활동주기 확인/삭제하는 v-for -->
                                     <v-row v-for="i in frequency_num" :key="i">
-                                        <v-col cols="6"> {{ study.frequency[i - 1].week }} / {{ study.frequency[i - 1].startTime }} ~ {{ study.frequency[i - 1].endTime }} </v-col>
+                                        <v-col
+                                            cols="6"
+                                        >{{ study.frequency[i - 1].week }} / {{ study.frequency[i - 1].startTime }} ~ {{ study.frequency[i - 1].endTime }}</v-col>
                                         <v-col cols="6">
                                             <v-btn
                                                 class="mx-2"
@@ -126,7 +158,7 @@
                                                 color="red"
                                                 @click="deleteFrequency(study.frequency[i - 1].week, study.frequency[i - 1].startTime, study.frequency[i - 1].endTime)"
                                             >
-                                                <v-icon dark> mdi-minus </v-icon>
+                                                <v-icon dark>mdi-minus</v-icon>
                                             </v-btn>
                                         </v-col>
                                     </v-row>
@@ -141,7 +173,7 @@
                                     <!-- 활동주기 모달 -->
                                     <v-dialog v-model="frequency_dialog" width="800">
                                         <v-card>
-                                            <v-card-title> 활동 주기 추가 </v-card-title>
+                                            <v-card-title>활동 주기 추가</v-card-title>
 
                                             <v-card-text>
                                                 <v-row>
@@ -149,7 +181,11 @@
                                                         <v-subheader>요일 선택</v-subheader>
                                                     </v-col>
                                                     <v-col cols="9">
-                                                        <v-combobox v-model="temp_frequency.week" :items="week_option" label="요일 선택"></v-combobox>
+                                                        <v-combobox
+                                                            v-model="temp_frequency.week"
+                                                            :items="week_option"
+                                                            label="요일 선택"
+                                                        ></v-combobox>
                                                     </v-col>
                                                 </v-row>
                                                 <v-row>
@@ -162,10 +198,18 @@
                                                 </v-row>
                                                 <v-row>
                                                     <v-col cols="6">
-                                                        <v-time-picker v-model="temp_frequency.startTime" ampm-in-title format="ampm"></v-time-picker>
+                                                        <v-time-picker
+                                                            v-model="temp_frequency.startTime"
+                                                            ampm-in-title
+                                                            format="ampm"
+                                                        ></v-time-picker>
                                                     </v-col>
                                                     <v-col cols="6">
-                                                        <v-time-picker v-model="temp_frequency.endTime" ampm-in-title format="ampm"></v-time-picker>
+                                                        <v-time-picker
+                                                            v-model="temp_frequency.endTime"
+                                                            ampm-in-title
+                                                            format="ampm"
+                                                        ></v-time-picker>
                                                     </v-col>
                                                 </v-row>
                                             </v-card-text>
@@ -174,8 +218,16 @@
 
                                             <v-card-actions>
                                                 <v-spacer></v-spacer>
-                                                <v-btn color="primary" text @click="addFrequency()"> 확인 </v-btn>
-                                                <v-btn color="primary" text @click="frequency_dialog = false"> 취소 </v-btn>
+                                                <v-btn
+                                                    color="primary"
+                                                    text
+                                                    @click="addFrequency()"
+                                                >확인</v-btn>
+                                                <v-btn
+                                                    color="primary"
+                                                    text
+                                                    @click="frequency_dialog = false"
+                                                >취소</v-btn>
                                             </v-card-actions>
                                         </v-card>
                                     </v-dialog>
@@ -188,7 +240,11 @@
                                     <v-subheader>모임</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    <v-combobox v-model="study.meeting" :items="meetingList" label="모임 방식 선택"></v-combobox>
+                                    <v-select
+                                        v-model="study.meeting"
+                                        :items="meetingList"
+                                        label="모임 방식 선택"
+                                    ></v-select>
                                 </v-col>
                             </v-row>
 
@@ -198,7 +254,7 @@
                                     <v-subheader>시작 예정일</v-subheader>
                                 </v-col>
                                 <v-col cols="8">
-                                    <v-text-field v-model="study.startTime"></v-text-field>
+                                    <v-text-field v-model="study.startTime" hint="ex) 2월 초 쯤 시작"></v-text-field>
                                 </v-col>
                             </v-row>
 
@@ -226,7 +282,13 @@
                     <!-- 등록 버튼 -->
                     <v-row class="text-center">
                         <v-col cols="12">
-                            <v-btn rounded color="#FFEB00" style="width: 200px" large @click="createStudy()">
+                            <v-btn
+                                rounded
+                                color="#FFEB00"
+                                style="width: 200px"
+                                large
+                                @click="createStudy()"
+                            >
                                 <h2>등록 완료하기</h2>
                             </v-btn>
                         </v-col>
@@ -343,16 +405,20 @@ export default {
             }
         },
         addFrequency() {
-            this.frequency_num = this.frequency_num + 1;
-            this.study.frequency = this.study.frequency.concat({
-                week: this.temp_frequency.week,
-                startTime: this.temp_frequency.startTime,
-                endTime: this.temp_frequency.endTime
-            });
-            this.temp_frequency.week = null;
-            this.temp_frequency.startTime = null;
-            this.temp_frequency.endTime = null;
-            this.frequency_dialog = false;
+            if (this.temp_frequency.week == null || this.temp_frequency.startTime == null || this.temp_frequency.endTime == null) {
+                alert('모든 항목을 선택해주세요!');
+            } else {
+                this.frequency_num = this.frequency_num + 1;
+                this.study.frequency = this.study.frequency.concat({
+                    week: this.temp_frequency.week,
+                    startTime: this.temp_frequency.startTime,
+                    endTime: this.temp_frequency.endTime
+                });
+                this.temp_frequency.week = null;
+                this.temp_frequency.startTime = null;
+                this.temp_frequency.endTime = null;
+                this.frequency_dialog = false;
+            }
         },
         deleteFrequency(w, s, e) {
             this.frequency_num = this.frequency_num - 1;
@@ -367,7 +433,7 @@ export default {
             reader.readAsDataURL(file);
             reader.addEventListener(
                 'load',
-                function () {
+                function() {
                     fileData(reader.result);
                 },
                 false

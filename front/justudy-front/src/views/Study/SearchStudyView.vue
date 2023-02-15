@@ -25,23 +25,42 @@
                         <v-col cols="12">
                             <v-tabs color="black" v-model="tab">
                                 <v-tabs-slider color="yellow"></v-tabs-slider>
-                                <v-tab @click="changeBottom('전체')"><h1>전체</h1></v-tab>
-                                <v-tab v-for="top in topCategories" :key="top.key" @click="changeBottom(top.key)">
+                                <v-tab @click="changeBottom('전체')">
+                                    <h1>전체</h1>
+                                </v-tab>
+                                <v-tab
+                                    v-for="top in topCategories"
+                                    :key="top.key"
+                                    @click="changeBottom(top.key)"
+                                >
                                     <h1>{{ top.value }}</h1>
                                 </v-tab>
                             </v-tabs>
                         </v-col>
                     </v-row>
 
-                    <v-row><v-divider></v-divider></v-row>
+                    <v-row>
+                        <v-divider></v-divider>
+                    </v-row>
 
                     <!-- 하위 카테고리 buttons -->
                     <v-row>
                         <v-col v-if="checkAll" cols="12">
                             <div class="btnGroup" v-for="bot in bottomCategories" :key="bot.key">
-                                <v-btn outlined class="btnBot" rounded x-large @click="doSearch('category', bot.key)">
+                                <v-btn
+                                    outlined
+                                    class="btnBot"
+                                    rounded
+                                    x-large
+                                    @click="doSearch('category', bot.key)"
+                                >
                                     <!-- 추후 SVG 아이콘으로 수정예정 -->
-                                    <v-avatar size="50"><img :src="`${port}images/${bot.imageSequence}`" alt="stackIcon" /></v-avatar>
+                                    <v-avatar size="35">
+                                        <img
+                                            :src="`${port}images/${bot.imageSequence}`"
+                                            alt="stackIcon"
+                                        />
+                                    </v-avatar>
                                     {{ bot.value }}
                                 </v-btn>
                             </div>
@@ -52,7 +71,13 @@
                     <v-row>
                         <v-col cols="12">
                             <v-chip-group column>
-                                <v-chip close close-icon="mdi-close-outline" @click:close="remove(i)" v-for="i in choice" :key="i"> {{ i }}</v-chip>
+                                <v-chip
+                                    close
+                                    close-icon="mdi-close-outline"
+                                    @click:close="remove(i)"
+                                    v-for="i in choice"
+                                    :key="i"
+                                >{{ i }}</v-chip>
                             </v-chip-group>
                         </v-col>
                     </v-row>
@@ -63,7 +88,9 @@
                     <!-- 더보기 버튼 -->
                     <v-row v-if="checkMore">
                         <v-col cols="3"></v-col>
-                        <v-col cols="6"><v-btn outlined color="gold" block @click="getMore"> 더보기 </v-btn></v-col>
+                        <v-col cols="6">
+                            <v-btn outlined color="gold" block @click="getMore">더보기</v-btn>
+                        </v-col>
                         <v-col cols="3"></v-col>
                     </v-row>
 
@@ -77,7 +104,12 @@
                             </v-row>
                             <v-row>
                                 <v-col dense align="center" cols="12">
-                                    <v-btn rounded color="#FFEB00" style="height: 50px; width: 50%" @click="moveToCreate">
+                                    <v-btn
+                                        rounded
+                                        color="#FFEB00"
+                                        style="height: 50px; width: 50%"
+                                        @click="moveToCreate"
+                                    >
                                         <h2>1분 만에 스터디 만들기</h2>
                                     </v-btn>
                                 </v-col>
