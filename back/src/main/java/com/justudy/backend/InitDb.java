@@ -63,7 +63,7 @@ public class InitDb {
 
     @PostConstruct
     public void init() throws ParseException {
-        initService.init();
+        //initService.init();
     }
 
     @RequiredArgsConstructor
