@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <div>
-            <ModalComponent :dialog="dialog" @closeModal="close" />
+            <ModalComponent :dialog="dialog" @closeModal="close" :data="profile" />
         </div>
 
         <!-- 프로필 디테일 파트 ............................................................................-->
@@ -363,6 +363,7 @@ export default {
             console.log(memSeq);
             // this.$emit('dialogChangeFromChild');
             await this.$store.dispatch('moduleMyPage/getProfile', {id: memSeq});
+            this.profile = this.$store.state.moduleMyPage.profile;
         },
         close(status) {
             if (status) {
