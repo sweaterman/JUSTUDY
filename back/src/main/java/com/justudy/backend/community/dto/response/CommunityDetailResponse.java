@@ -1,6 +1,7 @@
 package com.justudy.backend.community.dto.response;
 
 import com.justudy.backend.category.dto.request.CategoryResponse;
+import com.justudy.backend.common.date.DateChanger;
 import com.justudy.backend.community.domain.CommunityEntity;
 import lombok.Builder;
 import lombok.Data;
@@ -18,8 +19,8 @@ public class CommunityDetailResponse {
     private String title;
     private String content;
     private Integer viewCount;
-    private LocalDateTime createdTime;
-    private LocalDateTime modifiedTime;
+    private String createdTime;
+    private String modifiedTime;
     private Integer loveCount;
 
     private boolean isWriter;
@@ -41,8 +42,8 @@ public class CommunityDetailResponse {
         this.title = title;
         this.content = content;
         this.viewCount = viewCount;
-        this.createdTime = createdTime;
-        this.modifiedTime = modifiedTime;
+        this.createdTime = DateChanger.format(createdTime);
+        this.modifiedTime = DateChanger.format(modifiedTime);
         this.loveCount = loveCount;
 
         this.isWriter = isWriter;

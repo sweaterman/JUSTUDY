@@ -1,5 +1,6 @@
 package com.justudy.backend.report.dto.response.admin;
 
+import com.justudy.backend.report.domain.*;
 import lombok.Data;
 
 @Data
@@ -7,17 +8,16 @@ public class ReportListResponse {
 
     private Long reportSequence;
 
-    private String category;
+    private String type;
 
     private Long targetSequence;
 
-    private String reportContent;
+    private String content;
 
-    public ReportListResponse(Long reportSequence, String category,
-                              Long targetSequence, String reportContent) {
-        this.reportSequence = reportSequence;
-        this.category = category;
-        this.targetSequence = targetSequence;
-        this.reportContent = reportContent;
+    public ReportListResponse(Report report) {
+        this.reportSequence = report.getSequence();
+        this.targetSequence = report.getTargetSequence();
+        this.content = report.getContent();
+        this.type = ValidateReportType.valid(report);
     }
 }

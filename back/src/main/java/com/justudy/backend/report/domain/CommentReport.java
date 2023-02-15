@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -17,11 +16,11 @@ public class CommentReport extends Report {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_seq")
-    private CommunityCommentEntity commentEntity;
+    private CommunityCommentEntity targetComment;
 
     public CommentReport(MemberEntity reporter, String content,
-                         CommunityCommentEntity commentEntity) {
-        super(reporter, content);
-        this.commentEntity = commentEntity;
+                         CommunityCommentEntity targetComment) {
+        super(reporter, targetComment.getSequence(), content);
+        this.targetComment = targetComment;
     }
 }
