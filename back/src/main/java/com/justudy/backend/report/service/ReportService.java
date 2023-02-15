@@ -17,11 +17,14 @@ import com.justudy.backend.study.domain.StudyEntity;
 import com.justudy.backend.study.exception.StudyNotFound;
 import com.justudy.backend.study.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -42,12 +45,13 @@ public class ReportService {
         MemberEntity reporter = memberRepository.findById(loginSequence)
                 .orElseThrow(MemberNotFound::new);
         Report report = createReport(targetSequence, reporter, request);
-        reportRepository.save(report);
-        return report.getSequence();
+        return reportRepository.save(report).getSequence();
     }
 
     public List<ReportListResponse> getReportList() {
-        return null;
+        return reportRepository.getReportList().stream()
+                .map(ReportListResponse::new)
+                .collect(Collectors.toList());
     }
 
 

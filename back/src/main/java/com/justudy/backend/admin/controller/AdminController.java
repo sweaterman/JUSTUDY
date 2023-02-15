@@ -13,6 +13,8 @@ import com.justudy.backend.community.dto.response.CommunityListResult;
 import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.login.infra.SessionConst;
 import com.justudy.backend.member.service.MemberService;
+import com.justudy.backend.report.dto.response.admin.ReportListResponse;
+import com.justudy.backend.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,8 @@ public class AdminController {
     private final MemberService memberService;
 
     private final CommunityService communityService;
+
+    private final ReportService reportService;
 
     @GetMapping("/total-member")
     public TotalResult getTotalMember() {
@@ -83,5 +87,10 @@ public class AdminController {
     @GetMapping("/week/community")
     public Long geCountOfCommunityByWeek() {
         return adminService.geCountOfCommunityByWeek();
+    }
+
+    @GetMapping("/report")
+    public List<ReportListResponse> getReport() {
+        return reportService.getReportList();
     }
 }
