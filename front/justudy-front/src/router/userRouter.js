@@ -4,11 +4,13 @@ export default [
     {
         path: '/mypage',
         name: 'MyPageView',
-        component: MyPageView
+        component: MyPageView,
+        meta: {authorization: ['login']}
     },
     {
         path: '/mypage/update',
         name: 'MyPageUpdate',
-        component: MyPageUpdateView
+        component: MyPageUpdateView,
+        meta: {authorization: ['login']}
     }
 ];

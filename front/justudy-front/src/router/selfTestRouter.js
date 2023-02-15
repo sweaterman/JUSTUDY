@@ -5,16 +5,19 @@ export default [
     {
         path: '/self-test/problem/:number',
         name: 'SelfTestProblemView',
-        component: SelfTestProblemView
+        component: SelfTestProblemView,
+        meta: {authorization: ['login']}
     },
     {
         path: '/self-test/confirm',
         name: 'SelfTestConfirmView',
-        component: SelfTestConfirmView
+        component: SelfTestConfirmView,
+        meta: {authorization: ['login']}
     },
     {
         path: '/self-test/result',
         name: 'SelfTestResultView',
-        component: SelfTestResultView
+        component: SelfTestResultView,
+        meta: {authorization: ['login']}
     }
 ];
