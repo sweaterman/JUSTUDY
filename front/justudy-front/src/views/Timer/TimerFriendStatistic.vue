@@ -89,9 +89,19 @@
                         <v-row>
                             <v-col justify="center" align="center">
                                 <Profile :diameter="100" standard="px" :src="`${port}/images/${user.imageSequence}`" />
-                                {{ user.nickname }}
+                                이름 : {{ user.nickname }}
+                                <br />
+                                꿈 : {{ user.dream ? user.dream : '없음' }}
+                                <br />
+                                뱃지카운트 : +{{ user.badgeCount }}
+                                <br />
+                                레벨 : {{ user.level }}
+                                <h2>자기소개</h2>
+
+                                {{ user.introduction ? user.introduction : '소개글이 없습니다.' }}
                             </v-col>
                         </v-row>
+
                         <v-row>
                             <!-- <div id="modal" @click="close(false)" style="padding: 100px 300px">
                                 <div class="d-flex justify-center">
@@ -164,7 +174,7 @@
                     </v-col>
                 </v-row>
             </v-col>
-            {{ follow }}
+            {{ user }}
             <v-col cols="12" md="2" />
         </v-row>
     </v-app>
@@ -203,9 +213,11 @@ export default {
             if (check == 'following') {
                 this.isFollowing = true;
                 this.isFollower = false;
+                this.bannerPosition = 0;
             } else {
                 this.isFollowing = false;
                 this.isFollower = true;
+                this.bannerPosition = 0;
             }
         },
         async dialogChange(memSeq) {
@@ -226,11 +238,17 @@ export default {
         },
         toLeft() {
             // if 문 써서 조절 하면 됨
-
-            this.bannerPosition = this.bannerPosition + 200;
+            if (this.bannerPosition <= -200) {
+                this.bannerPosition = this.bannerPosition + 200;
+            }
         },
         toRight() {
-            this.bannerPosition = this.bannerPosition - 200;
+            if (this.isFollowing && this.bannerPosition >= -20 * this.follow.length) {
+                this.bannerPosition = this.bannerPosition - 200;
+            }
+            if (this.isFollower && this.bannerPosition >= -20 * this.follower.length) {
+                this.bannerPosition = this.bannerPosition - 200;
+            }
         }
     },
     components: {

@@ -47,7 +47,8 @@ export default {
                 })
                 .then(res => {
                     commit('getMyPageUser', res.data);
-                });
+                })
+                .catch(async () => {});
         },
 
         async getModifyUser({commit}) {
