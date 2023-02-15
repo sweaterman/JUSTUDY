@@ -21,12 +21,12 @@ spring:
         show_sql: true
         format_sql: true
 
-  http:
-    encoding:
-      charset: UTF-8
-      force: true
-      force-request: true
-      force-response: true
+#  http:
+#    encoding:
+#      charset: UTF-8
+#      force: true
+#      force-request: true
+#      force-response: true
 
   ## page 인덱스를 1부터 시작하게 만듬
   data:
@@ -42,3 +42,9 @@ vue:
   loginUrl: "localhost:8081/login"
 
 
+#  utf-8 encoding 한글 깨짐 방지용 
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
