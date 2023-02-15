@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +38,9 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
 
     @Override
     public List<CommunityEntity> getAllList(CommunitySearch communitySearch) {
-        List<CommunityEntity> list = queryFactory.selectFrom(communityEntity)
+        List<CommunityEntity> list = new ArrayList<>();
+
+        List<CommunityEntity> notices = queryFactory.selectFrom(communityEntity)
                 .join(communityEntity.member, memberEntity).fetchJoin()
                 .where(communityEntity.isHighlighted.eq(true),
                         communityEntity.isDeleted.eq(false))
@@ -52,16 +55,15 @@ public class CommunityRepositoryImpl implements CommunityRepositoryCustom {
                         communityEntity.isDeleted.eq(false),
                         eqCategory(communitySearch.getCategory()),
                         eqTypeAndSearch(communitySearch))
-                .limit(communitySearch.getSize() - list.size())
-                .offset(communitySearch.getOffsetWithNotice(list.size()))
+                .limit(communitySearch.getSize() - notices.size())
+                .offset(communitySearch.getOffsetWithNotice(notices.size()))
                 .orderBy(orderByCondition(communitySearch))
                 .fetch();
         if (commonList.isEmpty()) {
             return List.of();
         }
-        if (!list.addAll(commonList)) {
-            throw new ImportBoardFail();
-        }
+        list.addAll(notices);
+        list.addAll(commonList);
         return list;
     }
 
