@@ -168,7 +168,7 @@
                     <v-col cols="12" md="8">
                         <!-- 달력 파트 -->
                         <v-row :style="{marginTop: '-2%'}">
-                            <MyPageCalendar :studyCalendar="studyCalendar" />
+                            <MyPageCalendar v-if="studyCalendar !==null" :studyCalendar="studyCalendar" />
                         </v-row>
                     </v-col>
                 </v-row>
@@ -239,7 +239,7 @@ export default {
             studyAnalyzeValue: [],
             studyRecommand: [],
             bookMark: [],
-            studyCalendar: [],
+            studyCalendar: null,
             bookMarkList: [],
             timeCategoryData: []
         };
@@ -296,9 +296,8 @@ export default {
         // 로그인한 유저 사진과 유저 정보 (닉네임,희망상태,희망진로)
         await this.$store.dispatch('moduleMyPage/getMyPageUser');
         this.user = this.$store.state.moduleMyPage.user;
-        let studyCalendar = new Array(32).fill('🟡18:00');
-        this.studyCalendar = studyCalendar;
-        console.log(studyCalendar);
+        await this.$store.dispatch('moduleStudy/getMyStudies');
+        this.studyCalendar = this.$store.state.moduleStudy.myStudies;
         await this.$store.dispatch('moduleMyPage/getBookMarkList');
         this.bookMarkList = this.$store.state.moduleMyPage.bookMarkList;
         //ff

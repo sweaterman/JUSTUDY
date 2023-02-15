@@ -54,9 +54,12 @@
                         </v-row>
                         <!-- 날짜별 시간 -->
                         <v-row :style="{marginTop: '10%', marginLeft: '15%'}">
-                            <div style="font-size: 100%" v-if="7 * (cr - 1) + cc - firstDayOfWeek > 0 && 7 * (cr - 1) + cc - firstDayOfWeek <= monthDate[month]">
-                                {{ studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] }}
+                            <div v-on:mouseover="showToolTip=true" v-on:mouseleave="showToolTip=false" style="font-size: 100%" v-if="7 * (cr - 1) + cc - firstDayOfWeek > 0 && 7 * (cr - 1) + cc - firstDayOfWeek <= monthDate[month]">
+                                {{ studyArray[7 * (cr - 1) + cc - firstDayOfWeek] }}
                             </div>
+                            <slot> 
+                                <Tooltip :show="showToolTip"> {{ studyDetailArray[7 * (cr - 1) + cc - firstDayOfWeek] }}</Tooltip>
+                            </slot>
                         </v-row>
                     </v-col>
                 </v-row>
@@ -79,7 +82,10 @@ export default {
             monthDate: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
             year: 0,
             month: 0,
-            date: 0
+            date: 0,
+            studyArray:[],
+            studyDetailArray:[],
+            showToolTip:false,
         };
     },
     props: {
@@ -94,6 +100,7 @@ export default {
                 this.month--;
             }
             this.firstDayOfWeek = this.WEEKDAY.indexOf(new Date(this.year, this.month, 1).toString().slice(0, 3));
+            this.calcStartDay();
         },
         monthAfter() {
             if (this.month == 11) {
@@ -103,6 +110,7 @@ export default {
                 this.month++;
             }
             this.firstDayOfWeek = this.WEEKDAY.indexOf(new Date(this.year, this.month, 1).toString().slice(0, 3));
+            this.calcStartDay();
         },
 
         hourMinSecond(data) {
@@ -113,6 +121,37 @@ export default {
                 ':' +
                 (data % 60 >= 10 ? data % 60 : '0' + (data % 60))
             );
+        },
+        calcStartDay(){
+        //studyCalendar 값을 바탕으로 배열 생성
+        // this.studyArray = new Array(40).fill('🟡18:00');
+        this.studyArray = new Array(47).fill("");
+        this.studyArray = new Array(47).fill("");
+        
+        let week = {"월":1,"화":2,"수":3,"목":4,"금":5,"토":6,"일":0};
+        console.log("this.studyCalendar");
+        console.log(this.studyCalendar);
+        //string 형태로 각각에 시작시간 넣어줌
+        for(let i=0;i<this.studyCalendar.length;++i){
+            let tmp= this.studyCalendar[i].frequency;
+            for(let j=0;j<tmp.length;++j){
+                let weekIndex = week[tmp[j].week];
+                console.log( weekIndex);
+                for(let k=weekIndex;k<40;k+=7){
+                    this.studyArray[k]+="🟡" + tmp[j].startTime;
+                    if(this.studyArray[k].length>20)this.studyArray[k]="..."
+                    // this.studyDetailArray[k]+="\n🟡" + tmp[j].startTime + "~" + tmp[j].endTime +"\n"+ this.studyCalendar[i].name;
+                }
+            }
+        }
+        //시작일 요일별 맞추기
+        this.studyArray=this.studyArray.slice(this.firstDayOfWeek==0?this.firstDayOfWeek+6:this.firstDayOfWeek-1)
+        this.studyDetailArray=this.studyDetailArray.slice(this.firstDayOfWeek==0?this.firstDayOfWeek+6:this.firstDayOfWeek-1)
+        console.log(this.firstDayOfWeek);
+        console.log(this.studyArray);
+        },
+        getStudyInfo(){
+            
         }
     },
     created() {
@@ -127,11 +166,16 @@ export default {
 
         this.today = today;
         this.firstDayOfWeek = this.WEEKDAY.indexOf(new Date(year, month, 1).toString().slice(0, 3));
-
         if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
             this.monthDate[1] = 29;
         }
+    },
+    mounted(){
+        console.log("aa")
+        console.log(this.studyCalendar)
+        this.calcStartDay();
     }
+    
 };
 </script>
 <style>
