@@ -15,6 +15,8 @@ import static com.justudy.backend.category.domain.QCategoryEntity.*;
 @RequiredArgsConstructor
 public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
 
+    private final Long ALGORITHM_SEQUENCE = 5L;
+
     private final JPAQueryFactory queryFactory;
 
     @Override
@@ -58,6 +60,15 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
         return queryFactory
                 .selectFrom(categoryEntity)
                 .where(categoryEntity.parentCategory.isNull())
+                .fetch();
+    }
+
+    @Override
+    public List<CategoryEntity> getMemberCategories() {
+        return queryFactory
+                .selectFrom(categoryEntity)
+                .where(categoryEntity.parentCategory.isNotNull(),
+                        categoryEntity.parentCategory.sequence.eq(ALGORITHM_SEQUENCE).not())
                 .fetch();
     }
 

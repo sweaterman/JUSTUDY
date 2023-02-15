@@ -31,4 +31,9 @@ public class CategoryController {
     public List<CategoryResponse> getSubCategories() {
         return categoryService.getSubCategories();
     }
+
+    @GetMapping("/member-category")
+    public List<CategoryResponse> getMemberCategories() {
+        return categoryService.getMemberCategories();
+    }
 }

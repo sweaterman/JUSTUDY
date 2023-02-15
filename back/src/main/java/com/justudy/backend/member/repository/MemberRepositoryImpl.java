@@ -35,7 +35,9 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                         memberEntity.password,
                         memberEntity.nickname))
                 .from(memberEntity)
-                .where(memberEntity.userId.eq(userId))
+                .where(memberEntity.userId.eq(userId),
+                        memberEntity.isBanned.eq(false),
+                        memberEntity.isDeleted.eq(false))
                 .fetchOne());
     }
 

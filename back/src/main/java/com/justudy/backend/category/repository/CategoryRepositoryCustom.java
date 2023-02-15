@@ -17,4 +17,6 @@ public interface CategoryRepositoryCustom {
     List<CategoryEntity> getAllChildren();
 
     List<CategoryEntity> getAllParents();
+
+    List<CategoryEntity> getMemberCategories();
 }
