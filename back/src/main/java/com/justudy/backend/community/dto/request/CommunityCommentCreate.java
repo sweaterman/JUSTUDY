@@ -51,4 +51,8 @@ public class CommunityCommentCreate {
     public void changeMemberSeq(Long loginSequence) {
         this.memberSeq = loginSequence;
     }
+
+    public void changecommunitySeq(Long communitySeq) {
+        this.communitySeq = communitySeq;
+    }
 }

@@ -43,4 +43,10 @@ public class CategoryService {
                 .map(CategoryResponse::new)
                 .collect(Collectors.toList());
     }
+
+    public List<CategoryResponse> getMemberCategories() {
+        return categoryRepository.getMemberCategories().stream()
+                .map(CategoryResponse::new)
+                .collect(Collectors.toList());
+    }
 }
