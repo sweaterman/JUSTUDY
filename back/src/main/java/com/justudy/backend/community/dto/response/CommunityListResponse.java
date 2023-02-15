@@ -1,5 +1,6 @@
 package com.justudy.backend.community.dto.response;
 
+import com.justudy.backend.common.date.DateChanger;
 import com.justudy.backend.community.domain.CommunityEntity;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,7 @@ public class CommunityListResponse {
 
     private String nickname;
 
-    private LocalDateTime createdTime;
+    private String createdTime;
 
     private boolean isHighlighted;
 
@@ -30,7 +31,7 @@ public class CommunityListResponse {
         this.sequence = sequence;
         this.title = title;
         this.nickname = nickname;
-        this.createdTime = createdTime;
+        this.createdTime = DateChanger.format(createdTime);
         this.isHighlighted = isHighlighted;
         this.viewCount = viewCount;
         this.loveCount = loveCount;
@@ -40,7 +41,7 @@ public class CommunityListResponse {
         this.sequence = communityEntity.getSequence();
         this.title = communityEntity.getTitle();
         this.nickname = communityEntity.getMember().getNickname(); //memberEntity
-        this.createdTime = communityEntity.getCreatedTime();
+        this.createdTime = DateChanger.format(communityEntity.getCreatedTime());
         this.isHighlighted = communityEntity.getIsHighlighted();
         this.viewCount = communityEntity.getViewCount(); //조회수
         this.loveCount = communityEntity.getLoveCount() + communityEntity.getWeekLoveCount(); //기존 좋아요 + 일주일간 좋아요
