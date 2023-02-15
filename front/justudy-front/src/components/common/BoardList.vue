@@ -9,7 +9,7 @@
                     <hr />
                 </v-col>
                 <v-col cols="12" md="4" />
-                <v-col cols="12" md="4" align="right">
+                <v-col cols="12" md="4" align="right" @click="moveTo('/community?page=1&category=all')">
                     <!-- <v-text>더보기</v-text> -->
                     더보기
                 </v-col>
@@ -26,10 +26,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="item in bookMarkList" :key="item.id" @click="movetocontent(item?.id)">
-                            <td>{{ item.writer }}</td>
-                            <td>{{ item.title }}</td>
-                            <td>{{ item.createdAt.split('T')[0] }}</td>
+                        <tr v-for="(value, index) in bookMarkList" :key="index" @click="movetocontent(value.sequence)">
+                            <td style="width: 10%; font-size: large">No</td>
+                            <td style="width: 50%; font-size: large">{{ value.title }}</td>
+                            <td style="width: 15%; font-size: large">{{ value.nickname }}</td>
+                            <td style="width: 15%; font-size: large">{{ value.createdTime.split('T')[0] }}</td>
+                            <td style="width: 10%; font-size: large">{{ value.loveCount }}</td>
+
                             <!-- Sequelize의 createdAt, updatedAt의 날짜 형식이 '2021-12-10T12:38:52.000Z' 이런 식이여서 
                                split('T')[0]을 통해 날짜만 표시 -->
                         </tr>
@@ -48,6 +51,22 @@ export default {
         boardtitle: {
             type: String
         }
+    },
+    methods:{
+        async moveTo(link) {
+             window.location.href = link;
+        },
+        movetocontent(index) {
+            // 클릭된 글의 id를 받아와야 라우팅할때 보낼 수 있음
+            this.$router.push({
+                // path: window.location.pathname + '/content/' + id,
+                name: 'CommuContent',
+                params: {
+                    id: index
+                }
+            });
+            // window.location.href = window.location.pathname + '/content/' + id;
+        },
     }
 };
 </script>

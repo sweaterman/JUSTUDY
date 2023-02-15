@@ -4,6 +4,7 @@ spring:
     username: root
     password: ssafy
     url: jdbc:mysql://db:3306/justudy?serverTimezone=UTC&characterEncoding=UTF-8
+    sql-script-encoding: UTF-8 
   # swagger
   mvc:
     pathmatch:
@@ -20,6 +21,13 @@ spring:
         show_sql: true
         format_sql: true
 
+#  http:
+#    encoding:
+#      charset: UTF-8
+#      force: true
+#      force-request: true
+#      force-response: true
+
   ## page 인덱스를 1부터 시작하게 만듬
   data:
     web:
@@ -34,3 +42,9 @@ vue:
   loginUrl: "localhost:8081/login"
 
 
+#  utf-8 encoding 한글 깨짐 방지용 
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true

@@ -1,7 +1,7 @@
 <template>
-    <v-app>
+    <v-container>
         <!-- 년도와 월 -->
-        <v-row :style="{marginTop: '2%'}" justify="center" align="center">
+        <v-row justify="center" align="center">
             <v-col cols="12" md="2" />
             <v-col cols="12" md="2" justify="center" align="center">
                 <v-btn icon class="ma-2" @click="monthBefore()">
@@ -10,18 +10,18 @@
             </v-col>
             <v-col cols="12" md="2" justify="center" align="center">
                 <div :style="{fontWeight: 'bold', fontSize: 'x-large'}">
-                    <h1>
+                    <h4>
                         <span style="color: #ffb000">{{ year }}</span>
                         <span style="color: black"> 년 </span>
-                    </h1>
+                    </h4>
                 </div>
             </v-col>
             <v-col cols="12" md="2" justify="center" align="center">
                 <div :style="{fontWeight: 'bold', fontSize: 'x-large'}">
-                    <h1>
+                    <h4>
                         <span style="color: #ffb000">{{ month + 1 }}</span>
                         <span style="color: black"> 월</span>
-                    </h1>
+                    </h4>
                 </div>
             </v-col>
             <v-col cols="12" md="2" justify="center" align="center">
@@ -33,7 +33,7 @@
         </v-row>
 
         <!-- 날짜 -->
-        <v-row :style="{marginTop: '2%', marginBottom: '2%'}" justify="center" align="center">
+        <v-row justify="center" align="center">
             <v-container id="container">
                 <v-row id="thead" justify="center" align="center">
                     <v-col style="color: tomato" justify="center" align="center">일</v-col>
@@ -49,11 +49,11 @@
                     <v-col v-for="cc in 7" v-bind:key="cc" id="td">
                         <!-- </v-col>:style="`background-color: ${cc > 4 ? '#006400' : '#008000'}`"> -->
                         <!-- 날짜별 숫자 -->
-                        <v-row :style="{marginTop: '1%', marginLeft: '1%'}">
+                        <v-row :style="{fontWeight: 'bold'}">
                             <div v-if="7 * (cr - 1) + cc - firstDayOfWeek > 0 && 7 * (cr - 1) + cc - firstDayOfWeek <= monthDate[month]">{{ 7 * (cr - 1) + cc - firstDayOfWeek }}</div>
                         </v-row>
                         <!-- 날짜별 시간 -->
-                        <v-row :style="{marginTop: '15%', marginLeft: '15%'}">
+                        <v-row :style="{marginTop: '10%', marginLeft: '15%'}">
                             <div style="font-size: 100%" v-if="7 * (cr - 1) + cc - firstDayOfWeek > 0 && 7 * (cr - 1) + cc - firstDayOfWeek <= monthDate[month]">
                                 {{ studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] }}
                             </div>
@@ -62,7 +62,7 @@
                 </v-row>
             </v-container>
         </v-row>
-    </v-app>
+    </v-container>
 </template>
 <script>
 import CalendarData from '@/data/CalendarData';
@@ -136,13 +136,13 @@ export default {
 </script>
 <style>
 #container {
-    width: 100%;
+    width: 24%;
     border: 0.2px solid rgb(230, 230, 230);
 }
 
 #td {
     border: 0.2px solid rgb(230, 230, 230);
 
-    height: 130px;
+    height: 70px;
 }
 </style>

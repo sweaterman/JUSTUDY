@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <v-row :style="{marginTop: '2%'}">
+        <v-row :style="{marginTop: '0.5%'}">
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <!-- 타이머 메뉴 바 -->
@@ -98,17 +98,17 @@ export default {
         DigitalClockAverage
     },
     async created() {
-        await this.$store.dispatch('moduleTimer/getStudyTimeWeek', {seq: 50});
+        await this.$store.dispatch('moduleTimer/getStudyTimeWeek', {nickName: '테스트 봇1'});
         this.weekTime = this.$store.state.moduleTimer.studyTimeWeek.time;
-        await this.$store.dispatch('moduleTimer/getStudyTimeMonth', {seq: 50});
+        await this.$store.dispatch('moduleTimer/getStudyTimeMonth', {nickName: '테스트 봇1'});
         this.monthTime = this.$store.state.moduleTimer.studyTimeMonth.time;
         await this.$store.dispatch('moduleTimer/getAverageMembersWeek');
         this.averageWeekTime = this.$store.state.moduleTimer.averageMemberWeek.time;
         await this.$store.dispatch('moduleTimer/getAverageMembersMonth');
         this.averageMonthTime = this.$store.state.moduleTimer.averageMemberMonth.time;
-        await this.$store.dispatch('moduleTimer/getStudyCategory', {seq: 50});
+        await this.$store.dispatch('moduleTimer/getStudyCategory', {nickName: '테스트 봇1'});
         this.studyCategory = this.$store.state.moduleTimer.studyCategory;
-        await this.$store.dispatch('moduleTimer/getStudyCalendar', {seq: 50, year: 2023, month: 1});
+        await this.$store.dispatch('moduleTimer/getStudyCalendar', {nickName: '테스트 봇1', year: 2023, month: 1});
 
         let studyCalendar = new Array(32).fill(0);
         let data = this.$store.state.moduleTimer.studyCalendar;

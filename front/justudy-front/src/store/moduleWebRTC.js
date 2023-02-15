@@ -12,7 +12,7 @@ function Participant(parents, name, receiveCallback, iceCallback) {
     video.controls = false;
     video.muted = false;
     // video.style = 'display:inline-block;max-width:600px;';
-    video.style = 'display:inline-block;width:33%;';
+    video.style = 'display:inline-block;width:20%;';
     parents.append(video);
     video.value = true;
     video.addEventListener('click', () => {
@@ -22,7 +22,7 @@ function Participant(parents, name, receiveCallback, iceCallback) {
             video.value = false;
             parents.childNodes.forEach(item => {
                 if (item != video) {
-                    item.style = 'display:inline-block;width:33%;';
+                    item.style = 'display:inline-block;width:20%;';
                     item.value = true;
                 }
             });
@@ -30,7 +30,7 @@ function Participant(parents, name, receiveCallback, iceCallback) {
             parents.append(video);
         } else {
             ///축소 시킬 때
-            video.style = 'display:inline-block;width:33%;';
+            video.style = 'display:inline-block;width:20%;';
             video.value = true;
         }
     });
@@ -73,8 +73,8 @@ const moduleWebRTC = {
         screenState: true,
         mainParents: null,
         webSock: null,
-        personName: 'UNKNOWN',
-        roomName: 'UNKNOWN',
+        personName: 'UNKNOWN' + Math.random().toString(36).substring(2, 12),
+        roomName: 'UNKNOWN' + Math.random().toString(36).substring(2, 12),
         participants: {},
         settingValue: {
             maxWidth: 640,
@@ -171,8 +171,8 @@ const moduleWebRTC = {
             state.screenState = true;
             // state.mainParents = null;
             state.webSock = null;
-            state.personName = 'UNKNOWN';
-            state.roomName = 'UNKNOWN';
+            state.personName = 'UNKNOWN' + Math.random().toString(36).substring(2, 12);
+            state.roomName = 'UNKNOWN' + Math.random().toString(36).substring(2, 12);
             state.participants = {};
             state.settingValue = {
                 maxWidth: 640,
@@ -351,6 +351,12 @@ const moduleWebRTC = {
                 };
                 dispatch('sendMessage', message);
             };
+            // state.webSock.onclose = async (e) => {
+            //     console.log('Socket is closed. Reconnect will be attempted in 1.5 second.', e);
+            //     setTimeout(function() {
+            //         dispatch('reset',{url, person, room});
+            //       }, 1500)
+            // }
         },
 
         setEnvironment({commit}, {maxWidth, maxFrameRate, minFrameRate}) {
@@ -588,6 +594,9 @@ const moduleWebRTC = {
                         break;
                     case 'exit':
                         dispatch('onExit');
+                        break;
+                    case 'changeName':
+                        dispatch('changeName', parsedMessage);
                         break;
                     default:
                         console.error('Unrecognized message', parsedMessage);
@@ -858,6 +867,10 @@ const moduleWebRTC = {
         onExit({commit}) {
             console.log('exit');
             commit('ADD_EXIT_CNT');
+        },
+        changeName({commit}, request) {
+            console.log('changeName');
+            commit('SET_PERSON_NAME', request.name);
         },
         //isViewMuteDiv
         setIsViewMuteDiv({commit}, on) {
