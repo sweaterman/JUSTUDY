@@ -21,7 +21,7 @@ public class CommunityReport extends Report {
 
     public CommunityReport(MemberEntity reporter, String content,
                            CommunityEntity targetCommunity) {
-        super(reporter, content);
+        super(reporter, targetCommunity.getSequence(), content);
         this.targetCommunity = targetCommunity;
     }
 }

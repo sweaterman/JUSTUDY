@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,8 @@ public class StudyCommunityRepositoryImpl implements StudyCommunityRepositoryCus
 
     @Override
     public List<StudyCommunityEntity> getAllList(CommunitySearch communitySearch, Long studySequence) {
-        List<StudyCommunityEntity> list = queryFactory.selectFrom(qStudyCommunity)
+        List<StudyCommunityEntity> list = new ArrayList<>();
+        List<StudyCommunityEntity> notices = queryFactory.selectFrom(qStudyCommunity)
                 .join(qStudyCommunity.member, memberEntity).fetchJoin()
                 .where(qStudyCommunity.isHighlighted.eq(true),
                         qStudyCommunity.isDeleted.eq(false),
@@ -47,16 +49,13 @@ public class StudyCommunityRepositoryImpl implements StudyCommunityRepositoryCus
                         qStudyCommunity.isDeleted.eq(false),
                         eqStudy(studySequence),
                         eqTypeAndSearch(communitySearch))
-                .limit(communitySearch.getSize() - list.size())
-                .offset(communitySearch.getOffsetWithNotice(list.size()))
+                .limit(communitySearch.getSize() - notices.size())
+                .offset(communitySearch.getOffsetWithNotice(notices.size()))
                 .orderBy(orderByCondition(communitySearch))
                 .fetch();
-        if (commonList.isEmpty()) {
-            return List.of();
-        }
-        if (!list.addAll(commonList)) {
-            throw new ImportBoardFail();
-        }
+
+        list.addAll(notices);
+        list.addAll(commonList);
         return list;
     }
 

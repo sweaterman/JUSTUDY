@@ -1,9 +1,8 @@
 package com.justudy.backend.admin.dto.response;
 
+import com.justudy.backend.common.date.DateChanger;
 import com.justudy.backend.member.domain.MemberEntity;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Data
 public class AdminMemberDetail {
@@ -28,9 +27,9 @@ public class AdminMemberDetail {
 
     private String introduction;
 
-    private LocalDateTime createdTime;
+    private String createdTime;
 
-    private LocalDateTime modifiedTime;
+    private String modifiedTime;
 
     public AdminMemberDetail(MemberEntity member) {
         this.imageSequence = member.getImageFile().getSequence();
@@ -43,7 +42,7 @@ public class AdminMemberDetail {
         this.email = member.getEmail();
         this.dream = member.getDream();
         this.introduction = member.getIntroduction();
-        this.createdTime = member.getCreatedTime();
-        this.modifiedTime = member.getModifiedTime();
+        this.createdTime = DateChanger.format(member.getCreatedTime());
+        this.modifiedTime = DateChanger.format(member.getModifiedTime());
     }
 }

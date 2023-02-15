@@ -99,7 +99,9 @@ public class MemberService {
     }
 
     public MypageResponse getMypage(Long loginSequence) {
-        MemberEntity findMember = memberRepository.findBySequenceWithJoin(loginSequence)
+//        MemberEntity findMember = memberRepository.findBySequenceWithJoin(loginSequence)
+//                .orElseThrow(() -> new MemberNotFound());
+        MemberEntity findMember = memberRepository.findById(loginSequence)
                 .orElseThrow(() -> new MemberNotFound());
 
         return createMypageResponse(findMember);

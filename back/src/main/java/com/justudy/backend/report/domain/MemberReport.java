@@ -19,7 +19,7 @@ public class MemberReport extends Report {
 
     public MemberReport(MemberEntity reporter, String content,
                         MemberEntity targetMember) {
-        super(reporter, content);
+        super(reporter, targetMember.getSequence(), content);
         this.targetMember = targetMember;
     }
 }

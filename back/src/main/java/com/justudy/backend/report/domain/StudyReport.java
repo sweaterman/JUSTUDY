@@ -24,7 +24,7 @@ public class StudyReport extends Report {
 
     public StudyReport(MemberEntity reporter, String content,
                        StudyEntity targetStudy) {
-        super(reporter, content);
+        super(reporter, targetStudy.getSequence(), content);
         this.targetStudy = targetStudy;
     }
 }

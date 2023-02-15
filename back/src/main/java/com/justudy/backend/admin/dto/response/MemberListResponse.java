@@ -1,5 +1,6 @@
 package com.justudy.backend.admin.dto.response;
 
+import com.justudy.backend.common.date.DateChanger;
 import com.justudy.backend.member.domain.MemberEntity;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +22,7 @@ public class MemberListResponse {
 
     private String mmId;
 
-    private LocalDateTime createdTime;
+    private String createdTime;
 
     @Builder
     public MemberListResponse(Long memberSequence, String userId, String username, String nickname,
@@ -32,7 +33,7 @@ public class MemberListResponse {
         this.nickname = nickname;
         this.ssafyId = ssafyId;
         this.mmId = mmId;
-        this.createdTime = createdTime;
+        this.createdTime = DateChanger.format(createdTime);
     }
 
     public static MemberListResponse toResponse(MemberEntity member) {
