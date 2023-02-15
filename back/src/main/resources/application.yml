@@ -25,6 +25,8 @@ spring:
     encoding:
       charset: UTF-8
       force: true
+      force-request: true
+      force-response: true
 
   ## page 인덱스를 1부터 시작하게 만듬
   data:
