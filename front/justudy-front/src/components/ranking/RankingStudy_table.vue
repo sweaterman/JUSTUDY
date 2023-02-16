@@ -110,7 +110,7 @@
                 <v-row justify="center" align="center">
                     <v-col>
                         <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyYesterday.slice(3)">
-                            <v-col  align-self="center" cols="12" md="2"> {{ value.order + 2 }} </v-col>
+                            <v-col  align-self="center" cols="12" md="2"> {{ value.order }} </v-col>
                             <v-col  align-self="center" class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
                             </v-col>
@@ -232,7 +232,7 @@
                 <v-row justify="center" align="center" >
                     <v-col>
                         <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyWeek.slice(3)">
-                            <v-col @click="moveToStudy(rankStudyWeek[index].seq)" align-self="center" cols="12" md="2"> {{ value.order + 2 }} </v-col>
+                            <v-col @click="moveToStudy(rankStudyWeek[index].seq)" align-self="center" cols="12" md="2"> {{ value.order }} </v-col>
                             <v-col @click="moveToStudy(rankStudyWeek[index].seq)"  align-self="center" class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
                             </v-col>
@@ -354,7 +354,7 @@
                 <v-row justify="center" align="center">
                     <v-col>
                         <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyMonth.slice(3)">
-                            <v-col  @click="moveToStudy(rankStudyMonth[index].seq)" align-self="center" cols="12" md="2"> {{ value.order + 2 }} </v-col>
+                            <v-col  @click="moveToStudy(rankStudyMonth[index].seq)" align-self="center" cols="12" md="2"> {{ value.order }} </v-col>
                             <v-col  @click="moveToStudy(rankStudyMonth[index].seq)"  align-self="center" class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
                             </v-col>
