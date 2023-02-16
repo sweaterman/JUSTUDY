@@ -16,7 +16,6 @@
                         </h3>
                     </v-col>
                 </v-row>
-<!-- 
                 <v-row class="card_section_1st" justify="center" align="center" @click="moveToStudy(rankStudyYesterday[0])" >
                     <v-col cols="12" md="2">
                         <v-avatar size="40">
@@ -24,9 +23,9 @@
                         </v-avatar>
                     </v-col>
                     <v-col cols="12" md="1" />
-                    <v-col cols="12" md="2"> -->
+                    <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <!-- <v-avatar
+                        <v-avatar
                         color="primary"
                         size="56"
                         ><img
@@ -83,9 +82,9 @@
                         </v-avatar>
                     </v-col>
                     <v-col cols="12" md="1" />
-                    <v-col cols="12" md="2"> -->
+                    <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <!-- <v-avatar
+                        <v-avatar
                         color="primary"
                         size="56"
                         ><img
@@ -104,7 +103,7 @@
                             <DigitalClock :allTime="rankStudyYesterday[2].time" :fontSize="30" />
                         </v-row>
                     </v-col>
-                </v-row> -->
+                </v-row>
 
                 <!-- 오늘 버닝 데이터 TOP10 -->
                 <v-row justify="center" align="center">
