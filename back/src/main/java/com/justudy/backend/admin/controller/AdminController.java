@@ -1,10 +1,7 @@
 package com.justudy.backend.admin.controller;
 
 import com.justudy.backend.admin.dto.request.MemberSearch;
-import com.justudy.backend.admin.dto.response.AdminMemberDetail;
-import com.justudy.backend.admin.dto.response.MemberListResponse;
-import com.justudy.backend.admin.dto.response.MemberListResult;
-import com.justudy.backend.admin.dto.response.TotalResult;
+import com.justudy.backend.admin.dto.response.*;
 import com.justudy.backend.admin.service.AdminService;
 import com.justudy.backend.community.dto.request.CommunitySearch;
 import com.justudy.backend.community.dto.response.CommunityDetailResponse;
@@ -108,5 +105,35 @@ public class AdminController {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
         adminService.deleteComment(loginSequence, commentSequence);
         return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    //== 신고로 삭제 ==//
+    @DeleteMapping("/report/member/{memberSequence}")
+    public ResponseEntity<Void> banMemberByReport(@PathVariable Long memberSequence, HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        adminService.banMemberByReport(loginSequence, memberSequence);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/report/community/{communitySequence}")
+    public ResponseEntity<Void> deleteCommunityByReport(@PathVariable Long communitySequence,
+                                                        HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        adminService.deleteCommunityByReport(loginSequence, communitySequence);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @DeleteMapping("/report/comment/{commentSequence}")
+    public ResponseEntity<Void> deleteCommentByReport(@PathVariable Long commentSequence,
+                                                      HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        adminService.deleteCommentByReport(loginSequence, commentSequence);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @GetMapping("/report-count")
+    public CountReport getCountsOfReport() {
+        return adminService.getCountsOfReport();
     }
 }
