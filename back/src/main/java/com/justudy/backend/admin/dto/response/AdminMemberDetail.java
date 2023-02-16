@@ -31,6 +31,10 @@ public class AdminMemberDetail {
 
     private String modifiedTime;
 
+    private boolean isBanned;
+
+    private boolean isDeleted;
+
     public AdminMemberDetail(MemberEntity member) {
         this.imageSequence = member.getImageFile().getSequence();
         this.userId = member.getUserId();
@@ -44,5 +48,7 @@ public class AdminMemberDetail {
         this.introduction = member.getIntroduction();
         this.createdTime = DateChanger.format(member.getCreatedTime());
         this.modifiedTime = DateChanger.format(member.getModifiedTime());
+        this.isBanned = member.isBanned();
+        this.isDeleted = member.isDeleted();
     }
 }
