@@ -145,7 +145,7 @@ public class StudyController {
         request.changeLeaderSeq(loginSequence);
 
         //이미지 생성
-        UploadFileEntity uploadImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
+        UploadFileEntity uploadImage = uploadFileService.getUploadFile(ImageConst.BASIC_PROJECT_IMAGE);//기본 이미지 파일, 1L
         if (multipartFile != null) {
             uploadImage = fileStore.storeFile(multipartFile);
             uploadFileService.saveUploadFile(uploadImage);
@@ -195,7 +195,7 @@ public class StudyController {
 
         //이미지 수정
         //파일 없을시 변경 x
-        UploadFileEntity uploadImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
+        UploadFileEntity uploadImage = uploadFileService.getUploadFile(ImageConst.BASIC_PROJECT_IMAGE);//기본 이미지 파일, 1L
         if (multipartFile != null) {
             uploadImage = fileStore.storeFile(multipartFile);
             uploadFileService.saveUploadFile(uploadImage);
