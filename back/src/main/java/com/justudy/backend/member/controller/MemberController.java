@@ -53,7 +53,15 @@ public class MemberController {
         log.info("nickname = {}", nickname);
         log.info("ssafyId = {}", ssafyId);
         validateParameter(userId, nickname, ssafyId);
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @GetMapping("/edit-check")
+    public ResponseEntity<Void> validateEditMember(@RequestParam(name = "nickname") String nickname,
+                                                   HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        memberService.validEditNickname(loginSequence, nickname);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @PostMapping("/matter-most")
