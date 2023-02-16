@@ -102,6 +102,16 @@ public class MemberActivityRepositoryImpl implements MemberActivityRepositoryCus
         .fetch();
   }
 
+  @Override
+  public List<ActivitySubjectResponse> sumAllTimeByCategory() {
+    return queryFactory
+        .select(Projections.constructor(ActivitySubjectResponse.class, qMemberActivity.category,
+            qMemberActivity.time.sum()))
+        .from(qMemberActivity)
+        .groupBy(qMemberActivity.category)
+        .fetch();
+  }
+
   private DateTemplate fromDateToDay(QMemberActivityEntity qMemberActivity) {
     return Expressions.dateTemplate(
         String.class,

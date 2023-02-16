@@ -81,10 +81,11 @@ public class StudyFrequencyService {
         StudyEntity studyEntity = studyRepository.findById(studySequence)
                 .orElseThrow(StudyNotFound::new);
         //ConcurrentModificationException을 피하기위해 iterator를 활용한 제거
-        for (Iterator<StudyFrequencyEntity> iterator = studyEntity.getFrequency().iterator(); iterator.hasNext(); ) {
-            iterator.next().changeStudy(null);
-            iterator.remove();
-        }
+//        for (Iterator<StudyFrequencyEntity> iterator = studyEntity.getFrequency().iterator(); iterator.hasNext(); ) {
+//            iterator.next().changeStudy(null);
+//            iterator.remove();
+//        }
+        log.info("loo {}",studySequence);
         studyFrequencyRepository.deleteByStudy(studySequence);
     }
 

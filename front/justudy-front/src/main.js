@@ -12,6 +12,7 @@ Vue.use(VueApexCharts)
 
 Vue.component('ApexChart', VueApexCharts)
 
+axios.defaults.withCredentials = true;
 
 Vue.config.productionTip = false;
 
