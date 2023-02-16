@@ -292,16 +292,18 @@ export default {
             window.location.href = '/community/content/' + id;
         },
         deletecontent(id){
-            let API_URL = `${this.port}community/board/${id}`;
-            axios.delete(API_URL)
+            let API_URL = `${this.port}admin/community/${id}`;
+            axios.delete(API_URL,{
+                withCredentials: true
+            })
             .then((ret) => {
                     console.log(ret);
-                    window.location.reload();
+                    // window.location.reload();
                 }
             )
             .catch((error) => {
                 console.log(error);
-                window.location.reload();
+                // window.location.reload();
             });
         },
         movetopreviouspage() {
