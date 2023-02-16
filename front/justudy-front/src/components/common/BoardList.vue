@@ -9,10 +9,7 @@
                     <hr />
                 </v-col>
                 <v-col cols="12" md="4" />
-                <v-col cols="12" md="4" align="right" @click="moveTo('/community?page=1&category=all')">
-                    <!-- <v-text>더보기</v-text> -->
-                    더보기
-                </v-col>
+                <v-col v-if="bookMarkList == {}" cols="12" md="4" align="right" @click="moveTo('/community?page=1&category=all')"> 더보기 </v-col>
             </v-row>
             <v-row :style="{marginTop: '1%'}">
                 <v-simple-table style="width: 100%">
@@ -52,9 +49,9 @@ export default {
             type: String
         }
     },
-    methods:{
+    methods: {
         async moveTo(link) {
-             window.location.href = link;
+            window.location.href = link;
         },
         movetocontent(index) {
             // 클릭된 글의 id를 받아와야 라우팅할때 보낼 수 있음
@@ -66,7 +63,7 @@ export default {
                 }
             });
             // window.location.href = window.location.pathname + '/content/' + id;
-        },
+        }
     }
 };
 </script>
