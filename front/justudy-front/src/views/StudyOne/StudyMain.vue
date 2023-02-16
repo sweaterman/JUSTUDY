@@ -8,15 +8,19 @@
                 <!-- 본문 -->
                 <v-col cols="12" md="6">
                     <v-row>
-                        <v-col cols="12" align="center">
-                            <router-link :to="`/study/${studySeq}/info`">
-                                <v-btn :style="{color: 'blue'}">
+                        <v-col cols="12">
+                            <router-link :to="`/study/${studySeq}/info`" style="text-decoration: none">
+                                <v-btn dark rounded>
+                                    <span>스터디 정보</span>
+                                    &nbsp;
                                     <span class="material-icons-outlined"> info </span>
                                 </v-btn>
                             </router-link>
-
-                            <router-link :to="`/study/${studySeq}/board/main`">
-                                <v-btn :style="{color: 'blue'}">
+                            &nbsp;&nbsp;
+                            <router-link :to="`/study/${studySeq}/board/main`" style="text-decoration: none">
+                                <v-btn dark rounded>
+                                    <span>스터디 게시판</span>
+                                    &nbsp;
                                     <span class="material-icons-outlined"> article </span>
                                 </v-btn>
                             </router-link>
