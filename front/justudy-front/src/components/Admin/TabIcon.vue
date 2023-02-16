@@ -2,7 +2,7 @@
     <v-app>
         <div v-if="isTab" >
             <v-row>
-                <v-col @click="onClickTab">X</v-col>
+                <v-col @click="onClickTab">Close</v-col>
             </v-row>
             <v-row>
                 <v-col @click="moveTo('/admin')">대시보드</v-col>
@@ -20,7 +20,7 @@
                 <v-col @click="moveTo('/admin/community')">게시판 관리</v-col>
             </v-row>
         </div>
-        <v-btn @click="onClickTab" v-if="!isTab" fab color="yellow"></v-btn>
+        <v-btn @click="onClickTab" v-if="!isTab" fab color="yellow">open</v-btn>
 
     </v-app>
 </template>
@@ -47,3 +47,15 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+* {
+    background-color: yellow;
+    text-align: center;
+    font-weight: 600;
+}
+.row {
+    border: 1px solid black;
+}
+
+</style>
