@@ -32,9 +32,12 @@ export default {
                 )
                 .then(res => {
                     commit('SET_ISLOGIN', {
-                        loginCheck: true
+                        loginCheck: true,
                     });
                     localStorage.setItem('nickname', res.data.nickname);
+                    if(res.data.admin)
+                        localStorage.setItem('admin', true);
+                     
                     window.location.href = '/';
                 })
                 .catch(err => {
@@ -54,6 +57,7 @@ export default {
                         loginCheck: false
                     });
                     localStorage.removeItem('nickname');
+                    localStorage.removeItem('admin');
                     window.location.href = '/';
                 })
                 .catch(err => {
