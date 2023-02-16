@@ -47,6 +47,13 @@ public class ReportRepositoryImpl implements ReportRepositoryCustom {
                 .selectFrom(report)
                 .where(report.sequence.eq(sequence))
                 .fetchOne());
+    }
 
+    @Override
+    public Optional<Report> findReportByTargetSequence(Long targetSequence) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(report)
+                .where(report.targetSequence.eq(targetSequence))
+                .fetchOne());
     }
 }
