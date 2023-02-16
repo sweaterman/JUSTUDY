@@ -174,7 +174,7 @@
                     </v-col>
                 </v-row>
             </v-col>
-            {{ user }}
+            <!-- {{ user }} -->
             <v-col cols="12" md="2" />
         </v-row>
     </v-app>
