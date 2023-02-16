@@ -16,7 +16,7 @@
                         </h3>
                     </v-col>
                 </v-row>
-                <v-row class="card_section_1st" justify="center" align="center" @click="moveToStudy(rankStudyYesterday[0])" >
+                <v-row class="card_section_1st" justify="center" align="center" @click="moveToStudy(rankStudyYesterday[0].seq)" >
                     <v-col cols="12" md="2">
                         <v-avatar size="40">
                             <v-img :src="require('@/assets/1st.png')" />
@@ -391,9 +391,7 @@ export default {
     },
     async created() {
         await this.$store.dispatch('moduleRanking/getRankMemberYesterday');
-        console.log(this.$store.state.moduleRanking.rankStudyYesterday)
         this.rankStudyYesterday = this.$store.state.moduleRanking.rankStudyYesterday;
-        console.log(this.$store.state.moduleRanking.rankStudyYesterday)
         await this.$store.dispatch('moduleRanking/getRankMemberWeek');
         this.rankStudyWeek = this.$store.state.moduleRanking.rankStudyWeek;
         await this.$store.dispatch('moduleRanking/getRankMemberMonth');
