@@ -268,8 +268,10 @@ export default {
             level: '초보 개발자',
             dialog: false,
             port: port,
-            first: '알고리즘',
-            second: '데이터베이스',
+            first: 'FRONT-END',
+            second: 'BACK-END',
+            firstValue: 100000,
+            secondValue: 100001,
             // store에서 담아올 값
             profile: {},
             follow: [],
@@ -288,7 +290,7 @@ export default {
     computed: {
         chartData() {
             return {
-                labels: ['Frontend', 'Backend', 'Algorithm', 'CS', 'Database', 'etc'],
+                labels: ['FRONT-END', 'BACK-END', 'INFRA', 'MOBILE', 'ALGORITHM', 'CS'],
                 datasets: [
                     {
                         label: 'value',
@@ -404,6 +406,30 @@ export default {
         for (let i = 0; i < this.category.length; i++) {
             this.chartData.datasets[0].data[i] = this.category[i].second;
             // this.chartData.datasets[0].data[i] = 300;
+            if (this.category[i].second < this.firstValue) {
+                this.secondValue = this.firstValue;
+                this.second = this.first;
+                this.firstValue = this.category[i].second;
+                this.first = this.category[i].category;
+            } else if (this.category[i].second < this.secondValue) {
+                this.secondValue = this.category[i].second;
+                this.second = this.category[i].category;
+            } else {
+                // 하하하
+            }
+        }
+        let fir = false;
+        let sec = false;
+        for (let i = 0; i < this.chartData.datasets[0].data.length; i++) {
+            if (!fir && this.chartData.datasets[0].data[i] == 0) {
+                this.first = this.chartData.labels[i];
+                fir = true;
+            } else if (!sec && this.chartData.datasets[0].data[i] == 0) {
+                this.second = this.chartData.labels[i];
+                sec = true;
+            } else {
+                // 하하하
+            }
         }
         // this.chartData.datasets[0].data[0] = this.category[0] ? this.category[0]?.second : 0;
         // this.chartData.datasets[0].data[1] = this.category[1] ? this.category[1]?.second : 0;

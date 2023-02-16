@@ -57,7 +57,8 @@ export default {
 
             await axios({
                 url: API_URL,
-                method: 'GET'
+                method: 'GET',
+                withCredentials: true
             })
                 .then(res => {
                     commit('GET_COMMUNITYBOARD', res.data);
@@ -160,7 +161,8 @@ export default {
             const API_URL = `${port}category/main-category`;
             await axios({
                 url: API_URL,
-                method: 'GET'
+                method: 'GET',
+                withCredentials: true
             })
                 .then(res => {
                     commit('GET_TOPCATEGORIES', res.data);
@@ -174,7 +176,8 @@ export default {
             const API_URL = `${port}community/board/notice?page=${number}`;
             await axios({
                 url: API_URL,
-                method: 'GET'
+                method: 'GET',
+                withCredentials: true
             })
                 .then(res => {
                     commit('GET_COMMUNITYBOARD', res.data);
