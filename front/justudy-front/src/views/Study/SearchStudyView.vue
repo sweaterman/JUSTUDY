@@ -7,16 +7,18 @@
             <!-- 본문 -->
             <v-col cols="12" md="6">
                 <!-- 검색란 -->
-                <v-row>
+                <v-row style="margin-top: 20px">
+                    <v-col col="2"></v-col>
                     <v-col cols="2">
                         <v-select v-model="searchSelect" solo :items="items" label="검색"></v-select>
                     </v-col>
-                    <v-col cols="8">
+                    <v-col cols="4">
                         <v-text-field v-model="searchContent" label="검색 내용"></v-text-field>
                     </v-col>
-                    <v-col cols="2">
-                        <v-btn block @click="doSearch('search', null)">검색</v-btn>
+                    <v-col cols="4">
+                        <v-btn rounded @click="doSearch('search', null)">검색</v-btn>
                     </v-col>
+                    <v-col cols="2"></v-col>
                 </v-row>
 
                 <!-- 상위 카테고리 tabs -->
@@ -25,10 +27,10 @@
                         <v-tabs color="black" v-model="tab">
                             <v-tabs-slider color="yellow"></v-tabs-slider>
                             <v-tab @click="changeBottom('전체')">
-                                <h1>전체</h1>
+                                <h2>전체</h2>
                             </v-tab>
                             <v-tab v-for="top in topCategories" :key="top.key" @click="changeBottom(top.key)">
-                                <h1>{{ top.value }}</h1>
+                                <h2>{{ top.value }}</h2>
                             </v-tab>
                         </v-tabs>
                     </v-col>

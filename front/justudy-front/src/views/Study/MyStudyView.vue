@@ -3,10 +3,10 @@
         <v-container>
             <v-row>
                 <!-- 왼쪽 여백 -->
-                <v-col cols="0" md="2"></v-col>
+                <v-col cols="0" md="3"></v-col>
 
                 <!-- 본문 -->
-                <v-col cols="12" md="8">
+                <v-col cols="12" md="6">
                     <!-- 지원한 스터디 목록 -->
                     <v-row>
                         <v-col>
@@ -35,7 +35,7 @@
                 </v-col>
 
                 <!-- 오른쪽 여백 -->
-                <v-col cols="0" md="2"></v-col>
+                <v-col cols="0" md="3"></v-col>
             </v-row>
         </v-container>
     </v-app>
