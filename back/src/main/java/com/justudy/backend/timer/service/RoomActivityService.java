@@ -10,6 +10,7 @@ import com.justudy.backend.timer.domain.QRoomActivityEntity;
 import com.justudy.backend.timer.domain.RoomActivityEntity;
 import com.justudy.backend.timer.dto.request.ActivityRequest;
 import com.justudy.backend.timer.dto.response.ActivityCalendarResponse;
+import com.justudy.backend.timer.dto.response.ActivitySubjectResponse;
 import com.justudy.backend.timer.dto.response.ActivityToRank;
 import com.justudy.backend.timer.dto.response.RoomActivityBeforeRank;
 import com.justudy.backend.timer.repository.RoomActivityRepository;
@@ -97,4 +98,8 @@ public class RoomActivityService {
         roomActivityRepository.deleteAllInBatch(roomActivityEntities);
     }
 
+    @Transactional
+    public List<ActivitySubjectResponse> getAllTimeByCategory() {
+        return roomActivityRepository.sumAllTimeByCategory();
+    }
 }
