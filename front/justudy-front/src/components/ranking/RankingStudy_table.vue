@@ -17,7 +17,7 @@
                     </v-col>
                 </v-row>
 
-                <v-row class="card_section_1st" justify="center" align="center">
+                <v-row class="card_section_1st" justify="center" align="center" @click="moveToStudy(rankStudyYesterday[0])" >
                     <v-col cols="12" md="2">
                         <v-avatar size="40">
                             <v-img :src="require('@/assets/1st.png')" />
@@ -39,10 +39,10 @@
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #ffb000">{{ rankStudyYesterday[0].nickName }}</span>
+                                <span align-self="center" class="line_limit_ranking" style="color: #ffb000; vertical-align: middle;">{{ rankStudyYesterday[0].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -73,10 +73,10 @@
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #bbbbbb">{{ rankStudyYesterday[1].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #bbbbbb; vertical-align: middle;">{{ rankStudyYesterday[1].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -108,10 +108,10 @@
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #503000">{{ rankStudyYesterday[2].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #503000; vertical-align: middle;">{{ rankStudyYesterday[2].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -124,9 +124,9 @@
                 <!-- 오늘 버닝 데이터 TOP10 -->
                 <v-row justify="center" align="center">
                     <v-col>
-                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyYesterday">
-                            <v-col cols="12" md="2"> {{ value.order + 2 }} </v-col>
-                            <v-col class="line_limit_ranking" cols="12" md="6">
+                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyYesterday.slice(3)">
+                            <v-col  align-self="center" cols="12" md="2"> {{ value.order + 2 }} </v-col>
+                            <v-col  align-self="center" class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
                             </v-col>
                             <v-col cols="12" md="4">
@@ -175,10 +175,10 @@
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #ffb000">{{ rankStudyWeek[0].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #ffb000; vertical-align: middle;">{{ rankStudyWeek[0].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -210,10 +210,10 @@
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #bbbbbb">{{ rankStudyWeek[1].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #bbbbbb; vertical-align: middle;">{{ rankStudyWeek[1].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -245,10 +245,10 @@
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #503000">{{ rankStudyWeek[2].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #503000; vertical-align: middle;">{{ rankStudyWeek[2].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -261,9 +261,9 @@
                 <!-- 이번주 버닝 데이터 TOP10 -->
                 <v-row justify="center" align="center">
                     <v-col>
-                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyWeek">
-                            <v-col cols="12" md="2"> {{ value.order + 2 }} </v-col>
-                            <v-col class="line_limit_ranking" cols="12" md="6">
+                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyWeek.slice(3)">
+                            <v-col  align-self="center" cols="12" md="2"> {{ value.order + 2 }} </v-col>
+                            <v-col  align-self="center" class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
                             </v-col>
                             <v-col cols="12" md="4">
@@ -312,10 +312,10 @@
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #ffb000">{{ rankStudyMonth[0].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #ffb000; vertical-align: middle;">{{ rankStudyMonth[0].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -347,10 +347,10 @@
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #bbbbbb">{{ rankStudyMonth[1].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #bbbbbb; vertical-align: middle;">{{ rankStudyMonth[1].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -382,10 +382,10 @@
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #503000">{{ rankStudyMonth[2].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #503000; vertical-align: middle;">{{ rankStudyMonth[2].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -398,9 +398,9 @@
                 <!-- 이번달 버닝 데이터 TOP10 -->
                 <v-row justify="center" align="center">
                     <v-col>
-                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyMonth">
-                            <v-col cols="12" md="2"> {{ value.order + 2 }} </v-col>
-                            <v-col class="line_limit_ranking" cols="12" md="6">
+                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyMonth.slice(3)">
+                            <v-col  align-self="center" cols="12" md="2"> {{ value.order + 2 }} </v-col>
+                            <v-col  align-self="center" class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
                             </v-col>
                             <v-col cols="12" md="4">
@@ -444,6 +444,12 @@ export default {
         this.rankStudyWeek = this.$store.state.moduleRanking.rankStudyWeek;
         await this.$store.dispatch('moduleRanking/getRankMemberMonth');
         this.rankStudyMonth = this.$store.state.moduleRanking.rankStudyMonth;
+        console.log(this.rankStudyYesterday)
+    },
+    methods:{
+        moveToStudy(seq) {
+            this.$router.push({path: `/study/search/${seq}`});
+        },
     }
 };
 </script>
@@ -460,7 +466,7 @@ export default {
 }
 .card_section_board {
     padding: 30px;
-    height: 1200px;
+    height: 1110px !important;
     /* margin-bottom: 20px; */
     border-style: solid;
     border-color: #eeeeee;
