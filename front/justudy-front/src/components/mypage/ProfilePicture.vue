@@ -1,7 +1,5 @@
 <template>
-    <v-row>
-        <Profile :diameter="diameter" :standard="`${standard}`" :src="`${src}`" />
-    </v-row>
+    <Profile :diameter="diameter" :standard="`${standard}`" :src="`${src}`" />
 </template>
 <script>
 import Profile from './Profile.vue';
