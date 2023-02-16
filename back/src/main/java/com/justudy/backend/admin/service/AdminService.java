@@ -20,6 +20,9 @@ import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.domain.MemberRole;
 import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
+import com.justudy.backend.report.domain.Report;
+import com.justudy.backend.report.exception.ReportNotFound;
+import com.justudy.backend.report.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -46,6 +49,11 @@ public class AdminService {
 
     private final CommunityCommentRepository commentRepository;
 
+    private final ReportRepository reportRepository;
+
+
+
+
     public Long getCountOfMembers() {
         return adminRepository.getCountOfMembers();
     }
@@ -63,6 +71,19 @@ public class AdminService {
         MemberEntity findMember = memberRepository.findById(memberSequence)
                 .orElseThrow(MemberNotFound::new);
         return new AdminMemberDetail(findMember);
+    }
+
+    @Transactional
+    public Long banMember(Long loginSequence, Long memberSequence) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+        Validation.validateUserRole(findMember, MemberRole.ADMIN);
+
+        MemberEntity targetMember = memberRepository.findById(memberSequence)
+                .orElseThrow(() -> new MemberNotFound());
+        targetMember.banMember();
+        acceptReport(memberSequence);
+        return targetMember.getSequence();
     }
 
     public Long getWeekSignup() {
@@ -98,6 +119,7 @@ public class AdminService {
         CommunityEntity findCommunity = communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         findCommunity.deleteCommunity();
+        acceptReport(communitySequence);
         return findCommunity.getSequence();
     }
 
@@ -116,8 +138,15 @@ public class AdminService {
         Validation.validateUserRole(findMember, MemberRole.ADMIN);
         CommunityCommentEntity findComment = commentRepository.findById(commentSequence)
                 .orElseThrow(CommentNotFound::new);
-        findComment.changeIsDeleted(false);
+        findComment.changeIsDeleted(true);
+        acceptReport(commentSequence);
         return findComment.getSequence();
+    }
+
+    private Long acceptReport(Long targetSequence) {
+        Report report = reportRepository.findReportByTargetSequence(targetSequence)
+                .orElseThrow(ReportNotFound::new);
+        return report.acceptReport();
     }
 
 

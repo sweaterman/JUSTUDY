@@ -132,18 +132,6 @@ public class MemberService {
     }
 
     @Transactional
-    public Long banMember(Long loginSequence, Long memberSequence) {
-        MemberEntity findMember = memberRepository.findById(loginSequence)
-                .orElseThrow(MemberNotFound::new);
-        Validation.validateUserRole(findMember, MemberRole.ADMIN);
-
-        MemberEntity targetMember = memberRepository.findById(memberSequence)
-                .orElseThrow(() -> new MemberNotFound());
-        targetMember.banMember();
-        return targetMember.getSequence();
-    }
-
-    @Transactional
     public Long deleteMember(Long loginSequence) {
         MemberEntity findMember = memberRepository.findById(loginSequence)
                 .orElseThrow(() -> new MemberNotFound());
