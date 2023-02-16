@@ -1,129 +1,102 @@
 <template>
-    <v-app>
-        <v-container>
-            <v-row>
-                <!-- 왼쪽 여백 -->
-                <v-col cols="12" md="2"></v-col>
+    <v-container>
+        <v-row>
+            <!-- 왼쪽 여백 -->
+            <v-col cols="12" md="3"></v-col>
 
-                <!-- 본문 -->
-                <v-col cols="12" md="8">
-                    <!-- 검색란 -->
-                    <v-row>
-                        <v-col cols="2">
-                            <v-select v-model="searchSelect" solo :items="items" label="검색"></v-select>
-                        </v-col>
-                        <v-col cols="8">
-                            <v-text-field v-model="searchContent" label="검색 내용"></v-text-field>
-                        </v-col>
-                        <v-col cols="2">
-                            <v-btn block @click="doSearch('search', null)">검색</v-btn>
-                        </v-col>
-                    </v-row>
+            <!-- 본문 -->
+            <v-col cols="12" md="6">
+                <!-- 검색란 -->
+                <v-row>
+                    <v-col cols="2">
+                        <v-select v-model="searchSelect" solo :items="items" label="검색"></v-select>
+                    </v-col>
+                    <v-col cols="8">
+                        <v-text-field v-model="searchContent" label="검색 내용"></v-text-field>
+                    </v-col>
+                    <v-col cols="2">
+                        <v-btn block @click="doSearch('search', null)">검색</v-btn>
+                    </v-col>
+                </v-row>
 
-                    <!-- 상위 카테고리 tabs -->
-                    <v-row style="margin-top: 10px; margin-bottom: 10px">
-                        <v-col cols="12">
-                            <v-tabs color="black" v-model="tab">
-                                <v-tabs-slider color="yellow"></v-tabs-slider>
-                                <v-tab @click="changeBottom('전체')">
-                                    <h1>전체</h1>
-                                </v-tab>
-                                <v-tab
-                                    v-for="top in topCategories"
-                                    :key="top.key"
-                                    @click="changeBottom(top.key)"
-                                >
-                                    <h1>{{ top.value }}</h1>
-                                </v-tab>
-                            </v-tabs>
-                        </v-col>
-                    </v-row>
+                <!-- 상위 카테고리 tabs -->
+                <v-row style="margin-top: 10px; margin-bottom: 10px">
+                    <v-col cols="12">
+                        <v-tabs color="black" v-model="tab">
+                            <v-tabs-slider color="yellow"></v-tabs-slider>
+                            <v-tab @click="changeBottom('전체')">
+                                <h1>전체</h1>
+                            </v-tab>
+                            <v-tab v-for="top in topCategories" :key="top.key" @click="changeBottom(top.key)">
+                                <h1>{{ top.value }}</h1>
+                            </v-tab>
+                        </v-tabs>
+                    </v-col>
+                </v-row>
 
-                    <v-row>
-                        <v-divider></v-divider>
-                    </v-row>
+                <v-row>
+                    <v-divider></v-divider>
+                </v-row>
 
-                    <!-- 하위 카테고리 buttons -->
-                    <v-row>
-                        <v-col v-if="checkAll" cols="12">
-                            <div class="btnGroup" v-for="bot in bottomCategories" :key="bot.key">
-                                <v-btn
-                                    outlined
-                                    class="btnBot"
-                                    rounded
-                                    x-large
-                                    @click="doSearch('category', bot.key)"
-                                >
-                                    <!-- 추후 SVG 아이콘으로 수정예정 -->
-                                    <v-avatar size="35">
-                                        <img
-                                            :src="`${port}images/${bot.imageSequence}`"
-                                            alt="stackIcon"
-                                        />
-                                    </v-avatar>
-                                    {{ bot.value }}
+                <!-- 하위 카테고리 buttons -->
+                <v-row>
+                    <v-col v-if="checkAll" cols="12">
+                        <div class="btnGroup" v-for="bot in bottomCategories" :key="bot.key">
+                            <v-btn outlined class="btnBot" rounded large @click="doSearch('category', bot.key)">
+                                <v-avatar size="30">
+                                    <img :src="`${port}images/${bot.imageSequence}`" alt="stackIcon" />
+                                </v-avatar>
+                                &nbsp;&nbsp;{{ bot.value }}
+                            </v-btn>
+                        </div>
+                    </v-col>
+                </v-row>
+
+                <!-- 선택한 항목 표기 chips -->
+                <v-row>
+                    <v-col cols="12">
+                        <v-chip-group column>
+                            <v-chip close close-icon="mdi-close-outline" @click:close="remove(i)" v-for="i in choice" :key="i">{{ i }}</v-chip>
+                        </v-chip-group>
+                    </v-col>
+                </v-row>
+
+                <!-- 스터디 리스트 -->
+                <StudyList :studies="promotionStudies.studyResponse" :type="promotion"></StudyList>
+
+                <!-- 더보기 버튼 -->
+                <v-row v-if="checkMore">
+                    <v-col cols="3"></v-col>
+                    <v-col cols="6">
+                        <v-btn outlined color="gold" block @click="getMore">더보기</v-btn>
+                    </v-col>
+                    <v-col cols="3"></v-col>
+                </v-row>
+
+                <!-- 스터디 생성 페이지로 연결 -->
+                <v-row class="createCom">
+                    <v-col cols="12">
+                        <v-row>
+                            <v-col dense align="center" cols="12">
+                                <h3 style="color: #999999">직접 스터디를 만들어 스터디 멤버를 모집해보세요!</h3>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col dense align="center" cols="12">
+                                <v-btn rounded color="#FFEB00" style="height: 50px; width: 50%" @click="moveToCreate">
+                                    <h2>1분 만에 스터디 만들기</h2>
                                 </v-btn>
-                            </div>
-                        </v-col>
-                    </v-row>
+                            </v-col>
+                        </v-row>
+                    </v-col>
+                </v-row>
+            </v-col>
+            <!-- 본문 끝 -->
 
-                    <!-- 선택한 항목 표기 chips -->
-                    <v-row>
-                        <v-col cols="12">
-                            <v-chip-group column>
-                                <v-chip
-                                    close
-                                    close-icon="mdi-close-outline"
-                                    @click:close="remove(i)"
-                                    v-for="i in choice"
-                                    :key="i"
-                                >{{ i }}</v-chip>
-                            </v-chip-group>
-                        </v-col>
-                    </v-row>
-
-                    <!-- 스터디 리스트 -->
-                    <StudyList :studies="promotionStudies.studyResponse" :type="promotion"></StudyList>
-
-                    <!-- 더보기 버튼 -->
-                    <v-row v-if="checkMore">
-                        <v-col cols="3"></v-col>
-                        <v-col cols="6">
-                            <v-btn outlined color="gold" block @click="getMore">더보기</v-btn>
-                        </v-col>
-                        <v-col cols="3"></v-col>
-                    </v-row>
-
-                    <!-- 스터디 생성 페이지로 연결 -->
-                    <v-row class="createCom">
-                        <v-col cols="12">
-                            <v-row>
-                                <v-col dense align="center" cols="12">
-                                    <h3 style="color: #999999">직접 스터디를 만들어 스터디 멤버를 모집해보세요!</h3>
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col dense align="center" cols="12">
-                                    <v-btn
-                                        rounded
-                                        color="#FFEB00"
-                                        style="height: 50px; width: 50%"
-                                        @click="moveToCreate"
-                                    >
-                                        <h2>1분 만에 스터디 만들기</h2>
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
-                        </v-col>
-                    </v-row>
-                </v-col>
-                <!-- 본문 끝 -->
-
-                <!-- 오른쪽 여백 -->
-                <v-col cols="12" md="2"></v-col>
-            </v-row>
-        </v-container>
-    </v-app>
+            <!-- 오른쪽 여백 -->
+            <v-col cols="12" md="3"></v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>

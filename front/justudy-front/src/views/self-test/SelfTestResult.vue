@@ -4,7 +4,7 @@
             <v-col cols="12" md="4" />
             <v-col cols="12" md="4">
                 <v-row>
-                    <v-cols>
+                    <v-col>
                         <v-row justify="center" align="center">
                             <h1 :style="{marginTop: '8%'}">당신의 레벨은?!?!?</h1>
                         </v-row>
@@ -14,7 +14,7 @@
                         <v-row justify="center" align="center">
                             <img src="@/assets/juniorClass.png" style="padding: 20px" />
                         </v-row>
-                    </v-cols>
+                    </v-col>
                 </v-row>
                 <v-row :style="{marginTop: '5%'}">
                     <v-col cols="12" md="5">
