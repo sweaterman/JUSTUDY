@@ -35,7 +35,7 @@ export default {
     actions: {
         async getRankMemberYesterday({commit}) {
             await axios
-                .get(`${port}rank/members/yesterday`)
+                .get(`${port}rank/members/yesterday`, {withCredentials: true})
                 .then(res => {
                     commit('getRankMemberYesterday', res.data);
                 })
@@ -44,7 +44,7 @@ export default {
 
         async getRankMemberWeek({commit}) {
             await axios
-                .get(`${port}rank/members/week`)
+                .get(`${port}rank/members/week`, {withCredentials: true})
                 .then(res => {
                     commit('getRankMemberWeek', res.data);
                 })
@@ -52,7 +52,7 @@ export default {
         },
         async getRankMemberMonth({commit}) {
             await axios
-                .get(`${port}rank/members/month`)
+                .get(`${port}rank/members/month`, {withCredentials: true})
                 .then(res => {
                     commit('getRankMemberMonth', res.data);
                 })
@@ -60,7 +60,7 @@ export default {
         },
         async getRankStudyYesterday({commit}) {
             await axios
-                .get(`${port}rank/study/yesterday`)
+                .get(`${port}rank/study/yesterday`, {withCredentials: true})
                 .then(res => {
                     commit('getRankStudyYesterday', res.data);
                 })
@@ -69,7 +69,7 @@ export default {
 
         async getRankStudyWeek({commit}) {
             await axios
-                .get(`${port}rank/study/week`)
+                .get(`${port}rank/study/week`, {withCredentials: true})
                 .then(res => {
                     commit('getRankStudyWeek', res.data);
                 })
@@ -77,7 +77,7 @@ export default {
         },
         async getRankStudyMonth({commit}) {
             await axios
-                .get(`${port}rank/study/month`)
+                .get(`${port}rank/study/month`, {withCredentials: true})
                 .then(res => {
                     commit('getRankStudyMonth', res.data);
                 })
