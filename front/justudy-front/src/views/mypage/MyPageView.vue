@@ -226,7 +226,7 @@
                     <v-col cols="12" md="8">
                         <!-- 달력 파트 -->
                         <v-row :style="{marginTop: '-2%'}">
-                            <MyPageCalendar v-if="studyCalendar !==null" :studyCalendar="studyCalendar" />
+                            <MyPageCalendar v-if="studyCalendar !== null" :studyCalendar="studyCalendar" />
                         </v-row>
                     </v-col>
                 </v-row>
