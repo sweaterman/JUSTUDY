@@ -126,7 +126,7 @@ public class StudyEntity {
         this.population = population;
         this.level = level;
         this.meeting = meeting;
-        this.isOpen = isOpen;
+        this.isOpen = true;
         this.github = github;
         this.notion = notion;
         this.startTime = startTime;
