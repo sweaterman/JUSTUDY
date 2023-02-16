@@ -7,45 +7,45 @@
                         <!-- 한 개의 스터디를 감싸고 있는 div -->
                         <div class="singleStudy">
                             <v-row justify="center">
-                                <div v-if="type != 'apply'">
+                                <div v-if="type != 'apply'" style="display: flex; justify-content: center; align-items: center">
                                     <img class="hover" style="width: 80%" :src="`${port}images/${study.imageSequence}`" alt="study_image" @click="moveToStudy(study.sequence)" />
                                 </div>
 
-                                <div v-if="type == 'apply'" class="container">
+                                <div v-if="type == 'apply'" class="container" style="display: flex; justify-content: center; align-items: center">
                                     <img class="hover" style="width: 80%" :src="`${port}images/${study.imageSequence}`" alt="study_image" @click="moveToStudy(study.sequence)" />
                                     <v-btn rounded color="error" class="cancleApply" @click="deleteApply('open', study.sequence)">X</v-btn>
                                 </div>
                             </v-row>
                             <v-row style="margin-bottom: 5px">
                                 <v-col cols="12">
-                                    <h3 class="hover" @click="moveToStudy(study.sequence)">{{ study.name }}</h3>
+                                    <h4 class="hover" @click="moveToStudy(study.sequence)">{{ study.name }}</h4>
                                 </v-col>
                             </v-row>
 
                             <v-row no-gutters align="center">
-                                <v-col cols="4">
+                                <v-col cols="5">
                                     <v-subheader style="height: fit-content; padding: 0px">모집 현황</v-subheader>
                                 </v-col>
-                                <v-col cols="8" v-if="checkPersonnel(study.member.length, study.population)" style="color: #ff0000; font-weight: bold">
+                                <v-col cols="7" v-if="checkPersonnel(study.member.length, study.population)" style="color: #ff0000; font-weight: bold; font-size: 14px">
                                     {{ study.member.length }} / {{ study.population }}
                                 </v-col>
-                                <v-col cols="8" v-if="!checkPersonnel(study.member.length, study.population)" style="color: #3edf23; font-weight: bold">
+                                <v-col cols="7" v-if="!checkPersonnel(study.member.length, study.population)" style="color: #3edf23; font-weight: bold; font-size: 14px">
                                     {{ study.member.length }} / {{ study.population }}
                                 </v-col>
                             </v-row>
                             <v-row no-gutters align="center">
-                                <v-col cols="4">
+                                <v-col cols="5">
                                     <v-subheader style="height: fit-content; padding: 0px">시작 예정일</v-subheader>
                                 </v-col>
-                                <v-col cols="8">
+                                <v-col cols="7" style="font-size: 14px">
                                     {{ study.startTime }}
                                 </v-col>
                             </v-row>
                             <v-row no-gutters align="center">
-                                <v-col cols="4">
+                                <v-col cols="5">
                                     <v-subheader style="height: fit-content; padding: 0px">스터디장</v-subheader>
                                 </v-col>
-                                <v-col cols="8">
+                                <v-col cols="7" style="font-size: 14px">
                                     {{ study.leader }}
                                 </v-col>
                             </v-row>
@@ -142,7 +142,7 @@ export default {
     border-style: solid;
     border-color: #eeeeee;
     border-radius: 30px;
-    /* border-width: thin; */
+    border-width: thin;
 }
 
 .container {

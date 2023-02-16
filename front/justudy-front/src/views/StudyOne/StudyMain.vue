@@ -3,34 +3,27 @@
         <v-container>
             <v-row :style="{padding: '1%'}">
                 <!-- 왼쪽 여백 -->
-                <v-col cols="12" md="2" />
+                <v-col cols="12" md="3" />
 
                 <!-- 본문 -->
-                <v-col cols="12" md="8">
+                <v-col cols="12" md="6">
                     <v-row>
-                        <v-col cols="12" md="1">
+                        <v-col cols="12" align="center">
                             <router-link :to="`/study/${studySeq}/info`">
                                 <v-btn :style="{color: 'blue'}">
                                     <span class="material-icons-outlined"> info </span>
                                 </v-btn>
                             </router-link>
-                        </v-col>
 
-                        <v-col cols="12" md="1">
                             <router-link :to="`/study/${studySeq}/board/main`">
                                 <v-btn :style="{color: 'blue'}">
                                     <span class="material-icons-outlined"> article </span>
                                 </v-btn>
                             </router-link>
                         </v-col>
-
-                        <v-col cols="12" md="4" />
-                        <v-col cols="12" md="2" justify="center" align="center">
-                            <router-link :to="`/study/${studySeq}/calender`"> CALENDER </router-link>
-                        </v-col>
                     </v-row>
 
-                    <v-row>
+                    <v-row style="margin-bottom: 20px">
                         <v-divider></v-divider>
                     </v-row>
 
@@ -40,7 +33,7 @@
                 </v-col>
 
                 <!-- 오른쪽 여백 -->
-                <v-col cols="12" md="2" />
+                <v-col cols="12" md="3" />
             </v-row>
         </v-container>
     </v-app>
