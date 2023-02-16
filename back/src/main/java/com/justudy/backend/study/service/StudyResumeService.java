@@ -102,10 +102,10 @@ public class StudyResumeService {
                 .orElseThrow(StudyNotFound::new);
 
         //ConcurrentModificationException을 피하기위해 iterator를 활용한 제거
-        for (Iterator<StudyResumeEntity> iterator = studyEntity.getResumes().iterator(); iterator.hasNext(); ) {
-            iterator.next().changeStudy(null);
-            iterator.remove();
-        }
+//        for (Iterator<StudyResumeEntity> iterator = studyEntity.getResumes().iterator(); iterator.hasNext(); ) {
+//            iterator.next().changeStudy(null);
+//            iterator.remove();
+//        }
         studyResumeRepository.deleteStudyResumeByStudy(id);
     }
 }

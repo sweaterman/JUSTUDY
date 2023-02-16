@@ -91,10 +91,10 @@ public class StudyMemberService {
 //        List<StudyMemberEntity> studyMemberEntities = studyMemberRepository.readAllByStudy(studySequence);
 
         //ConcurrentModificationException을 피하기위해 iterator를 활용한 제거
-        for (Iterator<StudyMemberEntity> iterator = studyEntity.getStudyMembers().iterator(); iterator.hasNext(); ) {
-            iterator.next().changeStudy(null);
-            iterator.remove();
-        }
+//        for (Iterator<StudyMemberEntity> iterator = studyEntity.getStudyMembers().iterator(); iterator.hasNext(); ) {
+//            iterator.next().changeStudy(null);
+//            iterator.remove();
+//        }
         studyMemberRepository.deleteStudyMemberByStudy(studySequence);
     }
 
