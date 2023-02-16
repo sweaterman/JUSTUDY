@@ -28,22 +28,34 @@
                     <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
                         <ProfilePicture
+                            v-if="rankMemberYesterday !== null"
                             :diameter="70"
                             :height="70"
-                            :fontSize="32"
+                            :fontSize="32"                            
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankMemberYesterday[0].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #ffb000">{{ rankMemberYesterday[0].nickName }}</span>
+                                <v-tooltip text="Tooltip">
+                                <template v-slot:activator="{ props }">
+                                    <span v-bind="props" class="line_limit_ranking" style="color: #ffb000; vertical-align: middle;">{{ rankMemberYesterday[0].nickName }}</span>
+                                </template>
+                                </v-tooltip>
+                                <v-btn>
+                                    Bottom
+                                    <v-tooltip
+                                    activator="parent"
+                                    location="bottom"
+                                    >Tooltip</v-tooltip>
+                                </v-btn>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -62,35 +74,23 @@
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <!-- <ProfilePicture
-                            :diameter="30"
-                            :height="70"
-                            :fontSize="32"
-                            content="LV"
-                            standard="px"
-                            
-                            :src="`${port}images/${rankMemberYesterday[0].img}`"
-                            style="padding: 5%"
-                            justify="center"
-                            align="center"
-                        /> -->
                         <ProfilePicture
                             :diameter="70"
                             :height="70"
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankMemberYesterday[1].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #bbbbbb">{{ rankMemberYesterday[1].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #bbbbbb; vertical-align: middle;">{{ rankMemberYesterday[1].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -115,17 +115,17 @@
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankMemberYesterday[2].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #503000">{{ rankMemberYesterday[2].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #503000; vertical-align: middle;">{{ rankMemberYesterday[2].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -138,9 +138,9 @@
                 <!-- 오늘 버닝 데이터 TOP10 -->
                 <v-row justify="center" align="center">
                     <v-col>
-                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankMemberYesterday">
-                            <v-col cols="12" md="2"> {{ value.order + 2 }} </v-col>
-                            <v-col class="line_limit_ranking" cols="12" md="6">
+                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankMemberYesterday.slice(3)">
+                            <v-col align-self="center" cols="12" md="2"> {{ value.order }} </v-col>
+                            <v-col align-self="center" class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
                             </v-col>
                             <v-col cols="12" md="4">
@@ -183,17 +183,17 @@
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankMemberWeek[0].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #ffb000">{{ rankMemberWeek[0].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #ffb000; vertical-align: middle;">{{ rankMemberWeek[0].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -217,17 +217,17 @@
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankMemberWeek[1].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #bbbbbb">{{ rankMemberWeek[1].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #bbbbbb; vertical-align: middle;">{{ rankMemberWeek[1].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -252,17 +252,18 @@
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankMemberWeek[2].img}`"
+                            alt="stackIcon"
                             style="padding: 5%"
                             justify="center"
                             align="center"
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #503000">{{ rankMemberWeek[2].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #503000; vertical-align: middle;">{{ rankMemberWeek[2].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -275,9 +276,9 @@
                 <!-- 이번주 버닝 데이터 TOP10 -->
                 <v-row justify="center" align="center">
                     <v-col>
-                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankMemberWeek">
-                            <v-col cols="12" md="2"> {{ value.order + 2 }} </v-col>
-                            <v-col class="line_limit_ranking" cols="12" md="6">
+                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankMemberWeek.slice(3)">
+                            <v-col align-self="center" cols="12" md="2"> {{ value.order }} </v-col>
+                            <v-col align-self="center" class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
                             </v-col>
                             <v-col cols="12" md="4">
@@ -320,17 +321,17 @@
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankMemberMonth[0].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #ffb000">{{ rankMemberMonth[0].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #ffb000; vertical-align: middle;">{{ rankMemberMonth[0].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -354,17 +355,17 @@
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankMemberMonth[1].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #bbbbbb">{{ rankMemberMonth[1].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #bbbbbb; vertical-align: middle;">{{ rankMemberMonth[1].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -389,17 +390,17 @@
                             :fontSize="32"
                             content="LV"
                             standard="px"
-                            :src="require('@/assets/justudy.png')"
+                            :src="`${port}images/${rankMemberMonth[2].img}`"
                             style="padding: 5%"
                             justify="center"
                             align="center"
                         />
                     </v-col>
                     <v-col cols="12" md="2" />
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="5">
                         <v-row>
                             <h3>
-                                <span class="line_limit_ranking" style="color: #503000">{{ rankMemberMonth[2].nickName }}</span>
+                                <span class="line_limit_ranking" style="color: #503000; vertical-align: middle;">{{ rankMemberMonth[2].nickName }}</span>
                                 <span style="color: black">님!</span>
                             </h3>
                         </v-row>
@@ -410,11 +411,11 @@
                 </v-row>
 
                 <!-- 이번달 버닝 데이터 TOP10 -->
-                <v-row justify="center" align="center">
-                    <v-col>
-                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankMemberMonth">
-                            <v-col cols="12" md="2"> {{ value.order + 2 }} </v-col>
-                            <v-col class="line_limit_ranking" cols="12" md="6">
+                <v-row justify="center" >
+                    <v-col align-self="center">
+                        <v-row class="card_section_each" :key="index" v-for="(value, index) in rankMemberMonth.slice(3)">
+                            <v-col align-self="center" cols="12" md="2"> {{ value.order  }} </v-col>
+                            <v-col align-self="center" class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
                             </v-col>
                             <v-col cols="12" md="4">
@@ -454,6 +455,7 @@ export default {
     async created() {
         await this.$store.dispatch('moduleRanking/getRankMemberYesterday');
         this.rankMemberYesterday = this.$store.state.moduleRanking.rankMemberYesterday;
+        console.log(this.rankMemberYesterday[0].img)
         await this.$store.dispatch('moduleRanking/getRankMemberWeek');
         this.rankMemberWeek = this.$store.state.moduleRanking.rankMemberWeek;
         await this.$store.dispatch('moduleRanking/getRankMemberMonth');
@@ -474,7 +476,7 @@ export default {
 }
 .card_section_board {
     padding: 30px;
-    height: 1200px;
+    height: 1110px !important;
     /* margin-bottom: 20px; */
     border-style: solid;
     border-color: #eeeeee;
