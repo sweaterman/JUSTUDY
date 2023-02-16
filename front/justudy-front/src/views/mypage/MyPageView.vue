@@ -403,8 +403,11 @@ export default {
         // this.category = this.$store.state.moduleTimer.studyCategory;
         console.log('아아아' + this.category);
         // console.log(this.chartData.datasets[0].data);
-        for (let i = 0; i < this.category.length; i++) {
+
+        // 원래 this.category.length 로 해야하지만, 일단 급한대로
+        for (let i = 0; i < 6; i++) {
             this.chartData.datasets[0].data[i] = this.category[i].second;
+
             // this.chartData.datasets[0].data[i] = 300;
             if (this.category[i].second < this.firstValue) {
                 this.secondValue = this.firstValue;
@@ -418,6 +421,7 @@ export default {
                 // 하하하
             }
         }
+
         let fir = false;
         let sec = false;
         for (let i = 0; i < this.chartData.datasets[0].data.length; i++) {
