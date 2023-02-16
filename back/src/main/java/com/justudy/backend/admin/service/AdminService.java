@@ -53,8 +53,6 @@ public class AdminService {
     private final ReportRepository reportRepository;
 
 
-
-
     public Long getCountOfMembers() {
         return adminRepository.getCountOfMembers();
     }
@@ -198,8 +196,16 @@ public class AdminService {
         LocalDate now = LocalDate.now();
         return now.with(DayOfWeek.MONDAY).atStartOfDay();
     }
+
     private LocalDateTime getEndDateTime() {
         LocalDate now = LocalDate.now();
         return now.with(DayOfWeek.SUNDAY).atTime(LocalTime.MAX);
+    }
+
+    public boolean validateAdmin(Long loginSequence) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+        Validation.validateUserRole(findMember, MemberRole.ADMIN);
+        return true;
     }
 }

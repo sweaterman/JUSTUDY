@@ -136,4 +136,5 @@ public class AdminController {
     public CountReport getCountsOfReport() {
         return adminService.getCountsOfReport();
     }
+
 }
