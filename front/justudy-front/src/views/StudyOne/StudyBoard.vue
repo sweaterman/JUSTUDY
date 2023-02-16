@@ -45,12 +45,14 @@
             </v-row>
 
             <v-row>
-                <v-col cols="12">
+                <v-col cols="12" align="center">
                     <v-btn width="5px" @click="movepage('previous')">
                         <!-- 이전페이지로 이동 -->
                         <v-icon color="black" small>mdi-arrow-left-bold-outline</v-icon>
                     </v-btn>
+                    &nbsp;&nbsp;
                     <span>{{ sendData.page }}/{{ parseInt(boardList.totalCount / sendData.size) + 1 }} page</span>
+                    &nbsp;&nbsp;
                     <v-btn width="5px" @click="movepage('next')">
                         <!-- 다음페이지로 이동 -->
                         <v-icon color="black" small> mdi-arrow-right-bold-outline </v-icon>

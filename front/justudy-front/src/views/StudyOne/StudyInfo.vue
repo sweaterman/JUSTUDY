@@ -1,5 +1,4 @@
 <template>
-    <!-- <v-app> -->
     <v-container>
         <!-- 상단 스터디 정보 -->
         <v-row>
@@ -7,41 +6,41 @@
             <v-col cols="12" md="5" justify="center" align="center">
                 <!-- 스터디 이미지 -->
                 <v-row>
-                    <v-col>
+                    <v-col align="center">
                         <img class="img" style="width: 100%; border: 1px solid" :src="`${port}images/${studyInfo.imageSequence}`" alt="study_image" />
                     </v-col>
                 </v-row>
             </v-col>
-            <v-col cols="12" md="1" />
+            <v-col cols="12" md="1"></v-col>
             <v-col cols="12" md="6">
-                <v-row>
-                    <v-col cols="4"><h3>스터디</h3></v-col>
+                <v-row align="center">
+                    <v-col cols="3"><h3>스터디</h3></v-col>
                     <v-col cols="8"> {{ studyInfo.name }} </v-col>
                 </v-row>
-                <v-row>
-                    <v-col cols="4"> <h3>Level</h3> </v-col>
+                <v-row align="center">
+                    <v-col cols="3"> <h3>Level</h3> </v-col>
                     <v-col cols="8"> {{ studyInfo.level }} </v-col>
                 </v-row>
-                <v-row>
-                    <v-col cols="4"> <h3>팀장</h3> </v-col>
+                <v-row align="center">
+                    <v-col cols="3"> <h3>팀장</h3> </v-col>
                     <v-col cols="8"> {{ studyInfo.leader }} </v-col>
                 </v-row>
-                <v-row>
-                    <v-col cols="4"> <h3>on-off</h3> </v-col>
+                <v-row align="center">
+                    <v-col cols="3"> <h3>on-off</h3> </v-col>
                     <v-col cols="8"> {{ studyInfo.meeting }} </v-col>
                 </v-row>
-                <v-row>
-                    <v-col cols="4"> <h3>주제</h3> </v-col>
+                <v-row align="center">
+                    <v-col cols="3"> <h3>주제</h3> </v-col>
                     <v-col cols="8"> {{ studyInfo.bottomCategory }} </v-col>
                 </v-row>
-                <v-row>
-                    <v-col cols="4">
+                <v-row align="center">
+                    <v-col cols="3">
                         <v-img :src="require('@/assets/git.png')" :style="{width: '30px'}" />
                     </v-col>
                     <v-col cols="8"> {{ studyInfo.github }} </v-col>
                 </v-row>
-                <v-row>
-                    <v-col cols="4">
+                <v-row align="center">
+                    <v-col cols="3">
                         <v-img :src="require('@/assets/notion.png')" :style="{width: '30px'}" />
                     </v-col>
                     <v-col cols="8"> {{ studyInfo.notion }} </v-col>
@@ -51,7 +50,7 @@
 
         <!-- 스터디룸 참가/단체알림 -->
         <v-row>
-            <v-col cols="12" md="6" align="center">
+            <v-col cols="12" align="end">
                 <!-- 스터디 닫혀있을 때 -->
                 <v-btn v-if="!studyInfo.onAir" @click="onAirClicked('off')" :style="{color: 'black'}">
                     <v-col>
@@ -72,8 +71,8 @@
                     </v-col>
                 </v-btn>
             </v-col>
-            <v-col cols="12" md="6" align="center">
-                <!-- 단체 문자?알림? -->
+            <!-- <v-col cols="12" md="6" align="center">
+                단체 문자?알림?
                 <v-btn @click="sendAllMessage" :style="{color: '#00B9FF'}">
                     <v-col>
                         <span class="material-icons-outlined"> send </span>
@@ -82,7 +81,7 @@
                         <span color="white">단체 알림보내기</span>
                     </v-col>
                 </v-btn>
-            </v-col>
+            </v-col> -->
         </v-row>
 
         <!-- 스터디 Description -->
@@ -189,7 +188,6 @@
             </v-card>
         </v-dialog>
     </v-container>
-    <!-- </v-app> -->
 </template>
 
 <script>
