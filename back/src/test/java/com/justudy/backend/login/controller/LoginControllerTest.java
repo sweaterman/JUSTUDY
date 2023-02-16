@@ -2,7 +2,7 @@ package com.justudy.backend.login.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.justudy.backend.login.dto.request.LoginRequest;
-import com.justudy.backend.login.dto.response.LoginResponse;
+import com.justudy.backend.login.dto.response.LoginResult;
 import com.justudy.backend.login.service.LoginService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,7 +50,7 @@ class LoginControllerTest {
         LoginRequest request = new LoginRequest(USER_ID, PASSWORD);
         String json = objectMapper.writeValueAsString(request);
 
-        LoginResponse response = new LoginResponse(NICKNAME);
+        LoginResult response = new LoginResult(NICKNAME);
         response.setLoginSequence(100L);
         response.setPassword("1234");
 
