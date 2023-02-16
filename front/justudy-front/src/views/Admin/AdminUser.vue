@@ -50,9 +50,10 @@
                                         <td style="width: 5%; font-size: x-large">No</td>
                                         <td style="width: 20%; font-size: x-large">아이디</td>
                                         <td style="width: 20%; font-size: x-large">닉네임</td>
-                                        <td style="width: 20%; font-size: x-large">SSAFY학번</td>
+                                        <td style="width: 15%; font-size: x-large">SSAFY학번</td>
                                         <td style="width: 20%; font-size: x-large">가입시간</td>
-                                        <td style="width: 15%; font-size: x-large"></td>
+                                        <td style="width: 10%; font-size: x-large">탈퇴여부</td>
+                                        <td style="width: 10%; font-size: x-large">BAN여부</td>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -62,9 +63,8 @@
                                         <td>{{ item.nickName }}</td>
                                         <td>{{ item.ssafy }}</td>
                                         <td>{{ item.createdAt.split('T')[0] }}</td>
-                                        <td>
-                                            <!-- <v-btn color="yellow">상세보기</v-btn> -->
-                                        </td>
+                                        <td>{{ item.deleted }}</td>
+                                        <td>{{ item.banned }}</td>
                                         <!-- Sequelize의 createdAt, updatedAt의 날짜 형식이 '2021-12-10T12:38:52.000Z' 이런 식이여서 
                                     split('T')[0]을 통해 날짜만 표시 -->
                                     </tr>
@@ -134,7 +134,9 @@ export default {
                     writer:"오의석",
                     nickName:"바보",
                     ssafy:"084822",
-                    createdAt:"2021-11-05T"
+                    createdAt:"2021-11-05T",
+                    deleted:false,
+                    banned:false
                 },
             ], // 현재 게시판과 페이지에 맞는 글 리스트들
             cnt: 0 // 현재 게시판의 총 글 개수
@@ -176,6 +178,8 @@ export default {
                                 nickName:response[i].nickname,
                                 ssafy:response[i].ssafyId,
                                 createdAt:response[i].createdTime,
+                                deleted:response[i].deleted,
+                                banned:response[i].banned,
                             }
                         )
                     }
