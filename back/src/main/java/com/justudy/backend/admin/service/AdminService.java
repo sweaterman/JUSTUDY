@@ -6,17 +6,23 @@ import com.justudy.backend.admin.dto.response.MemberListResponse;
 import com.justudy.backend.admin.dto.response.MemberListResult;
 import com.justudy.backend.admin.repository.AdminRepository;
 import com.justudy.backend.common.validate.Validation;
+import com.justudy.backend.community.domain.CommunityCommentEntity;
 import com.justudy.backend.community.domain.CommunityEntity;
 import com.justudy.backend.community.dto.request.CommunitySearch;
 import com.justudy.backend.community.dto.response.CommunityDetailResponse;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
 import com.justudy.backend.community.dto.response.CommunityListResult;
+import com.justudy.backend.community.exception.CommentNotFound;
 import com.justudy.backend.community.exception.CommunityNotFound;
+import com.justudy.backend.community.repository.CommunityCommentRepository;
 import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.domain.MemberRole;
 import com.justudy.backend.member.exception.MemberNotFound;
 import com.justudy.backend.member.repository.MemberRepository;
+import com.justudy.backend.report.domain.Report;
+import com.justudy.backend.report.exception.ReportNotFound;
+import com.justudy.backend.report.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,6 +47,13 @@ public class AdminService {
 
     private final CommunityRepository communityRepository;
 
+    private final CommunityCommentRepository commentRepository;
+
+    private final ReportRepository reportRepository;
+
+
+
+
     public Long getCountOfMembers() {
         return adminRepository.getCountOfMembers();
     }
@@ -58,6 +71,19 @@ public class AdminService {
         MemberEntity findMember = memberRepository.findById(memberSequence)
                 .orElseThrow(MemberNotFound::new);
         return new AdminMemberDetail(findMember);
+    }
+
+    @Transactional
+    public Long banMember(Long loginSequence, Long memberSequence) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+        Validation.validateUserRole(findMember, MemberRole.ADMIN);
+
+        MemberEntity targetMember = memberRepository.findById(memberSequence)
+                .orElseThrow(() -> new MemberNotFound());
+        targetMember.banMember();
+        acceptReport(memberSequence);
+        return targetMember.getSequence();
     }
 
     public Long getWeekSignup() {
@@ -93,6 +119,7 @@ public class AdminService {
         CommunityEntity findCommunity = communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         findCommunity.deleteCommunity();
+        acceptReport(communitySequence);
         return findCommunity.getSequence();
     }
 
@@ -101,6 +128,25 @@ public class AdminService {
         LocalDateTime endDateTime = getEndDateTime();
 
         return adminRepository.countCommunityByTime(startDateTime, endDateTime);
+    }
+
+    @Transactional
+    public Long deleteComment(Long loginSequence, Long commentSequence) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+
+        Validation.validateUserRole(findMember, MemberRole.ADMIN);
+        CommunityCommentEntity findComment = commentRepository.findById(commentSequence)
+                .orElseThrow(CommentNotFound::new);
+        findComment.changeIsDeleted(true);
+        acceptReport(commentSequence);
+        return findComment.getSequence();
+    }
+
+    private Long acceptReport(Long targetSequence) {
+        Report report = reportRepository.findReportByTargetSequence(targetSequence)
+                .orElseThrow(ReportNotFound::new);
+        return report.acceptReport();
     }
 
 
