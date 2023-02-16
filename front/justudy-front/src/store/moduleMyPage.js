@@ -70,8 +70,8 @@ export default {
             });
         },
 
-        async getProfile({commit}, {id}) {
-            await axios.get(port + 'member/profiles/' + id).then(res => {
+        async getProfile({commit}, data) {
+            await axios.get(port + 'member/profiles/' + data.id).then(res => {
                 commit('getProfile', res.data);
             });
         }
