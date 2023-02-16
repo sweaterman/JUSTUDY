@@ -331,7 +331,7 @@ export default {
                     this.timeString = date.toISOString().substring(11, 19);
                     if (this.transferTime > 4.9) {
                         //1분 마다 데이터 전송
-                        axios.post(`${port}timer/member`,{category:this.webcamSwitch[0],second:5}).then((ret)=>console.log(ret));
+                        axios.post(`${port}timer/member`,{category:this.webcamSwitch[0],second:5}).then((ret)=>console.log(ret)).catch((err)=>console.log(err));
                         this.transferTime = 0.0;
                         /* 
                 여기에 store의 axois로 /timer/member/로 post 값을 보내주면 된다.(비동기로 보내기를 원합니다. 정확한 시간을 위해)
