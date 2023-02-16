@@ -44,19 +44,21 @@
                                         <td style="width: 5%; font-size: x-large">No</td>
                                         <td style="width: 20%; font-size: x-large">제목</td>
                                         <td style="width: 20%; font-size: x-large">글쓴이</td>
-                                        <td style="width: 20%; font-size: x-large">조회수</td>
-                                        <td style="width: 20%; font-size: x-large">좋아요수</td>
+                                        <td style="width: 15%; font-size: x-large">조회수</td>
+                                        <td style="width: 15%; font-size: x-large">좋아요수</td>
                                         <td style="width: 15%; font-size: x-large">작성일자</td>
+                                        <td style="width: 15%; font-size: x-large">삭제</td>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="item in contentlist" :key="item.id" @click="movetocontent(item.id)">
-                                        <td>{{ item.no }}</td>
-                                        <td>{{ item.title }}</td>
-                                        <td>{{ item.writer }}</td>
-                                        <td>{{ item.viewCount }}</td>
-                                        <td>{{ item.loveCount }}</td>
-                                        <td>{{ item.createdAt.split('T')[0] }}</td>
+                                    <tr v-for="item in contentlist" :key="item.id">
+                                        <td  @click="movetocontent(item.id)">{{ item.no }}</td>
+                                        <td @click="movetocontent(item.id)">{{ item.title }}</td>
+                                        <td @click="movetocontent(item.id)">{{ item.writer }}</td>
+                                        <td @click="movetocontent(item.id)">{{ item.viewCount }}</td>
+                                        <td @click="movetocontent(item.id)">{{ item.loveCount }}</td>
+                                        <td @click="movetocontent(item.id)">{{ item.createdAt.split('T')[0] }}</td>
+                                        <td @click="deletecontent(item.id)"><v-btn color="yellow">삭제</v-btn></td>
                                         <!-- Sequelize의 createdAt, updatedAt의 날짜 형식이 '2021-12-10T12:38:52.000Z' 이런 식이여서 
                                     split('T')[0]을 통해 날짜만 표시 -->
                                     </tr>
@@ -288,6 +290,19 @@ export default {
             // 클릭된 글의 id를 받아와야 라우팅할때 보낼 수 있음
             console.log('/community/content/' + id);
             window.location.href = '/community/content/' + id;
+        },
+        deletecontent(id){
+            let API_URL = `${this.port}admin/community/${id}`;
+            axios.delete(API_URL)
+            .then((ret) => {
+                    console.log(ret);
+                    // window.location.reload();
+                }
+            )
+            .catch((error) => {
+                console.log(error);
+                // window.location.reload();
+            });
         },
         movetopreviouspage() {
             if (this.page == 1) {
