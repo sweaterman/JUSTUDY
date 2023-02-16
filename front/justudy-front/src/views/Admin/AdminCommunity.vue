@@ -293,9 +293,7 @@ export default {
         },
         deletecontent(id){
             let API_URL = `${this.port}admin/community/${id}`;
-            axios.delete(API_URL,{
-                withCredentials: true
-            })
+            axios.delete(API_URL)
             .then((ret) => {
                     console.log(ret);
                     // window.location.reload();
