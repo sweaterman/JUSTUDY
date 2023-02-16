@@ -1,6 +1,6 @@
 package com.justudy.backend.member.repository;
 
-import com.justudy.backend.login.dto.response.LoginResponse;
+import com.justudy.backend.login.dto.response.LoginResult;
 import com.justudy.backend.member.domain.MemberEntity;
 
 import java.util.Optional;
@@ -9,7 +9,7 @@ public interface MemberRepositoryCustom {
 
     Optional<MemberEntity> findBySequenceWithJoin(Long sequence);
 
-    Optional<LoginResponse> findLoginInfoByUserId(String userId);
+    Optional<LoginResult> findLoginInfoByUserId(String userId);
 
     Optional<String> findUserId(String userId);
 

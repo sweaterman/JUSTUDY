@@ -13,4 +13,14 @@ public interface ReportRepositoryCustom {
     Long getCountOfReportList();
 
     Optional<Report> findReportBySequence(Long sequence);
+
+    Optional<Report> findReportByTargetSequence(Long targetSequence);
+
+    Long getCountOfMemberReport();
+
+    Long getCountOfCommunityReport();
+
+    Long getCountOfCommentReport();
+
+    Long getCountOfStudyReport();
 }

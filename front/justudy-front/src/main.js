@@ -6,6 +6,14 @@ import vuetify from './plugins/vuetify';
 import '@/assets/styles/icons.css';
 import axios from 'axios';
 import port from './store/port';
+
+import VueApexCharts from 'vue-apexcharts'
+Vue.use(VueApexCharts)
+
+Vue.component('ApexChart', VueApexCharts)
+
+axios.defaults.withCredentials = true;
+
 Vue.config.productionTip = false;
 
 router.beforeEach(async (to, from, next) => {

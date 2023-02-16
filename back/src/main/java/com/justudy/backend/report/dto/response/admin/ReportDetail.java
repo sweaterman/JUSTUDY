@@ -24,7 +24,7 @@ public class ReportDetail {
     public ReportDetail(Report report) {
         this.sequence = report.getSequence();
         this.reporterName = report.getReporter().getNickname();
-        this.targetSequence = report.getSequence();
+        this.targetSequence = report.getTargetSequence();
         this.type = ValidateReportType.valid(report);
         this.content = report.getContent();
         this.isFinished = report.isFinished();

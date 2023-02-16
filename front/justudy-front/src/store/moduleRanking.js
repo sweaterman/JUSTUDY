@@ -34,36 +34,54 @@ export default {
     },
     actions: {
         async getRankMemberYesterday({commit}) {
-            await axios.get(`${port}rank/members/yesterday`).then(res => {
-                commit('getRankMemberYesterday', res.data);
-            });
+            await axios
+                .get(`${port}rank/members/yesterday`, {withCredentials: true})
+                .then(res => {
+                    commit('getRankMemberYesterday', res.data);
+                })
+                .catch(() => {});
         },
 
         async getRankMemberWeek({commit}) {
-            await axios.get(`${port}rank/members/week`).then(res => {
-                commit('getRankMemberWeek', res.data);
-            });
+            await axios
+                .get(`${port}rank/members/week`, {withCredentials: true})
+                .then(res => {
+                    commit('getRankMemberWeek', res.data);
+                })
+                .catch(() => {});
         },
         async getRankMemberMonth({commit}) {
-            await axios.get(`${port}rank/members/month`).then(res => {
-                commit('getRankMemberMonth', res.data);
-            });
+            await axios
+                .get(`${port}rank/members/month`, {withCredentials: true})
+                .then(res => {
+                    commit('getRankMemberMonth', res.data);
+                })
+                .catch(() => {});
         },
         async getRankStudyYesterday({commit}) {
-            await axios.get(`${port}rank/study/yesterday`).then(res => {
-                commit('getRankStudyYesterday', res.data);
-            });
+            await axios
+                .get(`${port}rank/study/yesterday`, {withCredentials: true})
+                .then(res => {
+                    commit('getRankStudyYesterday', res.data);
+                })
+                .catch(() => {});
         },
 
         async getRankStudyWeek({commit}) {
-            await axios.get(`${port}rank/study/week`).then(res => {
-                commit('getRankStudyWeek', res.data);
-            });
+            await axios
+                .get(`${port}rank/study/week`, {withCredentials: true})
+                .then(res => {
+                    commit('getRankStudyWeek', res.data);
+                })
+                .catch(() => {});
         },
         async getRankStudyMonth({commit}) {
-            await axios.get(`${port}rank/study/month`).then(res => {
-                commit('getRankStudyMonth', res.data);
-            });
+            await axios
+                .get(`${port}rank/study/month`, {withCredentials: true})
+                .then(res => {
+                    commit('getRankStudyMonth', res.data);
+                })
+                .catch(() => {});
         }
     }
 };

@@ -1,6 +1,6 @@
 package com.justudy.backend.member.repository;
 
-import com.justudy.backend.login.dto.response.LoginResponse;
+import com.justudy.backend.login.dto.response.LoginResult;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -30,12 +30,13 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public Optional<LoginResponse> findLoginInfoByUserId(String userId) {
+    public Optional<LoginResult> findLoginInfoByUserId(String userId) {
         return Optional.ofNullable(queryFactory
-                .select(Projections.fields(LoginResponse.class,
+                .select(Projections.fields(LoginResult.class,
                         memberEntity.sequence.as("loginSequence"),
                         memberEntity.password,
-                        memberEntity.nickname))
+                        memberEntity.nickname,
+                        memberEntity.role.as("role")))
                 .from(memberEntity)
                 .where(memberEntity.userId.eq(userId),
                         memberEntity.isBanned.eq(false),

@@ -1,5 +1,5 @@
 <template>
-    <v-app>
+    <v-container>
         <v-row>
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
@@ -51,19 +51,22 @@
                     <v-col cols="12" md="3" />
                     <v-col cols="12" md="3">
                         <!-- <div class="d-flex" v-on:click="nextOrPrev()"> -->
-                        <a
-                            :href="`/self-test/${this.$route.params.number != 1 ? 'problem/' + Number(Number(this.$route.params.number) - 1) : 'problem/1'}`"
+                        <router-link
+                            :to="`/self-test/${this.$route.params.number != 1 ? 'problem/' + Number(Number(this.$route.params.number) - 1) : 'problem/1'}`"
                             style="text-decoration: none; color: black"
                         >
                             <v-btn v-on:click="nextOrPrev()" color="yellow" :style="{fontWeight: 'bold', fontSize: 'large'}">뒤로</v-btn>
-                        </a>
+                        </router-link>
                     </v-col>
                     <v-col cols="12" md="2" />
                     <v-col cols="12" md="3">
-                        <a :href="`/self-test/${this.$route.params.number != 7 ? 'problem/' + Number(Number(this.$route.params.number) + 1) : 'confirm'}`" style="text-decoration: none; color: black">
+                        <router-link
+                            :to="`/self-test/${this.$route.params.number != 7 ? 'problem/' + Number(Number(this.$route.params.number) + 1) : 'confirm'}`"
+                            style="text-decoration: none; color: black"
+                        >
                             <v-btn v-on:click="nextOrPrev()" color="yellow" :style="{fontWeight: 'bold', fontSize: 'large'}">다음</v-btn>
                             <!-- <BasicButton :buttonLength="150" :height="60" :fontSize="25" content="다음" standard="px" /> -->
-                        </a>
+                        </router-link>
                     </v-col>
                     <v-col cols="12" md="1" />
 
@@ -73,7 +76,7 @@
             </v-col>
             <v-col cols="12" md="2" />
         </v-row>
-    </v-app>
+    </v-container>
 </template>
 <script>
 // import BasicButton from '@/components/common/BasicButton.vue';
@@ -104,7 +107,7 @@ export default {
                 },
                 {
                     question: '5 . 관계형 데이터베이스 사용할 수 있나요?',
-                    option: ['아직...', '단순한 조회는 가능', 'Join 을 활용해 원하는 조회 가능', '원하는데로 ERD 구성 가능']
+                    option: ['아직...', '단순한 조회는 가능', 'Join 을 활용해 원하는 조회 가능', '원하는대로 ERD 구성 가능']
                 },
                 {
                     question: '6 . 프로젝트 아키텍쳐 아시나요?',
@@ -119,6 +122,10 @@ export default {
     },
 
     methods: {
+        nextOrPrev() {
+            this.selected.length = 0;
+            this.selected = [...this.selected];
+        },
         setSelect(index) {
             console.log(this.selected[0]);
             this.selected.length = 0;

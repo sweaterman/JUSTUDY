@@ -1,6 +1,7 @@
 package com.justudy.backend.study.controller;
 
 import com.justudy.backend.GroupCall.service.StudyRoomService;
+import com.justudy.backend.admin.service.AdminService;
 import com.justudy.backend.category.dto.request.CategoryResponse;
 import com.justudy.backend.category.service.CategoryService;
 import com.justudy.backend.community.dto.request.CommunitySearch;
@@ -69,6 +70,8 @@ public class StudyController {
     private final StudyCommunityBookmarkService studyCommunityBookmarkService;
     private final StudyCommunityCommentService studyCommunityCommentService;
     private final RoomActivityService roomActivityService;
+    ;
+    private final AdminService adminService;
     // ---------------------------------------------------------------스터디---------------------------------------------------------------
 
     /**
@@ -142,7 +145,7 @@ public class StudyController {
         request.changeLeaderSeq(loginSequence);
 
         //이미지 생성
-        UploadFileEntity uploadImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
+        UploadFileEntity uploadImage = uploadFileService.getUploadFile(ImageConst.BASIC_PROJECT_IMAGE);//기본 이미지 파일, 1L
         if (multipartFile != null) {
             uploadImage = fileStore.storeFile(multipartFile);
             uploadFileService.saveUploadFile(uploadImage);
@@ -192,7 +195,7 @@ public class StudyController {
 
         //이미지 수정
         //파일 없을시 변경 x
-        UploadFileEntity uploadImage = uploadFileService.getUploadFile(ImageConst.BASIC_MEMBER_IMAGE);//기본 이미지 파일, 1L
+        UploadFileEntity uploadImage = uploadFileService.getUploadFile(ImageConst.BASIC_PROJECT_IMAGE);//기본 이미지 파일, 1L
         if (multipartFile != null) {
             uploadImage = fileStore.storeFile(multipartFile);
             uploadFileService.saveUploadFile(uploadImage);
@@ -219,10 +222,9 @@ public class StudyController {
     public ResponseEntity<Void> deleteStudy(@PathVariable("id") Long id, HttpSession session) {
         //session 과 id 체크
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        if (loginSequence != studyService.getStudyLeader(id).longValue()) {
+        if (loginSequence != studyService.getStudyLeader(id).longValue() && !adminService.validateAdmin(loginSequence)) {
             throw new InvalidRequest("", "리더가 아니면 스터디를 삭제할 수 없습니다.");
         }
-
         //todo 이미지 삭제
 
         // 활동주기 삭제
@@ -243,6 +245,7 @@ public class StudyController {
 
         //스터디 삭제
         studyService.deleteStudy(id);
+
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 

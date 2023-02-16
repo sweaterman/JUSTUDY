@@ -93,13 +93,13 @@ export default {
         greenValue(cr, cc, firstDayOfWeek) {
             if (7 * (cr - 1) + cc - firstDayOfWeek <= 0 || 7 * (cr - 1) + cc - firstDayOfWeek > this.monthDate[this.month]) {
                 return 'white';
-            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] == 0) {
+            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 1800) {
                 return '#FFFFF4';
-            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 40) {
+            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 3600) {
                 return '#FFF9E3';
-            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 70) {
+            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 5400) {
                 return '#FAF0DD';
-            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 100) {
+            } else if (this.studyCalendar[7 * (cr - 1) + cc - firstDayOfWeek] < 7200) {
                 return '#FFE4B5';
             } else {
                 return '#FFDAB9';
