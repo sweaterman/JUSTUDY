@@ -2,6 +2,7 @@ package com.justudy.backend.admin.service;
 
 import com.justudy.backend.admin.dto.request.MemberSearch;
 import com.justudy.backend.admin.dto.response.AdminMemberDetail;
+import com.justudy.backend.admin.dto.response.CountReport;
 import com.justudy.backend.admin.dto.response.MemberListResponse;
 import com.justudy.backend.admin.dto.response.MemberListResult;
 import com.justudy.backend.admin.repository.AdminRepository;
@@ -82,6 +83,17 @@ public class AdminService {
         MemberEntity targetMember = memberRepository.findById(memberSequence)
                 .orElseThrow(() -> new MemberNotFound());
         targetMember.banMember();
+        return targetMember.getSequence();
+    }
+
+    public Long banMemberByReport(Long loginSequence, Long memberSequence) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+        Validation.validateUserRole(findMember, MemberRole.ADMIN);
+
+        MemberEntity targetMember = memberRepository.findById(memberSequence)
+                .orElseThrow(() -> new MemberNotFound());
+        targetMember.banMember();
         acceptReport(memberSequence);
         return targetMember.getSequence();
     }
@@ -119,6 +131,18 @@ public class AdminService {
         CommunityEntity findCommunity = communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         findCommunity.deleteCommunity();
+        return findCommunity.getSequence();
+    }
+
+    @Transactional
+    public Long deleteCommunityByReport(Long loginSequence, Long communitySequence) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+
+        Validation.validateUserRole(findMember, MemberRole.ADMIN);
+        CommunityEntity findCommunity = communityRepository.findById(communitySequence)
+                .orElseThrow(CommunityNotFound::new);
+        findCommunity.deleteCommunity();
         acceptReport(communitySequence);
         return findCommunity.getSequence();
     }
@@ -139,8 +163,29 @@ public class AdminService {
         CommunityCommentEntity findComment = commentRepository.findById(commentSequence)
                 .orElseThrow(CommentNotFound::new);
         findComment.changeIsDeleted(true);
+        return findComment.getSequence();
+    }
+
+    @Transactional
+    public Long deleteCommentByReport(Long loginSequence, Long commentSequence) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+
+        Validation.validateUserRole(findMember, MemberRole.ADMIN);
+        CommunityCommentEntity findComment = commentRepository.findById(commentSequence)
+                .orElseThrow(CommentNotFound::new);
+        findComment.changeIsDeleted(true);
         acceptReport(commentSequence);
         return findComment.getSequence();
+    }
+
+    public CountReport getCountsOfReport() {
+        Long member = reportRepository.getCountOfMemberReport();
+        Long community = reportRepository.getCountOfCommunityReport();
+        Long comment = reportRepository.getCountOfCommentReport();
+        Long study = reportRepository.getCountOfStudyReport();
+
+        return new CountReport(member, community, comment, study);
     }
 
     private Long acceptReport(Long targetSequence) {
@@ -148,7 +193,6 @@ public class AdminService {
                 .orElseThrow(ReportNotFound::new);
         return report.acceptReport();
     }
-
 
     private LocalDateTime getStartDateTime() {
         LocalDate now = LocalDate.now();
