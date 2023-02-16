@@ -341,6 +341,15 @@ public class MemberService {
         return ResponseEntity.status(200).body(response.getBody());
     }
 
+    public void validEditNickname(Long loginSequence, String nickname) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+        if (findMember.getNickname().equals(nickname)) {
+            return;
+        }
+        isDuplicatedNickname(nickname);
+    }
+
     public void isDuplicatedMmId(String mmId) {
         if (memberRepository.findMmId(mmId).isPresent()) {
             throw new ConflictRequest("mmId", "이미 가입된 MatterMostId 입니다.");
