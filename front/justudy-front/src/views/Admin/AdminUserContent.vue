@@ -57,11 +57,11 @@
             </v-col>
         </v-row>
         <v-row>
-            <v-col cols="12" md="5"></v-col>
-            <v-col cols="12" md="2"><v-btn color="yellow" style="width:100%" @click="updateUser">수정하기</v-btn></v-col>
-            <v-col cols="12" md="2"><v-btn color="yellow" style="width:100%" @click="deleteUser">삭제하기</v-btn></v-col>
+            <v-col cols="12" md="6"></v-col>
+            <!-- <v-col cols="12" md="2"><v-btn color="yellow" style="width:100%" @click="updateUser">수정하기</v-btn></v-col> -->
+            <v-col cols="12" md="2"><v-btn color="yellow" style="width:100%" @click="deleteUser">접금금지</v-btn></v-col>
             <v-col cols="12" md="2"><v-btn color="yellow" style="width:100%" @click="moveToList">목록보기</v-btn></v-col>
-            <v-col cols="12" md="1"></v-col>
+            <v-col cols="12" md="2"></v-col>
         </v-row>
     </v-app>
 </template>
@@ -110,9 +110,19 @@ export default {
             });
         },
         updateUser(){
-
         },
         deleteUser(){
+            let API_URL = `${this.port}admin/member/${this.id}`;
+            console.log("API_URL : "+API_URL);
+            
+            axios.delete(API_URL)
+            .then(() => {
+                    console.log("성공적으로 퇴출");
+                }
+            )
+            .catch((error) => {
+                console.log(error);
+            });
 
         },
         moveToList(){
