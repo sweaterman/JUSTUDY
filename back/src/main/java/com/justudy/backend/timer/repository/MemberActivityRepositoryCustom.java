@@ -25,4 +25,5 @@ public interface MemberActivityRepositoryCustom {
 
   List<MemberActivityBeforeRank> sumTimeByPeriod(Date ago, Date cur);
 
+  List<ActivitySubjectResponse> sumAllTimeByCategory();
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class Validation {
 
     public static void validateUserRole(MemberEntity member, MemberRole role) {
-        if (member.getRole().equals(role)) {
+        if (member.getRole().equals(role.getKey())) {
             throw new ForbiddenRequest();
         }
     }

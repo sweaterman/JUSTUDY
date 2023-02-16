@@ -108,6 +108,7 @@ public class StudyService {
                 .orElseThrow(StudyNotFound::new);
 
         studyRepository.deleteById(studySequence);
+
     }
 
 

@@ -27,14 +27,11 @@
             <v-col cols="12" md="10" v-if="isView" justify="center" align="center">
                 <v-row>
                     <v-col>
-                        <v-col cols="12" md="6" justify="center" align="center">
-                            <router-link to="/ranking/study-ranking" style="text-decoration: none; color: black">
-                                <span class="material-icons-outlined"> group </span>
-                                <div>스터디 랭킹</div>
-                            </router-link>
-                        </v-col>
-                        <h4>카테고리</h4>
-                        <h4>를 선택해주세요</h4>
+                        <h3>
+                            <span style="color: black">오늘 </span>
+                            <span style="color: #ffb000">공부할 과목</span>
+                            <span style="color: black">을 선택한 후 공부하세요!</span>
+                        </h3>
                     </v-col>
                 </v-row>
                 <v-row :style="{marginTop: '0.4%'}">
@@ -105,6 +102,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+import port from '@/store/port';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class Webcam {
     constructor(e, t = 'user', s = null, i = null) {
@@ -253,6 +252,7 @@ export default {
     },
     data() {
         return {
+            port:port,
             size: {height: 0, width: 0},
             isView: true,
             timeString: '',
@@ -329,8 +329,9 @@ export default {
                     let date = new Date(0);
                     date.setSeconds(this.time); // specify value for SECONDS here
                     this.timeString = date.toISOString().substring(11, 19);
-                    if (this.transferTime > 600) {
-                        //10분 마다 데이터 전송
+                    if (this.transferTime > 4.9) {
+                        //1분 마다 데이터 전송
+                        axios.post(`${port}timer/member`,{category:this.webcamSwitch[0],second:5}).then((ret)=>console.log(ret)).catch((err)=>console.log(err));
                         this.transferTime = 0.0;
                         /* 
                 여기에 store의 axois로 /timer/member/로 post 값을 보내주면 된다.(비동기로 보내기를 원합니다. 정확한 시간을 위해)

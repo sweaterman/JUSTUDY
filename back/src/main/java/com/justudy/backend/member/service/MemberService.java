@@ -132,18 +132,6 @@ public class MemberService {
     }
 
     @Transactional
-    public Long banMember(Long loginSequence, Long memberSequence) {
-        MemberEntity findMember = memberRepository.findById(loginSequence)
-                .orElseThrow(MemberNotFound::new);
-        Validation.validateUserRole(findMember, MemberRole.ADMIN);
-
-        MemberEntity targetMember = memberRepository.findById(memberSequence)
-                .orElseThrow(() -> new MemberNotFound());
-        targetMember.banMember();
-        return targetMember.getSequence();
-    }
-
-    @Transactional
     public Long deleteMember(Long loginSequence) {
         MemberEntity findMember = memberRepository.findById(loginSequence)
                 .orElseThrow(() -> new MemberNotFound());
@@ -351,6 +339,15 @@ public class MemberService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<MatterMostResponse> response = restTemplate.exchange(requestEntity, MatterMostResponse.class);
         return ResponseEntity.status(200).body(response.getBody());
+    }
+
+    public void validEditNickname(Long loginSequence, String nickname) {
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+        if (findMember.getNickname().equals(nickname)) {
+            return;
+        }
+        isDuplicatedNickname(nickname);
     }
 
     public void isDuplicatedMmId(String mmId) {

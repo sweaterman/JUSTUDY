@@ -41,6 +41,7 @@ public class RankService {
           .rankName(memberActivityToRank.getName())
           .rankTime(memberActivityToRank.getSecond())
           .rankImage(memberActivityToRank.getImage())
+          .rankTargetSeq(memberActivityToRank.getSequence())
           .build());
     }
   }

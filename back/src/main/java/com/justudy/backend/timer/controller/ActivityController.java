@@ -83,6 +83,13 @@ public class ActivityController {
         .body(memberActivityService.getSumTimeByNickNameAndCategory(nickName));
   }
 
+  @GetMapping("/member/all-category")
+  public ResponseEntity<List<ActivitySubjectResponse>> readMemberCategoryAllTime() {
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(memberActivityService.getAllTimeByCategory());
+  }
+
   @GetMapping("/members/week")
   public ResponseEntity<HashMap> readWeekTimeAvg() {
     HashMap<String, Long> ret = new HashMap<String, Long>();
@@ -131,4 +138,10 @@ public class ActivityController {
             roomCalendarRequest.getSeq()));
   }
 
+  @GetMapping("/study/all-category")
+  public ResponseEntity<List<ActivitySubjectResponse>> readStudyCategoryAllTime() {
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(roomActivityService.getAllTimeByCategory());
+  }
 }

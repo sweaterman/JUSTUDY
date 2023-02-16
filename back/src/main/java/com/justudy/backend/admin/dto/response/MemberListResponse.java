@@ -24,9 +24,14 @@ public class MemberListResponse {
 
     private String createdTime;
 
+    private boolean isBanned;
+
+    private boolean isDeleted;
+
     @Builder
     public MemberListResponse(Long memberSequence, String userId, String username, String nickname,
-                              String ssafyId, String mmId, LocalDateTime createdTime) {
+                              String ssafyId, String mmId, LocalDateTime createdTime,
+                              boolean isBanned, boolean isDeleted) {
         this.memberSequence = memberSequence;
         this.userId = userId;
         this.username = username;
@@ -34,6 +39,8 @@ public class MemberListResponse {
         this.ssafyId = ssafyId;
         this.mmId = mmId;
         this.createdTime = DateChanger.format(createdTime);
+        this.isBanned = isBanned;
+        this.isDeleted = isDeleted;
     }
 
     public static MemberListResponse toResponse(MemberEntity member) {
@@ -45,6 +52,8 @@ public class MemberListResponse {
                 .ssafyId(member.getSsafyId())
                 .mmId(member.getMmId())
                 .createdTime(member.getCreatedTime())
+                .isBanned(member.isBanned())
+                .isDeleted(member.isDeleted())
                 .build();
     }
 }

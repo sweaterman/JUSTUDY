@@ -13,6 +13,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 @RequiredArgsConstructor
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -40,6 +41,7 @@ public class WebConfig implements WebMvcConfigurer {
                         HttpMethod.OPTIONS.name(),
                         HttpMethod.POST.name(),
                         HttpMethod.PUT.name(),
+                        HttpMethod.PATCH.name(),
                         HttpMethod.DELETE.name()
                 )
                 .allowCredentials(true);
@@ -53,14 +55,14 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor())
-                .addPathPatterns("/**")
-                .excludePathPatterns("/api/login",
-                        "/api/member/register",
-                        "/api/member/check/**",
-                        "/api/member/matter-most");
+        // registry.addInterceptor(loginInterceptor())
+        //         .addPathPatterns("/**")
+        //         .excludePathPatterns("/api/login",
+        //                 "/api/member/register",
+        //                 "/api/member/check/**",
+        //                 "/api/member/matter-most");
 
-        registry.addInterceptor(adminCheckInterceptor())
-                .addPathPatterns("/api/admin/**");
+        // registry.addInterceptor(adminCheckInterceptor())
+        //         .addPathPatterns("/api/admin/**");
     }
 }

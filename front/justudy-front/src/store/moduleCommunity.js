@@ -31,12 +31,21 @@ export default {
         getBookMarkList(state, payload) {
             state.bookMarkList = payload;
         },
-
+        getLoveList(state, payload) {
+            state.loveList = payload;
+        },
         GET_COMMENTLIST(state, payload) {
             state.commentList = payload;
         }
     },
     actions: {
+        async createReport(_, {boardId, report}) {
+            let API_URL;
+            API_URL = `${port}community/board/${boardId}/report`;
+            await axios.post(API_URL, report, {
+                withCredentials: true
+            });
+        },
         async getCommunityBoard({commit}, {number, category, type, search, order}) {
             let API_URL;
             if (category == 'all') API_URL = `${port}community/board?page=${number}`;
@@ -48,7 +57,8 @@ export default {
 
             await axios({
                 url: API_URL,
-                method: 'GET'
+                method: 'GET',
+                withCredentials: true
             })
                 .then(res => {
                     commit('GET_COMMUNITYBOARD', res.data);
@@ -120,8 +130,10 @@ export default {
                 })
                 .catch(err => {
                     console.log(err);
-                    alert('로그인이 필요합니다.');
-                    window.location.href = '/login';
+                    if (err == '401') {
+                        alert('로그인이 필요합니다.');
+                        window.location.href = '/login';
+                    }
                 });
         },
         //북마크 삭제
@@ -138,8 +150,10 @@ export default {
                 })
                 .catch(err => {
                     console.log(err);
-                    alert('로그인이 필요합니다.');
-                    window.location.href = '/login';
+                    if (err == '401') {
+                        alert('로그인이 필요합니다.');
+                        window.location.href = '/login';
+                    }
                 });
         },
         //카테고리 불러오기
@@ -147,7 +161,8 @@ export default {
             const API_URL = `${port}category/main-category`;
             await axios({
                 url: API_URL,
-                method: 'GET'
+                method: 'GET',
+                withCredentials: true
             })
                 .then(res => {
                     commit('GET_TOPCATEGORIES', res.data);
@@ -161,7 +176,8 @@ export default {
             const API_URL = `${port}community/board/notice?page=${number}`;
             await axios({
                 url: API_URL,
-                method: 'GET'
+                method: 'GET',
+                withCredentials: true
             })
                 .then(res => {
                     commit('GET_COMMUNITYBOARD', res.data);
@@ -185,8 +201,10 @@ export default {
                 })
                 .catch(err => {
                     console.log(err);
-                    alert('로그인이 필요합니다.');
-                    window.location.href = '/login';
+                    if (err == '401') {
+                        alert('로그인이 필요합니다.');
+                        window.location.href = '/login';
+                    }
                 });
         },
         //좋아요 삭제
@@ -203,8 +221,10 @@ export default {
                 })
                 .catch(err => {
                     console.log(err);
-                    alert('로그인이 필요합니다.');
-                    window.location.href = '/login';
+                    if (err == '401') {
+                        alert('로그인이 필요합니다.');
+                        window.location.href = '/login';
+                    }
                 });
         },
 
@@ -299,6 +319,7 @@ export default {
                     console.log(err);
                 });
         }
+
         //인기글 불러오기 메인 페이지 기능
         // async getPopularCommunityBoard({commit}, {number}) {
         //     const API_URL = `${port}community/board/popular?page=${number}&size=5`;
