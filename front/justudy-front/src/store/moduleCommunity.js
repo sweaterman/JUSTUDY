@@ -42,6 +42,7 @@ export default {
         async createReport(_, {boardId, report}) {
             let API_URL;
             API_URL = `${port}community/board/${boardId}/report`;
+            console.log(report);
             await axios.post(API_URL, report, {
                 withCredentials: true
             });

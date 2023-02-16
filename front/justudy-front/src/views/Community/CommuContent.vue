@@ -1,71 +1,81 @@
 <template>
-    <v-app>
+    <v-container>
         <!-- 상세 글보기 -->
-        <v-row :style="{marginTop: '4%'}">
-            <v-col cols="12" md="2" />
-            <v-col cols="12" md="8">
-                <v-row>
+        <v-row style="margin-top: 20px">
+            <v-col cols="12" md="3">
+                <!-- <v-row>
                     <v-col cols="12" md="2" align="right">
                         <v-btn outlined text @click="moveback">
                             <span class="material-icons-outlined">arrow_back</span>
                         </v-btn>
                     </v-col>
-                </v-row>
-
+                </v-row> -->
+            </v-col>
+            <v-col cols="12" md="6">
                 <v-form ref="form" @submit.prevent="onSubmitForm">
                     <!-- 제목 -->
                     <v-row>
-                        <div style="margin-left: 9%; margin-top: 1%">
-                            <h1>{{ Data.title }}</h1>
-                        </div>
-                    </v-row>
-                    <v-row>
-                        <hr style="margin-left: 9%; margin-top: 1%; width: 100%" />
+                        <v-col cols="12" style="background-color: #e4e4e4">
+                            <h2>{{ Data.title }}</h2>
+                        </v-col>
                     </v-row>
 
                     <!-- 글쓴이 -->
                     <v-row>
-                        <v-col cols="12" md="6">
-                            <div style="width: 300px; margin-left: 17%; margin-top: 1.7%; margin-bottom: 0.5%">
-                                <h3>작성자 : {{ Data.nickname }}</h3>
-                            </div>
+                        <v-col cols="12"> 작성자 : {{ Data.nickname }} </v-col>
+                    </v-row>
+
+                    <!-- 작성일 -->
+                    <v-row dense>
+                        <v-col cols="12"> 작성일 : {{ Data.createdTime }} </v-col>
+                    </v-row>
+
+                    <v-row>
+                        <v-col cols="12">
+                            <v-divider></v-divider>
                         </v-col>
-                        <v-col cols="12" md="2" />
-                        <v-col cols="12" md="2" align="right">
+                    </v-row>
+
+                    <v-row>
+                        <v-col cols="12" align="end">
                             <v-btn v-if="like" outlined text @click="clickLike('liked')" :style="{color: 'red'}">
                                 <span class="material-icons-outlined">favorite</span>
                             </v-btn>
                             <v-btn v-if="!like" outlined text @click="clickLike('notliked')">
                                 <span class="material-icons-outlined">favorite</span>
                             </v-btn>
-                        </v-col>
-                        <v-col cols="12" md="2" align="left">
+                            &nbsp;&nbsp;
                             <v-btn v-if="bookmark" outlined text @click="clickMark('marked')" :style="{color: 'gold'}">
                                 <span class="material-icons-outlined">bookmark</span>
                             </v-btn>
                             <v-btn v-if="!bookmark" outlined text @click="clickMark('notmarked')">
                                 <span class="material-icons-outlined">bookmark</span>
                             </v-btn>
+                            &nbsp;&nbsp;
+                            <v-btn
+                                text
+                                outlined
+                                v-if="Data.nickname != user.nickname"
+                                v-on:click="
+                                    () => {
+                                        this.dialog = true;
+                                    }
+                                "
+                            >
+                                <v-icon color="error"> mdi-alarm-light </v-icon>
+                            </v-btn>
                         </v-col>
                     </v-row>
 
-                    <!-- 작성일 -->
-                    <v-row>
-                        <div style="width: 300px; margin-left: 9%; padding-top: 4px; padding-bottom: 25px">작성일 : {{ Data.createdTime }}</div>
-                    </v-row>
-                    <!-- 수정일 기능 -->
-                    <!-- <v-row>
-                        <div style="width: 300px; margin-left: 30px; padding-top: 2px; padding-bottom: 30px">수정일 : {{ updatedAt }}</div>
-                    </v-row>-->
-
                     <!-- 내용 -->
                     <v-row>
-                        <div style="width: 300px; margin-left: 9%; margin-top: 2%; margin-bottom: 15%">{{ Data.content }}</div>
+                        <v-col cols="12">
+                            <div style="white-space: pre-wrap">{{ Data.content }}</div>
+                        </v-col>
                     </v-row>
-                    <v-col cols="12" md="2" />
                 </v-form>
             </v-col>
-            <v-col cols="12" md="2" />
+            <v-col cols="12" md="3" />
         </v-row>
 
         <!-- 완료/취소 버튼 -->
@@ -87,36 +97,27 @@
                             <span class="material-icons-outlined">delete</span>
                         </v-btn>
                     </v-col>
-                    <v-col cols="12" md="2" v-if="Data.nickname != user.nickname">
-                        <v-btn
-                            outlined
-                            text
-                            color="red"
-                            v-on:click="
-                                () => {
-                                    this.dialog = true;
-                                }
-                            "
-                        >
-                            <span class="material-icons-outlined"> bug_report </span>
-                        </v-btn>
-                    </v-col>
                 </v-row>
                 <v-row>
-                    <hr style="margin-left: 9%; margin-top: 1%; width: 100%" />
+                    <v-divider> </v-divider>
                 </v-row>
             </v-col>
 
             <v-col cols="12" md="2" />
         </v-row>
 
-        <CommuComment :contentId="parseInt(this.$route.params.id)" />
+        <!-- 댓글 -->
+        <v-row>
+            <v-col cols="3"></v-col>
+            <v-col cols="6">
+                <CommuComment :contentId="parseInt(this.$route.params.id)" />
+            </v-col>
+            <v-col cols="3"></v-col>
+        </v-row>
+
         <!-- 신고모달창 -->
         <v-row justify="center">
-            <v-dialog v-model="dialog" persistent width="1024">
-                <template v-slot:activator="{props}">
-                    <v-btn color="primary" v-bind="props"> Open Dialog </v-btn>
-                </template>
+            <v-dialog v-model="dialog" persistent width="800">
                 <v-card>
                     <v-card-title>
                         <span class="text-h5">신고하기</span>
@@ -124,35 +125,22 @@
                     <v-card-text>
                         <v-container>
                             <v-row>
-                                <!-- <v-col cols="12" sm="6" md="4">
-                                    <v-text-field label="Legal middle name" hint="example of helper text only on focus"></v-text-field>
+                                <v-col cols="4">
+                                    <v-select
+                                        :items="['욕설/혐오/차별적 표현입니다.', '개인정보 노출 게시물입니다.', '스팸홍보/도배글입니다.']"
+                                        label="신고이유"
+                                        v-model="report.reason"
+                                        required
+                                    ></v-select>
                                 </v-col>
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-text-field label="Legal last name*" hint="example of persistent helper text" persistent-hint required></v-text-field>
-                                </v-col>
+                            </v-row>
+
+                            <v-row>
                                 <v-col cols="12">
-                                    <v-text-field label="Email*" required></v-text-field>
-                                </v-col>
-                                <v-col cols="12">
-                                    <v-text-field label="Password*" type="password" required></v-text-field>
-                                </v-col> -->
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-select :items="['abuse', 'privacy', 'spam']" label="신고이유" v-model="report.reason" required></v-select>
-                                </v-col>
-                                <v-col cols="12" sm="6" md="8">
-                                    <!-- <v-text-field label="신고내용" v-model="report.content" required></v-text-field> -->
                                     <v-text-field label="신고내용" required></v-text-field>
                                 </v-col>
-                                <!-- <v-col cols="12" sm="6">
-                                    <v-autocomplete
-                                        :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                                        label="Interests"
-                                        multiple
-                                    ></v-autocomplete>
-                                </v-col> -->
                             </v-row>
                         </v-container>
-                        <!-- <small>*indicates required field</small> -->
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
@@ -162,7 +150,7 @@
                 </v-card>
             </v-dialog>
         </v-row>
-    </v-app>
+    </v-container>
 </template>
 
 <script>
@@ -255,9 +243,9 @@ export default {
                 await this.$store.dispatch('moduleCommunity/deleteBookMark', {id: this.$route.params.id});
             }
         },
-        moveback() {
-            window.history.back(); // window.history.back()을 통해 뒤로가기
-        },
+        // moveback() {
+        //     window.history.back(); // window.history.back()을 통해 뒤로가기
+        // },
         async deletecontent() {
             // CommunityData.splice(this.index, 1);
             await this.$store.dispatch('moduleCommunity/getCommunityContentDelete', {id: this.Data.sequence});
@@ -267,6 +255,15 @@ export default {
         },
         async doReport() {
             // 여기에 dispatch  신고만들기
+            //  "['abuse', 'privacy', 'spam']"
+            // "['욕설/혐오/차별적 표현입니다.', '개인정보 노출 게시물입니다.', '스팸홍보/도배글입니다.']"
+            if (this.report.reason == '욕설/혐오/차별적 표현입니다.') {
+                this.report.reason = 'abuse';
+            } else if (this.report.reason == '개인정보 노출 게시물입니다.') {
+                this.report.reason = 'privacy';
+            } else {
+                this.report.reason = 'spam';
+            }
             await this.$store.dispatch('moduleCommunity/createReport', {boardId: this.$route.params.id, report: this.report});
             this.dialog = false;
         },

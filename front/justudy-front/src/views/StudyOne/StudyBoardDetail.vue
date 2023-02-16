@@ -211,7 +211,6 @@ export default {
         });
         this.myNickname = localStorage.getItem('nickname');
         this.cocommentToggle = Array.from({length: this.commentList.length}, () => false);
-        console.log(this.cocommentToggle);
     },
     data() {
         return {
