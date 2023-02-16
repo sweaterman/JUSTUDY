@@ -140,7 +140,8 @@
                                     <v-select :items="['abuse', 'privacy', 'spam']" label="신고이유" v-model="report.reason" required></v-select>
                                 </v-col>
                                 <v-col cols="12" sm="6" md="8">
-                                    <v-text-field label="신고내용" v-model="report.content" required></v-text-field>
+                                    <!-- <v-text-field label="신고내용" v-model="report.content" required></v-text-field> -->
+                                    <v-text-field label="신고내용" required></v-text-field>
                                 </v-col>
                                 <!-- <v-col cols="12" sm="6">
                                     <v-autocomplete
@@ -188,8 +189,8 @@ export default {
             user: {},
             dialog: false,
             report: {
-                reason: '',
-                content: ''
+                type: 'community',
+                reason: ''
             }
         };
     },
@@ -264,9 +265,9 @@ export default {
                 path: window.history.back()
             });
         },
-        doReport() {
+        async doReport() {
             // 여기에 dispatch  신고만들기
-            // this.$store.dispatch('moduleCommunity/report')
+            await this.$store.dispatch('moduleCommunity/createReport', {boardId: this.$route.params.id, report: this.report});
             this.dialog = false;
         },
         // deletecontent() {

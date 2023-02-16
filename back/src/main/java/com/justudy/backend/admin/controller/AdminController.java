@@ -59,7 +59,7 @@ public class AdminController {
     @DeleteMapping("/member/{memberSequence}")
     public ResponseEntity<Void> banMember(@PathVariable Long memberSequence, HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        memberService.banMember(loginSequence, memberSequence);
+        adminService.banMember(loginSequence, memberSequence);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -100,5 +100,13 @@ public class AdminController {
     @GetMapping("/report/{reportId}")
     public ReportDetail getReportDetail(@PathVariable("reportId") Long reportSequence) {
         return reportService.getReportDetail(reportSequence);
+    }
+
+    @DeleteMapping("/comment/{commentSequence}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentSequence,
+                                              HttpSession session) {
+        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+        adminService.deleteComment(loginSequence, commentSequence);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

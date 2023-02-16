@@ -38,7 +38,8 @@ export default {
                 })
                 .then(res => {
                     commit('getBookMarkList', res.data);
-                });
+                })
+                .catch(() => {});
         },
         async getMyPageUser({commit}) {
             await axios
@@ -58,22 +59,28 @@ export default {
                 })
                 .then(res => {
                     commit('getModifyUser', res.data);
-                });
+                })
+                .catch(() => {});
         },
 
         updateUser(_, {formData}) {
-            axios.patch(port + 'member/mypage/modify', formData, {
-                withCredentials: true,
-                headers: {
-                    'Content-Type': ' multipart/form-data'
-                }
-            });
+            axios
+                .patch(port + 'member/mypage/modify', formData, {
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': ' multipart/form-data'
+                    }
+                })
+                .catch(() => {});
         },
 
-        async getProfile({commit}, data) {
-            await axios.get(port + 'member/profiles/' + data.id).then(res => {
-                commit('getProfile', res.data);
-            });
+        async getProfile({commit}, {id}) {
+            await axios
+                .get(port + 'member/profiles/' + id)
+                .then(res => {
+                    commit('getProfile', res.data);
+                })
+                .catch(() => {});
         }
     }
 };
