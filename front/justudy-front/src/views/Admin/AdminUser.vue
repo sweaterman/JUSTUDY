@@ -1,107 +1,148 @@
 <template>
     <v-app>
         <!-- 자유게시판 / 검색 기능 / 글쓰기 -->
-        <v-row :style="{marginTop: '-8%'}">
-            <v-col cols="12" md="2" />
-
-            <v-col cols="12" md="8">
+        <v-row :style="{marginTop: '3%'}">
+            <v-col cols="12" md="1" >
                 <v-row>
-                    <v-col cols="12" md="2">
-                        <div align="left" :style="{fontSize: 'xx-large'}">사용자 관리</div>
+                    <v-col cols="12" md="3" ></v-col>
+                    <v-col cols="12" md="9" >
+                        <TabIcon></TabIcon>
                     </v-col>
-                    <v-col cols="12" md="2" align="right">
-                        <v-select :items="searchoption" v-model="searchoptionselected" :style="{width: '150px'}" />
-                    </v-col>
-                    <v-col cols="12" md="4">
-                        <v-text-field v-model="searchkeyword" dense outlined label="검색키워드" full-width />
-                    </v-col>
-                    <v-col cols="12" md="1">
-                        <v-btn @click="searchstart">검색</v-btn>
+                </v-row>
+            </v-col>
+            <v-col cols="12" md="11" >
+                <v-row >
+                    <v-col cols="12" md="10">
+                        <div align="center" :style="{fontSize: 'xx-large'}">사용자 관리</div>
+                        <v-row style="padding-top: 60px">
+                            <v-col cols="12" md="2">
+                                
+                            </v-col>
+                            <v-col cols="12" md="2" >
+                                <v-select :items="searchoption"  v-model="searchoptionselected" :style="{width: '150px'}" />
+                            </v-col>
+                            <v-col cols="12" md="4">
+                                <v-text-field v-model="searchkeyword" dense outlined label="검색키워드" full-width />
+                            </v-col>
+                            <v-col cols="12" md="1"></v-col>
+                            <v-col cols="12" md="2" align="right">
+                                <v-btn color="yellow" @click="searchstart" style="width:100%" >검색</v-btn>
+                            </v-col>
+
+                            <v-col cols="12" md="1" />
+                            <!-- <v-col cols="12" md="2" align="right">
+                                <v-btn color="yellow" @click="movetowrite" :style="{height: '50px', width: '200px', fontWeight: 'bold', fontSize: 'large'}">글작성</v-btn>
+                            </v-col> -->
+                        </v-row>
                     </v-col>
 
+                    
+                </v-row>
+
+                <!-- 글목록 -->
+                <v-row >
                     <v-col cols="12" md="1" />
-                    <v-col cols="12" md="2" align="right">
-                        <v-btn color="yellow" @click="movetowrite" :style="{height: '50px', width: '200px', fontWeight: 'bold', fontSize: 'large'}">글작성</v-btn>
+                    <v-col cols="12" md="10">
+                        <v-row>
+                            <v-simple-table style="width: 100%">
+                                <thead>
+                                    <tr style="font-weight: bolder">
+                                        <td style="width: 5%; font-size: x-large">No</td>
+                                        <td style="width: 20%; font-size: x-large">아이디</td>
+                                        <td style="width: 20%; font-size: x-large">닉네임</td>
+                                        <td style="width: 20%; font-size: x-large">SSAFY학번</td>
+                                        <td style="width: 20%; font-size: x-large">가입시간</td>
+                                        <td style="width: 15%; font-size: x-large"></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item in contentlist" :key="item.id" @click="movetocontent(item.id)" >
+                                        <td>{{ item.no }}</td>
+                                        <td>{{ item.writer }}</td>
+                                        <td>{{ item.nickName }}</td>
+                                        <td>{{ item.ssafy }}</td>
+                                        <td>{{ item.createdAt.split('T')[0] }}</td>
+                                        <td>
+                                            <!-- <v-btn color="yellow">상세보기</v-btn> -->
+                                        </td>
+                                        <!-- Sequelize의 createdAt, updatedAt의 날짜 형식이 '2021-12-10T12:38:52.000Z' 이런 식이여서 
+                                    split('T')[0]을 통해 날짜만 표시 -->
+                                    </tr>
+                                </tbody>
+                            </v-simple-table>
+                        </v-row>
                     </v-col>
                 </v-row>
-            </v-col>
 
-            <v-col cols="12" md="2" />
-        </v-row>
+                <!-- 페이지네이션 -->
+                <v-row >
+                    
+                    <v-col cols="12" md="10">
+                        <v-row>
+                            <v-col cols="12" md="4" />
 
-        <!-- 글목록 -->
-        <v-row :style="{marginTop: '-6%'}">
-            <v-col cols="12" md="2" />
-            <v-col cols="12" md="8">
-                <v-row>
-                    <v-simple-table style="width: 100%">
-                        <thead>
-                            <tr style="font-weight: bolder">
-                                <td style="width: 10%; font-size: x-large">No</td>
-                                <td style="width: 50%; font-size: x-large">아이디</td>
-                                <td style="width: 15%; font-size: x-large">이름</td>
-                                <td style="width: 15%; font-size: x-large">멘토여부</td>
-                                <td style="width: 10%; font-size: x-large">가입상태</td>
-                                <td style="width: 10%; font-size: x-large">가입시간</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in contentlist" :key="item.id" @click="movetocontent(item.id)">
-                                <td>{{ item.writer }}</td>
-                                <td>{{ item.title }}</td>
-                                <td>{{ item.createdAt.split('T')[0] }}</td>
-                                <!-- Sequelize의 createdAt, updatedAt의 날짜 형식이 '2021-12-10T12:38:52.000Z' 이런 식이여서 
-                               split('T')[0]을 통해 날짜만 표시 -->
-                            </tr>
-                        </tbody>
-                    </v-simple-table>
+                            <v-col cols="12" md="1" align="right">
+                                <v-btn width="5px" @click="movetopreviouspage" color="yellow">
+                                    <!-- 이전페이지로 이동 -->
+                                    <v-icon color="black" small> mdi-arrow-left-bold-outline </v-icon>
+                                </v-btn>
+                            </v-col>
+
+                            <v-col cols="12" md="2" justify="center" align="center">
+                                <div style="margin-top: 5px; margin-right: 10px; margin-left: 10px">{{ page }} page</div>
+                                <!-- 위와 같이 해줌으로서 '현재페이지/총페이지 page' 식으로 나타냄 -->
+                            </v-col>
+
+                            <v-col cols="12" md="1" align="left">
+                                <v-btn width="5px" @click="movetonextpage" color="yellow">
+                                    <!-- 다음페이지로 이동 -->
+                                    <v-icon color="black" small> mdi-arrow-right-bold-outline </v-icon>
+                                </v-btn>
+                            </v-col>
+
+                            <v-col cols="12" md="4" />
+                        </v-row>
+                    </v-col>
+                    <v-col cols="12" md="1" />
                 </v-row>
             </v-col>
-            <v-col cols="12" md="2" />
-        </v-row>
-
-        <!-- 페이지네이션 -->
-        <v-row style="padding-top: 10%">
-            <v-col cols="12" md="1" />
-            <v-col cols="12" md="10">
-                <v-row>
-                    <v-col cols="12" md="4" />
-
-                    <v-col cols="12" md="1" align="right">
-                        <v-btn width="5px" @click="movetopreviouspage">
-                            <!-- 이전페이지로 이동 -->
-                            <v-icon color="black" small> mdi-arrow-left-bold-outline </v-icon>
-                        </v-btn>
-                    </v-col>
-
-                    <v-col cols="12" md="2" justify="center" align="center">
-                        <div style="margin-top: 5px; margin-right: 10px; margin-left: 10px">{{ $route.query.page }}/{{ totalpage }} page</div>
-                        <!-- 위와 같이 해줌으로서 '현재페이지/총페이지 page' 식으로 나타냄 -->
-                    </v-col>
-
-                    <v-col cols="12" md="1" align="left">
-                        <v-btn width="5px" @click="movetonextpage">
-                            <!-- 다음페이지로 이동 -->
-                            <v-icon color="black" small> mdi-arrow-right-bold-outline </v-icon>
-                        </v-btn>
-                    </v-col>
-
-                    <v-col cols="12" md="4" />
-                </v-row>
-            </v-col>
-            <v-col cols="12" md="1" />
+        
         </v-row>
     </v-app>
 </template>
 <script>
+import TabIcon from "@/components/Admin/TabIcon.vue"
+import axios from 'axios';
+import port from '@/store/port';
+
 export default {
-    components: {},
+    components: {TabIcon},
     data() {
         return {
-            contentlist: [], // 현재 게시판과 페이지에 맞는 글 리스트들
+            page:1,
+            port: port,
+            size : 10,
+            totalpage:1,
+            searchword:"",
+            searchkeyword:"",
+            searchoption:['MEMBER_ID','SSAFY_ID','MEMBER_NAME','NICKNAME'],
+            searchoptionselected:'MEMBER_ID',
+            contentlist: [
+                {
+                    id:1,
+                    no:1,
+                    writer:"오의석",
+                    nickName:"바보",
+                    ssafy:"084822",
+                    createdAt:"2021-11-05T"
+                },
+            ], // 현재 게시판과 페이지에 맞는 글 리스트들
             cnt: 0 // 현재 게시판의 총 글 개수
         };
     },
+    created(){
+        this.changeUserData();
+    },  
     computed: {
         // // computed는 계산 목적으로 사용된다고 보면 됨
         // totalpage() {
@@ -114,45 +155,78 @@ export default {
         // }
     },
     methods: {
+        changeUserData(){
+            let API_URL = `${this.port}admin/member?page=${this.page}&size=${this.size}`;
+            if(this.searchword != null  &&  this.searchword != "" ){
+                API_URL = `${this.port}admin/member?page=${this.page}&size=${this.size}&search=${this.searchword}&type=${this.searchoptionselected}`;
+            }
+            console.log("API_URL : "+API_URL);
+            this.contentlist = [];
+            axios.get(API_URL)
+            .then((ret) => {
+                    let response = ret.data.memberList;
+                    console.log(response);
+                    for(let i = 0; i < response.length; i++){
+                        response[i];
+                        this.contentlist.push(
+                            {
+                                id:response[i].memberSequence,
+                                no:i+1,
+                                writer:response[i].username,
+                                nickName:response[i].nickname,
+                                ssafy:response[i].ssafyId,
+                                createdAt:response[i].createdTime,
+                            }
+                        )
+                    }
+                    console.log(this.contentlist);
+                }
+            )
+            .catch((error) => {
+                console.log(error);
+            });
+        },
         // 페이지 이동시 params로 게시판 구분, query로 페이지 구분
         movetoboard1() {
-            window.location.href = 'admin/user/1/?page=1';
+            // window.location.href = 'admin/user/1/?page=1';
         },
         movetoboard2() {
-            window.location.href = 'admin/user/1/?page=1';
+            // window.location.href = 'admin/user/1/?page=1';
         },
         movetoboard3() {
-            window.location.href = 'admin/user/1/?page=1';
+            // window.location.href = 'admin/user/1/?page=1';
         },
         movetomain() {
-            window.location.href = 'admin/user';
+            // window.location.href = 'admin/user';
         },
         movetowrite() {
-            window.location.href = 'admin/user/1/write';
+            window.location.href = '/admin/user/1/write';
             // window.location.href = window.location.pathname + 'write';
             // window.location.pathname이 현재 주소를 의미
             // 여기다 write를 붙여주면 글 작성 페이지로 라우팅 되게 됨
         },
         movetocontent(id) {
             // 클릭된 글의 id를 받아와야 라우팅할때 보낼 수 있음
-            window.location.href = window.location.pathname + 'content?id=' + id;
+            console.log(window.location.pathname + '/content/' + id);
+            window.location.href = window.location.pathname + '/content/' + id;
         },
         movetopreviouspage() {
-            if (this.$route.query.page == 1) {
+            if (this.page == 1) {
                 alert('첫번째 페이지입니다!');
             } else {
-                var pp = parseInt(this.$route.query.page) - 1;
-                window.location.href = window.location.pathname + '?page=' + pp;
+                this.page-=1;
+                this.changeUserData();
             }
         },
         movetonextpage() {
-            if (this.$route.query.page == Math.ceil(this.cnt / 10)) {
-                alert('마지막 페이지입니다!');
-            } else {
-                var pp = parseInt(this.$route.query.page) + 1;
-                window.location.href = window.location.pathname + '?page=' + pp;
-            }
-        }
+                this.page+=1;
+                this.changeUserData();
+        },
+        searchstart(){
+            this.searchword =this.searchkeyword; 
+            this.page=1;
+            this.changeUserData();
+        },
     }
 };
 </script>
