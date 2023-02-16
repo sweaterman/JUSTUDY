@@ -3,7 +3,7 @@ package com.justudy.backend.login.service;
 import com.justudy.backend.common.enum_util.Region;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.login.dto.request.LoginRequest;
-import com.justudy.backend.login.dto.response.LoginResponse;
+import com.justudy.backend.login.dto.response.LoginResult;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -34,8 +34,8 @@ class LoginServiceTest {
         memberRepository.save(member);
 
         //when
-        LoginResponse loginResponse = loginService.loginProcess(new LoginRequest(USER_ID, PASSWORD));
-        MemberEntity findMember = memberRepository.findById(loginResponse.getLoginSequence()).get();
+        LoginResult loginResult = loginService.loginProcess(new LoginRequest(USER_ID, PASSWORD));
+        MemberEntity findMember = memberRepository.findById(loginResult.getLoginSequence()).get();
 
         //then
         assertThat(findMember.getUserId()).isEqualTo(USER_ID);
