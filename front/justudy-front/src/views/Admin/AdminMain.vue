@@ -28,7 +28,18 @@
                         <ApexChart type="donut" :options="chartOptions2" :series="series2"></ApexChart>
                     </v-col>
                     <v-col cols="12" md="4">
-                        <ApexChart type="donut" :options="chartOptions2" :series="series2"></ApexChart>
+                        <ApexChart type="donut" :options="chartOptions3" :series="series3"></ApexChart>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="12" md="4">
+                        <div style="text-align: center;">신고비율</div>
+                    </v-col>
+                    <v-col cols="12" md="4">
+                        <div style="text-align: center;">스터디공부비율</div>
+                    </v-col>
+                    <v-col cols="12" md="4">
+                        <div style="text-align: center;">멤버공부비율</div>
                     </v-col>
                 </v-row>
 
@@ -53,8 +64,8 @@ export default {
             weekCommunityNum:10,
             weeklyLoginTime:300,
             series1: [{
-              name: "Desktops",
-              data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+              name: "신고횟수",
+              data: [10, 41, 35, 51]
             }],
             chartOptions1: {
                 chart: {
@@ -71,7 +82,7 @@ export default {
                     curve: 'straight'
                 },
                 title: {
-                    text: '유저 활동 수',
+                    text: '신고비율',
                     align: 'left'
                 },
                 grid: {
@@ -81,11 +92,38 @@ export default {
                     },
                 },
                 xaxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                    categories: ['멤버', '커뮤니티', '댓글', '스터디'],
                 }
             },
             series2: [44, 55, 13, 33],
             chartOptions2: {
+                chart: {
+                    width: 380,
+                    type: 'donut',
+                },
+                labels:['q','w','e','r'],
+                dataLabels: {
+                    enabled: true
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            width: 200
+                        },
+                        legend: {
+                            show: false
+                        }
+                    }
+                }],
+                legend: {
+                    position: 'right',
+                    offsetY: 0,
+                    height: 230,
+                }
+          },
+            series3: [44, 55, 13, 33],
+            chartOptions3: {
                 chart: {
                     width: 380,
                     type: 'donut',
@@ -118,6 +156,9 @@ export default {
         this.getTotalMember();
         this.getWeekcommunity();
         this.getSignup();
+        this.getReportRate();
+        this.getStudyRate();
+        this.getMemberRate();
     },  
     
     methods: {
@@ -127,7 +168,6 @@ export default {
             axios.get(API_URL)
             .then((ret) => {
                     this.totalUserNum = ret.data.total;
-                    console.log(this.totalUserNum);
                 }
             )
             .catch((error) => {
@@ -140,7 +180,6 @@ export default {
             axios.get(API_URL)
             .then((ret) => {
                     this.weekCommunityNum = ret.data;
-                    console.log(this.weekCommunityNum);
                 }
             )
             .catch((error) => {
@@ -153,13 +192,116 @@ export default {
             axios.get(API_URL)
             .then((ret) => {
                     this.weeklyLoginTime = ret.data;
-                    console.log(this.weeklyLoginTime);
                 }
             )
             .catch((error) => {
                 console.log(error);
             });
         },
+        getReportRate(){
+            let API_URL = `${this.port}admin/report-count`;
+            
+            axios.get(API_URL)
+            .then((ret) => {
+                    let tmp = [ret.data.member,ret.data.community,ret.data.comment,ret.data.study];
+                    this.series1 = [ {data:tmp}];
+                }
+            )
+            .catch((error) => {
+                console.log(error);
+            });
+        },
+        getStudyRate(){
+            let API_URL = `${this.port}timer/study/all-category`;
+            let category =[];
+            let second =[];
+            axios.get(API_URL)
+            .then((ret) => {
+                    // console.log(ret.data);
+                    ret.data.forEach(function(item,){
+                        category.push(item.category);
+                        second.push(item.second);
+                    })
+                    this.chartOptions2 = {
+                            chart: {
+                                width: 380,
+                                type: 'donut',
+                            },
+                            labels:category,
+                            dataLabels: {
+                                enabled: true
+                            },
+                            responsive: [{
+                                breakpoint: 480,
+                                options: {
+                                    chart: {
+                                        width: 200
+                                    },
+                                    legend: {
+                                        show: false
+                                    }
+                                }
+                            }],
+                            legend: {
+                                position: 'right',
+                                offsetY: 0,
+                                height: 230,
+                            }
+                    };
+                    this.series2 = second;
+
+                }
+            )
+            .catch((error) => {
+                console.log(error);
+            });
+        },
+        getMemberRate(){
+            let API_URL = `${this.port}timer/member/all-category`;
+            let category =[];
+            let second =[];
+            axios.get(API_URL)
+            .then((ret) => {
+                    // console.log(ret.data);
+                    ret.data.forEach(function(item){
+                        category.push(item.category);
+                        second.push(item.second);
+                    })
+                    this.chartOptions3 = {
+                            chart: {
+                                width: 380,
+                                type: 'donut',
+                            },
+                            labels:category,
+                            dataLabels: {
+                                enabled: true
+                            },
+                            responsive: [{
+                                breakpoint: 480,
+                                options: {
+                                    chart: {
+                                        width: 200
+                                    },
+                                    legend: {
+                                        show: false
+                                    }
+                                }
+                            }],
+                            legend: {
+                                position: 'right',
+                                offsetY: 0,
+                                height: 230,
+                            }
+                    };
+                    this.series3 = second;
+
+                }
+            )
+            .catch((error) => {
+                console.log(error);
+            });
+        }
+
     }
 };
 </script>
