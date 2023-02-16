@@ -1,7 +1,6 @@
 package com.justudy.backend.report.repository;
 
-import com.justudy.backend.report.domain.QReport;
-import com.justudy.backend.report.domain.Report;
+import com.justudy.backend.report.domain.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +10,11 @@ import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
+import static com.justudy.backend.report.domain.QCommentReport.*;
+import static com.justudy.backend.report.domain.QCommunityReport.*;
+import static com.justudy.backend.report.domain.QMemberReport.*;
 import static com.justudy.backend.report.domain.QReport.*;
+import static com.justudy.backend.report.domain.QStudyReport.*;
 
 @RequiredArgsConstructor
 @Repository
@@ -55,5 +58,33 @@ public class ReportRepositoryImpl implements ReportRepositoryCustom {
                 .selectFrom(report)
                 .where(report.targetSequence.eq(targetSequence))
                 .fetchOne());
+    }
+
+    @Override
+    public Long getCountOfMemberReport() {
+        return queryFactory.select(memberReport.count())
+                .from(memberReport)
+                .fetchOne();
+    }
+
+    @Override
+    public Long getCountOfCommunityReport() {
+        return queryFactory.select(communityReport.count())
+                .from(communityReport)
+                .fetchOne();
+    }
+
+    @Override
+    public Long getCountOfCommentReport() {
+        return queryFactory.select(commentReport.count())
+                .from(commentReport)
+                .fetchOne();
+    }
+
+    @Override
+    public Long getCountOfStudyReport() {
+        return queryFactory.select(studyReport.count())
+                .from(studyReport)
+                .fetchOne();
     }
 }

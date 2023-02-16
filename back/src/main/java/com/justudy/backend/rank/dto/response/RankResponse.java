@@ -1,12 +1,6 @@
 package com.justudy.backend.rank.dto.response;
 
-import com.justudy.backend.rank.domain.RankEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-
-import java.sql.Time;
-import lombok.NoArgsConstructor;
 
 @Data
 public class RankResponse {
@@ -15,11 +9,13 @@ public class RankResponse {
   private String nickName;
   private Long time;
   private Long img;
+  private Long seq;
 
-  public RankResponse(Integer rankOrder, String rankName, Long rankTime, Long rankImage) {
+  public RankResponse(Integer rankOrder, String rankName, Long rankTime, Long rankImage, Long seq) {
     this.order = rankOrder;
     this.nickName = rankName;
     this.time = rankTime;
     this.img = rankImage;
+    this.seq = seq;
   }
 }

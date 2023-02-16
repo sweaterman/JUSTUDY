@@ -4,6 +4,7 @@ import com.justudy.backend.GroupCall.domain.StudyRoomEntity;
 import com.justudy.backend.timer.domain.QRoomActivityEntity;
 import com.justudy.backend.timer.domain.RoomActivityEntity;
 import com.justudy.backend.timer.dto.response.ActivityCalendarResponse;
+import com.justudy.backend.timer.dto.response.ActivitySubjectResponse;
 import com.justudy.backend.timer.dto.response.MemberActivityBeforeRank;
 import com.justudy.backend.timer.dto.response.RoomActivityBeforeRank;
 import com.querydsl.core.types.ConstantImpl;
@@ -58,6 +59,16 @@ public class RoomActivityRepositoryImpl implements RoomActivityRepositoryCustom 
             .selectFrom(qRoomActivityEntity)
             .where(qRoomActivityEntity.studyRoom.sequence.eq(roomSeq))
             .fetch();
+  }
+
+  @Override
+  public List<ActivitySubjectResponse> sumAllTimeByCategory() {
+    return queryFactory
+        .select(Projections.constructor(ActivitySubjectResponse.class, qRoomActivityEntity.category,
+            qRoomActivityEntity.time.sum()))
+        .from(qRoomActivityEntity)
+        .groupBy(qRoomActivityEntity.category)
+        .fetch();
   }
 
   private DateTemplate fromDateToDay(QRoomActivityEntity qRoomActivity) {
