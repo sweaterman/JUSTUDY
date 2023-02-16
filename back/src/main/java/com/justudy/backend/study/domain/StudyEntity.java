@@ -3,6 +3,7 @@ package com.justudy.backend.study.domain;
 import com.justudy.backend.GroupCall.domain.StudyRoomEntity;
 import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.file.domain.UploadFileEntity;
+import com.justudy.backend.study.domain.community.StudyCommunityEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,29 +21,25 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 public class StudyEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_seq")
     private Long sequence;
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyMemberEntity> studyMembers = new ArrayList<>();
     @Builder.Default
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
     private List<StudyResumeEntity> resumes = new ArrayList<>();
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study",cascade = CascadeType.ALL)
     private List<StudyCommunityEntity> communities = new ArrayList<>();
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyFrequencyEntity> frequency = new ArrayList<>();
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_category_seq")
     private CategoryEntity category;
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "studyEntity")
-//    @JoinColumn(name = "study_room_seq")
     private StudyRoomEntity studyRoom;
     @Column(name = "study_name")
     private String name;
@@ -74,8 +71,8 @@ public class StudyEntity {
     @Column(name = "study_on_air", columnDefinition = "TINYINT(1)")
     private Boolean onAir;
 
-    public void changeOnAir(Boolean onAir){
-        this.onAir=onAir;
+    public void changeOnAir(Boolean onAir) {
+        this.onAir = onAir;
     }
 
     public void changeImage(UploadFileEntity imageFile) {
@@ -122,13 +119,13 @@ public class StudyEntity {
         entity.changeStudy(null);
     }
 
-    public void update(String name, String introduction, Integer population, String level, String onlineOffline,
+    public void update(String name, String introduction, Integer population, String level, String meeting,
                        Boolean isOpen, String github, String notion, String startTime) {
         this.name = name;
         this.introduction = introduction;
         this.population = population;
         this.level = level;
-        this.meeting = onlineOffline;
+        this.meeting = meeting;
         this.isOpen = isOpen;
         this.github = github;
         this.notion = notion;
@@ -137,6 +134,10 @@ public class StudyEntity {
     }
 
     public void changeStudyRoom(StudyRoomEntity studyRoom) {
-        this.studyRoom=studyRoom;
+        this.studyRoom = studyRoom;
+    }
+
+    public void changeCategory(CategoryEntity categoryEntity) {
+        this.category = categoryEntity;
     }
 }

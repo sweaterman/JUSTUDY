@@ -127,19 +127,4 @@ public class MemberController {
         memberService.deleteMember(loginSequence);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
-    /**
-     * ADMIN 유저의 회원 삭제 API
-     * @param memberSequence - Target Member Sequence
-     * @param session
-     */
-    @DeleteMapping("/admin/members/{memberSequence}")
-    public ResponseEntity<Void> banMember(@PathVariable Long memberSequence, HttpSession session) {
-        Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-
-        memberService.banMember(loginSequence, memberSequence);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }

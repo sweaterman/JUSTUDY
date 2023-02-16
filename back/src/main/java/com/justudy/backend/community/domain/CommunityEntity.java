@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -17,7 +16,7 @@ import java.util.List;
 @Entity
 public class CommunityEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "community_seq")
     private Long sequence;
 
@@ -33,6 +32,7 @@ public class CommunityEntity {
     private String title;
 
     @Column(name = "community_content")
+    @Lob
     private String content;
 
     @Column(name = "community_view_count")
@@ -83,11 +83,6 @@ public class CommunityEntity {
 
     public void addViewCount() {
         this.viewCount += 1;
-    }
-
-    public void mergeLoveCountWithWeek() {
-        this.loveCount += weekLoveCount;
-        weekLoveCount = 0;
     }
 
     public void addWeekLoveCount() {

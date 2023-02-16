@@ -4,10 +4,10 @@ import com.justudy.backend.category.domain.CategoryEntity;
 import com.justudy.backend.category.exception.CategoryNotFound;
 import com.justudy.backend.category.repository.CategoryRepository;
 import com.justudy.backend.common.enum_util.Region;
+import com.justudy.backend.common.validate.Validation;
 import com.justudy.backend.community.dto.response.CommunityListResponse;
 import com.justudy.backend.community.service.CommunityService;
 import com.justudy.backend.exception.ConflictRequest;
-import com.justudy.backend.exception.ForbiddenRequest;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.file.domain.UploadFileEntity;
 import com.justudy.backend.file.infra.ImageConst;
@@ -17,9 +17,9 @@ import com.justudy.backend.member.domain.MemberCategoryEntity;
 import com.justudy.backend.member.domain.MemberEditor;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.domain.MemberRole;
+import com.justudy.backend.member.dto.request.MatterMostRequest;
 import com.justudy.backend.member.dto.request.MemberCreate;
 import com.justudy.backend.member.dto.request.MemberEdit;
-import com.justudy.backend.member.dto.request.MatterMostRequest;
 import com.justudy.backend.member.dto.response.MatterMostResponse;
 import com.justudy.backend.member.dto.response.ModifyPageResponse;
 import com.justudy.backend.member.dto.response.MypageResponse;
@@ -40,6 +40,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,6 +64,13 @@ public class MemberService {
 
     private final BCryptPasswordEncoder passwordEncoder;
 
+    private static String[] fromCategoryToArray(List<MemberCategoryEntity> categories) {
+        List<String> categoryToString = categories.stream().map(category -> category.getCategory().getValue())
+                .collect(Collectors.toList());
+        String[] categoryResponse = categoryToString.toArray(new String[categoryToString.size()]);
+        return categoryResponse;
+    }
+
     @Transactional
     public Long saveMember(MemberCreate request, UploadFileEntity basicImage) {
         validateCreateRequest(request);
@@ -76,8 +84,24 @@ public class MemberService {
         return member.getSequence();
     }
 
+    @Transactional
+    public Long saveAdmin(MemberCreate request, UploadFileEntity basicImage) {
+        validateCreateRequest(request);
+
+        String encodePassword = passwordEncoder.encode(request.getPassword());
+        MemberEntity member = request.toEntity(encodePassword);
+        member.changeImage(basicImage);
+        member.changeRole(MemberRole.ADMIN);
+        addCategory(request, member);
+
+        memberRepository.save(member);
+        return member.getSequence();
+    }
+
     public MypageResponse getMypage(Long loginSequence) {
-        MemberEntity findMember = memberRepository.findBySequenceWithJoin(loginSequence)
+//        MemberEntity findMember = memberRepository.findBySequenceWithJoin(loginSequence)
+//                .orElseThrow(() -> new MemberNotFound());
+        MemberEntity findMember = memberRepository.findById(loginSequence)
                 .orElseThrow(() -> new MemberNotFound());
 
         return createMypageResponse(findMember);
@@ -109,7 +133,9 @@ public class MemberService {
 
     @Transactional
     public Long banMember(Long loginSequence, Long memberSequence) {
-        validateSessionUser(loginSequence, MemberRole.ADMIN);
+        MemberEntity findMember = memberRepository.findById(loginSequence)
+                .orElseThrow(MemberNotFound::new);
+        Validation.validateUserRole(findMember, MemberRole.ADMIN);
 
         MemberEntity targetMember = memberRepository.findById(memberSequence)
                 .orElseThrow(() -> new MemberNotFound());
@@ -151,6 +177,7 @@ public class MemberService {
         findMember.changeMemberCategory(newCategories);
 
         findMember.edit(memberEditor);
+        findMember.changeModifiedTime(LocalDateTime.now());
 
         return findMember.getSequence();
     }
@@ -192,6 +219,7 @@ public class MemberService {
         }
         return false;
     }
+
     private boolean isBasicImage(Long sequence) {
         if (ImageConst.BASIC_MEMBER_IMAGE == sequence) {
             return true;
@@ -212,6 +240,15 @@ public class MemberService {
         return memberCategories;
     }
 
+//    private void validateSessionUser(Long loginSequence, MemberRole role) {
+//        MemberEntity findMember = memberRepository.findById(loginSequence)
+//                .orElseThrow(() -> new MemberNotFound());
+//
+//        if (!findMember.getRole().equals(role)) {
+//            throw new ForbiddenRequest();
+//        }
+//    }
+
     private void addCategory(MemberCreate request, MemberEntity member) {
         log.info("request.getCategory.length = ", request.getCategory().length);
         List<CategoryEntity> categories = Arrays.stream(request.getCategory())
@@ -221,15 +258,6 @@ public class MemberService {
         for (CategoryEntity category : categories) {
             MemberCategoryEntity memberCategory = MemberCategoryEntity.createMemberCategory(category);
             member.addMemberCategory(memberCategory);
-        }
-    }
-
-    private void validateSessionUser(Long loginSequence, MemberRole role) {
-        MemberEntity findMember = memberRepository.findById(loginSequence)
-                .orElseThrow(() -> new MemberNotFound());
-
-        if (!findMember.getRole().equals(role)) {
-            throw new ForbiddenRequest();
         }
     }
 
@@ -272,13 +300,6 @@ public class MemberService {
                 .level(member.getLevel().getValue())
                 .imageSequence(member.getImageFile().getSequence()) //imageFile Sequence
                 .build();
-    }
-
-    private static String[] fromCategoryToArray(List<MemberCategoryEntity> categories) {
-        List<String> categoryToString = categories.stream().map(category -> category.getCategory().getValue())
-                .collect(Collectors.toList());
-        String[] categoryResponse = categoryToString.toArray(new String[categoryToString.size()]);
-        return categoryResponse;
     }
 
     private void validateCreateRequest(MemberCreate request) {

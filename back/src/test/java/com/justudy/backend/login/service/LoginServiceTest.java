@@ -1,26 +1,23 @@
 package com.justudy.backend.login.service;
 
 import com.justudy.backend.common.enum_util.Region;
-import com.justudy.backend.login.dto.request.LoginRequest;
-import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.exception.InvalidRequest;
+import com.justudy.backend.login.dto.request.LoginRequest;
+import com.justudy.backend.login.dto.response.LoginResponse;
+import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
+
 class LoginServiceTest {
 
-    @Autowired
     LoginService loginService;
 
-    @Autowired
     MemberRepository memberRepository;
 
     private final String USER_ID = "testId";
@@ -37,8 +34,8 @@ class LoginServiceTest {
         memberRepository.save(member);
 
         //when
-        Long loginId = loginService.loginProcess(new LoginRequest(USER_ID, PASSWORD));
-        MemberEntity findMember = memberRepository.findById(loginId).get();
+        LoginResponse loginResponse = loginService.loginProcess(new LoginRequest(USER_ID, PASSWORD));
+        MemberEntity findMember = memberRepository.findById(loginResponse.getLoginSequence()).get();
 
         //then
         assertThat(findMember.getUserId()).isEqualTo(USER_ID);

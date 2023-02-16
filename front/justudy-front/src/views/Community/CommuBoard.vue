@@ -8,13 +8,27 @@
             <v-col cols="12" md="8">
                 <v-row>
                     <v-col cols="12" md="2">
-                        <div align="left" :style="{fontSize: 'xx-large'}">자유 게시판</div>
+                        <div align="left" :style="{fontSize: 'xx-large'}"></div>
                     </v-col>
                     <v-col cols="12" md="2" align="right">
-                        <v-select :items="searchoption" item-text="value" item-value="key" v-model="searchoptionselected" label="항목선택" :style="{width: '150px'}" />
+                        <v-select
+                            :items="searchoption"
+                            item-text="value"
+                            item-value="key"
+                            v-model="searchoptionselected"
+                            label="항목선택"
+                            :style="{width: '150px'}"
+                        />
                     </v-col>
                     <v-col cols="12" md="4">
-                        <v-text-field v-model="searchkeyword" dense outlined label="검색키워드" full-width @keyup.enter="searchstart" />
+                        <v-text-field
+                            v-model="searchkeyword"
+                            dense
+                            outlined
+                            label="검색키워드"
+                            full-width
+                            @keyup.enter="searchstart"
+                        />
                     </v-col>
                     <v-col cols="12" md="1">
                         <v-btn @click="searchstart">검색</v-btn>
@@ -23,7 +37,7 @@
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2" justify="center" align="center">
                         <v-btn text @click="movetowrite()" :style="{fontSize: 'large'}">
-                            <span class="material-icons-outlined"> edit_note </span>
+                            <span class="material-icons-outlined">edit_note</span>
                             <div>글쓰기</div>
                         </v-btn>
                     </v-col>
@@ -41,7 +55,7 @@
                         <!-- 
                                     정렬 클릭시 updateData(category,type,search,order) 실행하면 됩니다
                                     order에 ""값이면 번호, "like" 면 좋아요 "view"면 조회수
-                                -->
+                        -->
                         <thead>
                             <tr style="font-weight: bolder">
                                 <td style="width: 15%; font-size: x-large">No</td>
@@ -53,23 +67,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(value, index) in Data.communityList" :key="index" @click="movetocontent(value.sequence)">
+                            <tr
+                                v-for="(value, index) in Data.communityList"
+                                :key="index"
+                                @click="movetocontent(value.sequence)"
+                            >
                                 <td>{{ index + 1 }}</td>
                                 <td>
-                                    <div class="line_limit">
-                                        {{ value.title }}
-                                    </div>
+                                    <div class="line_limit">{{ value.title }}</div>
                                 </td>
                                 <td>
-                                    <div class="line_limit">
-                                        {{ value.nickname }}
-                                    </div>
+                                    <div class="line_limit">{{ value.nickname }}</div>
                                 </td>
                                 <td>{{ value.createdTime }}</td>
                                 <td>{{ value.viewCount }}</td>
                                 <td>{{ value.loveCount }}</td>
                                 <!-- Sequelize의 createdAt, updatedAt의 날짜 형식이 '2021-12-10T12:38:52.000Z' 이런 식이여서 
-                               split('T')[0]을 통해 날짜만 표시 -->
+                                split('T')[0]을 통해 날짜만 표시-->
                             </tr>
                         </tbody>
                     </v-simple-table>
@@ -88,19 +102,21 @@
                     <v-col cols="12" md="1" align="right">
                         <v-btn outlined text width="5px" @click="movetopreviouspage">
                             <!-- 이전페이지로 이동 -->
-                            <span class="material-icons-outlined"> arrow_back </span>
+                            <span class="material-icons-outlined">arrow_back</span>
                         </v-btn>
                     </v-col>
 
                     <v-col cols="12" md="2" justify="center" align="center">
-                        <div style="margin-top: 5px; margin-right: 10px; margin-left: 10px">{{ $route.query.page }}/{{ totalpage }} page</div>
+                        <div
+                            style="margin-top: 5px; margin-right: 10px; margin-left: 10px"
+                        >{{ $route.query.page }}/{{ totalpage }} page</div>
                         <!-- 위와 같이 해줌으로서 '현재페이지/총페이지 page' 식으로 나타냄 -->
                     </v-col>
 
                     <v-col cols="12" md="1" align="left">
                         <v-btn outlined text width="5px" @click="movetonextpage">
                             <!-- 다음페이지로 이동 -->
-                            <span class="material-icons-outlined"> arrow_forward </span>
+                            <span class="material-icons-outlined">arrow_forward</span>
                         </v-btn>
                     </v-col>
 

@@ -4,6 +4,14 @@
         <v-row :style="{marginTop: '4%'}">
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
+                <v-row>
+                    <v-col cols="12" md="2" align="right">
+                        <v-btn outlined text @click="moveback">
+                            <span class="material-icons-outlined">arrow_back</span>
+                        </v-btn>
+                    </v-col>
+                </v-row>
+
                 <v-form ref="form" @submit.prevent="onSubmitForm">
                     <!-- 제목 -->
                     <v-row>
@@ -25,18 +33,18 @@
                         <v-col cols="12" md="2" />
                         <v-col cols="12" md="2" align="right">
                             <v-btn v-if="like" outlined text @click="clickLike('liked')" :style="{color: 'red'}">
-                                <span class="material-icons-outlined"> favorite </span>
+                                <span class="material-icons-outlined">favorite</span>
                             </v-btn>
                             <v-btn v-if="!like" outlined text @click="clickLike('notliked')">
-                                <span class="material-icons-outlined"> favorite </span>
+                                <span class="material-icons-outlined">favorite</span>
                             </v-btn>
                         </v-col>
                         <v-col cols="12" md="2" align="left">
                             <v-btn v-if="bookmark" outlined text @click="clickMark('marked')" :style="{color: 'gold'}">
-                                <span class="material-icons-outlined"> bookmark </span>
+                                <span class="material-icons-outlined">bookmark</span>
                             </v-btn>
                             <v-btn v-if="!bookmark" outlined text @click="clickMark('notmarked')">
-                                <span class="material-icons-outlined"> bookmark </span>
+                                <span class="material-icons-outlined">bookmark</span>
                             </v-btn>
                         </v-col>
                     </v-row>
@@ -48,7 +56,7 @@
                     <!-- 수정일 기능 -->
                     <!-- <v-row>
                         <div style="width: 300px; margin-left: 30px; padding-top: 2px; padding-bottom: 30px">수정일 : {{ updatedAt }}</div>
-                    </v-row> -->
+                    </v-row>-->
 
                     <!-- 내용 -->
                     <v-row>
@@ -65,22 +73,18 @@
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <v-row>
-                    <v-col cols="12" md="2" align="right">
-                        <v-btn outlined text @click="moveback">
-                            <span class="material-icons-outlined"> arrow_back </span>
-                        </v-btn>
-                    </v-col>
+                    <v-col cols="12" md="2" align="right"></v-col>
 
-                    <v-col cols="12" md="6" v-if="Data.nickname == user.nickname"> </v-col>
-                    <v-col cols="12" md="8" v-if="Data.nickname != user.nickname"> </v-col>
+                    <v-col cols="12" md="6" v-if="Data.nickname == user.nickname"></v-col>
+                    <v-col cols="12" md="8" v-if="Data.nickname != user.nickname"></v-col>
                     <v-col cols="12" md="2" align="right" v-if="Data.nickname == user.nickname">
                         <v-btn outlined text @click="editcontent">
-                            <span class="material-icons-outlined"> edit </span>
+                            <span class="material-icons-outlined">edit</span>
                         </v-btn>
                     </v-col>
                     <v-col cols="12" md="2" v-if="Data.nickname == user.nickname">
                         <v-btn outlined text @click="deletecontent" color="red">
-                            <span class="material-icons-outlined"> delete </span>
+                            <span class="material-icons-outlined">delete</span>
                         </v-btn>
                     </v-col>
                     <v-col cols="12" md="2" v-if="Data.nickname != user.nickname">

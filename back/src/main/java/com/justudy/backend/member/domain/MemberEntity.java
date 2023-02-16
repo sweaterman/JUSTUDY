@@ -23,7 +23,7 @@ import static javax.persistence.FetchType.*;
 public class MemberEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_seq")
     private Long sequence;
 
@@ -94,9 +94,6 @@ public class MemberEntity {
     @Column(name = "member_is_banned")
     private boolean isBanned;
 
-    @Column(name = "member_valid")
-    private boolean isValid;
-
     @Column(name = "member_created_time")
     private LocalDateTime createdTime;
 
@@ -121,8 +118,6 @@ public class MemberEntity {
         this.dream = dream;
         this.introduction = introduction;
 
-
-        this.isValid = false;
         this.imageFile = imageFile;
 
         this.role = MemberRole.USER;
@@ -180,6 +175,10 @@ public class MemberEntity {
 
     public void changeImage(UploadFileEntity imageFile) {
         this.imageFile = imageFile;
+    }
+
+    public void changeModifiedTime(LocalDateTime modifiedTime) {
+        this.modifiedTime = modifiedTime;
     }
 
     //== 연관관계 편의메소드 ==//

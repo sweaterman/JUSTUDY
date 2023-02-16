@@ -36,7 +36,7 @@ public class StudyDetailResponse {
     private Boolean isMember;
     private Boolean isLeader;
     private Boolean onAir;
-    private Long roomSeq;
+    private Long roomSequence;
 
     public static StudyDetailResponse makeBuilder(StudyEntity entity, String leaderName) {
         return StudyDetailResponse.builder()
@@ -72,7 +72,7 @@ public class StudyDetailResponse {
                 .isMember(false)
                 .isLeader(true)
                 .onAir(entity.getOnAir())
-                .roomSeq(entity.getStudyRoom().getSequence())
+                .roomSequence(entity.getStudyRoom().getSequence())
                 .build();
     }
 
@@ -84,10 +84,10 @@ public class StudyDetailResponse {
                         .map(StudyMemberResponse::makeBuilder)
                         .sorted(Comparator.comparing(StudyMemberResponse::getBadge).reversed())
                         .collect(Collectors.toList()))
-                .resumeSeq(entity.getResumes()
-                        .stream()
-                        .map(StudyResumeEntity::getSequence)
-                        .collect(Collectors.toList()))
+//                .resumeSeq(entity.getResumes()
+//                        .stream()
+//                        .map(StudyResumeEntity::getSequence)
+//                        .collect(Collectors.toList()))
                 .frequency(entity.getFrequency()
                         .stream()
                         .map(StudyFrequencyResponse::makeBuilder)
@@ -110,7 +110,7 @@ public class StudyDetailResponse {
                 .isMember(isMember)
                 .isLeader(isLeader)
                 .onAir(entity.getOnAir())
-                .roomSeq(entity.getStudyRoom().getSequence())
+                .roomSequence(entity.getStudyRoom().getSequence())
                 .build();
     }
 }

@@ -4,6 +4,7 @@ spring:
     username: root
     password: ssafy
     url: jdbc:mysql://db:3306/justudy?serverTimezone=UTC&characterEncoding=UTF-8
+    sql-script-encoding: UTF-8 
   # swagger
   mvc:
     pathmatch:
@@ -14,23 +15,43 @@ spring:
     database: mysql   # 추가 해준 부분
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect # 추가 해준 부분
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         show_sql: true
         format_sql: true
+
+#  http:
+#    encoding:
+#      charset: UTF-8
+#      force: true
+#      force-request: true
+#      force-response: true
 
   ## page 인덱스를 1부터 시작하게 만듬
   data:
     web:
       pageable:
         one-indexed-parameters: true
+  sql:
+    init:
+      mode: ALWAYS
+      continue-on-error: true
+      schema-locations: classpath*:JUSTUDY_INIT_DATABASE.sql
+      data-locations: classpath*:JUSTUDY_INIT_DATABASE.sql
 
 logging:
   level:
     org.hibernate.sql: debug
+    org.hibernate.type: trace
 
 vue:
   loginUrl: "localhost:8081/login"
 
 
+#  utf-8 encoding 한글 깨짐 방지용 
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true

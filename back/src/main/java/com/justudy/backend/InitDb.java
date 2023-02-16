@@ -24,7 +24,6 @@ import com.justudy.backend.study.service.StudyMemberService;
 import com.justudy.backend.study.service.StudyResumeService;
 import com.justudy.backend.study.service.StudyService;
 import com.justudy.backend.timer.dto.request.ActivityRequest;
-import com.justudy.backend.timer.dto.request.ActivityRequest;
 import com.justudy.backend.timer.service.MemberActivityService;
 import com.justudy.backend.timer.service.RoomActivityService;
 
@@ -36,10 +35,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 
 @RequiredArgsConstructor
 @Component
@@ -47,16 +44,17 @@ public class InitDb {
 
     private final InitService initService;
 
-    private static MemberCreate makeMemberCreate(int number) {
+    private static MemberCreate makeMemberCreate(int number, String[] category) {
         MemberCreate request = MemberCreate.builder()
                 .userId("test" + number)
                 .password("1234")
                 .passwordCheck("1234")
                 .username("테스트" + number)
-                .nickname("테스트 봇" + number)
+                .nickname("봇" + number)
                 .region("SEOUL")
-                .category(new String[]{"Java", "Spring"})
+                .category(category)
                 .ssafyId("08" + number)
+                .mmId("mmTest" + number)
                 .phone(String.valueOf(number))
                 .email("testEmail" + number + "@ssafy.com")
                 .build();
@@ -65,7 +63,7 @@ public class InitDb {
 
     @PostConstruct
     public void init() throws ParseException {
-        initService.init();
+        //initService.init();
     }
 
     @RequiredArgsConstructor
@@ -92,8 +90,8 @@ public class InitDb {
 
 
         public void init() throws ParseException {
-            saveCategory();
             saveImageFile();
+            saveCategory();
             saveMember();
             saveCommunity();
             saveStudy();
@@ -103,6 +101,41 @@ public class InitDb {
             saveTimer();
             saveRank();
             saveTest1();
+            saveAdmin();
+        }
+
+        private void saveAdmin() {
+            UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
+                    .orElseThrow(UploadFileNotFound::new);
+            MemberCreate request = MemberCreate.builder()
+                    .userId("consultant")
+                    .password("12341234")
+                    .passwordCheck("12341234")
+                    .username("컨설턴트")
+                    .nickname("컨설턴트계정")
+                    .region("SEOUL")
+                    .category(new String[]{"Java"})
+                    .ssafyId("9999999")
+                    .mmId("mmTest")
+                    .phone(String.valueOf("9999999"))
+                    .email("testEmail@ssafy.com")
+                    .build();
+            memberService.saveAdmin(request, basicImage);
+
+            request = MemberCreate.builder()
+                    .userId("coach")
+                    .password("12341234")
+                    .passwordCheck("12341234")
+                    .username("코치")
+                    .nickname("코치계정")
+                    .region("SEOUL")
+                    .category(new String[]{"Java"})
+                    .ssafyId("9999998")
+                    .mmId("mmTest")
+                    .phone(String.valueOf("9999999"))
+                    .email("testEmail@ssafy.com")
+                    .build();
+            memberService.saveAdmin(request, basicImage);
         }
 
         private void saveTest1() {
@@ -111,17 +144,17 @@ public class InitDb {
             UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
                     .orElseThrow(UploadFileNotFound::new);
             // 리더인 스터디 130
-            MemberEntity member = memberService.getMember(50L);
-            StudyEntity study = studyService.getStudyByLeader(50L);
+            MemberEntity member = memberService.getMember(1L);
+            StudyEntity study = studyService.getStudyByLeader(1L);
             //리더가 아닌 가입 스터디
-            final Long studyNotLeader = 228L;
+            final Long studyNotLeader = 50L;
             studyMemberService.createStudyMember(StudyMemberCreate.builder().memberSeq(member.getSequence()).studySeq(studyNotLeader).build());
             //팀장 아닐때 지원한 스터디
-            final Long studyNotLeader2 = 226L;
+            final Long studyNotLeader2 = 49L;
             studyResumeService.createStudyResume(StudyResumeCreate.builder().memberSeq(member.getSequence()).studySeq(studyNotLeader2).content("지원할까말까").build());
 
             //지원안한 스터디
-            final Long studyNotApply = 177L;
+            final Long studyNotApply = 48L;
 
         }
 
@@ -140,8 +173,8 @@ public class InitDb {
         private void saveStudyFrequency() throws ParseException {
             SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
             java.util.Date date = formatter.parse("18:00");
-            for (int i = 0; i < 10; i++) {
-                long memberSequence = 50 + (3 * i);
+            for (int i = 1; i <= 10; i++) {
+                long memberSequence = i;
                 MemberEntity findmember = memberService.getMember(memberSequence);
                 StudyEntity findStudy = studyService.getStudyByLeader(findmember.getSequence());
 
@@ -167,33 +200,39 @@ public class InitDb {
         }
 
         private void saveTimer() {
-            for (int i = 0; i < 10; i++) {
-                long memberSequence = 50 + (3 * i);
+            String[] category = {"etc", "project", "computer-science", "algorithm", "mobile", "infra", "frontend", "backend"};
+
+            for (int i = 1; i <= 10; i++) {
+                long memberSequence = i;
                 for (int count = 1; count <= 30; count++) {
+                    int categoryIdx = (int) (Math.random() * 7);
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
-                            new ActivityRequest((long) (Math.random() * 50), "frontend"), memberSequence,
+                            new ActivityRequest((long) (Math.random() * 50), category[categoryIdx]), memberSequence,
                             day);
                 }
                 for (int count = 1; count <= 30; count++) {
+                    int categoryIdx = (int) (Math.random() * 7);
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
                     memberActivityService.saveMemberAcitivity(
-                            new ActivityRequest((long) (Math.random() * 50), "backend"), memberSequence,
+                            new ActivityRequest((long) (Math.random() * 50), category[categoryIdx]), memberSequence,
                             day);
                 }
 
             }
-            for (long i = 240; i < 290; i++) {
+            for (long i = 1; i < 51; i++) {
                 for (int count = 1; count <= 30; count++) {
+                    int categoryIdx = (int) (Math.random() * 7);
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
-                    roomActivityService.saveRoomAcitivity(
-                            new ActivityRequest((long) (Math.random() * 50), "frontend"), i,
+                    roomActivityService.saveRoomActivity(
+                            new ActivityRequest((long) (Math.random() * 50), category[categoryIdx]), i,
                             day);
                 }
                 for (int count = 1; count <= 30; count++) {
+                    int categoryIdx = (int) (Math.random() * 7);
                     Date day = Date.valueOf(LocalDate.now().minusDays(count));
-                    roomActivityService.saveRoomAcitivity(
-                            new ActivityRequest((long) (Math.random() * 50), "backend"), i,
+                    roomActivityService.saveRoomActivity(
+                            new ActivityRequest((long) (Math.random() * 50), category[categoryIdx]), i,
                             day);
                 }
 
@@ -201,30 +240,42 @@ public class InitDb {
         }
 
         private void saveCommunity() {
-            CategoryEntity category = categoryRepository.findByKey("backend")
+            CategoryEntity backend = categoryRepository.findByKey("backend")
                     .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
-
-            for (int i = 0; i < 10; i++) {
-                long memberSequence = 50 + (3 * i);
+            for (int i = 1; i <= 10; i++) {
+                long memberSequence = i;
                 MemberEntity findMember = memberService.getMember(memberSequence);
                 for (int count = 1; count <= 5; count++)
-                    communityService.createCommunity(makeBoard(count), findMember, category);
+                    communityService.createCommunity(makeBoard(count), findMember, backend);
+            }
+
+            CategoryEntity frontend = categoryRepository.findByKey("frontend")
+                    .orElseThrow(() -> new InvalidRequest("category", "잘못된 카테고리 이름입니다."));
+            for (int i = 11; i <= 20; i++) {
+                long memberSequence = i;
+                MemberEntity findMember = memberService.getMember(memberSequence);
+                for (int count = 1; count <= 5; count++)
+                    communityService.createCommunity(makeBoard(count), findMember, frontend);
             }
         }
 
         private CommunityCreate makeBoard(int number) {
             return CommunityCreate.builder()
-                    .title("제목 " + number)
-                    .content("내용 " + number)
+                    .title("제목" + number)
+                    .content("내용" + number)
+                    .isHighlighted(false)
                     .build();
         }
 
         private void saveMember() {
             UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
                     .orElseThrow(UploadFileNotFound::new);
-
             for (int i = 1; i <= 10; i++) {
-                MemberCreate request = makeMemberCreate(i);
+                MemberCreate request = makeMemberCreate(i, new String[]{"Java", "Spring"});
+                memberService.saveMember(request, basicImage);
+            }
+            for (int i = 11; i <= 20; i++) {
+                MemberCreate request = makeMemberCreate(i, new String[]{"React", "Vue"});
                 memberService.saveMember(request, basicImage);
             }
         }
@@ -232,8 +283,8 @@ public class InitDb {
         private void saveStudy() {
             UploadFileEntity basicImage = uploadFileRepository.findById(ImageConst.BASIC_MEMBER_IMAGE)
                     .orElseThrow(UploadFileNotFound::new);
-            for (int i = 0; i < 10; i++) {
-                long memberSequence = 50 + (3 * i);
+            for (int i = 1; i <= 10; i++) {
+                long memberSequence = (i);
                 MemberEntity findmember = memberService.getMember(memberSequence);
                 for (int count = 1; count <= 5; count++) {
                     if (count % 2 == 0) {
@@ -257,19 +308,8 @@ public class InitDb {
         }
 
         public void saveStudyRoom() {
-            for (long i = 130; i < 230; i += 2)
+            for (long i = 1; i <= 50; i++)
                 studyRoomService.saveStudyRoom(i);
-        }
-
-        private void saveImageFile() {
-            UploadFileEntity basicMemberImage = new UploadFileEntity("basic_member.png", "basic_member.png");
-            uploadFileRepository.save(basicMemberImage);
-            UploadFileEntity basicFrontEndImage = new UploadFileEntity("basic_frontend.jpg", "basic_frontend.jpg");
-            uploadFileRepository.save(basicFrontEndImage);
-            UploadFileEntity basicBackEndImage = new UploadFileEntity("basic_backend.png", "basic_backend.png");
-            uploadFileRepository.save(basicBackEndImage);
-            UploadFileEntity basicAlgorithmImage = new UploadFileEntity("basic_algorithm.png", "basic_algorithm.png");
-            uploadFileRepository.save(basicAlgorithmImage);
         }
 
         private void saveCategory() {
@@ -296,12 +336,17 @@ public class InitDb {
             makeMobileSubCategory(mobile);
             makeAlgorithmSubCategory(algorithm);
             makeComputerScienceSubCategory(computerScience);
+            makeProjectSubCategory(project);
             makeEctSubCategory(etc);
         }
 
         private void makeEctSubCategory(CategoryEntity etc) {
             categoryRepository.save(createSubCategory("git", "Git", 1L, etc));
-            categoryRepository.save(createSubCategory("figma", "Figma", 1L, etc));
+            categoryRepository.save(createSubCategoryWithImage("figma", "Figma", 1L, etc, 5L));
+        }
+
+        private void makeProjectSubCategory(CategoryEntity project) {
+            categoryRepository.save(createSubCategory("project", "Project", 1L, project));
         }
 
         private void makeComputerScienceSubCategory(CategoryEntity computerScience) {
@@ -352,16 +397,43 @@ public class InitDb {
             categoryRepository.save(createSubCategory("javascript", "JavaScript", 1L, frontend));
             categoryRepository.save(createSubCategory("typescript", "TypeScript", 1L, frontend));
             categoryRepository.save(createSubCategory("react", "React", 1L, frontend));
-            categoryRepository.save(createSubCategory("vue", "Vue", 1L, frontend));
+            categoryRepository.save(createSubCategoryWithImage("vue", "Vue", 1L, frontend, 4L));
             categoryRepository.save(createSubCategory("nextjs", "NextJs", 1L, frontend));
             categoryRepository.save(createSubCategory("svelte", "Svelte", 1L, frontend));
         }
+
+        private void saveImageFile() {
+            UploadFileEntity basicMemberImage = new UploadFileEntity("basic_member.png", "basic_member.png");
+            uploadFileRepository.save(basicMemberImage);
+            UploadFileEntity basicFrontEndImage = new UploadFileEntity("basic_frontend.jpg", "basic_frontend.jpg");
+            uploadFileRepository.save(basicFrontEndImage);
+            UploadFileEntity basicBackEndImage = new UploadFileEntity("basic_backend.png", "basic_backend.png");
+            uploadFileRepository.save(basicBackEndImage);
+            UploadFileEntity vuejsImage = new UploadFileEntity("vuejs.svg", "vuejs.svg");
+            uploadFileRepository.save(vuejsImage);
+            UploadFileEntity figmaImage = new UploadFileEntity("figma.svg", "figma.svg");
+            uploadFileRepository.save(figmaImage);
+        }
+
 
         private CategoryEntity createSubCategory(String key, String value, Long level, CategoryEntity parent) {
             CategoryEntity subCategory = CategoryEntity.builder()
                     .key(key)
                     .value(value)
                     .categoryLevel(level)
+                    .build();
+            subCategory.addParentCategory(parent);
+            return subCategory;
+        }
+
+        private CategoryEntity createSubCategoryWithImage(String key, String value, Long level, CategoryEntity parent, Long imageSequence) {
+            UploadFileEntity imageFile = uploadFileRepository.findById(imageSequence)
+                    .orElseThrow(UploadFileNotFound::new);
+            CategoryEntity subCategory = CategoryEntity.builder()
+                    .key(key)
+                    .value(value)
+                    .categoryLevel(level)
+                    .imageFile(imageFile)
                     .build();
             subCategory.addParentCategory(parent);
             return subCategory;

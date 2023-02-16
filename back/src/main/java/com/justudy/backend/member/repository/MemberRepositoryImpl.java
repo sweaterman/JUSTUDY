@@ -1,9 +1,11 @@
 package com.justudy.backend.member.repository;
 
+import com.justudy.backend.login.dto.response.LoginResponse;
 import com.justudy.backend.member.domain.MemberEntity;
-import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
@@ -11,6 +13,7 @@ import static com.justudy.backend.file.domain.QUploadFileEntity.uploadFileEntity
 import static com.justudy.backend.member.domain.QMemberCategoryEntity.memberCategoryEntity;
 import static com.justudy.backend.member.domain.QMemberEntity.memberEntity;
 
+@Slf4j
 @RequiredArgsConstructor
 public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
@@ -27,11 +30,16 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public Optional<Tuple> findPasswordByUserId(String userId) {
+    public Optional<LoginResponse> findLoginInfoByUserId(String userId) {
         return Optional.ofNullable(queryFactory
-                .select(memberEntity.sequence, memberEntity.password)
+                .select(Projections.fields(LoginResponse.class,
+                        memberEntity.sequence.as("loginSequence"),
+                        memberEntity.password,
+                        memberEntity.nickname))
                 .from(memberEntity)
-                .where(memberEntity.userId.eq(userId))
+                .where(memberEntity.userId.eq(userId),
+                        memberEntity.isBanned.eq(false),
+                        memberEntity.isDeleted.eq(false))
                 .fetchOne());
     }
 

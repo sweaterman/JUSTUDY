@@ -2,7 +2,6 @@ package com.justudy.backend.study.dto.response;
 
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.study.domain.StudyEntity;
-import com.justudy.backend.study.domain.StudyMemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,10 +31,11 @@ public class StudyResponse {
 
 
     public static StudyResponse makeBuilder(StudyEntity entity) {
-        log.info("슬라이드5 {}",entity.getStudyMembers().size());
-        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info1 : {}", entity.getLeaderSeq()));
-        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info2 : {}", studyMember.getMember().getSequence()));
-        entity.getStudyMembers().forEach(studyMember->log.info("슬라이스2 info3 : {}", studyMember.getMember().getNickname()));
+        log.info("멤버 {}",entity.getStudyMembers().toString());
+        entity.getStudyMembers()
+                .stream()
+                .map(studyMemberEntity -> studyMemberEntity.getMember().getSequence())
+                .forEach(st->log.info(" {}",st));
 
         String leader = entity.getStudyMembers()
                 .stream()

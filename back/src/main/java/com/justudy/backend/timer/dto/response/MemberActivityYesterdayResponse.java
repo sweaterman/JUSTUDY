@@ -5,11 +5,11 @@ import lombok.Data;
 @Data
 public class MemberActivityYesterdayResponse {
 
-  String ninkName;
+  String nickName;
   Long second;
 
-  public MemberActivityYesterdayResponse(String ninkName, Long second) {
-    this.ninkName = ninkName;
+  public MemberActivityYesterdayResponse(String nickName, Long second) {
+    this.nickName = nickName;
     this.second = second;
   }
 }

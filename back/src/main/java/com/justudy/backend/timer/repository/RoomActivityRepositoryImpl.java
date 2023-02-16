@@ -2,6 +2,7 @@ package com.justudy.backend.timer.repository;
 
 import com.justudy.backend.GroupCall.domain.StudyRoomEntity;
 import com.justudy.backend.timer.domain.QRoomActivityEntity;
+import com.justudy.backend.timer.domain.RoomActivityEntity;
 import com.justudy.backend.timer.dto.response.ActivityCalendarResponse;
 import com.justudy.backend.timer.dto.response.MemberActivityBeforeRank;
 import com.justudy.backend.timer.dto.response.RoomActivityBeforeRank;
@@ -49,6 +50,14 @@ public class RoomActivityRepositoryImpl implements RoomActivityRepositoryCustom 
         .orderBy(qRoomActivityEntity.time.sum().desc())
         .limit(10)
         .fetch();
+  }
+
+  @Override
+  public List<RoomActivityEntity> findByStudyRoom(Long roomSeq) {
+    return queryFactory
+            .selectFrom(qRoomActivityEntity)
+            .where(qRoomActivityEntity.studyRoom.sequence.eq(roomSeq))
+            .fetch();
   }
 
   private DateTemplate fromDateToDay(QRoomActivityEntity qRoomActivity) {
