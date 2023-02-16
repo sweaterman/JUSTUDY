@@ -40,13 +40,14 @@ export default {
             tab: '',
             top_categories: [
                 ['All', 'all'],
-                ['Front-end', 'frontend'],
-                ['Back-end', 'backend'],
-                ['Infra', 'infra'],
+                ['FRONT-END', 'frontend'],
+                ['BACK-END', 'backend'],
+                ['INFRA', 'infra'],
+                ['MOBIlE', 'mobile'],
+                ['ALGORITHM', 'algorithm'],
                 ['CS', 'cs'],
-                ['Algorithm', 'algorithm'],
-                ['Leading-edge', 'leading-edge'],
-                ['Bulletin board', 'bulletinboard']
+                ['PROJECT', 'project'],
+                ['ETC', 'etc']
             ]
         };
     }

@@ -4,6 +4,14 @@
         <v-row :style="{marginTop: '4%'}">
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
+                <v-row>
+                    <v-col cols="12" md="2" align="right">
+                        <v-btn outlined text @click="moveback">
+                            <span class="material-icons-outlined">arrow_back</span>
+                        </v-btn>
+                    </v-col>
+                </v-row>
+
                 <v-form ref="form" @submit.prevent="onSubmitForm">
                     <!-- 제목 -->
                     <v-row>
@@ -25,18 +33,18 @@
                         <v-col cols="12" md="2" />
                         <v-col cols="12" md="2" align="right">
                             <v-btn v-if="like" outlined text @click="clickLike('liked')" :style="{color: 'red'}">
-                                <span class="material-icons-outlined"> favorite </span>
+                                <span class="material-icons-outlined">favorite</span>
                             </v-btn>
                             <v-btn v-if="!like" outlined text @click="clickLike('notliked')">
-                                <span class="material-icons-outlined"> favorite </span>
+                                <span class="material-icons-outlined">favorite</span>
                             </v-btn>
                         </v-col>
                         <v-col cols="12" md="2" align="left">
                             <v-btn v-if="bookmark" outlined text @click="clickMark('marked')" :style="{color: 'gold'}">
-                                <span class="material-icons-outlined"> bookmark </span>
+                                <span class="material-icons-outlined">bookmark</span>
                             </v-btn>
                             <v-btn v-if="!bookmark" outlined text @click="clickMark('notmarked')">
-                                <span class="material-icons-outlined"> bookmark </span>
+                                <span class="material-icons-outlined">bookmark</span>
                             </v-btn>
                         </v-col>
                     </v-row>
@@ -48,7 +56,7 @@
                     <!-- 수정일 기능 -->
                     <!-- <v-row>
                         <div style="width: 300px; margin-left: 30px; padding-top: 2px; padding-bottom: 30px">수정일 : {{ updatedAt }}</div>
-                    </v-row> -->
+                    </v-row>-->
 
                     <!-- 내용 -->
                     <v-row>
@@ -65,26 +73,31 @@
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
                 <v-row>
-                    <v-col cols="12" md="2" align="right">
-                        <v-btn outlined text @click="moveback">
-                            <span class="material-icons-outlined"> arrow_back </span>
-                        </v-btn>
-                    </v-col>
+                    <v-col cols="12" md="2" align="right"></v-col>
 
-                    <v-col cols="12" md="6" v-if="Data.nickname == user.nickname"> </v-col>
-                    <v-col cols="12" md="8" v-if="Data.nickname != user.nickname"> </v-col>
+                    <v-col cols="12" md="6" v-if="Data.nickname == user.nickname"></v-col>
+                    <v-col cols="12" md="8" v-if="Data.nickname != user.nickname"></v-col>
                     <v-col cols="12" md="2" align="right" v-if="Data.nickname == user.nickname">
                         <v-btn outlined text @click="editcontent">
-                            <span class="material-icons-outlined"> edit </span>
+                            <span class="material-icons-outlined">edit</span>
                         </v-btn>
                     </v-col>
                     <v-col cols="12" md="2" v-if="Data.nickname == user.nickname">
                         <v-btn outlined text @click="deletecontent" color="red">
-                            <span class="material-icons-outlined"> delete </span>
+                            <span class="material-icons-outlined">delete</span>
                         </v-btn>
                     </v-col>
                     <v-col cols="12" md="2" v-if="Data.nickname != user.nickname">
-                        <v-btn outlined text color="red">
+                        <v-btn
+                            outlined
+                            text
+                            color="red"
+                            v-on:click="
+                                () => {
+                                    this.dialog = true;
+                                }
+                            "
+                        >
                             <span class="material-icons-outlined"> bug_report </span>
                         </v-btn>
                     </v-col>
@@ -98,6 +111,56 @@
         </v-row>
 
         <CommuComment :contentId="parseInt(this.$route.params.id)" />
+        <!-- 신고모달창 -->
+        <v-row justify="center">
+            <v-dialog v-model="dialog" persistent width="1024">
+                <template v-slot:activator="{props}">
+                    <v-btn color="primary" v-bind="props"> Open Dialog </v-btn>
+                </template>
+                <v-card>
+                    <v-card-title>
+                        <span class="text-h5">신고하기</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container>
+                            <v-row>
+                                <!-- <v-col cols="12" sm="6" md="4">
+                                    <v-text-field label="Legal middle name" hint="example of helper text only on focus"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="6" md="4">
+                                    <v-text-field label="Legal last name*" hint="example of persistent helper text" persistent-hint required></v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-text-field label="Email*" required></v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-text-field label="Password*" type="password" required></v-text-field>
+                                </v-col> -->
+                                <v-col cols="12" sm="6" md="4">
+                                    <v-select :items="['abuse', 'privacy', 'spam']" label="신고이유" v-model="report.reason" required></v-select>
+                                </v-col>
+                                <v-col cols="12" sm="6" md="8">
+                                    <v-text-field label="신고내용" v-model="report.content" required></v-text-field>
+                                </v-col>
+                                <!-- <v-col cols="12" sm="6">
+                                    <v-autocomplete
+                                        :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
+                                        label="Interests"
+                                        multiple
+                                    ></v-autocomplete>
+                                </v-col> -->
+                            </v-row>
+                        </v-container>
+                        <!-- <small>*indicates required field</small> -->
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue-darken-1" variant="text" @click="dialog = false"> 취소 </v-btn>
+                        <v-btn color="rgba(255, 0, 0, 0.5)" variant="text" @click="doReport()"> 신고 </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-row>
     </v-app>
 </template>
 
@@ -122,7 +185,12 @@ export default {
             editable: false, // 수정가능여부 (수정 버튼누르면 true로 바뀜),
             bookMarkList: [],
             loveList: [],
-            user: {}
+            user: {},
+            dialog: false,
+            report: {
+                reason: '',
+                content: ''
+            }
         };
     },
     mounted() {
@@ -195,6 +263,11 @@ export default {
             this.$router.push({
                 path: window.history.back()
             });
+        },
+        doReport() {
+            // 여기에 dispatch  신고만들기
+            // this.$store.dispatch('moduleCommunity/report')
+            this.dialog = false;
         },
         // deletecontent() {
         //     // 글에 들어가서 삭제버튼 눌렀을 때
