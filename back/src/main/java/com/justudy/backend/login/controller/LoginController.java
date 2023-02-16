@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @RequiredArgsConstructor
@@ -23,8 +24,10 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody @Validated LoginRequest request, HttpSession session) {
-        LoginResponse loginInfo = loginService.loginProcess(request);
+    public ResponseEntity<LoginResponse> login(@RequestBody @Validated LoginRequest loginRequest,
+                                               HttpServletRequest request) {
+        LoginResponse loginInfo = loginService.loginProcess(loginRequest);
+        HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_USER, loginInfo.getLoginSequence());
 
         return ResponseEntity.status(HttpStatus.OK).body(new LoginResponse(loginInfo.getNickname()));
