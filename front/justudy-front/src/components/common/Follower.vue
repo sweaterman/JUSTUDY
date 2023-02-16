@@ -10,7 +10,6 @@
 
                 {{ item.nickname }}
 
-                <img src="../../assets/redHeart.png" />
             </div>
         </div>
         <div class="d-flex justify-space-between align-center" style="width: 100%; margin-top: -200px; margin-bottom: 200px">
