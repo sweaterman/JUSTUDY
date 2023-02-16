@@ -1,19 +1,17 @@
 package com.justudy.backend.login.dto.response;
 
+import com.justudy.backend.member.domain.MemberRole;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @Data
 public class LoginResponse {
 
-    private Long loginSequence;
-
-    private String password;
     private String nickname;
 
-    public LoginResponse(String nickname) {
-        this.nickname = nickname;
+    private boolean isAdmin;
+
+    public LoginResponse(LoginResult result) {
+        this.nickname = result.getNickname();
+        this.isAdmin = result.getRole().equals(MemberRole.ADMIN) ? true : false;
     }
 }
-
