@@ -148,4 +148,9 @@ public class MemberActivityService {
     String name = member.getNickname();
     return new ActivityToRank(index + 1, memberActivityBeforeRank.getSecond(), name, image);
   }
+
+  @Transactional
+  public List<ActivitySubjectResponse> getAllTimeByCategory() {
+    return memberActivityRepository.sumAllTimeByCategory();
+  }
 }
