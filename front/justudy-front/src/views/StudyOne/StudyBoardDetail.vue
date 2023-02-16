@@ -1,17 +1,5 @@
 <template>
     <v-container>
-        <!-- 글쓴이 일때 수정, 삭제 -->
-        <v-row v-if="boardDetail.writer">
-            <!-- 수정 -->
-            <v-col cols="6">
-                <v-btn @click="boardUpdate()">수정하기</v-btn>
-            </v-col>
-            <!-- 삭제 -->
-            <v-col cols="6">
-                <v-btn @click="boardDialog = true">삭제하기</v-btn>
-            </v-col>
-        </v-row>
-
         <!-- 글 삭제 토글 -->
         <v-dialog v-model="boardDialog">
             <v-card>
@@ -24,21 +12,6 @@
             </v-card>
         </v-dialog>
 
-        <!-- 글쓴이 아닐 때 좋아요, 북마크, 신고 -->
-        <v-row v-if="!boardDetail.writer">
-            <v-col cols="4" align="center">
-                <v-btn v-if="!boardDetail.loved" @click="btnLike()">좋아요하기</v-btn>
-                <v-btn v-if="boardDetail.loved" @click="btnLike()">좋아요취소</v-btn>
-            </v-col>
-            <v-col cols="4" align="center">
-                <v-btn v-if="!boardDetail.bookmarked" @click="btnBookmark()">북마크하기</v-btn>
-                <v-btn v-if="boardDetail.bookmarked" @click="btnBookmark()">북마크취소</v-btn>
-            </v-col>
-            <v-col cols="4" align="center">
-                <v-btn @click="reportDialog = true">신고</v-btn>
-            </v-col>
-        </v-row>
-
         <!-- 글 신고 토글 -->
         <v-dialog v-model="reportDialog">
             <v-card>
@@ -50,33 +23,62 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        <!-- 작성자 -->
-        <v-row>
-            <v-col cols="4">
-                <v-subheader>작성자</v-subheader>
-            </v-col>
-            <v-col cols="8">
-                <v-text-field :value="boardDetail.nickname" solo readonly></v-text-field>
-            </v-col>
-        </v-row>
 
         <!-- 제목 -->
         <v-row>
-            <v-col cols="4">
-                <v-subheader>TITLE</v-subheader>
+            <v-col cols="12" style="background-color: #e4e4e4">
+                <h2>{{ boardDetail.title }}</h2>
             </v-col>
-            <v-col cols="8">
-                <v-text-field readonly v-model="boardDetail.title"></v-text-field>
+        </v-row>
+
+        <!-- 글쓴이 -->
+        <v-row>
+            <v-col cols="12"> 작성자 : {{ boardDetail.nickname }} </v-col>
+        </v-row>
+
+        <!-- 작성일 -->
+        <v-row dense>
+            <v-col cols="12"> 작성일 : {{ boardDetail.createdTime }} </v-col>
+        </v-row>
+
+        <v-row>
+            <v-col cols="12">
+                <v-divider></v-divider>
+            </v-col>
+        </v-row>
+
+        <!-- 좋아요, 북마크 -->
+        <v-row>
+            <v-col cols="12" align="end">
+                <v-btn v-if="boardDetail.loved" outlined text @click="btnLike()" :style="{color: 'red'}">
+                    <span class="material-icons-outlined">favorite</span>
+                </v-btn>
+                <v-btn v-if="!boardDetail.loved" outlined text @click="btnLike()">
+                    <span class="material-icons-outlined">favorite</span>
+                </v-btn>
+                &nbsp;&nbsp;
+                <v-btn v-if="boardDetail.bookmarked" outlined text @click="btnBookmark()" :style="{color: 'gold'}">
+                    <span class="material-icons-outlined">bookmark</span>
+                </v-btn>
+                <v-btn v-if="!boardDetail.bookmarked" outlined text @click="btnBookmark()">
+                    <span class="material-icons-outlined">bookmark</span>
+                </v-btn>
             </v-col>
         </v-row>
 
         <!-- 내용 -->
         <v-row>
-            <v-col col="12" align="center"> CONTENT </v-col>
-        </v-row>
-        <v-row>
             <v-col col="12">
                 <v-textarea readonly v-model="boardDetail.content" rows="15" solo name="input-7-4" no-resize> </v-textarea>
+            </v-col>
+        </v-row>
+
+        <!-- 글쓴이 일때 수정, 삭제 -->
+        <v-row v-if="boardDetail.writer">
+            <v-col cols="12" align="end">
+                <v-btn @click="boardUpdate()">수정하기</v-btn>
+                &nbsp;&nbsp;
+                <v-btn @click="boardDialog = true">삭제하기</v-btn>
             </v-col>
         </v-row>
 
