@@ -259,10 +259,11 @@ export default {
             for (let i = 0; i < keys.length; i++) {
                 const key = keys[i];
                 const value = obj[key];
-                if ('connected' != value.rtcPeer.peerConnection.connectionState) {
-                    console.log('reconnect');
+                if ('connected' != value.rtcPeer.peerConnection.connectionState && 'connecting' != value.rtcPeer.peerConnection.connectionState ) {
+                    
+                    console.log(value.rtcPeer.peerConnection.connectionState);
                     location.reload();
-                    break;
+                    // break;
                 }
             }
             console.log('=========================');
