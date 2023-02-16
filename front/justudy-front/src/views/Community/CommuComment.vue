@@ -1,49 +1,125 @@
 <template>
-    <v-row>
-        <v-col cols="12" md="2" />
-        <v-col cols="12" md="6" :style="{marginLeft: '5%', width: '50%'}">
-            <div class="card_section">
-                <v-row justify="center" align="center">
-                    <v-col cols="12" md="10">
-                        <v-textarea v-model="content" label="내용" rows="1" style="width: 100%; margin-right: 10%; margin-left: 5%; margintop: 4%"></v-textarea>
-                    </v-col>
-                    <v-col cols="12" md="2" align="right">
-                        <v-btn text @click="createComment" color="green">
-                            <span class="material-icons-outlined"> check </span>
-                        </v-btn>
+    <v-container>
+        <!-- 내ㄱ꺾//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+        <!-- 댓글 목록 -->
+        <v-row>
+            <v-col v-for="(comment, index) in commentList" :key="index" cols="12">
+                <!-- 댓글 한개 -->
+                <div v-if="comment.parentSeq == 0">
+                    <!-- 작성자 -->
+                    <v-row dense>
+                        <v-col cols="12"> <v-icon>mdi-account</v-icon> {{ comment.memberNickName }} </v-col>
+                    </v-row>
+
+                    <!-- 댓글 내용 -->
+                    <v-row dense>
+                        <v-col cols="12">
+                            <v-textarea auto-grow rows="1" readonly v-model="comment.content"></v-textarea>
+                        </v-col>
+                    </v-row>
+
+                    <!-- 작성 시간 & 신고 & 수정 & 삭제 -->
+                    <v-row no-gutters>
+                        <v-col cols="12" v-if="!comment.isWriter">
+                            {{ comment.createdTime }} |
+                            <v-btn text @click="btnReport()">
+                                <v-icon color="error"> mdi-alarm-light </v-icon>
+                            </v-btn></v-col
+                        >
+                        <v-col cols="12" v-if="comment.isWriter"> {{ comment.createdTime }} | <v-btn text @click="deleteComment(comment.sequence)">삭제</v-btn> </v-col>
+                    </v-row>
+
+                    <!-- 대댓글 버튼 -->
+                    <v-row no-gutters>
+                        <v-col cols="12" align="end">
+                            <v-btn @click="toggle(index)" style="margin-bottom: 5px">답글달기</v-btn>
+                        </v-col>
+                    </v-row>
+
+                    <!-- 대댓글 작성란 -->
+                    <v-row v-if="cocommentToggle[index]">
+                        <v-col cols="2"></v-col>
+                        <v-col cols="10">
+                            <!-- 작성자 -->
+                            <v-row dense>
+                                <v-col cols="12"> <v-icon>mdi-account</v-icon>{{ myNickname }} </v-col>
+                            </v-row>
+                            <!-- 댓글 내용 -->
+                            <v-row dense>
+                                <v-col cols="12">
+                                    <v-textarea v-model="cocommentContent" no-resize solo name="input-7-4" label="좋은 댓글이 작성자에게 큰 힘이 됩니다."></v-textarea>
+                                </v-col>
+                            </v-row>
+                            <!-- 등록하기 -->
+                            <v-row no-gutters>
+                                <v-col align="end" cols="12">
+                                    <v-btn @click="writeComment(comment.sequence)" color="yellow" style="margin-bottom: 5px">작성</v-btn>
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                    </v-row>
+
+                    <v-divider></v-divider>
+                </div>
+
+                <!-- 대댓글 한개 -->
+                <div v-if="comment.parentSeq != 0">
+                    <!-- 작성자 -->
+                    <v-row dense>
+                        <v-col cols="2"></v-col>
+                        <v-col cols="10"> <v-icon>mdi-account</v-icon>{{ comment.memberNickName }} </v-col>
+                    </v-row>
+
+                    <!-- 댓글 내용 -->
+                    <v-row dense>
+                        <v-col cols="2"></v-col>
+                        <v-col cols="10">
+                            <v-textarea auto-grow rows="1" readonly v-model="comment.content"></v-textarea>
+                        </v-col>
+                    </v-row>
+
+                    <!-- 작성 시간 & 신고 & 수정 & 삭제 -->
+                    <v-row align-content="center" no-gutters>
+                        <v-col cols="2"></v-col>
+                        <v-col cols="10" v-if="!comment.isWriter">
+                            {{ comment.createdTime }} |
+                            <v-btn text @click="btnReport()">
+                                <v-icon color="error"> mdi-alarm-light </v-icon>
+                            </v-btn>
+                        </v-col>
+                        <v-col cols="10" v-if="comment.isWriter"> {{ comment.createdTime }} |<v-btn text @click="deleteComment(comment.sequence)">삭제</v-btn> </v-col>
+                    </v-row>
+                    <v-divider></v-divider>
+                </div>
+            </v-col>
+        </v-row>
+
+        <!-- 댓글 쓰기 -->
+        <v-row>
+            <v-col cols="12">
+                <!-- 작성자 -->
+                <v-row>
+                    <v-col cols="12"> <v-icon>mdi-account</v-icon>{{ myNickname }} </v-col>
+                </v-row>
+                <!-- 댓글 내용 -->
+                <v-row>
+                    <v-col cols="12">
+                        <v-textarea v-model="commentContent" no-resize solo name="input-7-4" label="좋은 댓글이 작성자에게 큰 힘이 됩니다."></v-textarea>
                     </v-col>
                 </v-row>
-            </div>
-            <!-- <v-textarea v-model="content" outlined rows="1" label="답글 달기" style="width: 80%"></v-textarea> -->
-        </v-col>
-        <v-col cols="12" md="1">
-            <v-btn @click="createComment" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">생성</v-btn>
-            <div :key="item.sequence" v-for="(item, index) in this.comments">
-                <v-row :style="`background-color: ${getColor(item.parentSeq)}`">
-                    <v-col>
-                        {{ item.parentSeq != 0 ? 'ㄴㄴㄴ' : '' }}
-                    </v-col>
-                    <v-col>
-                        {{ item.memberSeq }}
-                        <v-textarea v-model="item.content" label="내용"></v-textarea>
-                        {{ item.createdTime }}
-                        <br />
-                        <v-btn v-if="item.isWriter" @click="updateComment(item)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">수정</v-btn>
-                        <v-btn v-if="item.isWriter" @click="deleteComment(item.sequence)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">삭제</v-btn>
-                    </v-col>
-                    <v-col v-if="item.parentSeq == 0">
-                        <v-textarea v-model="item.inputValue" label="답글생성"></v-textarea>
-
-                        <v-btn @click="createReply(item.sequence, index)" :style="{height: '50px', width: '90px', fontWeight: 'bold', fontSize: 'large'}">답글생성</v-btn>
+                <!-- 등록하기 -->
+                <v-row no-gutters>
+                    <v-col align="end" cols="12">
+                        <v-btn @click="writeComment(0)" color="yellow">작성</v-btn>
                     </v-col>
                 </v-row>
-            </div>
-        </v-col>
-
-        <v-col cols="12" md="3" />
-    </v-row>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 <script>
+import {mapState} from 'vuex';
+
 export default {
     name: 'CommuComment',
     props: {
@@ -51,77 +127,67 @@ export default {
             type: Number
         }
     },
+    computed: {
+        ...mapState('moduleCommunity', ['commentList'])
+    },
+    async created() {
+        await this.$store.dispatch('moduleCommunity/getCommentList', {
+            id: this.contentId
+        });
+        this.myNickname = localStorage.getItem('nickname');
+        this.cocommentToggle = Array.from({length: this.commentList.length}, () => false);
+    },
     data() {
         return {
-            comments: [],
-            content: [],
-            comment: {
-                communitySeq: 0,
-                content: '',
-                parentSeq: 0
-            }
+            myNickname: '',
+            commentContent: '',
+            cocommentToggle: [],
+            cocommentContent: ''
         };
     },
     methods: {
-        getColor(parentSeq) {
+        writeComment(parentSeq) {
+            //댓글 작성하기
             if (parentSeq == 0) {
-                return 'white';
+                this.$store.dispatch('moduleCommunity/createComment', {
+                    id: this.contentId,
+                    comment: {
+                        content: this.commentContent,
+                        parentSeq: parentSeq
+                    }
+                });
             } else {
-                return 'yellow';
+                this.$store.dispatch('moduleCommunity/createComment', {
+                    id: this.contentId,
+                    comment: {
+                        content: this.cocommentContent,
+                        parentSeq: parentSeq
+                    }
+                });
             }
         },
-        async updateData() {
-            console.log('아아' + this.contentId);
-            await this.$store.dispatch('moduleCommunity/getCommentList', {id: this.contentId});
-            this.comments = this.$store.state.moduleCommunity.commentList;
-            console.log(this.comments);
+        toggle(index) {
+            //토글 온
+            if (!this.cocommentToggle[index]) {
+                let tempArray = Array.from({length: this.commentList.length}, () => false);
+                tempArray[index] = true;
+                this.cocommentToggle = tempArray;
+            }
+            //토글 오프
+            else {
+                let tempArray = Array.from({length: this.commentList.length}, () => false);
+                this.cocommentToggle = tempArray;
+            }
         },
-        async createComment() {
-            this.comment.content = this.content;
-            this.comment.communitySeq = this.contentId;
-            //부모 댓글일시 parentSeq 값 부모sequence 값으로 변경해야함!
-            this.comment.parentSeq = 0;
-
-            await this.$store.dispatch('moduleCommunity/createComment', {id: this.contentId, comment: this.comment});
-            this.comments = this.$store.state.moduleCommunity.commentList;
-            console.log(this.comments);
+        deleteComment(seq) {
+            this.$store.dispatch('moduleCommunity/deleteComment', {
+                id: this.contentId,
+                commentid: seq
+            });
         },
-        async createReply(parentSeq, index) {
-            this.comment.content = this.comments[index].inputValue;
-            console.log('아아' + this.comment.content);
-            this.comment.communitySeq = this.contentId;
-            //부모 댓글일시 parentSeq 값 부모sequence 값으로 변경해야함!
-            this.comment.parentSeq = parentSeq;
-
-            await this.$store.dispatch('moduleCommunity/createComment', {id: this.contentId, comment: this.comment});
-            this.comments = this.$store.state.moduleCommunity.commentList;
-            console.log(this.comments);
-        },
-        async updateComment(comment) {
-            console.log(comment);
-            await this.$store.dispatch('moduleCommunity/updateComment', {id: this.contentId, commentid: comment.sequence, comment: comment});
-            this.comments = this.$store.state.moduleCommunity.commentList;
-            console.log(this.comments);
-        },
-        async deleteComment(comment) {
-            console.log(comment);
-            await this.$store.dispatch('moduleCommunity/deleteComment', {id: this.contentId, commentid: comment});
-            this.comments = this.$store.state.moduleCommunity.commentList;
-            console.log(this.comments);
+        btnReport() {
+            //신고하기 (module에 alert로 신고 접수 완료 띄우기)
         }
-    },
-    mounted() {
-        this.updateData();
-        console.log(this.comment);
     }
 };
 </script>
-<style scoped>
-.card_section {
-    padding: 1%;
-    border-style: solid;
-    border-color: #eeeeee;
-    border-radius: 30px;
-    /* border-width: thin; */
-}
-</style>
