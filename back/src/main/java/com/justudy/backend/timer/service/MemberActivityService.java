@@ -146,7 +146,8 @@ public class MemberActivityService {
 
     Long image = member.getImageFile().getSequence();
     String name = member.getNickname();
-    return new ActivityToRank(index + 1, memberActivityBeforeRank.getSecond(), name, image);
+    Long seq = member.getSequence();
+    return new ActivityToRank(index + 1, memberActivityBeforeRank.getSecond(), name, image, seq);
   }
 
   @Transactional
