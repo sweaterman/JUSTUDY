@@ -33,10 +33,12 @@ public class RankEntity {
   private Long rankTime;
   @Column(name = "rank_image")
   private Long rankImage;
+  @Column(name = "rank_target_seq")
+  private Long rankTargetSeq;
 
   @Builder
   public RankEntity(Long sequence, RankGroup rankGroup, RankType rankType, Integer rankOrder,
-      String rankName, Long rankTime,Long rankImage) {
+      String rankName, Long rankTime,Long rankImage,Long rankTargetSeq) {
     this.sequence = sequence;
     this.rankGroup = rankGroup;
     this.rankType = rankType;
@@ -44,6 +46,7 @@ public class RankEntity {
     this.rankName = rankName;
     this.rankTime = rankTime;
     this.rankImage = rankImage;
+    this.rankTargetSeq = rankTargetSeq;
   }
 
 }
