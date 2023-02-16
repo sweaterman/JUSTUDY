@@ -16,7 +16,7 @@
                         </h3>
                     </v-col>
                 </v-row>
-
+<!-- 
                 <v-row class="card_section_1st" justify="center" align="center" @click="moveToStudy(rankStudyYesterday[0])" >
                     <v-col cols="12" md="2">
                         <v-avatar size="40">
@@ -24,19 +24,14 @@
                         </v-avatar>
                     </v-col>
                     <v-col cols="12" md="1" />
-                    <v-col cols="12" md="2">
+                    <v-col cols="12" md="2"> -->
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <ProfilePicture
-                            :diameter="70"
-                            :height="70"
-                            :fontSize="32"
-                            content="LV"
-                            standard="px"
-                            :src="`${port}images/${rankStudyYesterday[0].img}`"
-                            style="padding: 5%"
-                            justify="center"
-                            align="center"
-                        />
+                        <!-- <v-avatar
+                        color="primary"
+                        size="56"
+                        ><img
+                        :src="`${port}images/${rankStudyYesterday[0].img}`" 
+                        ></v-avatar>
                     </v-col>
                     <v-col cols="12" md="2" />
                     <v-col cols="12" md="5">
@@ -60,17 +55,12 @@
                     </v-col>
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2">
-                        <ProfilePicture
-                            :diameter="70"
-                            :height="70"
-                            :fontSize="32"
-                            content="LV"
-                            standard="px"
-                            :src="`${port}images/${rankStudyYesterday[1].img}`"
-                            style="padding: 5%"
-                            justify="center"
-                            align="center"
-                        />
+                        <v-avatar
+                        color="primary"
+                        size="56"
+                        ><img
+                        :src="`${port}images/${rankStudyYesterday[1].img}`" 
+                        ></v-avatar>
                     </v-col>
                     <v-col cols="12" md="2" />
                     <v-col cols="12" md="5">
@@ -93,19 +83,14 @@
                         </v-avatar>
                     </v-col>
                     <v-col cols="12" md="1" />
-                    <v-col cols="12" md="2">
+                    <v-col cols="12" md="2"> -->
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <ProfilePicture
-                            :diameter="70"
-                            :height="70"
-                            :fontSize="32"
-                            content="LV"
-                            standard="px"
-                            :src="`${port}images/${rankStudyYesterday[2].img}`"
-                            style="padding: 5%"
-                            justify="center"
-                            align="center"
-                        />
+                        <!-- <v-avatar
+                        color="primary"
+                        size="56"
+                        ><img
+                        :src="`${port}images/${rankStudyYesterday[2].img}`" 
+                        ></v-avatar>
                     </v-col>
                     <v-col cols="12" md="2" />
                     <v-col cols="12" md="5">
@@ -119,7 +104,7 @@
                             <DigitalClock :allTime="rankStudyYesterday[2].time" :fontSize="30" />
                         </v-row>
                     </v-col>
-                </v-row>
+                </v-row> -->
 
                 <!-- 오늘 버닝 데이터 TOP10 -->
                 <v-row justify="center" align="center">
@@ -153,7 +138,7 @@
                     </v-col>
                 </v-row>
 
-                <v-row class="card_section_1st" justify="center" align="center">
+                <v-row class="card_section_1st" justify="center" align="center" @click="moveToStudy(rankStudyWeek[0].seq)">
                     <v-col cols="12" md="2">
                         <v-avatar size="40">
                             <v-img :src="require('@/assets/1st.png')" />
@@ -162,17 +147,12 @@
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <ProfilePicture
-                            :diameter="70"
-                            :height="70"
-                            :fontSize="32"
-                            content="LV"
-                            standard="px"
-                            :src="`${port}images/${rankStudyWeek[0].img}`"
-                            style="padding: 5%"
-                            justify="center"
-                            align="center"
-                        />
+                        <v-avatar
+                        color="primary"
+                        size="56"
+                        ><img
+                        :src="`${port}images/${rankStudyWeek[0].img}`" 
+                        ></v-avatar>
                     </v-col>
                     <v-col cols="12" md="2" />
                     <v-col cols="12" md="5">
@@ -188,7 +168,7 @@
                     </v-col>
                 </v-row>
 
-                <v-row class="card_section_1st" justify="center" align="center">
+                <v-row class="card_section_1st" justify="center" align="center" @click="moveToStudy(rankStudyWeek[1].seq)">
                     <v-col cols="12" md="2">
                         <v-avatar size="40">
                             <v-img :src="require('@/assets/2nd.png')" />
@@ -197,17 +177,12 @@
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <ProfilePicture
-                            :diameter="70"
-                            :height="70"
-                            :fontSize="32"
-                            content="LV"
-                            standard="px"
-                            :src="`${port}images/${rankStudyWeek[1].img}`"
-                            style="padding: 5%"
-                            justify="center"
-                            align="center"
-                        />
+                        <v-avatar
+                        color="primary"
+                        size="56"
+                        ><img
+                        :src="`${port}images/${rankStudyWeek[1].img}`" 
+                        ></v-avatar>
                     </v-col>
                     <v-col cols="12" md="2" />
                     <v-col cols="12" md="5">
@@ -223,7 +198,7 @@
                     </v-col>
                 </v-row>
 
-                <v-row class="card_section_1st" justify="center" align="center">
+                <v-row class="card_section_1st" justify="center" align="center" @click="moveToStudy(rankStudyWeek[2].seq)">
                     <v-col cols="12" md="2">
                         <v-avatar size="40">
                             <v-img :src="require('@/assets/3rd.png')" />
@@ -232,17 +207,12 @@
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <ProfilePicture
-                            :diameter="70"
-                            :height="70"
-                            :fontSize="32"
-                            content="LV"
-                            standard="px"
-                            :src="`${port}images/${rankStudyWeek[2].img}`"
-                            style="padding: 5%"
-                            justify="center"
-                            align="center"
-                        />
+                        <v-avatar
+                        color="primary"
+                        size="56"
+                        ><img
+                        :src="`${port}images/${rankStudyWeek[2].img}`" 
+                        ></v-avatar>
                     </v-col>
                     <v-col cols="12" md="2" />
                     <v-col cols="12" md="5">
@@ -259,14 +229,14 @@
                 </v-row>
 
                 <!-- 이번주 버닝 데이터 TOP10 -->
-                <v-row justify="center" align="center">
+                <v-row justify="center" align="center" >
                     <v-col>
                         <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyWeek.slice(3)">
-                            <v-col  align-self="center" cols="12" md="2"> {{ value.order + 2 }} </v-col>
-                            <v-col  align-self="center" class="line_limit_ranking" cols="12" md="6">
+                            <v-col @click="moveToStudy(rankStudyWeek[index].seq)" align-self="center" cols="12" md="2"> {{ value.order + 2 }} </v-col>
+                            <v-col @click="moveToStudy(rankStudyWeek[index].seq)"  align-self="center" class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
                             </v-col>
-                            <v-col cols="12" md="4">
+                            <v-col cols="12" md="4" @click="moveToStudy(rankStudyWeek[index].seq)" >
                                 <DigitalClock :allTime="value.time" :fontSize="25" />
                             </v-col>
                         </v-row>
@@ -275,7 +245,7 @@
             </v-col>
 
             <!-- 이번달 버닝 TOP 10 -->
-            <v-col class="card_section_board" cols="12" md="4">
+            <v-col class="card_section_board" cols="12" md="4" >
                 <v-row>
                     <v-col><h1>이번달 버닝 TOP 10</h1></v-col>
                 </v-row>
@@ -290,7 +260,7 @@
                     </v-col>
                 </v-row>
 
-                <v-row class="card_section_1st" justify="center" align="center">
+                <v-row class="card_section_1st" justify="center" align="center" @click="moveToStudy(rankStudyMonth[0].seq)">
                     <v-col cols="12" md="2">
                         <v-avatar size="40">
                             <v-img :src="require('@/assets/1st.png')" />
@@ -299,17 +269,12 @@
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <ProfilePicture
-                            :diameter="70"
-                            :height="70"
-                            :fontSize="32"
-                            content="LV"
-                            standard="px"
-                            :src="`${port}images/${rankStudyMonth[0].img}`"
-                            style="padding: 5%"
-                            justify="center"
-                            align="center"
-                        />
+                        <v-avatar
+                        color="primary"
+                        size="56"
+                        ><img
+                        :src="`${port}images/${rankStudyMonth[0].img}`" 
+                        ></v-avatar>
                     </v-col>
                     <v-col cols="12" md="2" />
                     <v-col cols="12" md="5">
@@ -325,7 +290,7 @@
                     </v-col>
                 </v-row>
 
-                <v-row class="card_section_1st" justify="center" align="center">
+                <v-row class="card_section_1st" justify="center" align="center" @click="moveToStudy(rankStudyMonth[1].seq)">
                     <v-col cols="12" md="2">
                         <v-avatar size="40">
                             <v-img :src="require('@/assets/2nd.png')" />
@@ -334,17 +299,12 @@
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <ProfilePicture
-                            :diameter="70"
-                            :height="70"
-                            :fontSize="32"
-                            content="LV"
-                            standard="px"
-                            :src="`${port}images/${rankStudyMonth[1].img}`"
-                            style="padding: 5%"
-                            justify="center"
-                            align="center"
-                        />
+                        <v-avatar
+                        color="primary"
+                        size="56"
+                        ><img
+                        :src="`${port}images/${rankStudyMonth[1].img}`" 
+                        ></v-avatar>
                     </v-col>
                     <v-col cols="12" md="2" />
                     <v-col cols="12" md="5">
@@ -360,7 +320,7 @@
                     </v-col>
                 </v-row>
 
-                <v-row class="card_section_1st" justify="center" align="center">
+                <v-row class="card_section_1st" justify="center" align="center"  @click="moveToStudy(rankStudyMonth[2].seq)">
                     <v-col cols="12" md="2">
                         <v-avatar size="40">
                             <v-img :src="require('@/assets/3rd.png')" />
@@ -369,17 +329,12 @@
                     <v-col cols="12" md="1" />
                     <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <ProfilePicture
-                            :diameter="70"
-                            :height="70"
-                            :fontSize="32"
-                            content="LV"
-                            standard="px"
-                            :src="`${port}images/${rankStudyMonth[2].img}`"
-                            style="padding: 5%"
-                            justify="center"
-                            align="center"
-                        />
+                        <v-avatar
+                        color="primary"
+                        size="56"
+                        ><img
+                        :src="`${port}images/${rankStudyMonth[2].img}`" 
+                        ></v-avatar>
                     </v-col>
                     <v-col cols="12" md="2" />
                     <v-col cols="12" md="5">
@@ -399,11 +354,11 @@
                 <v-row justify="center" align="center">
                     <v-col>
                         <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyMonth.slice(3)">
-                            <v-col  align-self="center" cols="12" md="2"> {{ value.order + 2 }} </v-col>
-                            <v-col  align-self="center" class="line_limit_ranking" cols="12" md="6">
+                            <v-col  @click="moveToStudy(rankStudyMonth[index].seq)" align-self="center" cols="12" md="2"> {{ value.order + 2 }} </v-col>
+                            <v-col  @click="moveToStudy(rankStudyMonth[index].seq)"  align-self="center" class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
                             </v-col>
-                            <v-col cols="12" md="4">
+                            <v-col cols="12" md="4"  @click="moveToStudy(rankStudyMonth[index].seq)" >
                                 <DigitalClock :allTime="value.time" :fontSize="25" />
                             </v-col>
                         </v-row>
@@ -415,7 +370,6 @@
 </template>
 <script>
 import MyRankingData from '@/data/MyRankingData';
-import ProfilePicture from '@/components/mypage/ProfilePicture.vue';
 import DigitalClock from '@/components/timer/DigitalClock.vue';
 import port from '@/store/port';
 // import RankingForm from '../../components/timer/RankingForm.vue';
@@ -432,19 +386,19 @@ export default {
     },
 
     components: {
-        ProfilePicture,
         // RankingForm,
         DigitalClock
         // DigitalClockRankingFom
     },
     async created() {
         await this.$store.dispatch('moduleRanking/getRankMemberYesterday');
+        console.log(this.$store.state.moduleRanking.rankStudyYesterday)
         this.rankStudyYesterday = this.$store.state.moduleRanking.rankStudyYesterday;
+        console.log(this.$store.state.moduleRanking.rankStudyYesterday)
         await this.$store.dispatch('moduleRanking/getRankMemberWeek');
         this.rankStudyWeek = this.$store.state.moduleRanking.rankStudyWeek;
         await this.$store.dispatch('moduleRanking/getRankMemberMonth');
         this.rankStudyMonth = this.$store.state.moduleRanking.rankStudyMonth;
-        console.log(this.rankStudyYesterday)
     },
     methods:{
         moveToStudy(seq) {
