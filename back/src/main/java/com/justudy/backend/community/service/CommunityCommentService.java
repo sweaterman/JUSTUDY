@@ -12,13 +12,17 @@ import com.justudy.backend.community.repository.CommunityRepository;
 import com.justudy.backend.exception.InvalidRequest;
 import com.justudy.backend.member.domain.MemberEntity;
 import com.justudy.backend.member.repository.MemberRepository;
+import com.justudy.backend.report.dto.request.CommentReportReason;
+import com.justudy.backend.report.dto.response.CommentReportDetail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -141,6 +145,15 @@ public class CommunityCommentService {
 
     public List<CommunityCommentResponse> readAllComment(long id, Long loginSequence) {
         return repository.readAllComment(id).stream().map(a -> CommunityCommentResponse.makeBuilder(a, loginSequence)).collect(Collectors.toList());
+    }
+
+    public CommentReportDetail getCommentReportDetail(Long commentSequence) {
+        CommunityCommentEntity comment = repository.findById(commentSequence)
+                .orElseThrow(CommentNotFound::new);
+        Map<String, String> reasonMap = Arrays.stream(CommentReportReason.class.getEnumConstants())
+                .collect(Collectors.toMap(reason -> reason.getValue(), reason -> reason.getMessage()));
+
+        return new CommentReportDetail(comment.getMember().getNickname(), comment.getContent(), reasonMap);
     }
 
 }

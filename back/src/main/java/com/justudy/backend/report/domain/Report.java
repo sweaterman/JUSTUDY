@@ -49,8 +49,9 @@ public abstract class Report {
         this.finishedTime = null;
     }
 
-    public void acceptReport() {
+    public Long acceptReport() {
         this.isFinished = true;
         this.finishedTime = LocalDateTime.now();
+        return this.sequence;
     }
 }

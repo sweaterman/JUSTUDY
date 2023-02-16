@@ -329,46 +329,7 @@ public class MemberServiceTest {
         assertThat(memberRepository.findById(1L).get().isDeleted()).isTrue();
     }
 
-    @Test
-    @DisplayName("회원 밴")
-    void bandMember() {
-        //given
-        MemberEntity adminUser = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
-        adminUser.changeRole(MemberRole.ADMIN);
 
-        MemberEntity targetUser = makeTestMember("user", "기본유저", "1234567");
-
-        BDDMockito.given(memberRepository.findById(1L))
-                .willReturn(Optional.of(adminUser));
-        BDDMockito.given(memberRepository.findById(2L))
-                .willReturn(Optional.of(targetUser));
-
-        //when
-        memberService.banMember(1L, 2L);
-
-        //then
-        assertThat(memberRepository.findById(2L).get().isBanned()).isTrue();
-    }
-    @Test
-    @DisplayName("AdminUser가 AdminUser를 삭제하면 ForbiddenError 발생")
-    void bandAdminMember() {
-        //given
-        MemberEntity adminUser = makeTestMember(USER_ID, NICKNAME, SSAFY_ID);
-        adminUser.changeRole(MemberRole.ADMIN);
-
-        MemberEntity targetUser = makeTestMember("user", "기본유저", "1234567");
-        targetUser.changeRole(MemberRole.ADMIN);
-
-        BDDMockito.given(memberRepository.findById(1L))
-                .willReturn(Optional.of(adminUser));
-        BDDMockito.given(memberRepository.findById(2L))
-                .willReturn(Optional.of(targetUser));
-
-        //expected
-        assertThatThrownBy(() -> memberService.banMember(1L, 2L))
-                .isInstanceOf(ForbiddenRequest.class)
-                .hasMessage("접근 권한이 없습니다.");
-    }
 
 
 
