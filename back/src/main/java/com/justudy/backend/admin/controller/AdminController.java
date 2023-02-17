@@ -108,27 +108,31 @@ public class AdminController {
     }
 
     //== 신고로 삭제 ==//
-    @DeleteMapping("/report/member/{memberSequence}")
-    public ResponseEntity<Void> banMemberByReport(@PathVariable Long memberSequence, HttpSession session) {
+    @DeleteMapping("/report/member/{reportSequence}/{memberSequence}")
+    public ResponseEntity<Void> banMemberByReport(@PathVariable Long reportSequence,
+                                                  @PathVariable Long memberSequence,
+                                                  HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        adminService.banMemberByReport(loginSequence, memberSequence);
+        adminService.banMemberByReport(loginSequence, memberSequence, reportSequence);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/report/community/{communitySequence}")
-    public ResponseEntity<Void> deleteCommunityByReport(@PathVariable Long communitySequence,
+    @DeleteMapping("/report/community/{reportSequence}/{communitySequence}")
+    public ResponseEntity<Void> deleteCommunityByReport(@PathVariable Long reportSequence,
+                                                        @PathVariable Long communitySequence,
                                                         HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        adminService.deleteCommunityByReport(loginSequence, communitySequence);
+        adminService.deleteCommunityByReport(loginSequence, communitySequence, reportSequence);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    @DeleteMapping("/report/comment/{commentSequence}")
-    public ResponseEntity<Void> deleteCommentByReport(@PathVariable Long commentSequence,
+    @DeleteMapping("/report/comment/{reportSequence}/{commentSequence}")
+    public ResponseEntity<Void> deleteCommentByReport(@PathVariable Long reportSequence,
+                                                      @PathVariable Long commentSequence,
                                                       HttpSession session) {
         Long loginSequence = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-        adminService.deleteCommentByReport(loginSequence, commentSequence);
+        adminService.deleteCommentByReport(loginSequence, commentSequence, reportSequence);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
