@@ -63,7 +63,10 @@ SSAFY 2학기 공통 프로젝트
 
 [학습 문서](https://www.notion.so/fd3bdd2f67dc452bb546ab2ac12ba6b3)
 
-  <!-- # 테스트 -->
+# 테스트
+
+[소나 큐브 테스트](https://www.notion.so/12702519115f443e9a8f8fcc5874ce8f))
+
 
 # 배포 및 유지보수
 
