@@ -33,12 +33,12 @@ spring:
     web:
       pageable:
         one-indexed-parameters: true
-  sql:
-    init:
-      mode: ALWAYS
-      continue-on-error: true
-      schema-locations: classpath*:JUSTUDY_INIT_DATABASE.sql
-      data-locations: classpath*:JUSTUDY_INIT_DATABASE.sql
+  # sql:
+  #   init:
+  #     mode: ALWAYS
+  #     continue-on-error: true
+  #     schema-locations: classpath*:JUSTUDY_INIT_DATABASE.sql
+  #     data-locations: classpath*:JUSTUDY_INIT_DATABASE.sql
 
 logging:
   level:

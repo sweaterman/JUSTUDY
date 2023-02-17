@@ -1,7 +1,5 @@
 <template>
     <v-container>
-        <CategoryHeader @click="updateData" />
-
         <!-- 자유게시판 / 검색 기능 / 글쓰기 -->
         <v-row :style="{marginTop: '1%'}">
             <v-col cols="12" md="2" />
@@ -10,25 +8,11 @@
                     <v-col cols="12" md="2">
                         <div align="left" :style="{fontSize: 'xx-large'}"></div>
                     </v-col>
-                    <v-col cols="12" md="2" align="right">
-                        <v-select
-                            :items="searchoption"
-                            item-text="value"
-                            item-value="key"
-                            v-model="searchoptionselected"
-                            label="항목선택"
-                            :style="{width: '150px'}"
-                        />
+                    <v-col cols="12" md="2">
+                        <v-select :items="searchoption" item-text="value" item-value="key" v-model="searchoptionselected" label="항목선택" :style="{width: '150px'}" />
                     </v-col>
                     <v-col cols="12" md="4">
-                        <v-text-field
-                            v-model="searchkeyword"
-                            dense
-                            outlined
-                            label="검색키워드"
-                            full-width
-                            @keyup.enter="searchstart"
-                        />
+                        <v-text-field v-model="searchkeyword" dense outlined label="검색키워드" full-width @keyup.enter="searchstart" />
                     </v-col>
                     <v-col cols="12" md="1">
                         <v-btn @click="searchstart">검색</v-btn>
@@ -46,10 +30,21 @@
             <v-col cols="12" md="2" />
         </v-row>
 
+        <v-row style="margin-top: 10px">
+            <v-col cols="3"></v-col>
+            <v-col cols="6" align-content="center">
+                <CategoryHeader @click="updateData" />
+            </v-col>
+            <v-col cols="3"></v-col>
+        </v-row>
+
         <!-- 글목록 -->
         <v-row>
             <v-col cols="12" md="2" />
             <v-col cols="12" md="8">
+                <v-row>
+                    <v-divider style="margin-bottom: 10px"></v-divider>
+                </v-row>
                 <v-row>
                     <v-simple-table style="width: 100%">
                         <!-- 
@@ -58,20 +53,16 @@
                         -->
                         <thead>
                             <tr style="font-weight: bolder">
-                                <td style="width: 15%; font-size: x-large">No</td>
-                                <td style="width: 25%; font-size: x-large">제목</td>
-                                <td style="width: 15%; font-size: x-large">글쓴이</td>
-                                <td style="width: 15%; font-size: x-large">작성시간</td>
-                                <td style="width: 10%; font-size: x-large">조회수</td>
-                                <td style="width: 10%; font-size: x-large">좋아요</td>
+                                <td style="width: 15%; font-size: large">No</td>
+                                <td style="width: 25%; font-size: large">제목</td>
+                                <td style="width: 15%; font-size: large">글쓴이</td>
+                                <td style="width: 15%; font-size: large">작성시간</td>
+                                <td style="width: 10%; font-size: large">조회수</td>
+                                <td style="width: 10%; font-size: large">좋아요</td>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr
-                                v-for="(value, index) in Data.communityList"
-                                :key="index"
-                                @click="movetocontent(value.sequence)"
-                            >
+                            <tr v-for="(value, index) in Data.communityList" :key="index" @click="movetocontent(value.sequence)">
                                 <td>{{ index + 1 }}</td>
                                 <td>
                                     <div class="line_limit">{{ value.title }}</div>
@@ -107,9 +98,7 @@
                     </v-col>
 
                     <v-col cols="12" md="2" justify="center" align="center">
-                        <div
-                            style="margin-top: 5px; margin-right: 10px; margin-left: 10px"
-                        >{{ $route.query.page }}/{{ totalpage }} page</div>
+                        <div style="margin-top: 5px; margin-right: 10px; margin-left: 10px">{{ $route.query.page }}/{{ totalpage }} page</div>
                         <!-- 위와 같이 해줌으로서 '현재페이지/총페이지 page' 식으로 나타냄 -->
                     </v-col>
 
