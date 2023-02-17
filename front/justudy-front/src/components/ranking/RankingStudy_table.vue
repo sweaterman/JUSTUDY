@@ -16,17 +16,16 @@
                         </h3>
                     </v-col>
                 </v-row>
-<!-- 
-                <v-row class="card_section_1st" justify="center" align="center" @click="moveToStudy(rankStudyYesterday[0])" >
+                <v-row class="card_section_1st" justify="center" align="center" @click="moveToStudy(rankStudyYesterday[0].seq)" >
                     <v-col cols="12" md="2">
                         <v-avatar size="40">
                             <v-img :src="require('@/assets/1st.png')" />
                         </v-avatar>
                     </v-col>
                     <v-col cols="12" md="1" />
-                    <v-col cols="12" md="2"> -->
+                    <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <!-- <v-avatar
+                        <v-avatar
                         color="primary"
                         size="56"
                         ><img
@@ -47,7 +46,7 @@
                     </v-col>
                 </v-row>
 
-                <v-row class="card_section_1st" justify="center" align="center">
+                <v-row class="card_section_1st" justify="center" align="center" @click="moveToStudy(rankStudyYesterday[1].seq)" >
                     <v-col cols="12" md="2">
                         <v-avatar size="40">
                             <v-img :src="require('@/assets/2nd.png')" />
@@ -76,16 +75,16 @@
                     </v-col>
                 </v-row>
 
-                <v-row class="card_section_1st" justify="center" align="center">
+                <v-row class="card_section_1st" justify="center" align="center" @click="moveToStudy(rankStudyYesterday[2].seq)" >
                     <v-col cols="12" md="2">
                         <v-avatar size="40">
                             <v-img :src="require('@/assets/3rd.png')" />
                         </v-avatar>
                     </v-col>
                     <v-col cols="12" md="1" />
-                    <v-col cols="12" md="2"> -->
+                    <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <!-- <v-avatar
+                        <v-avatar
                         color="primary"
                         size="56"
                         ><img
@@ -104,17 +103,17 @@
                             <DigitalClock :allTime="rankStudyYesterday[2].time" :fontSize="30" />
                         </v-row>
                     </v-col>
-                </v-row> -->
+                </v-row>
 
                 <!-- 오늘 버닝 데이터 TOP10 -->
                 <v-row justify="center" align="center">
                     <v-col>
                         <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyYesterday.slice(3)">
-                            <v-col  align-self="center" cols="12" md="2"> {{ value.order }} </v-col>
-                            <v-col  align-self="center" class="line_limit_ranking" cols="12" md="6">
+                            <v-col @click="moveToStudy(rankStudyYesterday[index+3].seq)"  align-self="center" cols="12" md="2"> {{ value.order }} </v-col>
+                            <v-col @click="moveToStudy(rankStudyYesterday[index+3].seq)"  align-self="center" class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
                             </v-col>
-                            <v-col cols="12" md="4">
+                            <v-col cols="12" md="4" @click="moveToStudy(rankStudyYesterday[index+3].seq)" >
                                 <DigitalClock :allTime="value.time" :fontSize="25" />
                             </v-col>
                         </v-row>
@@ -232,11 +231,11 @@
                 <v-row justify="center" align="center" >
                     <v-col>
                         <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyWeek.slice(3)">
-                            <v-col @click="moveToStudy(rankStudyWeek[index].seq)" align-self="center" cols="12" md="2"> {{ value.order }} </v-col>
-                            <v-col @click="moveToStudy(rankStudyWeek[index].seq)"  align-self="center" class="line_limit_ranking" cols="12" md="6">
+                            <v-col @click="moveToStudy(rankStudyWeek[index+3].seq)" align-self="center" cols="12" md="2"> {{ value.order }} </v-col>
+                            <v-col @click="moveToStudy(rankStudyWeek[index+3].seq)"  align-self="center" class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
                             </v-col>
-                            <v-col cols="12" md="4" @click="moveToStudy(rankStudyWeek[index].seq)" >
+                            <v-col cols="12" md="4" @click="moveToStudy(rankStudyWeek[index+3].seq)" >
                                 <DigitalClock :allTime="value.time" :fontSize="25" />
                             </v-col>
                         </v-row>
@@ -354,11 +353,11 @@
                 <v-row justify="center" align="center">
                     <v-col>
                         <v-row class="card_section_each" :key="index" v-for="(value, index) in rankStudyMonth.slice(3)">
-                            <v-col  @click="moveToStudy(rankStudyMonth[index].seq)" align-self="center" cols="12" md="2"> {{ value.order }} </v-col>
-                            <v-col  @click="moveToStudy(rankStudyMonth[index].seq)"  align-self="center" class="line_limit_ranking" cols="12" md="6">
+                            <v-col  @click="moveToStudy(rankStudyMonth[index+3].seq)" align-self="center" cols="12" md="2"> {{ value.order }} </v-col>
+                            <v-col  @click="moveToStudy(rankStudyMonth[index+3].seq)"  align-self="center" class="line_limit_ranking" cols="12" md="6">
                                 {{ value.nickName }}
                             </v-col>
-                            <v-col cols="12" md="4"  @click="moveToStudy(rankStudyMonth[index].seq)" >
+                            <v-col cols="12" md="4"  @click="moveToStudy(rankStudyMonth[index+3].seq)" >
                                 <DigitalClock :allTime="value.time" :fontSize="25" />
                             </v-col>
                         </v-row>
@@ -391,14 +390,13 @@ export default {
         // DigitalClockRankingFom
     },
     async created() {
-        await this.$store.dispatch('moduleRanking/getRankMemberYesterday');
-        console.log(this.$store.state.moduleRanking.rankStudyYesterday)
+        await this.$store.dispatch('moduleRanking/getRankStudyYesterday');
         this.rankStudyYesterday = this.$store.state.moduleRanking.rankStudyYesterday;
-        console.log(this.$store.state.moduleRanking.rankStudyYesterday)
-        await this.$store.dispatch('moduleRanking/getRankMemberWeek');
+        await this.$store.dispatch('moduleRanking/getRankStudyWeek');
         this.rankStudyWeek = this.$store.state.moduleRanking.rankStudyWeek;
-        await this.$store.dispatch('moduleRanking/getRankMemberMonth');
+        await this.$store.dispatch('moduleRanking/getRankStudyMonth');
         this.rankStudyMonth = this.$store.state.moduleRanking.rankStudyMonth;
+        console.log(this.rankStudyMonth)
     },
     methods:{
         moveToStudy(seq) {

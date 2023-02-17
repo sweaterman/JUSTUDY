@@ -55,7 +55,7 @@
                         </v-row>
                         <!-- 날짜별 시간 -->
                         <v-row :style="{marginTop: '10%', marginLeft: '15%'}">
-                            <div style="font-size: 100%" v-if="7 * (cr - 1) + cc - firstDayOfWeek > 0 && 7 * (cr - 1) + cc - firstDayOfWeek <= monthDate[month]">
+                            <div style="font-size: 100%; white-space: pre-line;" v-if="7 * (cr - 1) + cc - firstDayOfWeek > 0 && 7 * (cr - 1) + cc - firstDayOfWeek <= monthDate[month]">
                                 <!-- <v-tooltip v-model="show" location="top center" origin="overlap" >
                                     <template v-slot:activator="{ props }">
                                     <div
@@ -135,7 +135,6 @@ export default {
         },
         calcStartDay(){
         //studyCalendar 값을 바탕으로 배열 생성
-        // this.studyArray = new Array(40).fill('🟡18:00');
         this.studyArray = new Array(47).fill("");
         this.studyDetailArray = new Array(47).fill("");
         
@@ -166,7 +165,7 @@ export default {
             studytemp[i].sort();
             studyDetailtemp[i].sort();
             this.studyArray[i]=studytemp[i].toString();
-            this.studyArray[i] = this.studyArray[i].replace(/,/g, " ");
+            this.studyArray[i] = this.studyArray[i].replace(/,/g, "\n");
             this.studyDetailArray[i]=studyDetailtemp[i].toString();
             this.studyDetailArray[i] = this.studyDetailArray[i].replace(/,/g, " ");
             //3개이상일 경우 생략

@@ -2,13 +2,13 @@
     <v-app>
         <v-row>
             <v-col class="card_section_board" cols="12" md="4">
-                오늘 버닝 상단
+                <!-- 오늘 버닝 상단 -->
                 <v-row>
                     <v-col><h1>오늘의 버닝 TOP 10</h1></v-col>
                 </v-row>
 
                 <!-- 오늘 버닝 데이터 1등 -->
-                <!-- <v-row>
+                <v-row>
                     <v-col>
                         <h3>
                             <span style="color: black">오늘의 </span>
@@ -25,9 +25,9 @@
                         </v-avatar>
                     </v-col>
                     <v-col cols="12" md="1" />
-                    <v-col cols="12" md="2"> -->
+                    <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <!-- 
+                        
                         <v-avatar
                         color="primary"
                         size="56"
@@ -61,9 +61,9 @@
                         </v-avatar>
                     </v-col>
                     <v-col cols="12" md="1" />
-                    <v-col cols="12" md="2"> -->
+                    <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <!--  
+                         
                         <v-avatar
                         color="primary"
                         size="56"
@@ -92,9 +92,9 @@
                         </v-avatar>
                     </v-col>
                     <v-col cols="12" md="1" />
-                    <v-col cols="12" md="2"> -->
+                    <v-col cols="12" md="2">
                         <!-- 받아온 이미지 src에 넣기 -->
-                        <!--  
+                         
                         <v-avatar
                         color="primary"
                         size="56"
@@ -114,7 +114,7 @@
                             <DigitalClock :allTime="rankMemberYesterday[2].time" :fontSize="30" />
                         </v-row>
                     </v-col>
-                </v-row> -->
+                </v-row>
 
                 <!-- 오늘 버닝 데이터 TOP10 -->
                 <v-row justify="center" align="center">

@@ -89,6 +89,7 @@ public class StudyFrequencyService {
         studyFrequencyRepository.deleteByStudy(studySequence);
     }
 
+    @Transactional
     public void createStudyFrequencies(Long studySequence, List<StudyFrequencyCreate> frequencies) throws ParseException {
         if (frequencies == null || frequencies.isEmpty()) return;
         StudyEntity studyEntity = studyRepository.findById(studySequence)
