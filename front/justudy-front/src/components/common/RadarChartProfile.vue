@@ -74,7 +74,7 @@ export default {
     computed: {
         chartData() {
             return {
-                labels: ['Frontend', 'Backend', 'Algorithm', 'CS', 'Database', 'etc'],
+                labels: ['FRONT-END', 'BACK-END', 'INFRA', 'MOBILE', 'ALGORITHM', 'CS'],
                 datasets: [
                     {
                         label: 'value',
@@ -129,7 +129,8 @@ export default {
         // this.category = this.$store.state.moduleTimer.studyCategory;
 
         // console.log(this.chartData.datasets[0].data);
-        for (let i = 0; i < this.category.length; i++) {
+        // 원래 this.category.length 가 맞지만 ... 임시로 6
+        for (let i = 0; i < 6; i++) {
             this.chartData.datasets[0].data[i] = this.category[i].second;
             // this.chartData.datasets[0].data[i] = 300;
         }
