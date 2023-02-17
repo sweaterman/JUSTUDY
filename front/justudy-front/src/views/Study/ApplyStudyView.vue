@@ -89,7 +89,10 @@
                             <v-col cols="5">
                                 <v-subheader>활동 주기</v-subheader>
                             </v-col>
-                            <v-col cols="7" align-self="center"> {{ applyStudyInfo.frequency.week }} / {{ applyStudyInfo.frequency.startTime }} ~ {{ applyStudyInfo.frequency.endTime }} </v-col>
+                        </v-row>
+
+                        <v-row>
+                            <v-col cols="10" align="end" v-for="(fre, index) in applyStudyInfo.frequency" :key="index"> {{ fre.week }} / {{ fre.startTime }} ~ {{ fre.endTime }} </v-col>
                         </v-row>
 
                         <!-- 모임 -->
