@@ -41,22 +41,24 @@
                                 <thead>
                                     <tr style="font-weight: bolder">
                                         <td style="width: 10%; font-size: x-large">No</td>
-                                        <td style="width: 10%; font-size: x-large">신고자</td>
+                                        <td style="width: 20%; font-size: x-large">신고자</td>
                                         <!-- <td style="width: 10%; font-size: x-large">피신고자</td> -->
-                                        <td style="width: 25%; font-size: x-large">신고이유</td>
-                                        <td style="width: 10%; font-size: x-large">종류</td>
+                                        <td style="width: 20%; font-size: x-large">신고이유</td>
+                                        <td style="width: 15%; font-size: x-large">종류</td>
                                         <!-- <td style="width: 10%; font-size: x-large">식별ID</td> -->
-                                        <td style="width: 15%; font-size: x-large">신고시간</td>
+                                        <td style="width: 20%; font-size: x-large">신고시간</td>
+                                        <td style="width: 15%; font-size: x-large">접근금지</td>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="item in contentlist" :key="item.id" @click="movetocontent(item.targetSequence,item.type )">
-                                        <td>{{ item.no }}</td>
-                                        <td>{{ item.reporter }}</td>
+                                    <tr v-for="item in contentlist" :key="item.id" >
+                                        <td @click="movetocontent(item.targetSequence,item.type )">{{ item.no }}</td>
+                                        <td @click="movetocontent(item.targetSequence,item.type )">{{ item.reporter }}</td>
                                         <!-- <td>{{ item.report }}</td> -->
-                                        <td>{{ item.reason }}</td>
-                                        <td>{{ item.type }}</td>
-                                        <td>{{ item.createdAt }}</td>
+                                        <td @click="movetocontent(item.targetSequence,item.type )">{{ item.reason }}</td>
+                                        <td @click="movetocontent(item.targetSequence,item.type )">{{ item.type }}</td>
+                                        <td @click="movetocontent(item.targetSequence,item.type )">{{ item.createdAt }}</td>
+                                        <td @click="ban(item.targetSequence,item.type )"><v-btn>금지</v-btn></td>
                                         <!-- Sequelize의 createdAt, updatedAt의 날짜 형식이 '2021-12-10T12:38:52.000Z' 이런 식이여서 
                                     split('T')[0]을 통해 날짜만 표시 -->
                                     </tr>
@@ -234,6 +236,17 @@ export default {
                 this.page+=1;
                 this.changeUserData();
         },
+        ban(id,type){
+            if(type=="community"){
+                let API_URL = `${this.port}admin/report/community/${id}`;
+                axios.delete(API_URL)
+                .then((ret) => {
+                        console.log(ret);
+                        alert("신고처리 되었습니다.")
+                    }
+                )
+            }
+        }
     }
 };
 </script>
