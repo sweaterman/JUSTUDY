@@ -86,7 +86,7 @@ public class AdminService {
         return targetMember.getSequence();
     }
 
-    public Long banMemberByReport(Long loginSequence, Long memberSequence) {
+    public Long banMemberByReport(Long loginSequence, Long memberSequence, Long reportSequence) {
         MemberEntity findMember = memberRepository.findById(loginSequence)
                 .orElseThrow(MemberNotFound::new);
         Validation.validateUserRole(findMember, MemberRole.ADMIN);
@@ -94,7 +94,7 @@ public class AdminService {
         MemberEntity targetMember = memberRepository.findById(memberSequence)
                 .orElseThrow(() -> new MemberNotFound());
         targetMember.banMember();
-        acceptReport(memberSequence);
+        acceptReport(reportSequence);
         return targetMember.getSequence();
     }
 
@@ -135,7 +135,7 @@ public class AdminService {
     }
 
     @Transactional
-    public Long deleteCommunityByReport(Long loginSequence, Long communitySequence) {
+    public Long deleteCommunityByReport(Long loginSequence, Long communitySequence, Long reportSequence) {
         MemberEntity findMember = memberRepository.findById(loginSequence)
                 .orElseThrow(MemberNotFound::new);
 
@@ -143,7 +143,7 @@ public class AdminService {
         CommunityEntity findCommunity = communityRepository.findById(communitySequence)
                 .orElseThrow(CommunityNotFound::new);
         findCommunity.deleteCommunity();
-        acceptReport(communitySequence);
+        acceptReport(reportSequence);
         return findCommunity.getSequence();
     }
 
@@ -167,7 +167,7 @@ public class AdminService {
     }
 
     @Transactional
-    public Long deleteCommentByReport(Long loginSequence, Long commentSequence) {
+    public Long deleteCommentByReport(Long loginSequence, Long commentSequence, Long reportSequence) {
         MemberEntity findMember = memberRepository.findById(loginSequence)
                 .orElseThrow(MemberNotFound::new);
 
@@ -175,7 +175,7 @@ public class AdminService {
         CommunityCommentEntity findComment = commentRepository.findById(commentSequence)
                 .orElseThrow(CommentNotFound::new);
         findComment.changeIsDeleted(true);
-        acceptReport(commentSequence);
+        acceptReport(reportSequence);
         return findComment.getSequence();
     }
 
@@ -188,8 +188,8 @@ public class AdminService {
         return new CountReport(member, community, comment, study);
     }
 
-    private Long acceptReport(Long targetSequence) {
-        Report report = reportRepository.findReportByTargetSequence(targetSequence)
+    private Long acceptReport(Long reportSequence) {
+        Report report = reportRepository.findById(reportSequence)
                 .orElseThrow(ReportNotFound::new);
         return report.acceptReport();
     }
