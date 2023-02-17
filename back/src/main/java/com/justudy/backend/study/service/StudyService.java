@@ -78,7 +78,7 @@ public class StudyService {
 
 
         //리더일시
-        String leaderName = memberRepository.findById(loginSequence).orElseThrow(MemberNotFound::new).getNickname();
+        String leaderName = memberRepository.findById(entity.getLeaderSeq()).orElseThrow(MemberNotFound::new).getNickname();
         if (entity.getLeaderSeq().longValue() == loginSequence.longValue()) {
             isLeader = true;
             isMember = false;
