@@ -41,7 +41,7 @@ public class ReportRepositoryImpl implements ReportRepositoryCustom {
     public Long getCountOfReportList() {
         return queryFactory.select(report.count())
                 .from(report)
-                .fetchOne();
+                .fetchFirst();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class ReportRepositoryImpl implements ReportRepositoryCustom {
         return Optional.ofNullable(queryFactory
                 .selectFrom(report)
                 .where(report.sequence.eq(sequence))
-                .fetchOne());
+                .fetchFirst());
     }
 
     @Override
@@ -57,34 +57,34 @@ public class ReportRepositoryImpl implements ReportRepositoryCustom {
         return Optional.ofNullable(queryFactory
                 .selectFrom(report)
                 .where(report.targetSequence.eq(targetSequence))
-                .fetchOne());
+                .fetchFirst());
     }
 
     @Override
     public Long getCountOfMemberReport() {
         return queryFactory.select(memberReport.count())
                 .from(memberReport)
-                .fetchOne();
+                .fetchFirst();
     }
 
     @Override
     public Long getCountOfCommunityReport() {
         return queryFactory.select(communityReport.count())
                 .from(communityReport)
-                .fetchOne();
+                .fetchFirst();
     }
 
     @Override
     public Long getCountOfCommentReport() {
         return queryFactory.select(commentReport.count())
                 .from(commentReport)
-                .fetchOne();
+                .fetchFirst();
     }
 
     @Override
     public Long getCountOfStudyReport() {
         return queryFactory.select(studyReport.count())
                 .from(studyReport)
-                .fetchOne();
+                .fetchFirst();
     }
 }
