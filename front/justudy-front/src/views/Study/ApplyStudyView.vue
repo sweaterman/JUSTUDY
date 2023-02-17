@@ -21,9 +21,7 @@
 
                     <v-row>
                         <v-col cols="12">
-                            <div class="studyInfo">
-                                <h3>{{ applyStudyInfo.introduction }}</h3>
-                            </div>
+                            <v-textarea no-resize rows="20" solo color="#000000" v-model="applyStudyInfo.introduction" outlined></v-textarea>
                         </v-col>
                     </v-row>
                 </v-col>
@@ -91,7 +89,10 @@
                             <v-col cols="5">
                                 <v-subheader>활동 주기</v-subheader>
                             </v-col>
-                            <v-col cols="7" align-self="center"> {{ applyStudyInfo.frequency.week }} / {{ applyStudyInfo.frequency.startTime }} ~ {{ applyStudyInfo.frequency.endTime }} </v-col>
+                        </v-row>
+
+                        <v-row>
+                            <v-col cols="10" align="end" v-for="(fre, index) in applyStudyInfo.frequency" :key="index"> {{ fre.week }} / {{ fre.startTime }} ~ {{ fre.endTime }} </v-col>
                         </v-row>
 
                         <!-- 모임 -->
@@ -208,16 +209,6 @@ export default {
 </script>
 
 <style scoped>
-.studyInfo {
-    display: flex;
-    /* 왜글자가 왼쪽에 안붙지? */
-    justify-content: flex-start;
-    align-items: center;
-    border-radius: 20px;
-    border-style: solid;
-    height: 300px;
-}
-
 .infoDiv {
     padding: 30px;
     border-radius: 20px;

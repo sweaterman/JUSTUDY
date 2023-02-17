@@ -60,7 +60,6 @@
                         <v-btn @click="toLeft()" color="white" depressed>
                             <span class="material-icons-outlined"> chevron_left </span>
                         </v-btn>
-                        <img src="@/assets/arrow.png" style="width: 30px; height: 30px; transform: rotate(0.5turn)" @click="toLeft()" />
                     </v-col>
                     <v-col cols="12" md="10">
                         <div class="d-flex align-center" style="overflow: hidden">

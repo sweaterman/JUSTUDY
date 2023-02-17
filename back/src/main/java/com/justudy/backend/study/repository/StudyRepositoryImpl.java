@@ -69,7 +69,7 @@ public class StudyRepositoryImpl implements StudyRepositorySupport {
         if (studyLeader == null || studyLeader.isEmpty()) {
             return null;
         }
-        return entity.username.containsIgnoreCase(studyLeader);
+        return entity.nickname.containsIgnoreCase(studyLeader);
     }
 
     private BooleanExpression eqStudyName(String studyName) {
