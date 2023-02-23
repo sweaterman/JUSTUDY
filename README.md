@@ -4,7 +4,7 @@
 
 ---
 
-[ucc.mp4](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/cdd3916f-e6bd-44e4-9cdb-f380478a0c0e/ucc.mp4)
+[ucc.mp4](https://lab.ssafy.com/s08-webmobile1-sub2/S08P12A104/-/blob/main/img/ucc.mp4)
 
 ## ✏ 프로젝트 진행 기간
 
