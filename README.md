@@ -4,7 +4,7 @@
 
 ---
 
-[ucc.mp4](https://lab.ssafy.com/s08-webmobile1-sub2/S08P12A104/-/blob/main/img/ucc.mp4)
+[ucc.mp4](/img/ucc.mp4)
 
 ## ✏ 프로젝트 진행 기간
 
