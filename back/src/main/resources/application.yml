@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: ssafy
-    url: jdbc:mysql://db:3306/justudy?serverTimezone=UTC&characterEncoding=UTF-8
+    username: 아이디
+    password: 비밀번호
+    url: jdbc:mysql://데이터베이스:포트/스키마?serverTimezone=UTC&characterEncoding=UTF-8
     sql-script-encoding: UTF-8 
   # swagger
   mvc:

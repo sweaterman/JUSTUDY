@@ -28,7 +28,7 @@ services:
       - /mysql:/var/lib/mysql
       - /mysql/config/my.cnf:/etc/mysql/my.cnf
     environment:
-      MYSQL_ROOT_PASSWORD: ssafy
+      MYSQL_ROOT_PASSWORD: 비밀번호
     restart: on-failure
     command:
       - --character-set-server=utf8 
@@ -43,9 +43,9 @@ services:
     environment:
       # KMS_MIN_PORT: 5000
       # KMS_MAX_PORT: 5050
-      KMS_STUN_IP: "3.38.116.236"
+      KMS_STUN_IP: "외부아이피"
       KMS_STUN_PORT: "3478"
-      KMS_TURN_URL: "a104t:ssafy@3.38.116.236:3478?transport=udp"
+      KMS_TURN_URL: "아이디:비밀번호@주소?transport=udp"
     # volumes:
     #   - /kurento/modules/kurento:/etc/kurento/modules/kurento
     restart: on-failure
